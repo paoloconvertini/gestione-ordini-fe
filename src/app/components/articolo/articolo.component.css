@@ -1,0 +1,22 @@
+table {
+  width: 100%;
+}
+
+.input {
+  display: inline;
+  height: fit-content;
+}
+
+.mat-column-nome{
+  padding-left: 16px;
+}
+
+.mat-column-azioni {
+  text-align: right;
+  font-weight: bold;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 80%;
+}
