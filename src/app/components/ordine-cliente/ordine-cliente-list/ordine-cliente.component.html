@@ -1,11 +1,12 @@
-<div class="container-fluid">
+<div class="container">
   <div class="row">
-    <div class="col-9">
+    <div class="col-12">
       <mat-form-field >
-        <input matInput (keyup)="applyFilter($event)" placeholder="Cerca..." #input>
+        <mat-label>Cerca...</mat-label>
+        <input matInput (keyup)="applyFilter($event)" #input>
       </mat-form-field>
-      <button class="float-end" (click)="openDialog()" mat-mini-fab matTooltip="Aggiungi ordine" color="accent" aria-label="progetto">
-        <mat-icon aria-hidden="false" aria-label="home" fontIcon="add"></mat-icon>
+      <button class="float-end" (click)="openDialog()" mat-raised-button color="primary" aria-label="ordine">
+        Aggiungi ordine
       </button>
       <div class="mat-elevation-z8">
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
@@ -35,8 +36,8 @@
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef > </th>
             <td mat-cell *matCellDef="let progetto">
-              <button *ngIf="!progetto.isEdit" (click)="detail(progetto)" mat-button>
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="info" class="color-purple"></mat-icon>
+              <button (click)="detail(progetto)" mat-button matTooltip="Vai a dettaglio ordine">
+                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
             </td>
           </ng-container>

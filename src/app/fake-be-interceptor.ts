@@ -22,18 +22,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     const { url, method, headers } = request;
 
-    if (url.endsWith('login') && method === 'POST') {
-      return handleLogin();
-    } else if (url.endsWith('ordini-clienti') && method === 'GET') {
+    if (url.endsWith('ordini-clienti') && method === 'GET') {
       return handleGetAllOrdiniClienti();
-    } else if (url.endsWith('articoli') && method === 'GET') {
+    } else if (url.includes('articoli') && method === 'GET') {
       return handleGetAllArticoli();
     }
     return next.handle(request);
-
-    function isLoggedIn() {
-      return headers.get('authorization') === FAKE_JWT_TOKEN;
-    }
 
     function handleGetAllOrdiniClienti() {
       return of(
@@ -66,34 +60,23 @@ export class FakeBackendInterceptor implements HttpInterceptor {
               'quantita': '1',
               'prezzo': '50',
               'flRiservato': true,
+              'flDisponibile': true,
               'flOrdinato': false,
               'dataUltimaModifica': '28/12/2022',
               'utenteUltimaModifica': 'Mario Rossi'
             },
             {
-              'codice': '103024',
+              'codice': '105524',
               'descrizione': 'Box doccia',
               'quantita': '1',
               'prezzo': '750',
               'flRiservato': false,
+              'flDisponibile': false,
               'flOrdinato': false,
               'dataUltimaModifica': '25/01/2023',
               'utenteUltimaModifica': 'Venditore 1'
             }
           ],
-        })
-      );
-    }
-
-    function handleLogin(): Observable<HttpEvent<unknown>> {
-      return of(
-        new HttpResponse({
-          status: 200,
-          body: {
-            id: '1',
-            username: 'profanis',
-            idToken: FAKE_JWT_TOKEN,
-          },
         })
       );
     }

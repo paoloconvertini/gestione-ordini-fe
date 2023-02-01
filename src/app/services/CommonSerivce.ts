@@ -9,10 +9,10 @@ export abstract class CommonService {
   get(id: any): Observable<any> {
     return this.http.get<any>(`${this.url}/${id}`);
   }
-/*  create(data: any): Observable<any> {
+  create(data: any): Observable<any> {
     return this.http.post(this.url, data);
   }
-  update(id:any, data: any): Observable<any> {
+ /* update(id:any, data: any): Observable<any> {
     return this.http.put(`${this.url}/${id}`, data);
   }
   delete(id: any): Observable<any> {

@@ -27,6 +27,8 @@ import {MatPaginatorModule} from "@angular/material/paginator";
 import { AddOrdineClienteComponent } from './components/ordine-cliente/add-ordine/add-ordine-cliente.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {SnackbarComponent} from "./components/snackbar/snackbar.component";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -34,35 +36,37 @@ export function tokenGetter() {
 
 @NgModule({
   declarations: [
-    AppComponent, LoginComponent, NavigationComponent, DashboardComponent, OrdineClienteComponent, ArticoloComponent, AddOrdineClienteComponent
+    AppComponent, LoginComponent, NavigationComponent, DashboardComponent, OrdineClienteComponent,
+    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    HttpClientModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080']
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatCardModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        HttpClientModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter: tokenGetter,
+                allowedDomains: ['localhost:8081']
 
-      }
-    }),
-    MatProgressSpinnerModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatCheckboxModule,
-    FormsModule
-  ],
+            }
+        }),
+        MatProgressSpinnerModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatCheckboxModule,
+        FormsModule,
+        MatTooltipModule
+    ],
   providers: [FakeBackendProvider],
   bootstrap: [AppComponent]
 })

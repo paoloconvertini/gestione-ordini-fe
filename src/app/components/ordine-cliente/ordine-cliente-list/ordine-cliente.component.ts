@@ -4,6 +4,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../../commonListComponent";
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {AddOrdineClienteComponent} from "../add-ordine/add-ordine-cliente.component";
+import {Router} from "@angular/router";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-ordine-cliente',
@@ -13,7 +15,7 @@ import {AddOrdineClienteComponent} from "../add-ordine/add-ordine-cliente.compon
 export class OrdineClienteComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['numero', 'cliente', 'data', 'azioni'];
-  constructor(ordineService: OrdineClienteService, dialog: MatDialog) {
+  constructor(ordineService: OrdineClienteService, dialog: MatDialog, private router: Router) {
     super(ordineService, dialog);}
 
 
@@ -39,6 +41,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   }
 
   detail(ordine: OrdineCliente) {
-      alert("dettaglio ordine:" + ordine.numero);
+    this.router.navigate(['/articoli/'], {queryParams: {ordine:ordine.numero}})
   }
 }

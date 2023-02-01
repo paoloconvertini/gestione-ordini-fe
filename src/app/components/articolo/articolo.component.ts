@@ -4,6 +4,7 @@ import {Articolo} from "../../models/articolo";
 import {OrdineClienteService} from "../../services/ordine-cliente/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ArticoloService} from "../../services/articolo.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-articolo',
@@ -13,13 +14,20 @@ import {ArticoloService} from "../../services/articolo.service";
 export class ArticoloComponent extends CommonListComponent implements OnInit{
 
   ngOnInit(): void {
-    this.retrieveList()
+    this.router.queryParams.subscribe((params: any) => {
+        this.ordine = params.ordine;
+    });
+    this.getById(this.ordine);
   }
 
+  ordine: any;
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo',
-    'flRiservato', 'flOrdinato', 'dataUltimaModifica', 'utenteUltimaModifica'
+    'flRiservato', 'flDisponibile', 'flOrdinato', 'dataUltimaModifica', 'utenteUltimaModifica'
   ];
-  constructor(service: ArticoloService, dialog: MatDialog) {
+  constructor(service: ArticoloService, dialog: MatDialog, private router: ActivatedRoute) {
     super(service, dialog);}
 
+  salvaOrdine() {
+    alert("Ordine salvato!");
+  }
 }

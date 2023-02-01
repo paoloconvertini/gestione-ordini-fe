@@ -3,5 +3,5 @@ export class User {
   cognome?:string
   username?:string
   password?:string
-  ruolo?:string
+  ruolo?:any
 }

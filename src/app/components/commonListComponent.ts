@@ -30,6 +30,22 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
+  getById(id:any): void {
+    this.loader = true;
+    setTimeout( () => {this.service.get(id)
+      .subscribe({
+        next: (data: any[] | undefined) => {
+          this.dataSource = new MatTableDataSource(data);
+          this.dataSource.paginator = this.paginator;
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
+    }, 2000);
+  }
 
 
 /*  update(model: Model): void {

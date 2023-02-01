@@ -4,6 +4,7 @@ export class Articolo {
   quantita?: number
   prezzo?: number
   flRiservato?: boolean
+  flDisponibile?: boolean
   flOrdinato?: boolean
   dataUltimaModifica?: any
   utenteUltimaModifica?: string

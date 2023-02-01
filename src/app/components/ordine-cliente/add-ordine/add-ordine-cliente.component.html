@@ -1,1 +1,19 @@
-<p>add-ordine-cliente works!</p>
+<div>
+  <div class="submit-form">
+    <div class="form-group">
+      <label for="ordine">Numero Ordine*</label>
+      <input
+        type="text"
+        class="form-control"
+        id="ordine"
+        required
+        [(ngModel)]="ordine"
+        name="ordine"
+      />
+    </div>
+    <mat-dialog-actions align="end">
+      <button mat-button color="accent" [mat-dialog-close]="false">Annulla</button>
+      <button (click)="save()" mat-button [mat-dialog-close]="true" color="warn">Salva</button>
+    </mat-dialog-actions>
+  </div>
+</div>
