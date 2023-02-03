@@ -6,6 +6,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
 import {User} from "../../models/user";
 import {LoginResponseI} from "../../models/login-response.interface";
+import {Router} from "@angular/router";
 
 const url = environment.baseAuthUrl + environment.LOGIN;
 @Injectable({
@@ -17,7 +18,7 @@ export class AuthService {
   private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
 
-  constructor(private http: HttpClient, private snackbar: MatSnackBar, private helper: JwtHelperService) {
+  constructor(private http: HttpClient, private snackbar: MatSnackBar, private helper: JwtHelperService, private router: Router) {
     const token = localStorage.getItem('access_token');
     this._isLoggedIn$.next(!!token);
     this.userSubject = new BehaviorSubject<User>({});
@@ -41,5 +42,11 @@ export class AuthService {
         duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
       }))
     )
+  }
+
+  logout() {
+    this._isLoggedIn$.next(false);
+    localStorage.removeItem('access_token');
+    this.router.navigate(['']);
   }
 }

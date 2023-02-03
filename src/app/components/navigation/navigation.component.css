@@ -2,16 +2,9 @@ mat-toolbar {
   margin-bottom: 50px;
 }
 
-a {
-  text-decoration: none;
-  color: white;
+.example-icon {
+  padding: 0 23px;
 }
-
-.nav-items {
-  list-style-type: none;
-  display: flex;
-}
-
-.nav-items a {
-  margin-right: 40px;
+.example-spacer {
+  flex: 1 1 auto;
 }

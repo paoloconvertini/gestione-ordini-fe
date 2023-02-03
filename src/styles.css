@@ -284,6 +284,10 @@ svg#clouds {
   width: 33%;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 /* Responsive Styles */
 @media screen and (max-width: 767px) {
   .card-container > *:not(.circle-link) ,

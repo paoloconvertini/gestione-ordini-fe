@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {tap} from 'rxjs';
 import {AuthService} from '../../services/auth/auth.service';
-import {JwtHelperService} from "@auth0/angular-jwt";
 
 @Component({
   selector: 'app-login',

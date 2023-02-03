@@ -1,9 +1,8 @@
 <mat-toolbar color="primary">
-  <div>
-    <ul class="nav-items">
-<!--      <li><a routerLink="/dashboard">Dashboard</a></li>-->
-      <li><a routerLink="/ordini-clienti">Ordini</a></li>
-      Ciao, {{user.username}}
-    </ul>
-  </div>
+  <mat-toolbar-row>
+    <span>Ordini</span>
+    <span class="example-spacer"></span>
+    <mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{user.username}}">face</mat-icon>
+    <mat-icon class="example-icon pointer" aria-hidden="false" aria-label="Example user verified icon" (click)="logout()">logout</mat-icon>
+  </mat-toolbar-row>
 </mat-toolbar>

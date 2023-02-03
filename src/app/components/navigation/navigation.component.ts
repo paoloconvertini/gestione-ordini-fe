@@ -15,6 +15,10 @@ export class NavigationComponent{
 
   user:User;
 
+  logout(){
+    this.authService.logout();
+  }
+
 
 
 }
