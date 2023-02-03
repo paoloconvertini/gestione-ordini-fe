@@ -1,25 +1,26 @@
 <form (ngSubmit)="submitForm()" [formGroup]="form" autocomplete="off">
   <div style="display: flex; justify-content: center">
-    <mat-card class="form-container">
-      <mat-card-title>Login</mat-card-title>
-
-      <!-- Username -->
-      <div>
+    <mat-card style="width: 25%; border-top: 1px solid #e5e5e5;">
+      <mat-card-header style="border-bottom: 1px solid #d5d5d5; padding-bottom: 20px;">
+        <mat-card-title style=" font-size: 24px; font-weight: bold">
+          Login
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="">
+        <!-- Username -->
         <mat-form-field>
-          <mat-label>Username</mat-label>
+          <mat-label><mat-icon>account_circle</mat-icon>&nbsp;Username</mat-label>
           <input
             matInput
             placeholder="Ex. profanis"
             formControlName="username"
           />
         </mat-form-field>
-      </div>
-      <!-- /Username -->
+        <!-- /Username -->
 
-      <!-- Password -->
-      <div>
+        <!-- Password -->
         <mat-form-field>
-          <mat-label>Password</mat-label>
+          <mat-label><mat-icon>lock</mat-icon>&nbsp;Password</mat-label>
           <input
             matInput
             type="password"
@@ -27,12 +28,11 @@
             formControlName="password"
           />
         </mat-form-field>
-      </div>
-      <!-- /Password -->
-
-      <div>
-        <button type="submit" mat-raised-button color="primary">Login</button>
-      </div>
+        <!-- /Password -->
+      </mat-card-content>
+      <mat-card-actions style="padding: 0 16px;">
+        <button type="submit" mat-raised-button color="primary" style="width:100%">Login</button>
+      </mat-card-actions>
     </mat-card>
   </div>
 </form>

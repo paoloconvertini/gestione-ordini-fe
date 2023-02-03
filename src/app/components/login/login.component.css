@@ -1,0 +1,12 @@
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-card-header {
+  justify-content: center;
+}
+
+.mat-mdc-card-content {
+  display: block;
+  padding: 16px 16px 0 16px;
+}
