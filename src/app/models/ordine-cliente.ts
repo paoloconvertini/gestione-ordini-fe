@@ -1,8 +1,8 @@
-import {Articolo} from "./articolo";
-
 export class OrdineCliente {
-  numero?: string
-  cliente?: string
-  data?: Date
-  articoli?:Articolo[]
+  anno?: number
+  serie?: string
+  progressivo?: number
+  intestazione?: string
+  dataOrdine?: Date
+  numeroConferma?: string
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {AuthService} from "../../services/auth/auth.service";
-import {User} from "../../models/user";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-navigation',
@@ -10,10 +10,10 @@ import {User} from "../../models/user";
 export class NavigationComponent{
 
   constructor(private authService: AuthService) {
-    this.user = this.authService.userValue;
+    this.username = localStorage.getItem(environment.USERNAME);
   }
 
-  user:User;
+  username:string | null;
 
   logout(){
     this.authService.logout();

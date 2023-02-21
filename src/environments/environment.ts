@@ -3,6 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  TOKEN_KEY: 'access_token',
+  USERNAME: 'username',
+  MAGAZZINIERE: 'Magazziniere',
+  AMMINISTRATIVO: 'Amministrativo',
+  ADMIN: 'Admin',
+  VENDITORE: 'Venditore',
   production: false,
   baseUrl: 'http://localhost:8080/api/v1/',
   baseAuthUrl: 'http://localhost:8081/api/v1/',

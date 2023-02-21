@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject, map, Observable, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {JwtHelperService} from "@auth0/angular-jwt";
@@ -9,36 +9,44 @@ import {LoginResponseI} from "../../models/login-response.interface";
 import {Router} from "@angular/router";
 
 const url = environment.baseAuthUrl + environment.LOGIN;
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this._isLoggedIn$.asObservable();
-  private userSubject: BehaviorSubject<User>;
-  public user: Observable<User>;
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar, private helper: JwtHelperService, private router: Router) {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem(environment.TOKEN_KEY);
     this._isLoggedIn$.next(!!token);
-    this.userSubject = new BehaviorSubject<User>({});
-    this.user = this.userSubject.asObservable();
   }
 
-  public get userValue(): User {
-    return this.userSubject.value;
-  }
-
-  login(user:User): Observable<LoginResponseI> {
+  login(user: User): Observable<LoginResponseI> {
     return this.http.post<LoginResponseI>(url, user).pipe(
       tap((res: LoginResponseI) => {
         this._isLoggedIn$.next(true);
-        localStorage.setItem('access_token', res.idToken);
+        localStorage.setItem(environment.TOKEN_KEY, res.idToken);
+        if (user.username) {
+          localStorage.setItem(environment.USERNAME, user.username);
+        }
         let tokenObj = this.helper.decodeToken(res.idToken);
         user.ruolo = tokenObj.groups;
-        this.userSubject.next(user);
+
+        if (user.ruolo!.includes('Magazziniere')) {
+          localStorage.setItem(environment.MAGAZZINIERE, 'Y');
+        }
+        if (user.ruolo!.includes('Amministrativo')) {
+          localStorage.setItem(environment.AMMINISTRATIVO, 'Y');
+        }
+        if (user.ruolo!.includes('Venditore')) {
+          localStorage.setItem(environment.VENDITORE, 'Y');
+        }
+        if (user.ruolo!.includes('Admin')) {
+          localStorage.setItem(environment.ADMIN, 'Y');
+        }
       }),
-      tap(()=> this.snackbar.open('Login successfull', 'Chiudi', {
+      tap(() => this.snackbar.open('Login successfull', 'Chiudi', {
         duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
       }))
     )
@@ -46,7 +54,12 @@ export class AuthService {
 
   logout() {
     this._isLoggedIn$.next(false);
-    localStorage.removeItem('access_token');
+    localStorage.removeItem(environment.TOKEN_KEY);
+    localStorage.removeItem(environment.USERNAME);
+    localStorage.removeItem(environment.MAGAZZINIERE);
+    localStorage.removeItem(environment.VENDITORE);
+    localStorage.removeItem(environment.ADMIN);
+    localStorage.removeItem(environment.AMMINISTRATIVO);
     this.router.navigate(['']);
   }
 }

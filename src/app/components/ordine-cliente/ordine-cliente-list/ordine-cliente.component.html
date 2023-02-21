@@ -15,29 +15,33 @@
           <!-- Name Column -->
           <ng-container matColumnDef="numero">
             <th mat-header-cell *matHeaderCellDef> Numero Ordine </th>
-            <td mat-cell *matCellDef="let progetto">
-              {{progetto.numero}}
+            <td mat-cell *matCellDef="let ordine">
+              {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="cliente">
             <th mat-header-cell *matHeaderCellDef> Cliente </th>
-            <td mat-cell *matCellDef="let progetto">
-              {{progetto.cliente}}
+            <td mat-cell *matCellDef="let ordine">
+              {{ordine.intestazione}}
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="data">
             <th mat-header-cell *matHeaderCellDef> Data </th>
-            <td mat-cell *matCellDef="let progetto">
-              {{progetto.data}}
+            <td mat-cell *matCellDef="let ordine">
+              {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
             </td>
           </ng-container>
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef > </th>
-            <td mat-cell *matCellDef="let progetto">
-              <button (click)="detail(progetto)" mat-button matTooltip="Vai a dettaglio ordine">
+            <td mat-cell *matCellDef="let ordine">
+              <button (click)="detail(ordine)" mat-button matTooltip="Vai a dettaglio ordine">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
+              </button>
+
+              <button (click)="apriFirma(ordine)" mat-button matTooltip="Firma ordine cliente">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="draw" color="primary"></mat-icon>
               </button>
             </td>
           </ng-container>

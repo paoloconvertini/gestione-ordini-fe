@@ -15,7 +15,6 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
-import {FakeBackendProvider} from "./fake-be-interceptor";
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import {JwtModule} from "@auth0/angular-jwt";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
@@ -29,6 +28,7 @@ import {MatTableModule} from "@angular/material/table";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {SnackbarComponent} from "./components/snackbar/snackbar.component";
+import { FirmaDialogComponent } from './components/firma-dialog/firma-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -37,7 +37,7 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, DashboardComponent, OrdineClienteComponent,
-    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent
+    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent, FirmaDialogComponent
   ],
     imports: [
         BrowserModule,
@@ -56,7 +56,7 @@ export function tokenGetter() {
         JwtModule.forRoot({
             config: {
                 tokenGetter: tokenGetter,
-                allowedDomains: ['localhost:8081']
+                allowedDomains: ['localhost:8080']
 
             }
         }),
@@ -67,7 +67,7 @@ export function tokenGetter() {
         FormsModule,
         MatTooltipModule
     ],
-  providers: [FakeBackendProvider],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

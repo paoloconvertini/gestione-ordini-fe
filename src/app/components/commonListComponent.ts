@@ -3,6 +3,7 @@ import {Directive, ViewChild} from "@angular/core";
 import {MatPaginator} from "@angular/material/paginator";
 import {CommonService} from "../services/CommonSerivce";
 import {MatDialog} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Directive()
 export abstract class CommonListComponent {
@@ -10,7 +11,7 @@ export abstract class CommonListComponent {
   dataSource = new MatTableDataSource;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  protected constructor(protected service: CommonService, protected dialog: MatDialog) {
+  protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
   }
 
   retrieveList(): void {
@@ -47,6 +48,40 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
+  getArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
+    this.loader = true;
+    setTimeout( () => {this.service.getArticoliByOrdineId(anno, serie, progressivo)
+      .subscribe({
+        next: (data: any[] | undefined) => {
+          this.dataSource = new MatTableDataSource(data);
+          this.dataSource.paginator = this.paginator;
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
+    }, 2000);
+  }
+
+  upload(data: any): void {
+    this.loader = true;
+    this.service.upload(data).subscribe({
+      next: (res) => {
+        this.loader = false;
+        if(res && !res.error) {
+          console.log(res);
+          this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
+        }
+      },
+      error: (e) => {
+        console.error(e);
+        this.loader = false;
+      }
+    });
+  }
 
 /*  update(model: Model): void {
     this.service.update(model.id, model)
