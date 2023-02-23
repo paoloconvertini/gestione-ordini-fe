@@ -1,12 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../commonListComponent";
-import {Articolo} from "../../models/articolo";
-import {OrdineClienteService} from "../../services/ordine-cliente/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ArticoloService} from "../../services/articolo.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {AuthService} from "../../services/auth/auth.service";
-import {User} from "../../models/user";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
 
@@ -18,7 +15,7 @@ import {environment} from "../../../environments/environment";
 export class ArticoloComponent extends CommonListComponent implements OnInit{
 
   ngOnInit(): void {
-    this.router.queryParams.subscribe((params: any) => {
+    this.router.params.subscribe((params: any) => {
         this.anno = params.anno;
         this.serie = params.serie;
         this.progressivo = params.progressivo;
@@ -32,8 +29,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   anno: any;
   serie: any;
   progressivo: any;
-  displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo',
-    'flRiservato', 'flDisponibile', 'flOrdinato', 'dataUltimaModifica', 'utenteUltimaModifica'
+  displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'tono',
+    'flRiservato', 'flDisponibile', 'flOrdinato'
   ];
   constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private authService: AuthService) {
     super(service, dialog, snackbar);
@@ -49,10 +46,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   }
 
   salvaOrdine() {
-    alert("Ordine salvato!");
-  }
-
-  approvaOrdine() {
-    alert("Ordine approvato!");
+    this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
   }
 }

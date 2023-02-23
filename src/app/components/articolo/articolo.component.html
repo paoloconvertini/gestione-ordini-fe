@@ -25,7 +25,8 @@
           <ng-container matColumnDef="quantita">
             <th mat-header-cell *matHeaderCellDef> Quantità </th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C'">{{articolo.quantita}}&nbsp;{{articolo.funitaMisura}}</span>
+              <span *ngIf="articolo.tipoRigo !=='C' && !isMagazziniere">{{articolo.quantita}}&nbsp;{{articolo.funitaMisura}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere" type="number" min="0" class="form-control input" [(ngModel)]="articolo.quantita"/>
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -36,38 +37,32 @@
             </td>
           </ng-container>
           <!-- Name Column -->
+          <ng-container matColumnDef="tono">
+            <th mat-header-cell *matHeaderCellDef> Tono </th>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !=='C' && !isMagazziniere">{{articolo.geTono}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere" type="text" class="form-control input" [(ngModel)]="articolo.geTono"/>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
           <ng-container matColumnDef="flRiservato">
             <th mat-header-cell *matHeaderCellDef> Riservato </th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox disabled="{{!isMagazziniere}}" [(ngModel)]="articolo.flRiservato" color="primary"></mat-checkbox></span>
+              <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox disabled="{{!isMagazziniere}}" [(ngModel)]="articolo.geFlagRiservato" color="primary"></mat-checkbox></span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="flDisponibile">
             <th mat-header-cell *matHeaderCellDef>Non disponibile </th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox disabled="{{!isMagazziniere}}" [(ngModel)]="articolo.flDisponibile" color="primary"></mat-checkbox></span>
+              <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox disabled="{{!isMagazziniere}}" [(ngModel)]="articolo.geFlagNonDisponibile" color="primary"></mat-checkbox></span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="flOrdinato">
             <th mat-header-cell *matHeaderCellDef> Ordinato </th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox disabled="{{!isAmministrativo}}" [(ngModel)]="articolo.flOrdinato" color="primary"></mat-checkbox></span>
-            </td>
-          </ng-container>
-          <!-- Name Column -->
-          <ng-container matColumnDef="dataUltimaModifica">
-            <th mat-header-cell *matHeaderCellDef> Data ultima modifica </th>
-            <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C'">{{articolo.dataUltimaModifica}}</span>
-            </td>
-          </ng-container>
-          <!-- Name Column -->
-          <ng-container matColumnDef="utenteUltimaModifica">
-            <th mat-header-cell *matHeaderCellDef> Utente ultima modifica </th>
-            <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C'">{{articolo.utenteUltimaModifica}}</span>
+              <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox disabled="{{!isAmministrativo}}" [(ngModel)]="articolo.geFlagOrdinato" color="primary"></mat-checkbox></span>
             </td>
           </ng-container>
 

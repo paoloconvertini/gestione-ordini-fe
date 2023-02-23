@@ -1,6 +1,12 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <span class="pointer" routerLink="/ordini-clienti">Ordini</span>
+    <span class="pointer" routerLink="/ordini-clienti">Ordini confermati</span>
+    <span class="example-spacer"></span>
+    <span class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']" >Ordini da processare</span>
+    <span class="example-spacer"></span>
+    <span class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Ordini incompleti</span>
+    <span class="example-spacer"></span>
+    <span class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Ordini completi</span>
     <span class="example-spacer"></span>
     <mat-icon class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{username}}">face</mat-icon>
     <mat-icon class="example-icon pointer" aria-hidden="false" aria-label="Example user verified icon" (click)="logout()">logout</mat-icon>

@@ -4,9 +4,10 @@ import {MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../../commonListComponent";
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {AddOrdineClienteComponent} from "../add-ordine/add-ordine-cliente.component";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-ordine-cliente',
@@ -17,40 +18,29 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   displayedColumns: string[] = ['numero', 'cliente', 'data', 'azioni'];
   signImage: any;
+  status?: string;
 
-  constructor(ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
-    super(ordineService, dialog, snackbar);}
+  constructor(private route: ActivatedRoute,   ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
+    super(ordineService, dialog, snackbar);
+  }
 
 
 
   ngOnInit(): void {
-    this.retrieveList();
-  }
-
-
-  openDialog() {
-    {
-      const dialogRef = this.dialog.open(AddOrdineClienteComponent, {
-        width: '30%'
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.retrieveList();
+    this.route.params.subscribe((params:any) => {
+          this.status = params.status;
         }
-        console.log('The dialog was closed');
-
-      });
+      );
+    if(this.status) {
+      this.retrieveList(this.status);
+    } else {
+      this.retrieveList(null);
     }
+
   }
 
-  detail(ordine: OrdineCliente) {
-    this.router.navigate(['/articoli/'], {
-      queryParams: {
-        anno:ordine.anno,
-        serie:ordine.serie,
-        progressivo:ordine.progressivo,
-      }
-    })
+  refreshPage() {
+    this.retrieveList(this.status);
   }
 
   apriFirma(ordine: OrdineCliente) {
@@ -65,10 +55,12 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           let data = new FormData();
           data.append('file', result);
           data.append('orderId', ordineId);
+          if(localStorage.getItem(environment.USERNAME)) {
+            // @ts-ignore
+            data.append('username', localStorage.getItem(environment.USERNAME));
+          }
           this.upload(data);
         }
-        console.log('The dialog was closed');
-
       });
     }
   }

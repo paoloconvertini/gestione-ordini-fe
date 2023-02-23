@@ -18,7 +18,12 @@ const routes: Routes = [
     component: OrdineClienteComponent,
   },
   {
-    path: 'articoli',
+    path: 'ordini-clienti/:status',
+    canActivate: [AuthGuard],
+    component: OrdineClienteComponent,
+  },
+  {
+    path: 'articoli/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },

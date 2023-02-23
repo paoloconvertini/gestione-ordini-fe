@@ -4,6 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {CommonService} from "../services/CommonSerivce";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {environment} from "../../environments/environment";
 
 @Directive()
 export abstract class CommonListComponent {
@@ -14,9 +15,9 @@ export abstract class CommonListComponent {
   protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
   }
 
-  retrieveList(): void {
+  retrieveList(status:any): void {
     this.loader = true;
-    setTimeout( () => {this.service.getAll()
+    setTimeout( () => {this.service.getAll(status)
       .subscribe({
         next: (data: any[] | undefined) => {
           this.dataSource = new MatTableDataSource(data);
@@ -53,6 +54,7 @@ export abstract class CommonListComponent {
     setTimeout( () => {this.service.getArticoliByOrdineId(anno, serie, progressivo)
       .subscribe({
         next: (data: any[] | undefined) => {
+          data?.forEach(d => d.username = localStorage.getItem(environment.USERNAME));
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
           this.loader = false;
@@ -83,17 +85,17 @@ export abstract class CommonListComponent {
     });
   }
 
-/*  update(model: Model): void {
-    this.service.update(model.id, model)
+  updateArticoli(anno: any, serie: any, progressivo: any, data: any): void {
+    this.service.update(data)
       .subscribe({
         next: (res) => {
-          console.log(res);
-          this.retrieveList();
-          model.isEdit = false;
+          if(!res.error){
+            this.getArticoliByOrdineId(anno, serie, progressivo);
+          }
         },
         error: (e) => console.error(e)
       });
-  }*/
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

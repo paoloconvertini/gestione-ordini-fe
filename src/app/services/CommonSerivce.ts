@@ -3,8 +3,12 @@ import {Observable} from "rxjs";
 
 export abstract class CommonService {
   protected constructor(protected http: HttpClient, protected url:string) { }
-  getAll(): Observable<any> {
-    return this.http.get<any>(this.url);
+  getAll(status:any): Observable<any> {
+    let url = `${this.url}`;
+    if(status){
+      url += '?status=' + status;
+    }
+    return this.http.get<any>(url);
   }
   get(id: any): Observable<any> {
     return this.http.get<any>(`${this.url}/${id}`);
@@ -25,10 +29,7 @@ export abstract class CommonService {
     return this.http.post(`${this.url}/upload`, data);
   }
 
- /* update(id:any, data: any): Observable<any> {
-    return this.http.put(`${this.url}/${id}`, data);
+ update(data: any): Observable<any> {
+    return this.http.put(`${this.url}`, data);
   }
-  delete(id: any): Observable<any> {
-    return this.http.delete(`${this.url}/${id}`);
-  }*/
 }

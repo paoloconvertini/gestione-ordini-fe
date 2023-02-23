@@ -29,6 +29,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {SnackbarComponent} from "./components/snackbar/snackbar.component";
 import { FirmaDialogComponent } from './components/firma-dialog/firma-dialog.component';
+import {RouteReuseStrategy} from "@angular/router";
+import {CustomRouteReuseStrategy} from "./providers/CustomRouteReuseStrategy";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -67,7 +69,7 @@ export function tokenGetter() {
         FormsModule,
         MatTooltipModule
     ],
-  providers: [],
+  providers: [{provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
