@@ -20,8 +20,7 @@ export abstract class CommonListComponent {
     setTimeout( () => {this.service.getAll(status)
       .subscribe({
         next: (data: any[] | undefined) => {
-          this.dataSource = new MatTableDataSource(data);
-          this.dataSource.paginator = this.paginator;
+          this.createPaginator(data);
           this.loader = false;
         },
         error: (e: any) => {
@@ -32,13 +31,40 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
+  private createPaginator(data: any[] | undefined) {
+    this.dataSource = new MatTableDataSource(data);
+    if (this.paginator) {
+      this.paginator._intl.itemsPerPageLabel = 'Elementi per pagina';
+      this.paginator._intl.nextPageLabel = 'Prossima';
+      this.paginator._intl.previousPageLabel = 'Precedente';
+      this.paginator._intl.firstPageLabel = 'Prima';
+      this.paginator._intl.lastPageLabel = 'Ultima';
+      this.paginator.pageSize = 10;
+      this.paginator.showFirstLastButtons = true;
+      this.paginator.pageSizeOptions = [5, 10, 25, 50];
+      this.paginator._intl.getRangeLabel = (page:number,pageSize:number, length:number) => {
+        if (length == 0 || pageSize == 0) {
+          return `0 di ${length}`;
+        }
+        length = Math.max(length, 0);
+        const startIndex = page * pageSize;
+        const endIndex =
+          startIndex < length
+            ? Math.min(startIndex + pageSize, length)
+            : startIndex + pageSize;
+
+        return `${startIndex + 1} - ${endIndex} di ${length}`;
+      }
+    }
+    this.dataSource.paginator = this.paginator;
+  }
+
   getById(id:any): void {
     this.loader = true;
     setTimeout( () => {this.service.get(id)
       .subscribe({
         next: (data: any[] | undefined) => {
-          this.dataSource = new MatTableDataSource(data);
-          this.dataSource.paginator = this.paginator;
+          this.createPaginator(data);
           this.loader = false;
         },
         error: (e: any) => {
@@ -55,8 +81,7 @@ export abstract class CommonListComponent {
       .subscribe({
         next: (data: any[] | undefined) => {
           data?.forEach(d => d.username = localStorage.getItem(environment.USERNAME));
-          this.dataSource = new MatTableDataSource(data);
-          this.dataSource.paginator = this.paginator;
+          this.createPaginator(data);
           this.loader = false;
         },
         error: (e: any) => {
@@ -67,19 +92,39 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
+  inviaMail(data: any): void {
+    this.loader = true;
+    this.service.inviaMail(data).subscribe({
+      next: (res) => {
+        this.loader = false;
+        if(res && !res.error) {
+          this.snackbar.open('Successo! Email inviata', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'})
+        }
+      },
+      error: (e) => {
+        console.error(e);
+        this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
+        this.loader = false;
+      }
+    });
+  }
+
   upload(data: any): void {
     this.loader = true;
     this.service.upload(data).subscribe({
       next: (res) => {
         this.loader = false;
         if(res && !res.error) {
-          console.log(res);
           this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
-            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'})
         }
       },
       error: (e) => {
         console.error(e);
+        this.snackbar.open('Errore! Firma non creata', 'Chiudi', {
+          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
         this.loader = false;
       }
     });
@@ -104,30 +149,6 @@ export abstract class CommonListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
-  /*openDeleteDialog(model: any, extraProp: any, preProp: any) {
-    let msg = '';
-    if(preProp) {
-      msg += preProp;
-    }
-    msg += 'Sei sicuro di voler procedere con l\'eliminazione di ';
-    msg += model.nome;
-    if (extraProp) {
-      msg += " ";
-      msg += extraProp;
-    }
-    msg += '?';
-    const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      width: '30%',
-      data: {msg: msg},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.delete(model.id);
-      }
-    });
-  }*/
 
 }
 

@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth/auth.service';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginComponent {
     password: new FormControl(null, Validators.required),
   });
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private sanckbar: MatSnackBar) {
   }
 
   submitForm() {
@@ -22,17 +23,29 @@ export class LoginComponent {
       this.authService.login({
         username: this.username.value,
         password: this.password.value
-      }).subscribe((response) => {
-        this.router.navigate(['/ordini-clienti']);
-      })
+      }).subscribe({
+        next: (res) => {
+          this.router.navigate(['/ordini-clienti']);
+        },
+        error: (e) => {
+          if(e) {
+            this.sanckbar.open('Utente non trovato', 'Chiudi', {
+              duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
+          }
+        }
+      });
     }
   }
 
-  get username(): FormControl {
+  get username()
+    :
+    FormControl {
     return this.form.get('username') as FormControl;
   }
 
-  get password(): FormControl {
+  get password()
+    :
+    FormControl {
     return this.form.get('password') as FormControl;
   }
 }

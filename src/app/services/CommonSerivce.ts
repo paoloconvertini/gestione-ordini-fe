@@ -32,4 +32,8 @@ export abstract class CommonService {
  update(data: any): Observable<any> {
     return this.http.put(`${this.url}`, data);
   }
+
+  inviaMail(data: any): Observable<any> {
+    return this.http.post(`${this.url}`, data);
+  }
 }

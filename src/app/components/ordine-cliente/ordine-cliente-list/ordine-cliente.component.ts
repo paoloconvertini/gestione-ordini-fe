@@ -8,6 +8,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
+import {EmailDto} from "../../../models/emailDto";
+import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 
 @Component({
   selector: 'app-ordine-cliente',
@@ -19,9 +21,21 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   displayedColumns: string[] = ['numero', 'cliente', 'data', 'azioni'];
   signImage: any;
   status?: string;
+  isMagazziniere: boolean = false;
+  isAmministrativo: boolean = false;
+  isVenditore: boolean = false;
 
   constructor(private route: ActivatedRoute,   ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
     super(ordineService, dialog, snackbar);
+    if(localStorage.getItem(environment.MAGAZZINIERE)) {
+      this.isMagazziniere = true;
+    }
+    if(localStorage.getItem(environment.AMMINISTRATIVO)) {
+      this.isAmministrativo = true;
+    }
+    if(localStorage.getItem(environment.VENDITORE)) {
+      this.isVenditore = true;
+    }
   }
 
 
@@ -63,5 +77,24 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
         }
       });
     }
+  }
+
+  inviaEmail(ordine:OrdineCliente) {
+    {
+      const dialogRef = this.dialog.open(InviaEmailComponent, {
+        width: '30%'
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          let dto = new EmailDto();
+          dto.to = result;
+          dto.anno = ordine.anno;
+          dto.serie = ordine.serie;
+          dto.progressivo = ordine.progressivo;
+          this.inviaMail(dto);
+        }
+      });
+    }
+
   }
 }

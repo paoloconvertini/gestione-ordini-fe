@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatIconModule} from "@angular/material/icon";
+import {MatIconModule, MatIconRegistry} from "@angular/material/icon";
 import { LoginComponent } from './components/login/login.component';
 import {MatCardModule} from "@angular/material/card";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -22,7 +22,7 @@ import { OrdineClienteComponent } from './components/ordine-cliente/ordine-clien
 import { ArticoloComponent } from './components/articolo/articolo.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
-import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatPaginatorIntl, MatPaginatorModule} from "@angular/material/paginator";
 import { AddOrdineClienteComponent } from './components/ordine-cliente/add-ordine/add-ordine-cliente.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatCheckboxModule} from "@angular/material/checkbox";
@@ -31,6 +31,7 @@ import {SnackbarComponent} from "./components/snackbar/snackbar.component";
 import { FirmaDialogComponent } from './components/firma-dialog/firma-dialog.component';
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomRouteReuseStrategy} from "./providers/CustomRouteReuseStrategy";
+import { InviaEmailComponent } from './components/invia-email/invia-email.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -39,7 +40,7 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, DashboardComponent, OrdineClienteComponent,
-    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent, FirmaDialogComponent
+    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent
   ],
     imports: [
         BrowserModule,
@@ -69,7 +70,17 @@ export function tokenGetter() {
         FormsModule,
         MatTooltipModule
     ],
-  providers: [{provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}],
+  providers: [
+    {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private readonly iconRegistry: MatIconRegistry) {
+    const defaultFontSetClasses = iconRegistry.getDefaultFontSetClass();
+    const outlinedFontSetClasses = defaultFontSetClasses
+      .filter(fontSetClass => fontSetClass !== 'material-icons')
+      .concat(['material-icons-outlined']);
+    iconRegistry.setDefaultFontSetClass(...outlinedFontSetClasses);
+  }
+}

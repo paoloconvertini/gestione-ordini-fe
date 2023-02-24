@@ -30,7 +30,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   serie: any;
   progressivo: any;
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'tono',
-    'flRiservato', 'flDisponibile', 'flOrdinato'
+    'flRiservato', 'flDisponibile', 'flOrdinato', 'flConsegnato', 'azioni'
   ];
   constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private authService: AuthService) {
     super(service, dialog, snackbar);
@@ -47,5 +47,9 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
 
   salvaOrdine() {
     this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
+  }
+
+  showHistory(articolo: any) {
+
   }
 }

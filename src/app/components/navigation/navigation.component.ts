@@ -9,8 +9,21 @@ import {environment} from "../../../environments/environment";
 })
 export class NavigationComponent{
 
+  isMagazziniere: boolean = false;
+  isAmministrativo: boolean = false;
+  isVenditore: boolean = false;
+
   constructor(private authService: AuthService) {
     this.username = localStorage.getItem(environment.USERNAME);
+    if(localStorage.getItem(environment.MAGAZZINIERE)) {
+      this.isMagazziniere = true;
+    }
+    if(localStorage.getItem(environment.AMMINISTRATIVO)) {
+      this.isAmministrativo = true;
+    }
+    if(localStorage.getItem(environment.VENDITORE)) {
+      this.isVenditore = true;
+    }
   }
 
   username:string | null;

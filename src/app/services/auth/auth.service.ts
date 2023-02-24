@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, map, Observable, tap} from "rxjs";
+import {BehaviorSubject, Observable, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {JwtHelperService} from "@auth0/angular-jwt";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -25,6 +25,9 @@ export class AuthService {
   login(user: User): Observable<LoginResponseI> {
     return this.http.post<LoginResponseI>(url, user).pipe(
       tap((res: LoginResponseI) => {
+        if(!res.idToken) {
+          console.log("ERRORE");
+        }
         this._isLoggedIn$.next(true);
         localStorage.setItem(environment.TOKEN_KEY, res.idToken);
         if (user.username) {

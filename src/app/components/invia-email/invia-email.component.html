@@ -1,0 +1,14 @@
+<form (ngSubmit)="submitForm()" [formGroup]="form" autocomplete="off">
+  <h1 mat-dialog-title>Inserisci indirizzo mail del cliente</h1>
+  <div mat-dialog-content>
+    <mat-form-field appearance="fill">
+      <mat-label>Indirizzo mail</mat-label>
+      <input type="email" name="email" matInput formControlName="to" email>
+    </mat-form-field>
+<!--    <div *ngIf="to.errors?['email']">ERRORE</div>-->
+  </div>
+  <div mat-dialog-actions style="padding: 0 16px;" align="center">
+    <button mat-button color="secondary" (click)="onNoClick()">Annulla</button>
+    <button mat-button color="primary" type="submit">Salva</button>
+  </div>
+</form>
