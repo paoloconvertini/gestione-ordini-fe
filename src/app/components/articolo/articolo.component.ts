@@ -6,6 +6,8 @@ import {ActivatedRoute} from "@angular/router";
 import {AuthService} from "../../services/auth/auth.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
+import {FirmaDialogComponent} from "../firma-dialog/firma-dialog.component";
+import {HistoryDialogComponent} from "../history-dialog/history-dialog.component";
 
 @Component({
   selector: 'app-articolo',
@@ -50,6 +52,16 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   }
 
   showHistory(articolo: any) {
+    const dialogRef = this.dialog.open(HistoryDialogComponent, {
+      width: '65%',
+      data: articolo,
+      autoFocus: false,
+      maxHeight: '90vh' //you can adjust the value as per your view
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
 
+      }
+    });
   }
 }

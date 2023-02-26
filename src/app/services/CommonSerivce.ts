@@ -10,8 +10,8 @@ export abstract class CommonService {
     }
     return this.http.get<any>(url);
   }
-  get(id: any): Observable<any> {
-    return this.http.get<any>(`${this.url}/${id}`);
+  getEvento(anno: any, serie: any, progressivo: any, rigo:any): Observable<any> {
+    return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}/${rigo}`);
   }
 
   getArticoliByOrdineId(anno: any, serie: any, progressivo: any): Observable<any> {

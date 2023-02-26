@@ -32,6 +32,8 @@ import { FirmaDialogComponent } from './components/firma-dialog/firma-dialog.com
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomRouteReuseStrategy} from "./providers/CustomRouteReuseStrategy";
 import { InviaEmailComponent } from './components/invia-email/invia-email.component';
+import { HistoryDialogComponent } from './components/history-dialog/history-dialog.component';
+import {MatGridListModule} from "@angular/material/grid-list";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -40,36 +42,37 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, DashboardComponent, OrdineClienteComponent,
-    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent
+    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatCardModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        HttpClientModule,
-        JwtModule.forRoot({
-            config: {
-                tokenGetter: tokenGetter,
-                allowedDomains: ['localhost:8080']
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:8080']
 
-            }
-        }),
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatCheckboxModule,
-        FormsModule,
-        MatTooltipModule
-    ],
+      }
+    }),
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatTooltipModule,
+    MatGridListModule
+  ],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
   ],

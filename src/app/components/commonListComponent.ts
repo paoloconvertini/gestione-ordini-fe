@@ -59,22 +59,6 @@ export abstract class CommonListComponent {
     this.dataSource.paginator = this.paginator;
   }
 
-  getById(id:any): void {
-    this.loader = true;
-    setTimeout( () => {this.service.get(id)
-      .subscribe({
-        next: (data: any[] | undefined) => {
-          this.createPaginator(data);
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
-        }
-      })
-    }, 2000);
-  }
-
   getArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
     this.loader = true;
     setTimeout( () => {this.service.getArticoliByOrdineId(anno, serie, progressivo)

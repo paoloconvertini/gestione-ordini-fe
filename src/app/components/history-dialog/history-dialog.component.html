@@ -1,0 +1,29 @@
+<mat-card *ngFor="let evento of list; index as i">
+  <mat-grid-list cols="4" rowHeight="50px">
+    <mat-grid-tile
+      [colspan]="1"
+      [rowspan]="2"
+      [style.background]="evento.color">
+      {{evento.data  | date:'dd/MM/yyyy HH:mm'}}
+    </mat-grid-tile>
+    <mat-grid-tile
+      [colspan]="3"
+      [rowspan]="1">
+      <mat-card-header>
+        <mat-card-title>{{evento.azione !== 'NON_DISPONIBILE' ? evento.azione : 'NON DISPONIBILE'}}</mat-card-title>
+      </mat-card-header>
+    </mat-grid-tile>
+    <mat-grid-tile
+      [colspan]="3"
+      [rowspan]="1">
+      <mat-card-content>
+        <p *ngIf="evento.azione === 'TONO' || evento.azione === 'QUANTITA'">
+          L'utente <strong>{{evento.user}}</strong> ha inserito il seguente valore: <em>{{evento.tono? evento.tono : evento.quantita}}</em>
+        </p>
+        <p *ngIf="evento.azione !== 'TONO' && evento.azione !== 'QUANTITA'">
+          L'utente <strong>{{evento.user}}</strong> ha modificato il flag.
+        </p>
+      </mat-card-content>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-card>

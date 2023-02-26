@@ -14,7 +14,8 @@ export const environment = {
   baseAuthUrl: 'http://localhost:8081/api/v1/',
   LOGIN: 'login',
   ORDINI_CLIENTI: 'ordini-clienti',
-  ARTICOLI_BY_NUM_ORDINE: "articoli"
+  ARTICOLI_BY_NUM_ORDINE: "articoli",
+  REGISTRO: "registro"
 };
 
 /*
