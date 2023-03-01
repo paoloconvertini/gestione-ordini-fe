@@ -34,6 +34,7 @@ import {CustomRouteReuseStrategy} from "./providers/CustomRouteReuseStrategy";
 import { InviaEmailComponent } from './components/invia-email/invia-email.component';
 import { HistoryDialogComponent } from './components/history-dialog/history-dialog.component';
 import {MatGridListModule} from "@angular/material/grid-list";
+import {MatRadioModule} from "@angular/material/radio";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -71,7 +72,8 @@ export function tokenGetter() {
     MatCheckboxModule,
     FormsModule,
     MatTooltipModule,
-    MatGridListModule
+    MatGridListModule,
+    MatRadioModule
   ],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}

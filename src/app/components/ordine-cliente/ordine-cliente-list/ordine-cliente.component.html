@@ -40,10 +40,10 @@
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
 
-              <button *ngIf="!status && isVenditore" (click)="apriFirma(ordine)" mat-button matTooltip="Firma ordine cliente">
+              <button *ngIf="!status" (click)="apriFirma(ordine)" mat-button matTooltip="Firma ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="draw" color="primary"></mat-icon>
               </button>
-              <button *ngIf="!status && isVenditore" (click)="inviaEmail(ordine)" mat-button matTooltip="Invia email ordine cliente">
+              <button *ngIf="isVenditore" (click)="inviaEmail(ordine)" mat-button matTooltip="Invia email ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
             </td>

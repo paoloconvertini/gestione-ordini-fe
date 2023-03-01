@@ -4,6 +4,10 @@
       <mat-form-field >
         <input matInput (keyup)="applyFilter($event)" placeholder="Cerca..." #input>
       </mat-form-field>
+      <mat-radio-group *ngIf="isAmministrativo" (change)="getArticoliByOrdineId(anno, serie, progressivo, filtroArticoli)"
+                       aria-label="Select an option" [(ngModel)]="filtroArticoli">
+        <mat-radio-button *ngFor="let option of radioOptions"  [checked]="option.checked" [value]="option.checked">{{option.name}}</mat-radio-button>
+      </mat-radio-group>
       <div class="mat-elevation-z8">
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
         <table *ngIf="!loader" mat-table [dataSource]="dataSource">

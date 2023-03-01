@@ -15,19 +15,20 @@ export abstract class CommonListComponent {
   protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
   }
 
-  retrieveList(status:any): void {
+  retrieveList(status: any): void {
     this.loader = true;
-    setTimeout( () => {this.service.getAll(status)
-      .subscribe({
-        next: (data: any[] | undefined) => {
-          this.createPaginator(data);
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
-        }
-      })
+    setTimeout(() => {
+      this.service.getAll(status)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
     }, 2000);
   }
 
@@ -42,7 +43,7 @@ export abstract class CommonListComponent {
       this.paginator.pageSize = 10;
       this.paginator.showFirstLastButtons = true;
       this.paginator.pageSizeOptions = [5, 10, 25, 50];
-      this.paginator._intl.getRangeLabel = (page:number,pageSize:number, length:number) => {
+      this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
         if (length == 0 || pageSize == 0) {
           return `0 di ${length}`;
         }
@@ -59,20 +60,21 @@ export abstract class CommonListComponent {
     this.dataSource.paginator = this.paginator;
   }
 
-  getArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
+  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean): void {
     this.loader = true;
-    setTimeout( () => {this.service.getArticoliByOrdineId(anno, serie, progressivo)
-      .subscribe({
-        next: (data: any[] | undefined) => {
-          data?.forEach(d => d.username = localStorage.getItem(environment.USERNAME));
-          this.createPaginator(data);
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
-        }
-      })
+    setTimeout(() => {
+      this.service.getArticoliByOrdineId(anno, serie, progressivo, filtro)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            data?.forEach(d => d.username = localStorage.getItem(environment.USERNAME));
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
     }, 2000);
   }
 
@@ -81,15 +83,17 @@ export abstract class CommonListComponent {
     this.service.inviaMail(data).subscribe({
       next: (res) => {
         this.loader = false;
-        if(res && !res.error) {
+        if (res && !res.error) {
           this.snackbar.open('Successo! Email inviata', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'})
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
         }
       },
       error: (e) => {
         console.error(e);
         this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
-          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
+          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+        })
         this.loader = false;
       }
     });
@@ -100,26 +104,28 @@ export abstract class CommonListComponent {
     this.service.upload(data).subscribe({
       next: (res) => {
         this.loader = false;
-        if(res && !res.error) {
+        if (res && !res.error) {
           this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'})
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
         }
       },
       error: (e) => {
         console.error(e);
         this.snackbar.open('Errore! Firma non creata', 'Chiudi', {
-          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'})
+          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+        })
         this.loader = false;
       }
     });
   }
 
-  updateArticoli(anno: any, serie: any, progressivo: any, data: any): void {
+  updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
     this.service.update(data)
       .subscribe({
         next: (res) => {
-          if(!res.error){
-            this.getArticoliByOrdineId(anno, serie, progressivo);
+          if (!res.error) {
+            this.getArticoliByOrdineId(anno, serie, progressivo, filtro);
           }
         },
         error: (e) => console.error(e)

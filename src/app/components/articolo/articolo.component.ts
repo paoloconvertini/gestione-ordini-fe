@@ -6,8 +6,12 @@ import {ActivatedRoute} from "@angular/router";
 import {AuthService} from "../../services/auth/auth.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
-import {FirmaDialogComponent} from "../firma-dialog/firma-dialog.component";
 import {HistoryDialogComponent} from "../history-dialog/history-dialog.component";
+
+export interface Option {
+  name: string,
+  checked: boolean
+}
 
 @Component({
   selector: 'app-articolo',
@@ -22,20 +26,29 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
         this.serie = params.serie;
         this.progressivo = params.progressivo;
     });
-    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo);
+    if(this.isAmministrativo) {
+      this.filtroArticoli = true;
+    }
+    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli);
   }
 
+  isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   anno: any;
   serie: any;
   progressivo: any;
+  filtroArticoli: boolean = false;
+  radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name:"Tutti", checked: false}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'tono',
     'flRiservato', 'flDisponibile', 'flOrdinato', 'flConsegnato', 'azioni'
   ];
   constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private authService: AuthService) {
     super(service, dialog, snackbar);
+    if(localStorage.getItem(environment.ADMIN)) {
+      this.isAdmin = true;
+    }
     if(localStorage.getItem(environment.MAGAZZINIERE)) {
       this.isMagazziniere = true;
     }
@@ -48,20 +61,18 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   }
 
   salvaOrdine() {
-    this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
+    if(this.isAmministrativo) {
+      this.filtroArticoli = true;
+    }
+    this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData, this.filtroArticoli);
   }
 
   showHistory(articolo: any) {
-    const dialogRef = this.dialog.open(HistoryDialogComponent, {
+    this.dialog.open(HistoryDialogComponent, {
       width: '65%',
       data: articolo,
       autoFocus: false,
       maxHeight: '90vh' //you can adjust the value as per your view
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
-      }
     });
   }
 }

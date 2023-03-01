@@ -21,12 +21,16 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   displayedColumns: string[] = ['numero', 'cliente', 'data', 'azioni'];
   signImage: any;
   status?: string;
+  isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
   constructor(private route: ActivatedRoute,   ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
     super(ordineService, dialog, snackbar);
+    if(localStorage.getItem(environment.ADMIN)) {
+      this.isAdmin = true;
+    }
     if(localStorage.getItem(environment.MAGAZZINIERE)) {
       this.isMagazziniere = true;
     }

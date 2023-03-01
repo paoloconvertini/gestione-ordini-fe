@@ -14,11 +14,14 @@ export abstract class CommonService {
     return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}/${rigo}`);
   }
 
-  getArticoliByOrdineId(anno: any, serie: any, progressivo: any): Observable<any> {
+  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean): Observable<any> {
     let url = `${this.url}`;
     url += '/' + anno;
     url += '/' + serie;
     url += '/' + progressivo;
+    if(filtro) {
+      url += '/' + filtro;
+    }
     return this.http.get<any>(url);
   }
   create(data: any): Observable<any> {

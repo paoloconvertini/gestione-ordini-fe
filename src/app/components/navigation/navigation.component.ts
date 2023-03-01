@@ -9,12 +9,16 @@ import {environment} from "../../../environments/environment";
 })
 export class NavigationComponent{
 
+  isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
   constructor(private authService: AuthService) {
     this.username = localStorage.getItem(environment.USERNAME);
+    if(localStorage.getItem(environment.ADMIN)) {
+      this.isAdmin = true;
+    }
     if(localStorage.getItem(environment.MAGAZZINIERE)) {
       this.isMagazziniere = true;
     }
