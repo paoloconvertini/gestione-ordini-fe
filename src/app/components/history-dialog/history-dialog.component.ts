@@ -43,6 +43,9 @@ export class HistoryDialogComponent extends CommonListComponent implements OnIni
               d.color = '#87bbfe';
             }
             if (d.azione === 'NON_DISPONIBILE') {
+              d.color = '#E02A45FF';
+            }
+            if (d.azione === 'ORDINATO') {
               d.color = '#555ac0';
             }
             if (d.azione === 'CONSEGNATO') {

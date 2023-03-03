@@ -23,7 +23,7 @@ const routes: Routes = [
     component: OrdineClienteComponent,
   },
   {
-    path: 'articoli/:anno/:serie/:progressivo',
+    path: 'articoli/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },

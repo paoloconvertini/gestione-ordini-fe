@@ -5,6 +5,7 @@ import {CommonService} from "../services/CommonSerivce";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../environments/environment";
+import {Observable} from "rxjs";
 
 @Directive()
 export abstract class CommonListComponent {
@@ -120,16 +121,8 @@ export abstract class CommonListComponent {
     });
   }
 
-  updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
-    this.service.update(data)
-      .subscribe({
-        next: (res) => {
-          if (!res.error) {
-            this.getArticoliByOrdineId(anno, serie, progressivo, filtro);
-          }
-        },
-        error: (e) => console.error(e)
-      });
+  updateArticoli(anno: any, serie: any, progressivo: any, data: any): Observable<any> {
+    return this.service.update(data);
   }
 
   applyFilter(event: Event) {

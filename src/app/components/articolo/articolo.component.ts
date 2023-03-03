@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../commonListComponent";
 import {MatDialog} from "@angular/material/dialog";
 import {ArticoloService} from "../../services/articolo.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../services/auth/auth.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
@@ -25,6 +25,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
         this.anno = params.anno;
         this.serie = params.serie;
         this.progressivo = params.progressivo;
+        this.status = params.status;
     });
     if(this.isAmministrativo) {
       this.filtroArticoli = true;
@@ -39,12 +40,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   anno: any;
   serie: any;
   progressivo: any;
+  status: any;
   filtroArticoli: boolean = false;
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name:"Tutti", checked: false}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'tono',
     'flRiservato', 'flDisponibile', 'flOrdinato', 'flConsegnato', 'azioni'
   ];
-  constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private authService: AuthService) {
+  constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
     super(service, dialog, snackbar);
     if(localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -61,10 +63,21 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
   }
 
   salvaOrdine() {
-    if(this.isAmministrativo) {
-      this.filtroArticoli = true;
-    }
-    this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData, this.filtroArticoli);
+    this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData)
+      .subscribe({
+      next: (res) => {
+        if (!res.error) {
+          let url = '/ordini-clienti';
+          if(res.msg) {
+            url += '/' + res.msg;
+          }
+          this.route.navigate([url]);
+        }
+      },
+      error: (e) => {
+        console.error(e)
+      }
+    });
   }
 
   showHistory(articolo: any) {
