@@ -36,7 +36,7 @@
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef > </th>
             <td mat-cell *matCellDef="let ordine">
-              <button [routerLink]="['/articoli', ordine.anno, ordine.serie, ordine.progressivo, status]" mat-button matTooltip="Vai a dettaglio ordine">
+              <button (click)="apriDettaglio(ordine)" mat-button matTooltip="Vai a dettaglio ordine">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
 

@@ -28,6 +28,11 @@ const routes: Routes = [
     component: ArticoloComponent,
   },
   {
+    path: 'articoli/:anno/:serie/:progressivo',
+    canActivate: [AuthGuard],
+    component: ArticoloComponent,
+  },
+  {
     path: 'login',
     component: LoginComponent,
   },

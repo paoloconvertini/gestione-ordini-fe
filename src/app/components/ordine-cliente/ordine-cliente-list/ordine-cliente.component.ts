@@ -101,4 +101,12 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
 
   }
+
+  apriDettaglio(ordine:OrdineCliente) {
+    let url = "/articoli/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+    if(this.status) {
+      url += "/" + this.status;
+    }
+    this.router.navigateByUrl(url);
+  }
 }
