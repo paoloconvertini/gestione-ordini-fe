@@ -25,6 +25,7 @@ export class HistoryDialogComponent extends CommonListComponent implements OnIni
   }
   list: any;
   color: any;
+  noResult: boolean = false;
 
   ngOnInit(): void {
     this.loader = true;
@@ -32,6 +33,9 @@ export class HistoryDialogComponent extends CommonListComponent implements OnIni
       .subscribe({
         next: (data: any[] | undefined) => {
           this.loader = false;
+          if(!data || data.length === 0) {
+            this.noResult = true;
+          }
           data?.forEach(d => {
             if (d.azione === 'TONO') {
               d.color = '#9251ac';

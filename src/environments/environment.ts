@@ -15,7 +15,8 @@ export const environment = {
   LOGIN: 'login',
   ORDINI_CLIENTI: 'ordini-clienti',
   ARTICOLI_BY_NUM_ORDINE: "articoli",
-  REGISTRO: "registro"
+  REGISTRO: "registro",
+  EMAIL: "mail"
 };
 
 /*

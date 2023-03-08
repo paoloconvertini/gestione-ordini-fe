@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {CommonService} from "../CommonSerivce";
-import {OrdineCliente} from "../../models/ordine-cliente";
 import {environment} from "../../../environments/environment";
 
 const url = environment.baseUrl + environment.ORDINI_CLIENTI;

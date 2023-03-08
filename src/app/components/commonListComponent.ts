@@ -79,50 +79,24 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
-  inviaMail(data: any): void {
-    this.loader = true;
-    this.service.inviaMail(data).subscribe({
-      next: (res) => {
-        this.loader = false;
-        if (res && !res.error) {
-          this.snackbar.open('Successo! Email inviata', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-          })
-        }
-      },
-      error: (e) => {
-        console.error(e);
-        this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
-          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-        })
-        this.loader = false;
-      }
-    });
+  upload(data: any): Observable<any> {
+    return this.service.upload(data);
   }
 
-  upload(data: any): void {
-    this.loader = true;
-    this.service.upload(data).subscribe({
-      next: (res) => {
-        this.loader = false;
-        if (res && !res.error) {
-          this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-          })
-        }
-      },
-      error: (e) => {
-        console.error(e);
-        this.snackbar.open('Errore! Firma non creata', 'Chiudi', {
-          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-        })
-        this.loader = false;
-      }
-    });
+  updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
+    this.service.update(data)
+      .subscribe({
+        next: (res) => {
+          if (!res.error) {
+            this.getArticoliByOrdineId(anno, serie, progressivo, filtro);
+          }
+        },
+        error: (e) => console.error(e)
+      });
   }
 
-  updateArticoli(anno: any, serie: any, progressivo: any, data: any): Observable<any> {
-    return this.service.update(data);
+  chiudi(anno: any, serie: any, progressivo: any): Observable<any> {
+    return this.service.chiudi(anno, serie, progressivo);
   }
 
   applyFilter(event: Event) {

@@ -10,6 +10,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
 import {EmailDto} from "../../../models/emailDto";
 import {InviaEmailComponent} from "../../invia-email/invia-email.component";
+import {EmailService} from "../../../services/email/email.service";
 
 @Component({
   selector: 'app-ordine-cliente',
@@ -26,7 +27,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private route: ActivatedRoute,   ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
+  constructor(private route: ActivatedRoute, private emailService: EmailService,  ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
     super(ordineService, dialog, snackbar);
     if(localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -77,7 +78,25 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             // @ts-ignore
             data.append('username', localStorage.getItem(environment.USERNAME));
           }
-          this.upload(data);
+          this.loader = true;
+          this.upload(data).subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+              }
+              this.refreshPage();
+            },
+            error: (e) => {
+              console.error(e);
+              this.snackbar.open('Errore! Firma non creata', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+              this.loader = false;
+            }
+          });
         }
       });
     }
@@ -95,7 +114,26 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           dto.anno = ordine.anno;
           dto.serie = ordine.serie;
           dto.progressivo = ordine.progressivo;
-          this.inviaMail(dto);
+          this.loader = true;
+          this.emailService.inviaMail(dto).subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open('Successo! Email inviata', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+              }
+            },
+            error: (e) => {
+              console.error(e);
+              this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+              this.loader = false;
+            }
+          });
+
+          ;
         }
       });
     }

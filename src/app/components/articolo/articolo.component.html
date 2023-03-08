@@ -98,8 +98,8 @@
 
         <mat-paginator aria-label="Select page of users"></mat-paginator>
       </div>
-      <button mat-raised-button color="warn" (click)="salvaOrdine()" class="float-end margin-top">Salva</button>
-<!--      <button mat-raised-button color="warn" disabled="{{!isApprovatore}}" (click)="approvaOrdine()" class="float-end margin-top">Approva ordine</button>-->
+      <button mat-raised-button color="warn" disabled="{{!isMagazziniere}}" (click)="chiudiOrdine()" class="float-end margin-top margin-left">Chiudi ordine</button>
+      <button mat-raised-button color="primary" (click)="salvaOrdine()" class="float-end margin-top">Salva</button>&nbsp;&nbsp;
     </div>
   </div>
 </div>
