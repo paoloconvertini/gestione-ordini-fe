@@ -95,8 +95,8 @@ export abstract class CommonListComponent {
       });
   }
 
-  chiudi(anno: any, serie: any, progressivo: any): Observable<any> {
-    return this.service.chiudi(anno, serie, progressivo);
+  chiudi(data: any): Observable<any> {
+    return this.service.chiudi(data);
   }
 
   applyFilter(event: Event) {

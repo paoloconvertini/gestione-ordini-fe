@@ -36,8 +36,8 @@ export abstract class CommonService {
     return this.http.put(`${this.url}`, data);
   }
 
-  chiudi(anno: any, serie: any, progressivo: any): Observable<any> {
-    return this.http.get(`${this.url}/chiudi/${anno}/${serie}/${progressivo}`);
+  chiudi(data: any): Observable<any> {
+    return this.http.post(`${this.url}/chiudi`, data);
   }
 
   inviaMail(data: any): Observable<any> {

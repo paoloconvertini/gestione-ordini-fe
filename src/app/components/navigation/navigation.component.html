@@ -6,9 +6,11 @@
     <span *ngIf="!isAmministrativo" class="example-spacer"></span>
     <span *ngIf="!isMagazziniere" class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']" >Da ordinare</span>
     <span *ngIf="!isMagazziniere"  class="example-spacer"></span>
-    <span class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</span>
-    <span class="example-spacer"></span>
+    <span *ngIf="!isAmministrativo" class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</span>
+    <span *ngIf="!isAmministrativo" class="example-spacer"></span>
     <span class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</span>
+    <span class="example-spacer"></span>
+    <span class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</span>
     <span class="example-spacer"></span>
     <mat-icon *ngIf="isMagazziniere" class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{username}}">warehouse</mat-icon>
     <mat-icon *ngIf="isVenditore" class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{username}}">monetization_on</mat-icon>

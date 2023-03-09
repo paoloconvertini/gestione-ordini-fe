@@ -97,7 +97,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.chiudi(this.anno, this.serie, this.progressivo).subscribe({
+        this.chiudi(this.dataSource.filteredData).subscribe({
           next: (res) => {
             if (!res.error) {
               let url = '/ordini-clienti';
