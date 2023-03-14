@@ -10,6 +10,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  width: 100%;
+}
+
 .color-white {
   color: white!important;
 }
@@ -281,11 +285,26 @@ svg#clouds {
 
 .mat-mdc-form-field {
   font-size: 14px;
-  width: 33%;
+  width: 100%;
 }
 
 .pointer {
   cursor: pointer;
+}
+
+table {
+  width: 100%;
+}
+
+.table-container {
+  position: relative;
+  overflow: auto;
+}
+
+.list-container{
+  position: relative;
+  margin: 20px;
+  padding:10px;
 }
 
 /* Responsive Styles */

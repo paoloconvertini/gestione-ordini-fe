@@ -3,8 +3,11 @@ import {Observable} from "rxjs";
 
 export abstract class CommonService {
   protected constructor(protected http: HttpClient, protected url:string) { }
-  getAll(status:any): Observable<any> {
+  getAll(status:any, update: boolean): Observable<any> {
     let url = `${this.url}`;
+    if(update) {
+      url += '/updateConsegne';
+    }
     if(status){
       url += '?status=' + status;
     }

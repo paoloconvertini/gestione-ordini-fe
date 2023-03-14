@@ -18,7 +18,9 @@ export interface Option {
   templateUrl: './articolo.component.html',
   styleUrls: ['./articolo.component.css']
 })
-export class ArticoloComponent extends CommonListComponent implements OnInit{
+export class ArticoloComponent extends CommonListComponent implements OnInit
+//  , OnDestroy
+{
 
   ngOnInit(): void {
     this.router.params.subscribe((params: any) => {
@@ -27,12 +29,18 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
         this.progressivo = params.progressivo;
         this.status = params.status;
     });
-    if(this.isAmministrativo) {
+    if(this.isAmministrativo && this.status === 'DA_ORDINARE') {
       this.filtroArticoli = true;
     }
+   /* this.subscription = timer(0, 5000).pipe(
+      switchMap( () =>
+        this.service.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli)))
+      .subscribe(result => console.log(result)
+    )*/
     this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli);
   }
 
+  //subscription!: Subscription;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
@@ -61,6 +69,10 @@ export class ArticoloComponent extends CommonListComponent implements OnInit{
       this.isVenditore = true;
     }
   }
+
+  /*ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }*/
 
   salvaOrdine() {
     this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData, this.filtroArticoli);

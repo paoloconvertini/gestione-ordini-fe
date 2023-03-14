@@ -4,7 +4,7 @@
       [colspan]="1"
       [rowspan]="2"
       [style.background]="evento.color">
-      {{evento.data  | date:'dd/MM/yyyy HH:mm'}}
+      {{evento.createDate  | date:'dd/MM/yyyy HH:mm'}}
     </mat-grid-tile>
     <mat-grid-tile
       [colspan]="3"
@@ -18,10 +18,10 @@
       [rowspan]="1">
       <mat-card-content>
         <p *ngIf="evento.azione === 'TONO' || evento.azione === 'QUANTITA'">
-          L'utente <strong>{{evento.user}}</strong> ha inserito il seguente valore: <em>{{evento.tono? evento.tono : evento.quantita}}</em>
+          L'utente <strong>{{evento.username}}</strong> ha inserito il seguente valore: <em>{{evento.tono? evento.tono : evento.quantita}}</em>
         </p>
         <p *ngIf="evento.azione !== 'TONO' && evento.azione !== 'QUANTITA'">
-          L'utente <strong>{{evento.user}}</strong> ha modificato il flag.
+          L'utente <strong>{{evento.username}}</strong> ha modificato il flag.
         </p>
       </mat-card-content>
     </mat-grid-tile>

@@ -16,10 +16,10 @@ export abstract class CommonListComponent {
   protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
   }
 
-  retrieveList(status: any): void {
+  retrieveList(status: any, update: boolean): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getAll(status)
+      this.service.getAll(status, update)
         .subscribe({
           next: (data: any[] | undefined) => {
             this.createPaginator(data);

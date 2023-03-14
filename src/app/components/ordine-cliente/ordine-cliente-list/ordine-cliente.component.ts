@@ -50,16 +50,11 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           this.status = params.status;
         }
       );
-    if(this.status) {
-      this.retrieveList(this.status);
-    } else {
-      this.retrieveList(null);
-    }
-
+      this.retrieveList(this.status, false);
   }
 
   refreshPage() {
-    this.retrieveList(this.status);
+      this.retrieveList(this.status, true);
   }
 
   apriFirma(ordine: OrdineCliente) {
