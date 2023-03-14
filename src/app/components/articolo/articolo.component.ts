@@ -22,24 +22,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 //  , OnDestroy
 {
 
-  ngOnInit(): void {
-    this.router.params.subscribe((params: any) => {
-        this.anno = params.anno;
-        this.serie = params.serie;
-        this.progressivo = params.progressivo;
-        this.status = params.status;
-    });
-    if(this.isAmministrativo && this.status === 'DA_ORDINARE') {
-      this.filtroArticoli = true;
-    }
-   /* this.subscription = timer(0, 5000).pipe(
-      switchMap( () =>
-        this.service.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli)))
-      .subscribe(result => console.log(result)
-    )*/
-    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli);
-  }
-
   //subscription!: Subscription;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
@@ -50,22 +32,45 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   progressivo: any;
   status: any;
   filtroArticoli: boolean = false;
-  radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name:"Tutti", checked: false}];
+  radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
+  radioConsegnatoOptions: Option[] = [{name: "Da consegnare", checked: true}, {name: "Tutti", checked: false}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'tono',
     'flRiservato', 'flDisponibile', 'flOrdinato', 'flConsegnato', 'azioni'
   ];
+
+  ngOnInit(): void {
+    this.router.params.subscribe((params: any) => {
+      this.anno = params.anno;
+      this.serie = params.serie;
+      this.progressivo = params.progressivo;
+      this.status = params.status;
+    });
+    if (this.isAmministrativo && this.status === 'DA_ORDINARE') {
+      this.filtroArticoli = true;
+    }
+    /* this.subscription = timer(0, 5000).pipe(
+       switchMap( () =>
+         this.service.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli)))
+       .subscribe(result => console.log(result)
+     )*/
+    if (this.status === 'COMPLETO') {
+      this.filtroConsegnati = true;
+    }
+    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati);
+  }
+
   constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
     super(service, dialog, snackbar);
-    if(localStorage.getItem(environment.ADMIN)) {
+    if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
-    if(localStorage.getItem(environment.MAGAZZINIERE)) {
+    if (localStorage.getItem(environment.MAGAZZINIERE)) {
       this.isMagazziniere = true;
     }
-    if(localStorage.getItem(environment.AMMINISTRATIVO)) {
+    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
       this.isAmministrativo = true;
     }
-    if(localStorage.getItem(environment.VENDITORE)) {
+    if (localStorage.getItem(environment.VENDITORE)) {
       this.isVenditore = true;
     }
   }
@@ -93,7 +98,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   openConfirmDialog(extraProp: any, preProp: any) {
     let msg = '';
-    if(preProp) {
+    if (preProp) {
       msg += preProp;
     }
     msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
@@ -113,7 +118,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           next: (res) => {
             if (!res.error) {
               let url = '/ordini-clienti';
-              if(res.msg) {
+              if (res.msg) {
                 url += '/' + res.msg;
               }
               this.route.navigate([url]);

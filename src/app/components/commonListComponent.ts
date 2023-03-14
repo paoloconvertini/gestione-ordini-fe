@@ -11,6 +11,8 @@ import {Observable} from "rxjs";
 export abstract class CommonListComponent {
   loader = false;
   dataSource = new MatTableDataSource;
+  articoli: any[] | undefined = [];
+  filtroConsegnati: boolean = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
@@ -61,14 +63,19 @@ export abstract class CommonListComponent {
     this.dataSource.paginator = this.paginator;
   }
 
-  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean): void {
+  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean, filtroConsegnati: boolean): void {
+    this.filtroConsegnati = filtroConsegnati;
     this.loader = true;
     setTimeout(() => {
       this.service.getArticoliByOrdineId(anno, serie, progressivo, filtro)
         .subscribe({
           next: (data: any[] | undefined) => {
             data?.forEach(d => d.username = localStorage.getItem(environment.USERNAME));
+            this.articoli = data;
             this.createPaginator(data);
+            if(filtroConsegnati) {
+              this.filtraConsegnati();
+            }
             this.loader = false;
           },
           error: (e: any) => {
@@ -88,7 +95,7 @@ export abstract class CommonListComponent {
       .subscribe({
         next: (res) => {
           if (!res.error) {
-            this.getArticoliByOrdineId(anno, serie, progressivo, filtro);
+            this.getArticoliByOrdineId(anno, serie, progressivo, filtro, false);
           }
         },
         error: (e) => console.error(e)
@@ -104,6 +111,16 @@ export abstract class CommonListComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  public filtraConsegnati() {
+    if (this.filtroConsegnati) {
+      this.createPaginator(this.articoli!.filter((el: any) => {
+        return !el.geFlagConsegnato || el.geFlagConsegnato === false;
+      }))
+    } else {
+      this.createPaginator(this.articoli);
     }
   }
 
