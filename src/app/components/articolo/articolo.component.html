@@ -5,17 +5,24 @@
         <input matInput (keyup)="applyFilter($event)" placeholder="Cerca..." #input>
       </mat-form-field>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12">
-      <mat-radio-group *ngIf="isAmministrativo && status === 'DA_ORDINARE'"
-                       (change)="getArticoliByOrdineId(anno, serie, progressivo, filtroArticoli, false)"
+    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-6 col-md-6 col-sm-12">
+      <mat-radio-group
+                       (change)="getArticoliByOrdineId(anno, serie, progressivo, filtroArticoli, false, false)"
                        aria-label="Select an option" [(ngModel)]="filtroArticoli">
         <mat-radio-button *ngFor="let option of radioOptions" [checked]="option.checked"
                           [value]="option.checked">{{option.name}}</mat-radio-button>
       </mat-radio-group>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12">
-      <mat-radio-group *ngIf="status === 'COMPLETO'"
-                       (change)="filtraConsegnati()"
+    <div *ngIf="isMagazziniere && status === 'INCOMPLETO'" class="col-lg-6 col-md-6 col-sm-12">
+      <mat-radio-group
+        (change)="filtraDaRiservare()"
+        aria-label="Select an option" [(ngModel)]="filtroDaRiservare">
+        <mat-radio-button *ngFor="let option of radioDaRiservareOptions" [checked]="option.checked"
+                          [value]="option.checked">{{option.name}}</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="status === 'COMPLETO'" class="col-lg-6 col-md-6 col-sm-12">
+      <mat-radio-group (change)="filtraConsegnati()"
                        aria-label="Select an option" [(ngModel)]="filtroConsegnati">
         <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"
                           [value]="option.checked">{{option.name}}</mat-radio-button>
@@ -91,7 +98,7 @@
           <ng-container matColumnDef="flOrdinato">
             <th mat-header-cell *matHeaderCellDef> Ordinato</th>
             <td mat-cell *matCellDef="let articolo">
-        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox
+        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="changeFlagDisp(articolo)"
           disabled="{{!isAmministrativo || status !== 'DA_ORDINARE'}}" [(ngModel)]="articolo.geFlagOrdinato"
           color="primary"></mat-checkbox></span>
             </td>

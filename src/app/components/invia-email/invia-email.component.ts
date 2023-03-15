@@ -25,9 +25,7 @@ export class InviaEmailComponent {
     }
   }
 
-  get to()
-    :
-    FormControl {
+  get to(): FormControl {
     return this.form.get('to') as FormControl;
   }
 

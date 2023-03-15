@@ -13,6 +13,7 @@ export abstract class CommonListComponent {
   dataSource = new MatTableDataSource;
   articoli: any[] | undefined = [];
   filtroConsegnati: boolean = false;
+  filtroDaRiservare: boolean = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
@@ -63,7 +64,7 @@ export abstract class CommonListComponent {
     this.dataSource.paginator = this.paginator;
   }
 
-  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean, filtroConsegnati: boolean): void {
+  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean, filtroConsegnati: boolean, filtroDaRiservare: boolean): void {
     this.filtroConsegnati = filtroConsegnati;
     this.loader = true;
     setTimeout(() => {
@@ -75,6 +76,9 @@ export abstract class CommonListComponent {
             this.createPaginator(data);
             if(filtroConsegnati) {
               this.filtraConsegnati();
+            }
+            if(filtroDaRiservare) {
+              this.filtraDaRiservare();
             }
             this.loader = false;
           },
@@ -95,7 +99,7 @@ export abstract class CommonListComponent {
       .subscribe({
         next: (res) => {
           if (!res.error) {
-            this.getArticoliByOrdineId(anno, serie, progressivo, filtro, false);
+            this.getArticoliByOrdineId(anno, serie, progressivo, filtro, false, false);
           }
         },
         error: (e) => console.error(e)
@@ -118,6 +122,16 @@ export abstract class CommonListComponent {
     if (this.filtroConsegnati) {
       this.createPaginator(this.articoli!.filter((el: any) => {
         return !el.geFlagConsegnato || el.geFlagConsegnato === false;
+      }))
+    } else {
+      this.createPaginator(this.articoli);
+    }
+  }
+
+  public filtraDaRiservare() {
+    if (this.filtroDaRiservare) {
+      this.createPaginator(this.articoli!.filter((el: any) => {
+        return el.geFlagOrdinato === true;
       }))
     } else {
       this.createPaginator(this.articoli);

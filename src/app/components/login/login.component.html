@@ -1,18 +1,18 @@
-<form (ngSubmit)="submitForm()" [formGroup]="form" autocomplete="off">
-  <div style="display: flex; justify-content: center">
-    <mat-card style="width: 25%; border-top: 1px solid #e5e5e5;">
-      <mat-card-header style="border-bottom: 1px solid #d5d5d5; padding-bottom: 20px;">
-        <mat-card-title style=" font-size: 24px; font-weight: bold">
+<form (ngSubmit)="submitForm()" [formGroup]="form" autocomplete="off" class="">
+  <div class="login-container">
+    <mat-card class="mat-card-container">
+      <mat-card-header class="mat-card-header">
+        <mat-card-title class="mat-card-title">
           Login
         </mat-card-title>
       </mat-card-header>
-      <mat-card-content style="">
+      <mat-card-content>
         <!-- Username -->
         <mat-form-field>
           <mat-label><mat-icon>account_circle</mat-icon>&nbsp;Username</mat-label>
           <input
             matInput
-            placeholder="Ex. profanis"
+            placeholder="Ex. mrossi"
             formControlName="username"
           />
         </mat-form-field>
@@ -30,9 +30,20 @@
         </mat-form-field>
         <!-- /Password -->
       </mat-card-content>
-      <mat-card-actions style="padding: 0 16px;">
-        <button type="submit" mat-raised-button color="primary" style="width:100%">Login</button>
+      <mat-card-actions class="padding-centrato">
+        <button type="submit" mat-raised-button color="primary" class="width-100">Login</button>
       </mat-card-actions>
+      <div class="padding-centrato" *ngIf="form.controls['username'].invalid && (form.controls['username'].dirty || form.controls['username'].touched)">
+        <div *ngIf="form.controls['username'] && form.controls['username'].errors && form.controls['username'].errors['required']">
+          <span class="error-msg">Username obbligatorio</span>
+        </div>
+      </div>
+      <div class="padding-centrato" *ngIf="form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)">
+        <div *ngIf="form.controls['password'] && form.controls['password'].errors && form.controls['password'].errors['required']">
+          <span class="error-msg">Password obbligatorio</span>
+        </div>
+      </div>
     </mat-card>
+
   </div>
 </form>

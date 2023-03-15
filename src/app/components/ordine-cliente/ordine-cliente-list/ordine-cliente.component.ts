@@ -114,7 +114,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             next: (res) => {
               this.loader = false;
               if (res && !res.error) {
-                this.snackbar.open('Successo! Email inviata', 'Chiudi', {
+                this.snackbar.open(res.msg, 'Chiudi', {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
               }

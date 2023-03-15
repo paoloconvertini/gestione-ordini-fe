@@ -34,6 +34,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   filtroArticoli: boolean = false;
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
   radioConsegnatoOptions: Option[] = [{name: "Da consegnare", checked: true}, {name: "Tutti", checked: false}];
+  radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: true}, {name: "Tutti", checked: false}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'tono',
     'flRiservato', 'flDisponibile', 'flOrdinato', 'flConsegnato', 'azioni'
   ];
@@ -56,7 +57,10 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     if (this.status === 'COMPLETO') {
       this.filtroConsegnati = true;
     }
-    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati);
+    if(this.status === 'INCOMPLETO' && this.isMagazziniere) {
+      this.filtroDaRiservare = true;
+    }
+    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
   }
 
   constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
@@ -128,5 +132,11 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         });
       }
     });
+  }
+
+  changeFlagDisp(articolo:any) {
+    if(articolo.geFlagNonDisponibile) {
+      articolo.geFlagNonDisponibile = false;
+    }
   }
 }
