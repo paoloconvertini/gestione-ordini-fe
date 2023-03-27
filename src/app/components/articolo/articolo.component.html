@@ -5,13 +5,18 @@
         <input matInput (keyup)="applyFilter($event)" placeholder="Cerca..." #input>
       </mat-form-field>
     </div>
-    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-6 col-md-6 col-sm-12">
+    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-4 col-md-6 col-sm-12">
       <mat-radio-group
                        (change)="getArticoliByOrdineId(anno, serie, progressivo, filtroArticoli, false, false)"
                        aria-label="Select an option" [(ngModel)]="filtroArticoli">
         <mat-radio-button *ngFor="let option of radioOptions" [checked]="option.checked"
                           [value]="option.checked">{{option.name}}</mat-radio-button>
       </mat-radio-group>
+    </div>
+    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-4 col-md-6 col-sm-12">
+      <button mat-raised-button color="primary" (click)="creaOrdineForn()" class="float-end">
+        Crea Ordine a fornitori
+      </button>
     </div>
     <div *ngIf="isMagazziniere && status === 'INCOMPLETO'" class="col-lg-6 col-md-6 col-sm-12">
       <mat-radio-group
@@ -122,8 +127,9 @@
                       matTooltip="Storia articolo">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="work_history" color="primary"></mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.notaOrdineFornitore" mat-button
-                      matTooltip="{{articolo.notaOrdineFornitore}}">
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-button
+                      matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore" fontIcon="fact_check"
                           color="primary"></mat-icon>

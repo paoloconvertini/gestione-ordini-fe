@@ -69,10 +69,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           let data = new FormData();
           data.append('file', result);
           data.append('orderId', ordineId);
-          if(localStorage.getItem(environment.USERNAME)) {
-            // @ts-ignore
-            data.append('username', localStorage.getItem(environment.USERNAME));
-          }
           this.loader = true;
           this.upload(data).subscribe({
             next: (res) => {
@@ -127,8 +123,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
               this.loader = false;
             }
           });
-
-          ;
         }
       });
     }

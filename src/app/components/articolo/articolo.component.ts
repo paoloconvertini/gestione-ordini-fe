@@ -7,6 +7,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
 import {HistoryDialogComponent} from "../history-dialog/history-dialog.component";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {OrdineFornitoreService} from "../../services/ordine-fornitore/ordine-fornitore.service";
 
 export interface Option {
   name: string,
@@ -63,7 +64,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
   }
 
-  constructor(service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
+  constructor(private ordineFornitoreService: OrdineFornitoreService, service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
     super(service, dialog, snackbar);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -139,4 +140,24 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       articolo.geFlagNonDisponibile = false;
     }
   }
+
+  creaOrdineForn() {
+    this.loader = true;
+    this.ordineFornitoreService.creaOrdineFornitori(this.anno, this.serie, this.progressivo).subscribe({
+      next: (res) => {
+        this.loader = false;
+        if(res) {
+          this.snackbar.open(res.msg, 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
+        }
+      },
+      error: (e: any) => {
+        console.error(e);
+        this.loader = false;
+      }
+    })
+  }
+
 }

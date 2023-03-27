@@ -71,7 +71,6 @@ export abstract class CommonListComponent {
       this.service.getArticoliByOrdineId(anno, serie, progressivo, filtro)
         .subscribe({
           next: (data: any[] | undefined) => {
-            data?.forEach(d => d.username = localStorage.getItem(environment.USERNAME));
             this.articoli = data;
             this.createPaginator(data);
             if(filtroConsegnati) {
@@ -95,14 +94,19 @@ export abstract class CommonListComponent {
   }
 
   updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
+    this.loader = true;
     this.service.update(data)
       .subscribe({
         next: (res) => {
+          this.loader = false;
           if (!res.error) {
             this.getArticoliByOrdineId(anno, serie, progressivo, filtro, false, false);
           }
         },
-        error: (e) => console.error(e)
+        error: (e) => {
+          console.error(e);
+          this.loader = false;
+        }
       });
   }
 
