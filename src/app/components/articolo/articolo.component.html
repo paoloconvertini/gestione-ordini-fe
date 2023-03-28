@@ -114,7 +114,7 @@
             <th mat-header-cell *matHeaderCellDef> Consegnato</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C'">
-                <mat-checkbox disabled="{{!isMagazziniere || status !== 'INCOMPLETO'}}" [(ngModel)]="articolo.geFlagConsegnato" color="primary">
+                <mat-checkbox disabled="{{!isMagazziniere || status !== 'COMPLETO'}}" [(ngModel)]="articolo.geFlagConsegnato" color="primary">
                 </mat-checkbox>
               </span>
             </td>
