@@ -135,9 +135,15 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     });
   }
 
-  changeFlagDisp(articolo:any) {
-    if(articolo.geFlagNonDisponibile) {
-      articolo.geFlagNonDisponibile = false;
+  checkFlags(articolo: any, from: number) {
+    if(from === 1) {
+      if(articolo.geFlagNonDisponibile) {
+        articolo.geFlagNonDisponibile = false;
+      }
+    } else if(from === 2){
+      if(articolo.geFlagRiservato) {
+        articolo.geFlagRiservato = false;
+      }
     }
   }
 
@@ -150,11 +156,17 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           this.snackbar.open(res.msg, 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
-          this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
+          this.route.navigate(['/ordini-clienti', 'DA_ORDINARE']);
+        } else if(res.error) {
+          this.snackbar.open(res.msg, 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
         }
       },
-      error: (e: any) => {
-        console.error(e);
+      error: () => {
+        this.snackbar.open('Errore!', 'Chiudi', {
+          duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+        });
         this.loader = false;
       }
     })

@@ -296,6 +296,10 @@ svg#clouds {
   cursor: pointer;
 }
 
+.no-pointer {
+  cursor: default!important;
+}
+
 table {
   width: 100%;
 }

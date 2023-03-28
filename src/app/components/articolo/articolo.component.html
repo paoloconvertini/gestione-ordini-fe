@@ -85,7 +85,7 @@
           <ng-container matColumnDef="flRiservato">
             <th mat-header-cell *matHeaderCellDef> Riservato</th>
             <td mat-cell *matCellDef="let articolo">
-        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox
+        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 1)"
           disabled="{{!isMagazziniere || (status !== 'DA_PROCESSARE' && status !== 'INCOMPLETO')}}"
           [(ngModel)]="articolo.geFlagRiservato" color="primary"></mat-checkbox></span>
             </td>
@@ -94,7 +94,7 @@
           <ng-container matColumnDef="flDisponibile">
             <th mat-header-cell *matHeaderCellDef>Non disponibile</th>
             <td mat-cell *matCellDef="let articolo">
-        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox
+        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 2)"
           disabled="{{!isMagazziniere || status !== 'DA_PROCESSARE'}}" [(ngModel)]="articolo.geFlagNonDisponibile"
           color="primary"></mat-checkbox></span>
             </td>
@@ -103,7 +103,7 @@
           <ng-container matColumnDef="flOrdinato">
             <th mat-header-cell *matHeaderCellDef> Ordinato</th>
             <td mat-cell *matCellDef="let articolo">
-        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="changeFlagDisp(articolo)"
+        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 1)"
           disabled="{{!isAmministrativo || status !== 'DA_ORDINARE'}}" [(ngModel)]="articolo.geFlagOrdinato"
           color="primary"></mat-checkbox></span>
             </td>
@@ -127,14 +127,14 @@
                       matTooltip="Storia articolo">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="work_history" color="primary"></mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-button
+              <button class="no-pointer" *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-button
                       matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
                         {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore" fontIcon="fact_check"
                           color="primary"></mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.numeroBolla"  mat-button
+              <button class="no-pointer" *ngIf="articolo.tipoRigo !=='C' && articolo.numeroBolla"  mat-button
                 matTooltip="N. bolla: {{articolo.numeroBolla}} del {{articolo.dataBolla | date: 'dd/MM/yyyy'}}">
                 <mat-icon aria-hidden="false"
                           aria-label="bolla" fontIcon="local_shipping"
