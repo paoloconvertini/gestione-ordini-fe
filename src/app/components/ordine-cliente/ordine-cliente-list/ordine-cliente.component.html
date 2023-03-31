@@ -53,6 +53,10 @@
                       matTooltip="Invia email ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
+              <button *ngIf="isMagazziniere && status === 'DA_ORDINARE'" (click)="apri(ordine)" mat-button
+                      matTooltip="Apri ordine">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="lock_open" color="primary"></mat-icon>
+              </button>
             </td>
           </ng-container>
 

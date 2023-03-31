@@ -50,4 +50,8 @@ export abstract class CommonService {
   creaOrdineFornitori(anno: any, serie: any, progressivo: any) {
     return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}`);
   }
+
+  apriOrdine(anno: any, serie: any, progressivo: any, stato: string) {
+    return this.http.get<any>(`${this.url}/apriOrdine/${anno}/${serie}/${progressivo}/${stato}`);
+  }
 }

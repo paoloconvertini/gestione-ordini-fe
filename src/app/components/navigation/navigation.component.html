@@ -4,8 +4,8 @@
     <span *ngIf="isVenditore || isAdmin" class="example-spacer"></span>
     <span *ngIf="!isAmministrativo" class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']" >Da processare</span>
     <span *ngIf="!isAmministrativo" class="example-spacer"></span>
-    <span *ngIf="!isMagazziniere" class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']" >Da ordinare</span>
-    <span *ngIf="!isMagazziniere"  class="example-spacer"></span>
+    <span class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']" >Da ordinare</span>
+    <span class="example-spacer"></span>
     <span class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</span>
     <span class="example-spacer"></span>
     <span class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</span>

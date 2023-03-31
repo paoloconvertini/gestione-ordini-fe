@@ -93,6 +93,10 @@ export abstract class CommonListComponent {
     return this.service.upload(data);
   }
 
+  apriOrdine(anno: any, serie:any, progressivo: any, stato: string): Observable<any> {
+    return this.service.apriOrdine(anno, serie, progressivo, stato);
+  }
+
   updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
     this.loader = true;
     this.service.update(data)

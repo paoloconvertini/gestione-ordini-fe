@@ -27,34 +27,55 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private route: ActivatedRoute, private emailService: EmailService,  ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
+  constructor(private route: ActivatedRoute, private emailService: EmailService, ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
     super(ordineService, dialog, snackbar);
-    if(localStorage.getItem(environment.ADMIN)) {
+    if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
-    if(localStorage.getItem(environment.MAGAZZINIERE)) {
+    if (localStorage.getItem(environment.MAGAZZINIERE)) {
       this.isMagazziniere = true;
     }
-    if(localStorage.getItem(environment.AMMINISTRATIVO)) {
+    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
       this.isAmministrativo = true;
     }
-    if(localStorage.getItem(environment.VENDITORE)) {
+    if (localStorage.getItem(environment.VENDITORE)) {
       this.isVenditore = true;
     }
   }
 
 
-
   ngOnInit(): void {
-    this.route.params.subscribe((params:any) => {
-          this.status = params.status;
-        }
-      );
-      this.retrieveList(this.status, false);
+    this.route.params.subscribe((params: any) => {
+        this.status = params.status;
+      }
+    );
+    this.retrieveList(this.status, false);
   }
 
   refreshPage() {
-      this.retrieveList(this.status, true);
+    this.retrieveList(this.status, true);
+  }
+
+  apri(ordine: OrdineCliente) {
+    this.loader = true;
+    this.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo, 'DA_PROCESSARE').subscribe({
+      next: (res) => {
+        this.loader = false;
+        if (res && !res.error) {
+          this.snackbar.open('Ordine riaperto', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+        }
+        this.router.navigate(['/ordini-clienti', 'DA_PROCESSARE']);
+      },
+      error: (e) => {
+        console.error(e);
+        this.snackbar.open('Errore!', 'Chiudi', {
+          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+        })
+        this.loader = false;
+      }
+    });
   }
 
   apriFirma(ordine: OrdineCliente) {
@@ -93,7 +114,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
   }
 
-  inviaEmail(ordine:OrdineCliente) {
+  inviaEmail(ordine: OrdineCliente) {
     {
       const dialogRef = this.dialog.open(InviaEmailComponent, {
         width: '30%'
@@ -129,9 +150,9 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   }
 
-  apriDettaglio(ordine:OrdineCliente) {
+  apriDettaglio(ordine: OrdineCliente) {
     let url = "/articoli/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if(this.status) {
+    if (this.status) {
       url += "/" + this.status;
     }
     this.router.navigateByUrl(url);
