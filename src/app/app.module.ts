@@ -35,6 +35,8 @@ import { HistoryDialogComponent } from './components/history-dialog/history-dial
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatRadioModule} from "@angular/material/radio";
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatMenuModule} from "@angular/material/menu";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -73,7 +75,9 @@ export function tokenGetter() {
     FormsModule,
     MatTooltipModule,
     MatGridListModule,
-    MatRadioModule
+    MatRadioModule,
+    MatSidenavModule,
+    MatMenuModule
   ],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}

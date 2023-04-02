@@ -1,20 +1,38 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <span *ngIf="isVenditore || isAdmin" class="pointer" routerLink="/ordini-clienti">Confermati</span>
-    <span *ngIf="isVenditore || isAdmin" class="example-spacer"></span>
-    <span *ngIf="!isAmministrativo" class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']" >Da processare</span>
-    <span *ngIf="!isAmministrativo" class="example-spacer"></span>
-    <span class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']" >Da ordinare</span>
+    <span>Gestione ordini</span>
     <span class="example-spacer"></span>
-    <span class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</span>
-    <span class="example-spacer"></span>
-    <span class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</span>
-    <span class="example-spacer"></span>
-    <span class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</span>
-    <span class="example-spacer"></span>
-    <mat-icon *ngIf="isMagazziniere" class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{username}}">warehouse</mat-icon>
-    <mat-icon *ngIf="isVenditore" class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{username}}">monetization_on</mat-icon>
-    <mat-icon *ngIf="isAmministrativo" class="example-icon" aria-hidden="false" aria-label="Example user verified icon" matTooltip="{{username}}">fax</mat-icon>
-    <mat-icon class="example-icon pointer" aria-hidden="false" aria-label="Example user verified icon" (click)="logout()">logout</mat-icon>
+    <mat-icon *ngIf="isMagazziniere" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
+              matTooltip="{{username}}">warehouse
+    </mat-icon>
+    <mat-icon *ngIf="isVenditore" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
+              matTooltip="{{username}}">monetization_on
+    </mat-icon>
+    <mat-icon *ngIf="isAmministrativo" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
+              matTooltip="{{username}}">fax
+    </mat-icon>
+    <mat-icon class="example-icon pointer" aria-hidden="false" aria-label="Example user verified icon" matTooltip="Esci"
+              (click)="logout()">logout
+    </mat-icon>
+  </mat-toolbar-row>
+  <mat-toolbar-row>
+    <button mat-button [matMenuTriggerFor]="clienti">Ordine Clienti</button>
+    <mat-menu #clienti="matMenu">
+      <button mat-menu-item *ngIf="isVenditore || isAdmin" class="pointer" routerLink="/ordini-clienti">Confermati
+      </button>
+      <button mat-menu-item *ngIf="isVenditore || isAdmin" class="example-spacer"></button>
+      <button mat-menu-item *ngIf="!isAmministrativo" class="pointer"
+              [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']">Da processare
+      </button>
+      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']">Da ordinare</button>
+      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</button>
+      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</button>
+      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</button>
+    </mat-menu>
+    <button mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
+    <mat-menu #fornitori="matMenu">
+      <button mat-menu-item>Da approvare</button>
+      <button mat-menu-item>Approvati</button>
+    </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>

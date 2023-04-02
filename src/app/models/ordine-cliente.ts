@@ -5,4 +5,5 @@ export class OrdineCliente {
   intestazione?: string
   dataOrdine?: Date
   numeroConferma?: string
+  email?: string
 }

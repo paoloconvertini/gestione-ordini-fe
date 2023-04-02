@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
+import {Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+
+export interface DialogData {
+  email: string;
+}
 
 @Component({
   selector: 'app-invia-email',
@@ -12,7 +16,11 @@ export class InviaEmailComponent {
     to: new FormControl(null, [Validators.required, Validators.email]),
   });
 
-  constructor(private dialogRef: MatDialogRef<InviaEmailComponent>) {
+  constructor(private dialogRef: MatDialogRef<InviaEmailComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+    if (data.email) {
+      this.to.setValue(data.email);
+    }
   }
 
   onNoClick(): void {

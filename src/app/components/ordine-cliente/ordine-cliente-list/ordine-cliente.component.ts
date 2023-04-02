@@ -117,7 +117,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   inviaEmail(ordine: OrdineCliente) {
     {
       const dialogRef = this.dialog.open(InviaEmailComponent, {
-        width: '30%'
+        width: '30%',
+        data: {email: ordine.email}
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
