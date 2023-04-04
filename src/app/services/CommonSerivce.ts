@@ -13,6 +13,18 @@ export abstract class CommonService {
     }
     return this.http.get<any>(url);
   }
+
+  getAllOaf(status:any, update: boolean): Observable<any> {
+    let url = `${this.url}`;
+    if(update) {
+      url += '/updateConsegne';
+    }
+    if(status){
+      url += '?status=' + status;
+    }
+    return this.http.get<any>(url);
+  }
+
   getEvento(anno: any, serie: any, progressivo: any, rigo:any): Observable<any> {
     return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}/${rigo}`);
   }
@@ -53,5 +65,13 @@ export abstract class CommonService {
 
   apriOrdine(anno: any, serie: any, progressivo: any, stato: string) {
     return this.http.get<any>(`${this.url}/apriOrdine/${anno}/${serie}/${progressivo}/${stato}`);
+  }
+
+  getOafArticoliByOrdineId(anno: any, serie: any, progressivo: any) {
+    return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}`);
+  }
+
+  approvaOrdine(anno: any, serie: any, progressivo: any) {
+    return this.http.get<any>(`${this.url}/approva/${anno}/${serie}/${progressivo}`);
   }
 }

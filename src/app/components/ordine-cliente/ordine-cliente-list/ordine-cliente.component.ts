@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {OrdineClienteService} from "../../../services/ordine-cliente/ordine-cliente.service";
+import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../../commonListComponent";
 import {OrdineCliente} from "../../../models/ordine-cliente";
-import {AddOrdineClienteComponent} from "../add-ordine/add-ordine-cliente.component";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";

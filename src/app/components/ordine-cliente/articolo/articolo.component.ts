@@ -1,13 +1,16 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonListComponent} from "../commonListComponent";
+import {CommonListComponent} from "../../commonListComponent";
 import {MatDialog} from "@angular/material/dialog";
-import {ArticoloService} from "../../services/articolo/articolo.service";
+import {ArticoloService} from "../../../services/ordine-cliente/articolo/articolo.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {environment} from "../../../environments/environment";
-import {HistoryDialogComponent} from "../history-dialog/history-dialog.component";
-import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
-import {OrdineFornitoreService} from "../../services/ordine-fornitore/ordine-fornitore.service";
+import {environment} from "../../../../environments/environment";
+import {HistoryDialogComponent} from "../../history-dialog/history-dialog.component";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
+import {OrdineCliente} from "../../../models/ordine-cliente";
+import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
+import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 
 export interface Option {
   name: string,
@@ -64,7 +67,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
   }
 
-  constructor(private ordineFornitoreService: OrdineFornitoreService, service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
+  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
     super(service, dialog, snackbar);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -144,6 +147,42 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       if(articolo.geFlagRiservato) {
         articolo.geFlagRiservato = false;
       }
+    }
+  }
+
+  apriFirma() {
+    let ordineId = this.anno + '_' +
+      this.serie + '_' + this.progressivo;
+    {
+      const dialogRef = this.dialog.open(FirmaDialogComponent, {
+        width: '30%'
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          let data = new FormData();
+          data.append('file', result);
+          data.append('orderId', ordineId);
+          this.loader = true;
+          this.ordineService.upload(data).subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+              }
+              this.route.navigate(['/ordini-clienti']);
+            },
+            error: (e) => {
+              console.error(e);
+              this.snackbar.open('Errore! Firma non creata', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+              this.loader = false;
+            }
+          });
+        }
+      });
     }
   }
 

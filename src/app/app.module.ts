@@ -18,11 +18,10 @@ import {MatInputModule} from "@angular/material/input";
 import {JwtModule} from "@auth0/angular-jwt";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { OrdineClienteComponent } from './components/ordine-cliente/ordine-cliente-list/ordine-cliente.component';
-import { ArticoloComponent } from './components/articolo/articolo.component';
+import { ArticoloComponent } from './components/ordine-cliente/articolo/articolo.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatPaginatorModule} from "@angular/material/paginator";
-import { AddOrdineClienteComponent } from './components/ordine-cliente/add-ordine/add-ordine-cliente.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
@@ -37,6 +36,9 @@ import {MatRadioModule} from "@angular/material/radio";
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatMenuModule} from "@angular/material/menu";
+import { OafListComponent } from './components/ordine-fornitore/oaf-list/oaf-list.component';
+import { OafDettaglioComponent } from './components/ordine-fornitore/oaf-dettaglio/oaf-dettaglio.component';
+import {environment} from "../environments/environment";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -45,7 +47,7 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, AddOrdineClienteComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent
+    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent
   ],
   imports: [
     BrowserModule,
@@ -64,8 +66,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080']
-
+        allowedDomains: environment.allowedDomains
       }
     }),
     MatProgressSpinnerModule,

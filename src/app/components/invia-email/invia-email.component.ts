@@ -24,7 +24,7 @@ export class InviaEmailComponent {
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.to.setValue(''));
   }
 
   submitForm() {

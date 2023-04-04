@@ -36,6 +36,23 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
+  retrieveFornitoreList(status: any, update: boolean): void {
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getAllOaf(status, update)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
+  }
+
   private createPaginator(data: any[] | undefined) {
     this.dataSource = new MatTableDataSource(data);
     if (this.paginator) {
@@ -89,8 +106,30 @@ export abstract class CommonListComponent {
     }, 2000);
   }
 
+  getOafArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getOafArticoliByOrdineId(anno, serie, progressivo)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            this.articoli = data;
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
+  }
+
   upload(data: any): Observable<any> {
     return this.service.upload(data);
+  }
+
+  approvaOrdine(anno: any, serie:any, progressivo: any): Observable<any> {
+    return this.service.approvaOrdine(anno, serie, progressivo);
   }
 
   apriOrdine(anno: any, serie:any, progressivo: any, stato: string): Observable<any> {
@@ -113,6 +152,24 @@ export abstract class CommonListComponent {
         }
       });
   }
+
+  updateOafArticoli(anno: any, serie: any, progressivo: any, data: any): void {
+    this.loader = true;
+    this.service.update(data)
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (!res.error) {
+            this.getOafArticoliByOrdineId(anno, serie, progressivo, );
+          }
+        },
+        error: (e) => {
+          console.error(e);
+          this.loader = false;
+        }
+      });
+  }
+
 
   chiudi(data: any): Observable<any> {
     return this.service.chiudi(data);

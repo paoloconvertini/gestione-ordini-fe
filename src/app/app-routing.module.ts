@@ -3,7 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import {LoginComponent} from "./components/login/login.component";
 import {AuthGuard} from "./guards/auth.guard";
 import {OrdineClienteComponent} from "./components/ordine-cliente/ordine-cliente-list/ordine-cliente.component";
-import {ArticoloComponent} from "./components/articolo/articolo.component";
+import {ArticoloComponent} from "./components/ordine-cliente/articolo/articolo.component";
+import {OafListComponent} from "./components/ordine-fornitore/oaf-list/oaf-list.component";
+import {OafDettaglioComponent} from "./components/ordine-fornitore/oaf-dettaglio/oaf-dettaglio.component";
 
 const routes: Routes = [
   {
@@ -12,9 +14,19 @@ const routes: Routes = [
     component: OrdineClienteComponent,
   },
   {
+    path: 'ordini-fornitore',
+    canActivate: [AuthGuard],
+    component: OafListComponent,
+  },
+  {
     path: 'ordini-clienti/:status',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
+  },
+  {
+    path: 'ordini-fornitore/:status',
+    canActivate: [AuthGuard],
+    component: OafListComponent,
   },
   {
     path: 'articoli/:anno/:serie/:progressivo/:status',
@@ -25,6 +37,11 @@ const routes: Routes = [
     path: 'articoli/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
+  },
+  {
+    path: 'oaf/articoli/:anno/:serie/:progressivo',
+    canActivate: [AuthGuard],
+    component: OafDettaglioComponent,
   },
   {
     path: 'login',
