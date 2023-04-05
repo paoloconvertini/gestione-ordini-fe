@@ -6,6 +6,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
+import {ConfirmDialogComponent} from "./confirm-dialog/confirm-dialog.component";
+import {Router} from "@angular/router";
 
 @Directive()
 export abstract class CommonListComponent {
@@ -16,7 +18,7 @@ export abstract class CommonListComponent {
   filtroDaRiservare: boolean = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar) {
+  protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar, protected route: Router) {
   }
 
   retrieveList(status: any, update: boolean): void {
@@ -173,6 +175,49 @@ export abstract class CommonListComponent {
 
   chiudi(data: any): Observable<any> {
     return this.service.chiudi(data);
+  }
+
+  richiediOafApprovazione(data: any): Observable<any> {
+    if(data instanceof Array) {
+      return this.service.richiediOafApprovazioneAll(data);
+    } else {
+      return this.service.richiediOafApprovazione(data.anno, data.serie, data.progressivo);
+    }
+
+  }
+
+  richiediApprovazione(data:any) {
+    this.openConfirmDialog(null, null, data);
+  }
+
+  openConfirmDialog(extraProp: any, preProp: any, data: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.richiediOafApprovazione(data).subscribe({
+          next: (res) => {
+            if (!res.error) {
+              this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+            }
+          },
+          error: (e) => console.error(e)
+        });
+      }
+    });
   }
 
   applyFilter(event: Event) {

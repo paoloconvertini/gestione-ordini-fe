@@ -44,6 +44,11 @@ const routes: Routes = [
     component: OafDettaglioComponent,
   },
   {
+    path: 'oaf/articoli/:anno/:serie/:progressivo/:status',
+    canActivate: [AuthGuard],
+    component: OafDettaglioComponent,
+  },
+  {
     path: 'login',
     component: LoginComponent,
   },

@@ -55,6 +55,14 @@ export abstract class CommonService {
     return this.http.post(`${this.url}/chiudi`, data);
   }
 
+  richiediOafApprovazione(anno: any, serie: any, progressivo: any): Observable<any> {
+    return this.http.get(`${this.url}/richiediApprovazione/${anno}/${serie}/${progressivo}`);
+  }
+
+  richiediOafApprovazioneAll(data: any): Observable<any> {
+    return this.http.post(`${this.url}/richiediApprovazione`, data);
+  }
+
   inviaMail(data: any): Observable<any> {
     return this.http.post(`${this.url}`, data);
   }

@@ -40,6 +40,8 @@ import { OafListComponent } from './components/ordine-fornitore/oaf-list/oaf-lis
 import { OafDettaglioComponent } from './components/ordine-fornitore/oaf-dettaglio/oaf-dettaglio.component';
 import {environment} from "../environments/environment";
 
+const domainArray = environment.allowedDomains;
+
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
@@ -66,7 +68,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: environment.allowedDomains
+        allowedDomains: ['localhost:8080', '192.168.1.150:8080']
       }
     }),
     MatProgressSpinnerModule,

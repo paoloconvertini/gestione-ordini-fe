@@ -26,8 +26,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private route: ActivatedRoute, private emailService: EmailService, ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
-    super(ordineService, dialog, snackbar);
+  constructor(private router: ActivatedRoute, private emailService: EmailService, ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
+    super(ordineService, dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -44,7 +44,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: any) => {
+    this.router.params.subscribe((params: any) => {
         this.status = params.status;
       }
     );
@@ -65,7 +65,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           })
         }
-        this.router.navigate(['/ordini-clienti', 'DA_PROCESSARE']);
+        this.route.navigate(['/ordini-clienti', 'DA_PROCESSARE']);
       },
       error: (e) => {
         console.error(e);
@@ -155,6 +155,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     if (this.status) {
       url += "/" + this.status;
     }
-    this.router.navigateByUrl(url);
+    this.route.navigateByUrl(url);
   }
 }

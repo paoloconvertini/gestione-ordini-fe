@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../commonListComponent";
 import {EventoService} from "../../services/evento/evento.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {Router} from "@angular/router";
 
 
 export interface DialogData {
@@ -18,10 +19,10 @@ export interface DialogData {
   styleUrls: ['./history-dialog.component.css']
 })
 export class HistoryDialogComponent extends CommonListComponent implements OnInit{
-  constructor( registroService: EventoService, dialog: MatDialog, snackbar: MatSnackBar,
+  constructor( registroService: EventoService, dialog: MatDialog, snackbar: MatSnackBar, route: Router,
   @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ){
-    super(registroService, dialog, snackbar);
+    super(registroService, dialog, snackbar, route);
   }
   list: any;
   color: any;

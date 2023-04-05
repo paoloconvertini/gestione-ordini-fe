@@ -1,15 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
-import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
-import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
-import {ArticoloService} from "../../../services/ordine-cliente/articolo/articolo.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
-import {Option} from "../../ordine-cliente/articolo/articolo.component";
-import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
-import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OafArticoloService} from "../../../services/ordine-fornitore/dettaglio/oaf-articolo.service";
 
 @Component({
@@ -39,8 +33,8 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
   }
 
-  constructor(service: OafArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
-    super(service, dialog, snackbar);
+  constructor(service: OafArticoloService, dialog: MatDialog, snackbar: MatSnackBar, route: Router, private router: ActivatedRoute) {
+    super(service, dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -56,48 +50,31 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   }
 
   approva() {
-    this.approvaOrdine(this.anno, this.serie, this.progressivo);
+    this.loader = true;
+    this.approvaOrdine(this.anno, this.serie, this.progressivo).subscribe({
+      next: (res) => {
+        this.loader = false;
+        if(!res.error) {
+          this.route.navigate(['/ordini-fornitore', 'APPROVATO'])
+        }
+      }, error: (e) => {
+        console.error(e);
+        this.loader = false;
+      }
+    })
   }
 
   salvaOrdine() {
     this.updateOafArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
   }
 
-  chiudiOrdine() {
-    this.openConfirmDialog(null, null);
-  }
+  override richiediApprovazione() {
+    let data = {
+      anno: this.anno,
+      serie: this.serie,
+      progressivo: this.progressivo,
 
-  openConfirmDialog(extraProp: any, preProp: any) {
-    let msg = '';
-    if (preProp) {
-      msg += preProp;
     }
-    msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
-    if (extraProp) {
-      msg += " ";
-      msg += extraProp;
-    }
-    msg += '?';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '30%',
-      data: {msg: msg},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.chiudi(this.dataSource.filteredData).subscribe({
-          next: (res) => {
-            if (!res.error) {
-              let url = '/ordini-fornitore';
-              if (res.msg) {
-                url += '/' + res.msg;
-              }
-              this.route.navigate([url]);
-            }
-          },
-          error: (e) => console.error(e)
-        });
-      }
-    });
+    super.richiediApprovazione(data);
   }
 }

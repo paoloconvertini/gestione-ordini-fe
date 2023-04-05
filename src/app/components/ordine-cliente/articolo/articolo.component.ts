@@ -67,8 +67,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
   }
 
-  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, private router: ActivatedRoute, private route: Router) {
-    super(service, dialog, snackbar);
+  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, route:Router, private router: ActivatedRoute) {
+    super(service, dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -104,7 +104,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.openConfirmDialog(null, null);
   }
 
-  openConfirmDialog(extraProp: any, preProp: any) {
+  override openConfirmDialog(extraProp: any, preProp: any) {
     let msg = '';
     if (preProp) {
       msg += preProp;

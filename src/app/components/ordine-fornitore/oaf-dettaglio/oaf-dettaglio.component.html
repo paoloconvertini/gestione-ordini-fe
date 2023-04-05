@@ -58,7 +58,6 @@
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine cliente" fontIcon="shopping_bag"
                           color="primary"></mat-icon>
-                <i class="fa-regular fa-file-invoice-dollar"></i>
               </button>
             </td>
           </ng-container>
@@ -84,7 +83,7 @@
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="warn"
               disabled="{{!isAmministrativo}}"
-              (click)="chiudiOrdine()" class="margin-top margin-left">Salva e Chiudi
+              (click)="richiediApprovazione()" class="margin-top margin-left">Richiedi approvazione
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="primary"
               disabled="{{!isAdmin}}"

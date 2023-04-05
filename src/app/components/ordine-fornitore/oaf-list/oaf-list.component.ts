@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {ActivatedRoute, Router} from "@angular/router";
-import {EmailService} from "../../../services/email/email.service";
-import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
@@ -23,8 +21,8 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private route: ActivatedRoute, ordineService: OrdineFornitoreService, dialog: MatDialog, snackbar: MatSnackBar, private router: Router) {
-    super(ordineService, dialog, snackbar);
+  constructor(private router: ActivatedRoute, ordineService: OrdineFornitoreService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
+    super(ordineService, dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -41,7 +39,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: any) => {
+    this.router.params.subscribe((params: any) => {
         if (params.status === 'DA_APPROVARE') {
           this.status = 'T';
         } else if (params.status === 'APPROVATO') {
@@ -64,6 +62,20 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     if (this.status) {
       url += "/" + this.status;
     }
-    this.router.navigateByUrl(url);
+    this.route.navigateByUrl(url);
+  }
+
+  override richiediApprovazione(ordine: OrdineCliente) {
+    let data = {
+      anno: ordine.anno,
+      serie: ordine.serie,
+      progressivo: ordine.progressivo,
+
+    }
+    super.richiediApprovazione(data);
+  }
+
+  richiediApprovazioneAll(){
+    super.richiediApprovazione(this.dataSource.filteredData);
   }
 }
