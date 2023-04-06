@@ -332,6 +332,10 @@ table {
   padding-top: 7px;
 }
 
+.margin-right {
+  margin-right: 5px;
+}
+
 /* Responsive Styles */
 @media screen and (max-width: 767px) {
   .card-container > *:not(.circle-link) ,

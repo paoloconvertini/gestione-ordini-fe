@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-md-12  ordine-title">
       ORDINI A FORNITORE
-      <span *ngIf="status==='DA_PROCESSARE'"> APPROVATI</span>
-      <span *ngIf="status==='DA_ORDINARE'"> DA APPROVARE</span>
+      <span *ngIf="status==='F'"> APPROVATI</span>
+      <span *ngIf="status==='T'"> DA APPROVARE</span>
       <span *ngIf="!status"> DA PROCESSARE</span>
     </div>
   </div>
@@ -18,9 +18,9 @@
       <button class="float-end" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
         Aggiorna lista
       </button>&nbsp;&nbsp;
-      <button class="float-end" (click)="richiediApprovazioneAll()" mat-raised-button color="primary" aria-label="ordine">
-        Richiedi approvazione per tutti
-      </button>
+      <button *ngIf="!status" class="float-end margin-right" (click)="richiediApprovazioneAll()" mat-raised-button color="warn" aria-label="ordine">
+        Richiedi approvazione
+      </button>&nbsp;&nbsp;
     </div>
   </div>
   <div class="row">
@@ -56,8 +56,8 @@
               <button (click)="apriDettaglio(ordine)" mat-button matTooltip="Vai a dettaglio ordine">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
-              <button (click)="richiediApprovazione(ordine)" mat-button matTooltip="Richiedi approvazione">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
+              <button *ngIf="!status" (click)="richiediApprovazione(ordine)" mat-button matTooltip="Richiedi approvazione">
+                <mat-icon aria-hidden="false" aria-label="richiedi approvazione" fontIcon="live_help" color="primary"></mat-icon>
               </button>
             </td>
           </ng-container>

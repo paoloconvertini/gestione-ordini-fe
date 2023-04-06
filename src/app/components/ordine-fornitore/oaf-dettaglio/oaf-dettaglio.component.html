@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-md-12  ordine-title">
      DETTAGLIO ORDINI A FORNITORE
-      <span *ngIf="status==='DA_PROCESSARE'"> APPROVATI</span>
-      <span *ngIf="status==='DA_ORDINARE'"> DA APPROVARE</span>
+      <span *ngIf="status==='F'"> APPROVATI</span>
+      <span *ngIf="status==='T'"> DA APPROVARE</span>
       <span *ngIf="!status"> DA PROCESSARE</span>
     </div>
   </div>
@@ -77,16 +77,15 @@
   </div>
   <div class="row float-end">
     <div class="col-lg-12 col-md-12 col-sm-12">
-      <button mat-raised-button color="secondary"
+<!--      <button mat-raised-button color="secondary"
               disabled="{{!isAmministrativo}}"
               (click)="salvaOrdine()" class="margin-top">Salva
-      </button>&nbsp;&nbsp;
-      <button mat-raised-button color="warn"
-              disabled="{{!isAmministrativo}}"
+      </button>&nbsp;&nbsp;-->
+      <button *ngIf="!status && isAmministrativo" mat-raised-button color="warn"
               (click)="richiediApprovazione()" class="margin-top margin-left">Richiedi approvazione
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="primary"
-              disabled="{{!isAdmin}}"
+              *ngIf="isAdmin && status === 'T'"
               (click)="approva()" class="margin-top margin-left">Approva
       </button>
     </div>
