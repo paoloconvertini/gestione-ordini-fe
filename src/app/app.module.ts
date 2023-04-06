@@ -66,7 +66,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080', '192.168.1.150:8080']
+        allowedDomains: ['localhost:8080', '192.168.1.150:8080', '192.168.1.60:8080']
       }
     }),
     MatProgressSpinnerModule,
