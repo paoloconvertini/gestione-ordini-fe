@@ -6,7 +6,7 @@ RUN npm install
 RUN npm run build --prod
 #stage 2
 FROM nginx:alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf # Not /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=node /app/dist/gestione-ordini /usr/share/nginx/html
 
 # When the container starts, replace the env.js with values from environment variables
