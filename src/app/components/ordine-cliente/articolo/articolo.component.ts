@@ -8,9 +8,9 @@ import {environment} from "../../../../environments/environment";
 import {HistoryDialogComponent} from "../../history-dialog/history-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
-import {OrdineCliente} from "../../../models/ordine-cliente";
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
+import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
 
 export interface Option {
   name: string,
@@ -191,9 +191,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.ordineFornitoreService.creaOrdineFornitori(this.anno, this.serie, this.progressivo).subscribe({
       next: (res) => {
         this.loader = false;
-        if(res) {
-          this.snackbar.open(res.msg, 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+        if(res && res instanceof Array) {
+          const dialogRef = this.dialog.open(WarnDialogComponent, {
+            width: '30%',
+            data: res
+          });
+          dialogRef.afterClosed().subscribe(result => {
+
           });
           this.route.navigate(['/ordini-clienti', 'DA_ORDINARE']);
         } else if(res.error) {

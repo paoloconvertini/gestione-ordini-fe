@@ -38,6 +38,7 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatMenuModule} from "@angular/material/menu";
 import {OafListComponent} from './components/ordine-fornitore/oaf-list/oaf-list.component';
 import {OafDettaglioComponent} from './components/ordine-fornitore/oaf-dettaglio/oaf-dettaglio.component';
+import { WarnDialogComponent } from './components/warn-dialog/warn-dialog.component';
 
 
 export function tokenGetter() {
@@ -47,7 +48,7 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent
+    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent, WarnDialogComponent
   ],
   imports: [
     BrowserModule,
