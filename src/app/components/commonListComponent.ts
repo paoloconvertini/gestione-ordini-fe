@@ -16,6 +16,7 @@ export abstract class CommonListComponent {
   articoli: any[] | undefined = [];
   filtroConsegnati: boolean = false;
   filtroDaRiservare: boolean = false;
+  totale: number = 0;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   protected constructor(protected service: CommonService, protected dialog: MatDialog, protected snackbar: MatSnackBar, protected route: Router) {
@@ -114,8 +115,13 @@ export abstract class CommonListComponent {
       this.service.getOafArticoliByOrdineId(anno, serie, progressivo)
         .subscribe({
           next: (data: any[] | undefined) => {
-            this.articoli = data;
-            this.createPaginator(data);
+            if(data) {
+              data.forEach(d => {
+                this.totale += d.oprezzo;
+              })
+              this.articoli = data;
+              this.createPaginator(data);
+            }
             this.loader = false;
           },
           error: (e: any) => {
