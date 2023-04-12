@@ -64,7 +64,7 @@ export abstract class CommonService {
   }
 
   inviaMail(data: any): Observable<any> {
-    return this.http.post(`${this.url}`, data);
+    return this.http.post(`${this.url}/confermato`, data);
   }
 
   creaOrdineFornitori(anno: any, serie: any, progressivo: any) {
