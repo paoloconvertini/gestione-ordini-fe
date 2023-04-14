@@ -14,6 +14,7 @@ export abstract class CommonListComponent {
   loader = false;
   dataSource = new MatTableDataSource;
   articoli: any[] | undefined = [];
+  fornitori: any = [];
   filtroConsegnati: boolean = false;
   filtroDaRiservare: boolean = false;
   totale: number = 0;
@@ -46,6 +47,23 @@ export abstract class CommonListComponent {
         .subscribe({
           next: (data: any[] | undefined) => {
             this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
+  }
+
+  getFornitori(): void {
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getFornitori()
+        .subscribe({
+          next: (data) => {
+            this.fornitori = data;
             this.loader = false;
           },
           error: (e: any) => {
@@ -194,6 +212,10 @@ export abstract class CommonListComponent {
 
   richiediApprovazione(data:any) {
     this.openConfirmDialog(null, null, data);
+  }
+
+  addFornitoreToArticolo(data:any): Observable<any>{
+    return this.service.addFornitoreToArticolo(data);
   }
 
   openConfirmDialog(extraProp: any, preProp: any, data: any) {

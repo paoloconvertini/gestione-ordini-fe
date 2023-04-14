@@ -1,0 +1,57 @@
+import {Component, Inject, OnInit} from '@angular/core';
+import {CommonListComponent} from "../commonListComponent";
+import {ArticoloService} from "../../services/ordine-cliente/articolo/articolo.service";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {Router} from "@angular/router";
+import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
+import {map, Observable, startWith} from "rxjs";
+import { FormControl } from '@angular/forms';
+
+@Component({
+  selector: 'app-add-fornitore-dialog',
+  templateUrl: './add-fornitore-dialog.component.html',
+  styleUrls: ['./add-fornitore-dialog.component.css']
+})
+export class AddFornitoreDialogComponent extends CommonListComponent implements OnInit{
+
+  myControl = new FormControl('');
+  filteredOptions: Observable<any[]> | undefined;
+  conto: any;
+
+  constructor(private dialogRef: MatDialogRef<AddFornitoreDialogComponent>, service: PianocontiService, dialog: MatDialog, snackbar: MatSnackBar, route:Router) {
+    super(service, dialog, snackbar, route);
+  }
+
+  ngOnInit(): void {
+    this.getFornitori();
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    );
+  }
+
+  private _filter(value: any): any[] {
+    let filterValue: string;
+    if(value instanceof Object) {
+      filterValue = value.intestazione.toLowerCase();
+    } else {
+      filterValue = value.toLowerCase();
+    }
+    return this.fornitori.filter((option: { intestazione: string; }) => option.intestazione.toLowerCase().includes(filterValue));
+  }
+
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  submitForm() {
+      this.dialogRef.close(this.conto);
+  }
+
+  getOption(option: any) {
+    return option.intestazione;
+  }
+
+}

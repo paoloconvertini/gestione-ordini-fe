@@ -39,6 +39,8 @@ import {MatMenuModule} from "@angular/material/menu";
 import {OafListComponent} from './components/ordine-fornitore/oaf-list/oaf-list.component';
 import {OafDettaglioComponent} from './components/ordine-fornitore/oaf-dettaglio/oaf-dettaglio.component';
 import { WarnDialogComponent } from './components/warn-dialog/warn-dialog.component';
+import { AddFornitoreDialogComponent } from './components/add-fornitore-dialog/add-fornitore-dialog.component';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 
 export function tokenGetter() {
@@ -48,39 +50,40 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent, WarnDialogComponent
+    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent, WarnDialogComponent, AddFornitoreDialogComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    HttpClientModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080', '192.168.1.150:8080', '192.168.1.60:8080']
-      }
-    }),
-    MatProgressSpinnerModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatCheckboxModule,
-    FormsModule,
-    MatTooltipModule,
-    MatGridListModule,
-    MatRadioModule,
-    MatSidenavModule,
-    MatMenuModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatCardModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        HttpClientModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter: tokenGetter,
+                allowedDomains: ['localhost:8080', '192.168.1.150:8080', '192.168.1.60:8080']
+            }
+        }),
+        MatProgressSpinnerModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatCheckboxModule,
+        FormsModule,
+        MatTooltipModule,
+        MatGridListModule,
+        MatRadioModule,
+        MatSidenavModule,
+        MatMenuModule,
+        MatAutocompleteModule
+    ],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
   ],

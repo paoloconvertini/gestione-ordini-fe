@@ -139,6 +139,10 @@
                       matTooltip="Storia articolo">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="work_history" color="primary"></mat-icon>
               </button>
+              <button *ngIf="articolo.tipoRigo !=='C' && !articolo.articolo" (click)="addFornitore(articolo.farticolo)" mat-button
+                      matTooltip="Associa fornitore">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="warning_amber" color="primary"></mat-icon>
+              </button>
               <button class="no-pointer" *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-button
                       matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
                         {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}">

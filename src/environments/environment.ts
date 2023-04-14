@@ -18,7 +18,8 @@ export const environment = {
   REGISTRO: "registro",
   EMAIL: "mail",
   OAF: 'oaf',
-  OAF_ARTICOLI: '/articoli'
+  OAF_ARTICOLI: '/articoli',
+  PIANOCONTI: 'pianoconti'
 };
 
 /*

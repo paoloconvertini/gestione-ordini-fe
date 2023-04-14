@@ -11,6 +11,7 @@ import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/or
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
+import {AddFornitoreDialogComponent} from "../../add-fornitore-dialog/add-fornitore-dialog.component";
 
 export interface Option {
   name: string,
@@ -214,5 +215,34 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       }
     })
   }
+
+  addFornitore(codice: any) {
+    const dialogRef = this.dialog.open(AddFornitoreDialogComponent, {
+      width: '30%'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loader = true;
+        result.codiceArticolo = codice;
+        this.addFornitoreToArticolo(result).subscribe({
+          next: (res) => {
+            this.loader = false;
+              this.snackbar.open(res.msg, 'Chiudi', {
+                duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+              });
+            this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
+          },
+          error: (e) => {
+            console.error(e);
+            this.snackbar.open('Errore! Non è stato possibile associare il fornitore all\'articolo', 'Chiudi', {
+              duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+            this.loader = false;
+          }
+        });
+      }
+    });
+  }
+
 
 }

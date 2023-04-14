@@ -59,6 +59,14 @@ export abstract class CommonService {
     return this.http.get(`${this.url}/richiediApprovazione/${anno}/${serie}/${progressivo}`);
   }
 
+  getFornitori(): Observable<any> {
+    return this.http.get(`${this.url}/getFornitori`);
+  }
+
+  addFornitoreToArticolo(data: any): Observable<any> {
+    return this.http.post(`${this.url}/addFornitore`, data);
+  }
+
   richiediOafApprovazioneAll(data: any): Observable<any> {
     return this.http.post(`${this.url}/richiediApprovazione`, data);
   }
