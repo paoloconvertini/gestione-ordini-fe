@@ -19,10 +19,8 @@ export interface DialogData {
   styleUrls: ['./history-dialog.component.css']
 })
 export class HistoryDialogComponent extends CommonListComponent implements OnInit{
-  constructor(private service: EventoService, dialog: MatDialog, snackbar: MatSnackBar, route: Router,
-  @Inject(MAT_DIALOG_DATA) public data: DialogData,
-  ){
-    super(dialog, snackbar, route);
+  constructor(private service: EventoService, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+    super();
   }
   list: any;
   color: any;

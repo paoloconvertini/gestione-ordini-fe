@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
 import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
 import {OafArticoloService} from "../../../services/ordine-fornitore/dettaglio/oaf-articolo.service";
-import {Observable} from "rxjs";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 
@@ -37,8 +35,8 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
   }
 
-  constructor(private oafService: OrdineFornitoreService, private service: OafArticoloService, dialog: MatDialog, snackbar: MatSnackBar, route: Router, private router: ActivatedRoute) {
-    super(dialog, snackbar, route);
+  constructor(private oafService: OrdineFornitoreService, private service: OafArticoloService, private dialog: MatDialog, private route: Router, private router: ActivatedRoute) {
+    super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }

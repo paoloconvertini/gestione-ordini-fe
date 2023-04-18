@@ -1,12 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../commonListComponent";
-import {ArticoloService} from "../../services/ordine-cliente/articolo/articolo.service";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MatDialogRef} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
 import {map, Observable, startWith} from "rxjs";
-import { FormControl } from '@angular/forms';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-add-fornitore-dialog',
@@ -20,8 +19,8 @@ export class AddFornitoreDialogComponent extends CommonListComponent implements 
   filteredOptions: Observable<any[]> | undefined;
   conto: any;
 
-  constructor(private dialogRef: MatDialogRef<AddFornitoreDialogComponent>,private service: PianocontiService, dialog: MatDialog, snackbar: MatSnackBar, route:Router) {
-    super(dialog, snackbar, route);
+  constructor(private dialogRef: MatDialogRef<AddFornitoreDialogComponent>,private service: PianocontiService) {
+    super();
   }
 
   ngOnInit(): void {

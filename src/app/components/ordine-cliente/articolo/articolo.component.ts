@@ -70,8 +70,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
   }
 
-  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, private service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, route:Router, private router: ActivatedRoute) {
-    super(dialog, snackbar, route);
+  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, private service: ArticoloService, private dialog: MatDialog, private snackbar: MatSnackBar, private route:Router, private router: ActivatedRoute) {
+    super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }

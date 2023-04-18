@@ -1,12 +1,7 @@
 import {MatTableDataSource} from "@angular/material/table";
 import {Directive, ViewChild} from "@angular/core";
 import {MatPaginator} from "@angular/material/paginator";
-import {CommonService} from "../services/CommonSerivce";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
-import {ConfirmDialogComponent} from "./confirm-dialog/confirm-dialog.component";
-import {Observable} from "rxjs";
 
 @Directive()
 export abstract class CommonListComponent {
@@ -15,7 +10,7 @@ export abstract class CommonListComponent {
   articoli: any[] | undefined = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  protected constructor(protected dialog: MatDialog, protected snackbar: MatSnackBar, protected route: Router) {}
+  protected constructor() {}
 
   protected createPaginator(data: any[] | undefined) {
     this.dataSource = new MatTableDataSource(data);

@@ -40,8 +40,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     {codice: "", name: "Angela", checked: false}
   ];
 
-  constructor(private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
-    super(dialog, snackbar, route);
+  constructor(private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
+    super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }

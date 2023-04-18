@@ -1,12 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {ActivatedRoute, Router} from "@angular/router";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {OrdineCliente} from "../../../models/ordine-cliente";
-import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-oaf-list',
@@ -22,8 +19,8 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private router: ActivatedRoute, private service: OrdineFornitoreService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
-    super(dialog, snackbar, route);
+  constructor(private router: ActivatedRoute, private service: OrdineFornitoreService, private route: Router) {
+    super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
