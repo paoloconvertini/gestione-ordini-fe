@@ -11,6 +11,13 @@ import {EmailDto} from "../../../models/emailDto";
 import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 import {EmailService} from "../../../services/email/email.service";
 
+
+export interface Option {
+  codice: any,
+  name: string,
+  checked: boolean
+}
+
 @Component({
   selector: 'app-ordine-cliente',
   templateUrl: './ordine-cliente.component.html',
@@ -25,6 +32,13 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
+  radioPerVenditoreOptions: Option[] = [{codice: "11", name: "Damiano", checked: true},
+    {codice: "Rocco", name: "Rocco", checked: false},
+    {codice: "Piero", name: "Piero", checked: false},
+    {codice: "Antoniana", name: "Antoniana", checked: false},
+    {codice: "Francesco", name: "Francesco", checked: false},
+    {codice: "", name: "Angela", checked: false}
+  ];
 
   constructor(private router: ActivatedRoute, private emailService: EmailService, ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
     super(ordineService, dialog, snackbar, route);
@@ -54,6 +68,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   refreshPage() {
     this.retrieveList(this.status, true);
   }
+
+
 
   apri(ordine: OrdineCliente) {
     this.loader = true;

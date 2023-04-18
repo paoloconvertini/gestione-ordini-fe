@@ -139,7 +139,7 @@
                       matTooltip="Storia articolo">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="work_history" color="primary"></mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && !articolo.articolo" (click)="addFornitore(articolo.farticolo)" mat-button
+              <button *ngIf="isAmministrativo && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && !articolo.articolo" (click)="addFornitore(articolo.farticolo)" mat-button
                       matTooltip="Associa fornitore">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="warning_amber" color="primary"></mat-icon>
               </button>
