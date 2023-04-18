@@ -16,11 +16,12 @@ import { FormControl } from '@angular/forms';
 export class AddFornitoreDialogComponent extends CommonListComponent implements OnInit{
 
   myControl = new FormControl('');
+  fornitori: any = [];
   filteredOptions: Observable<any[]> | undefined;
   conto: any;
 
-  constructor(private dialogRef: MatDialogRef<AddFornitoreDialogComponent>, service: PianocontiService, dialog: MatDialog, snackbar: MatSnackBar, route:Router) {
-    super(service, dialog, snackbar, route);
+  constructor(private dialogRef: MatDialogRef<AddFornitoreDialogComponent>,private service: PianocontiService, dialog: MatDialog, snackbar: MatSnackBar, route:Router) {
+    super(dialog, snackbar, route);
   }
 
   ngOnInit(): void {
@@ -29,6 +30,23 @@ export class AddFornitoreDialogComponent extends CommonListComponent implements 
       startWith(''),
       map(value => this._filter(value || '')),
     );
+  }
+
+  getFornitori(): void {
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getFornitori()
+        .subscribe({
+          next: (data) => {
+            this.fornitori = data;
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
   }
 
   private _filter(value: any): any[] {

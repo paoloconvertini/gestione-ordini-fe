@@ -6,6 +6,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {OrdineCliente} from "../../../models/ordine-cliente";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-oaf-list',
@@ -21,8 +22,8 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private router: ActivatedRoute, ordineService: OrdineFornitoreService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
-    super(ordineService, dialog, snackbar, route);
+  constructor(private router: ActivatedRoute, private service: OrdineFornitoreService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
+    super(dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -53,6 +54,23 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   }
 
+  retrieveFornitoreList(status: any, update: boolean): void {
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getAllOaf(status, update)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
+  }
+
   refreshPage() {
     this.retrieveFornitoreList(this.status, true);
   }
@@ -65,17 +83,11 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.route.navigateByUrl(url);
   }
 
-  override richiediApprovazione(ordine: OrdineCliente) {
-    let data = {
-      anno: ordine.anno,
-      serie: ordine.serie,
-      progressivo: ordine.progressivo,
-
-    }
-    super.richiediApprovazione(data);
+  richiediApprovazione(ordine: OrdineCliente) {
+    this.service.richiediOafApprovazione(ordine.anno, ordine.serie, ordine.progressivo);
   }
 
   richiediApprovazioneAll(){
-    super.richiediApprovazione(this.dataSource.filteredData);
+    this.service.richiediOafApprovazioneAll(this.dataSource.filteredData);
   }
 }

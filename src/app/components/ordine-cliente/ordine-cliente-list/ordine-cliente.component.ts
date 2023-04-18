@@ -40,8 +40,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     {codice: "", name: "Angela", checked: false}
   ];
 
-  constructor(private router: ActivatedRoute, private emailService: EmailService, ordineService: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
-    super(ordineService, dialog, snackbar, route);
+  constructor(private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, dialog: MatDialog, snackbar: MatSnackBar, route: Router) {
+    super(dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -65,15 +65,32 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.retrieveList(this.status, false);
   }
 
+  retrieveList(status: any, update: boolean): void {
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getAll(status, update)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
+  }
+
   refreshPage() {
     this.retrieveList(this.status, true);
   }
 
 
 
-  apri(ordine: OrdineCliente) {
+  apri(ordine: OrdineCliente): void {
     this.loader = true;
-    this.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo, 'DA_PROCESSARE').subscribe({
+    this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo, 'DA_PROCESSARE').subscribe({
       next: (res) => {
         this.loader = false;
         if (res && !res.error) {
@@ -106,7 +123,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           data.append('file', result);
           data.append('orderId', ordineId);
           this.loader = true;
-          this.upload(data).subscribe({
+          this.service.upload(data).subscribe({
             next: (res) => {
               this.loader = false;
               if (res && !res.error) {

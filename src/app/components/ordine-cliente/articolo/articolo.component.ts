@@ -37,6 +37,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   progressivo: any;
   status: any;
   filtroArticoli: boolean = false;
+  filtroConsegnati: boolean = false;
+  filtroDaRiservare: boolean = false;
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
   radioConsegnatoOptions: Option[] = [{name: "Da consegnare", checked: true}, {name: "Tutti", checked: false}];
   radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: true}, {name: "Tutti", checked: false}];
@@ -68,8 +70,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
   }
 
-  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, route:Router, private router: ActivatedRoute) {
-    super(service, dialog, snackbar, route);
+  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, private service: ArticoloService, dialog: MatDialog, snackbar: MatSnackBar, route:Router, private router: ActivatedRoute) {
+    super(dialog, snackbar, route);
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -105,7 +107,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.openConfirmDialog(null, null);
   }
 
-  override openConfirmDialog(extraProp: any, preProp: any) {
+  openConfirmDialog(extraProp: any, preProp: any) {
     let msg = '';
     if (preProp) {
       msg += preProp;
@@ -123,7 +125,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.chiudi(this.dataSource.filteredData).subscribe({
+        this.service.chiudi(this.dataSource.filteredData).subscribe({
           next: (res) => {
             if (!res.error) {
               let url = '/ordini-clienti';
@@ -216,7 +218,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     })
   }
 
-  addFornitore(codice: any) {
+  addFornitore(codice: any): void {
     const dialogRef = this.dialog.open(AddFornitoreDialogComponent, {
       width: '30%'
     });
@@ -224,7 +226,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       if (result) {
         this.loader = true;
         result.codiceArticolo = codice;
-        this.addFornitoreToArticolo(result).subscribe({
+        this.service.addFornitoreToArticolo(result).subscribe({
           next: (res) => {
             this.loader = false;
               this.snackbar.open(res.msg, 'Chiudi', {
@@ -242,6 +244,68 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         });
       }
     });
+  }
+
+  updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
+    this.loader = true;
+    this.service.update(data)
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (!res.error) {
+            this.getArticoliByOrdineId(anno, serie, progressivo, filtro, false, false);
+          }
+        },
+        error: (e) => {
+          console.error(e);
+          this.loader = false;
+        }
+      });
+  }
+
+  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean, filtroConsegnati: boolean, filtroDaRiservare: boolean): void {
+    this.filtroConsegnati = filtroConsegnati;
+    this.loader = true;
+    setTimeout(() => {
+      this.service.getArticoliByOrdineId(anno, serie, progressivo, filtro)
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            this.articoli = data;
+            this.createPaginator(data);
+            if(filtroConsegnati) {
+              this.filtraConsegnati();
+            }
+            if(filtroDaRiservare) {
+              this.filtraDaRiservare();
+            }
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
+    }, 2000);
+  }
+
+  public filtraConsegnati() {
+    if (this.filtroConsegnati) {
+      this.createPaginator(this.articoli!.filter((el: any) => {
+        return !el.geFlagConsegnato || el.geFlagConsegnato === false;
+      }))
+    } else {
+      this.createPaginator(this.articoli);
+    }
+  }
+
+  public filtraDaRiservare() {
+    if (this.filtroDaRiservare) {
+      this.createPaginator(this.articoli!.filter((el: any) => {
+        return el.geFlagOrdinato === true;
+      }))
+    } else {
+      this.createPaginator(this.articoli);
+    }
   }
 
 
