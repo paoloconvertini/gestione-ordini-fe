@@ -14,6 +14,10 @@ export class OrdineClienteService extends CommonService{
     super(http, url);
   }
 
+  filtra(codVenditore:any): Observable<any> {
+    return this.http.get<any>(`${this.url}/${codVenditore}`);
+  }
+
   getAll(status:any, update: boolean): Observable<any> {
     let url = `${this.url}`;
     if(update) {

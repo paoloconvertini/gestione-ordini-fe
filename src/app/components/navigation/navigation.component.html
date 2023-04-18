@@ -2,6 +2,9 @@
   <mat-toolbar-row>
     <span>Gestione ordini</span>
     <span class="example-spacer"></span>
+    <mat-icon *ngIf="isAdmin" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
+              matTooltip="{{username}}">admin_panel_settings
+    </mat-icon>
     <mat-icon *ngIf="isMagazziniere" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
               matTooltip="{{username}}">warehouse
     </mat-icon>

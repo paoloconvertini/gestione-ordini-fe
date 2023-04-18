@@ -8,7 +8,7 @@ import {User} from "../../models/user";
 import {LoginResponseI} from "../../models/login-response.interface";
 import {Router} from "@angular/router";
 
-const url = environment.baseAuthUrl + environment.LOGIN;
+const url = environment.baseAuthUrl;
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +22,12 @@ export class AuthService {
     this._isLoggedIn$.next(!!token);
   }
 
+  getVenditori(data:any): Observable<any> {
+    return this.http.post<any>(url + 'users/byRole', data);
+  }
+
   login(user: User): Observable<LoginResponseI> {
-    return this.http.post<LoginResponseI>(url, user).pipe(
+    return this.http.post<LoginResponseI>(url + environment.LOGIN, user).pipe(
       tap((res: LoginResponseI) => {
         if(!res.idToken) {
           console.log("ERRORE");
@@ -48,6 +52,9 @@ export class AuthService {
         if (user.ruolo!.includes('Admin')) {
           localStorage.setItem(environment.ADMIN, 'Y');
         }
+        if (user.ruolo!.includes('Logistica')) {
+          localStorage.setItem(environment.LOGISTICA, 'Y');
+        }
       }),
       tap(() => this.snackbar.open('Login successfull', 'Chiudi', {
         duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
@@ -63,6 +70,7 @@ export class AuthService {
     localStorage.removeItem(environment.VENDITORE);
     localStorage.removeItem(environment.ADMIN);
     localStorage.removeItem(environment.AMMINISTRATIVO);
+    localStorage.removeItem(environment.LOGISTICA);
     this.router.navigate(['']);
   }
 }

@@ -22,6 +22,13 @@
         Aggiorna lista
       </button>
     </div>
+    <div *ngIf="isVenditore || isAdmin" class="col-lg-12 col-md-12 col-sm-12">
+      <mat-radio-group (change)="filtraPerVenditore()"
+                       aria-label="Select an option" [(ngModel)]="filtro">
+        <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
+                          [value]="option">{{option.fullname}}</mat-radio-button>
+      </mat-radio-group>
+    </div>
   </div>
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">

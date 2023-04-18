@@ -10,11 +10,12 @@ import {environment} from "../../../../environments/environment";
 import {EmailDto} from "../../../models/emailDto";
 import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 import {EmailService} from "../../../services/email/email.service";
+import {AuthService} from "../../../services/auth/auth.service";
 
 
 export interface Option {
-  codice: any,
-  name: string,
+  codVenditore: any,
+  fullname: string,
   checked: boolean
 }
 
@@ -32,15 +33,10 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
-  radioPerVenditoreOptions: Option[] = [{codice: "11", name: "Damiano", checked: true},
-    {codice: "Rocco", name: "Rocco", checked: false},
-    {codice: "Piero", name: "Piero", checked: false},
-    {codice: "Antoniana", name: "Antoniana", checked: false},
-    {codice: "Francesco", name: "Francesco", checked: false},
-    {codice: "", name: "Angela", checked: false}
-  ];
+  radioPerVenditoreOptions: Option[] = [];
+  filtro:any;
 
-  constructor(private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
+  constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -62,7 +58,31 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
         this.status = params.status;
       }
     );
-    this.retrieveList(this.status, false);
+    if(!this.isVenditore) {
+      this.retrieveList(this.status, false);
+    } else {
+      this.getVenditori();
+    }
+  }
+
+  getVenditori(): void {
+    let data = [];
+    data.push('Venditore');
+    this.authService.getVenditori(data).subscribe({
+      next:(data) => {
+        data.forEach((d: Option) => {
+          if(d.checked) {
+            this.filtro = d;
+          }
+        });
+        this.radioPerVenditoreOptions = data;
+        this.filtraPerVenditore();
+      },
+      error: (e: any) => {
+        console.error(e);
+      }
+
+    })
   }
 
   retrieveList(status: any, update: boolean): void {
@@ -86,7 +106,27 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.retrieveList(this.status, true);
   }
 
+  cercaPerVenditore():void {
+    this.loader = true;
+    this.service.filtra(this.filtro.codVenditore).subscribe({
+      next: (data) => {
+        this.createPaginator(data);
+        this.loader = false;
+      },
+      error: (e: any) => {
+        console.error(e);
+        this.loader = false;
+      }
+    })
+  }
 
+  filtraPerVenditore():void {
+    if(!this.filtro.codVenditore){
+      this.retrieveList(this.status, false);
+    } else {
+      this.cercaPerVenditore();
+    }
+  }
 
   apri(ordine: OrdineCliente): void {
     this.loader = true;

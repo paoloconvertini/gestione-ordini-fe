@@ -5,6 +5,7 @@ export const environment = {
   AMMINISTRATIVO: 'Amministrativo',
   ADMIN: 'Admin',
   VENDITORE: 'Venditore',
+  LOGISTICA: 'Logistica',
   production: false,
   baseUrl: (window as any)["env"]['baseUrl'] || 'http://192.168.1.150:8080/api/',
   baseAuthUrl: (window as any)['env']['baseAuthUrl'] || 'http://192.168.1.150:8081/api/',

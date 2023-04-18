@@ -9,6 +9,7 @@ export const environment = {
   AMMINISTRATIVO: 'Amministrativo',
   ADMIN: 'Admin',
   VENDITORE: 'Venditore',
+  LOGISTICA: 'Logistica',
   production: false,
   baseUrl: 'http://localhost:8080/api/',
   baseAuthUrl: 'http://localhost:8081/api/',
