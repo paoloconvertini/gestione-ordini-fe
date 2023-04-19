@@ -4,6 +4,7 @@ import {CommonListComponent} from "../commonListComponent";
 import {EventoService} from "../../services/evento/evento.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
+import {takeUntil} from "rxjs";
 
 
 export interface DialogData {
@@ -29,7 +30,7 @@ export class HistoryDialogComponent extends CommonListComponent implements OnIni
   ngOnInit(): void {
     this.loader = true;
     this.service.getEvento(this.data.anno, this.data.serie, this.data.progressivo, this.data.rigo)
-      .subscribe({
+      .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (data: any[] | undefined) => {
           this.loader = false;
           if(!data || data.length === 0) {

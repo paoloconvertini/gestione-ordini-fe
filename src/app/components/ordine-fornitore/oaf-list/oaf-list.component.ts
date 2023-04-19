@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {OrdineCliente} from "../../../models/ordine-cliente";
+import {takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-oaf-list',
@@ -37,7 +38,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.router.params.subscribe((params: any) => {
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
         if (params.status === 'DA_APPROVARE') {
           this.status = 'T';
         } else if (params.status === 'APPROVATO') {
@@ -55,7 +56,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.loader = true;
     setTimeout(() => {
       this.service.getAllOaf(status, update)
-        .subscribe({
+        .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
           next: (data: any[] | undefined) => {
             this.createPaginator(data);
             this.loader = false;

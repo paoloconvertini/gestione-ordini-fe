@@ -4,13 +4,15 @@ import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth/auth.service';
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../environments/environment";
+import {takeUntil} from "rxjs";
+import { BaseComponent } from '../baseComponent';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent extends BaseComponent{
   form = new FormGroup({
     username: new FormControl(null, Validators.required),
     password: new FormControl(null, Validators.required),
@@ -22,6 +24,7 @@ export class LoginComponent {
   isVenditore: boolean = false;
 
   constructor(private authService: AuthService, private router: Router, private sanckbar: MatSnackBar) {
+    super();
   }
 
   submitForm() {
@@ -29,7 +32,7 @@ export class LoginComponent {
       this.authService.login({
         username: this.username.value,
         password: this.password.value
-      }).subscribe({
+      }).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (res) => {
           if (localStorage.getItem(environment.MAGAZZINIERE)) {
             this.router.navigate(['/ordini-clienti/DA_PROCESSARE']);

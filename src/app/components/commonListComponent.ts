@@ -1,16 +1,18 @@
 import {MatTableDataSource} from "@angular/material/table";
 import {Directive, ViewChild} from "@angular/core";
 import {MatPaginator} from "@angular/material/paginator";
-import {Router} from "@angular/router";
+import {BaseComponent} from "./baseComponent";
 
 @Directive()
-export abstract class CommonListComponent {
+export abstract class CommonListComponent extends BaseComponent{
   loader = false;
   dataSource = new MatTableDataSource;
   articoli: any[] | undefined = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  protected constructor() {}
+  protected constructor() {
+    super();
+  }
 
   protected createPaginator(data: any[] | undefined) {
     this.dataSource = new MatTableDataSource(data);

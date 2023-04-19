@@ -12,6 +12,7 @@ import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
 import {AddFornitoreDialogComponent} from "../../add-fornitore-dialog/add-fornitore-dialog.component";
+import {takeUntil} from "rxjs";
 
 export interface Option {
   name: string,
@@ -47,7 +48,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   ];
 
   ngOnInit(): void {
-    this.router.params.subscribe((params: any) => {
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
       this.anno = params.anno;
       this.serie = params.serie;
       this.progressivo = params.progressivo;
@@ -125,7 +126,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.service.chiudi(this.dataSource.filteredData).subscribe({
+        this.service.chiudi(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
           next: (res) => {
             if (!res.error) {
               let url = '/ordini-clienti';

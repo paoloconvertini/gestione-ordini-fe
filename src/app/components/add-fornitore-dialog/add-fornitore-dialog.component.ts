@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../commonListComponent";
 import {MatDialogRef} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {Router} from "@angular/router";
 import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
-import {map, Observable, startWith} from "rxjs";
+import {map, Observable, startWith, takeUntil} from "rxjs";
 import {FormControl} from '@angular/forms';
 
 @Component({
@@ -34,7 +32,7 @@ export class AddFornitoreDialogComponent extends CommonListComponent implements 
   getFornitori(): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getFornitori()
+      this.service.getFornitori().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data) => {
             this.fornitori = data;

@@ -6,6 +6,7 @@ import {environment} from "../../../../environments/environment";
 import {OafArticoloService} from "../../../services/ordine-fornitore/dettaglio/oaf-articolo.service";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
+import {takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -55,7 +56,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     this.loader = true;
     setTimeout(() => {
       this.service.getOafArticoliByOrdineId(anno, serie, progressivo)
-        .subscribe({
+        .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
           next: (data: any[] | undefined) => {
             if(data) {
               data.forEach(d => {
@@ -76,7 +77,8 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
 
   approva(): void {
     this.loader = true;
-    this.service.approvaOrdine(this.anno, this.serie, this.progressivo).subscribe({
+    this.service.approvaOrdine(this.anno, this.serie, this.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
       next: (res) => {
         this.loader = false;
         if(!res.error) {
@@ -91,7 +93,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
 
   updateOafArticoli(anno: any, serie: any, progressivo: any, data: any): void {
     this.loader = true;
-    this.service.update(data)
+    this.service.update(data).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
@@ -138,7 +140,8 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.oafService.richiediOafApprovazione(this.anno, this.serie, this.progressivo).subscribe({
+        this.oafService.richiediOafApprovazione(this.anno, this.serie, this.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
           next: (res) => {
             if (!res.error) {
               this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);

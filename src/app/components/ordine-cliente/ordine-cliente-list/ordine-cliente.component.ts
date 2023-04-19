@@ -11,6 +11,7 @@ import {EmailDto} from "../../../models/emailDto";
 import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 import {EmailService} from "../../../services/email/email.service";
 import {AuthService} from "../../../services/auth/auth.service";
+import {takeUntil} from "rxjs";
 
 
 export interface Option {
@@ -54,7 +55,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
 
   ngOnInit(): void {
-    this.router.params.subscribe((params: any) => {
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params: any) => {
         this.status = params.status;
       }
     );
@@ -68,7 +70,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   getVenditori(): void {
     let data = [];
     data.push('Venditore');
-    this.authService.getVenditori(data).subscribe({
+    this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next:(data) => {
         data.forEach((d: Option) => {
           if(d.checked) {
@@ -88,7 +90,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   retrieveList(status: any, update: boolean): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getAll(status, update)
+      this.service.getAll(status, update).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
             this.createPaginator(data);
@@ -108,7 +110,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   cercaPerVenditore():void {
     this.loader = true;
-    this.service.filtra(this.status, this.filtro.codVenditore).subscribe({
+    this.service.filtra(this.status, this.filtro.codVenditore).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
       next: (data) => {
         this.createPaginator(data);
         this.loader = false;
@@ -130,7 +133,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   apri(ordine: OrdineCliente): void {
     this.loader = true;
-    this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo, 'DA_PROCESSARE').subscribe({
+    this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo, 'DA_PROCESSARE').pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
       next: (res) => {
         this.loader = false;
         if (res && !res.error) {
@@ -200,7 +204,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           dto.serie = ordine.serie;
           dto.progressivo = ordine.progressivo;
           this.loader = true;
-          this.emailService.inviaMail(dto).subscribe({
+          this.emailService.inviaMail(dto).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
             next: (res) => {
               this.loader = false;
               if (res && !res.error) {
