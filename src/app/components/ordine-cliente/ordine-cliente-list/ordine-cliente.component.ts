@@ -108,7 +108,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   cercaPerVenditore():void {
     this.loader = true;
-    this.service.filtra(this.filtro.codVenditore).subscribe({
+    this.service.filtra(this.status, this.filtro.codVenditore).subscribe({
       next: (data) => {
         this.createPaginator(data);
         this.loader = false;

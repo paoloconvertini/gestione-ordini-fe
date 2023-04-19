@@ -80,10 +80,6 @@
       <span class="totale">Totale {{totale  | currency: 'EUR':'symbol'}}</span>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12">
-<!--      <button mat-raised-button color="secondary"
-              disabled="{{!isAmministrativo}}"
-              (click)="salvaOrdine()" class="margin-top">Salva
-      </button>&nbsp;&nbsp;-->
       <button *ngIf="!status && isAmministrativo" mat-raised-button color="warn"
               (click)="richiediApprovazione()" class="margin-top margin-left">Richiedi approvazione
       </button>&nbsp;&nbsp;

@@ -18,7 +18,7 @@
       <button class="float-end" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
         Aggiorna lista
       </button>&nbsp;&nbsp;
-      <button *ngIf="!status" class="float-end margin-right" (click)="richiediApprovazioneAll()" mat-raised-button color="warn" aria-label="ordine">
+      <button *ngIf="!status && isAmministrativo" class="float-end margin-right" (click)="richiediApprovazioneAll()" mat-raised-button color="warn" aria-label="ordine">
         Richiedi approvazione
       </button>&nbsp;&nbsp;
     </div>
@@ -56,7 +56,7 @@
               <button (click)="apriDettaglio(ordine)" mat-button matTooltip="Vai a dettaglio ordine">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
-              <button *ngIf="!status" (click)="richiediApprovazione(ordine)" mat-button matTooltip="Richiedi approvazione">
+              <button *ngIf="!status && isAmministrativo" (click)="richiediApprovazione(ordine)" mat-button matTooltip="Richiedi approvazione">
                 <mat-icon aria-hidden="false" aria-label="richiedi approvazione" fontIcon="live_help" color="primary"></mat-icon>
               </button>
             </td>
