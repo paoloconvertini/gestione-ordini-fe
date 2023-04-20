@@ -5,6 +5,8 @@ import {environment} from "../../../../environments/environment";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {takeUntil} from "rxjs";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-oaf-list',
@@ -20,7 +22,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
 
-  constructor(private router: ActivatedRoute, private service: OrdineFornitoreService, private route: Router) {
+  constructor(private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -82,26 +84,38 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   richiediApprovazione(ordine: OrdineCliente) {
-    this.service.richiediOafApprovazione(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res) => {
-          if (!res.error) {
-            this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
-          }
-        },
-        error: (e) => console.error(e)
-      });
+    this.openConfirmDialog(ordine);
   }
 
   richiediApprovazioneAll(){
-    this.service.richiediOafApprovazioneAll(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res) => {
-          if (!res.error) {
-            this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
-          }
-        },
-        error: (e) => console.error(e)
-      });
+    this.openConfirmDialog(this.dataSource.filteredData);
+  }
+
+  public openConfirmDialog(data: any) {
+    let msg =  'Sei sicuro di aver processato correttamente tutti gli articoli?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        let observable;
+        if(data instanceof Array) {
+          observable = this.service.richiediOafApprovazioneAll(data);
+        } else {
+          observable = this.service.richiediOafApprovazione(data.anno, data.serie, data.progressivo);
+        }
+        observable.pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              if (!res.error) {
+                this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+              }
+            },
+            error: (e) => console.error(e)
+          });
+      }
+    });
   }
 }

@@ -113,20 +113,11 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   }
 
   richiediApprovazione() {
-    this.openConfirmDialog(null, null);
+    this.openConfirmDialog();
   }
 
-  openConfirmDialog(extraProp: any, preProp: any) {
-    let msg = '';
-    if (preProp) {
-      msg += preProp;
-    }
-    msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
-    if (extraProp) {
-      msg += " ";
-      msg += extraProp;
-    }
-    msg += '?';
+  openConfirmDialog() {
+    let msg = 'Sei sicuro di aver processato correttamente tutti gli articoli?';
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '30%',
       data: {msg: msg},
