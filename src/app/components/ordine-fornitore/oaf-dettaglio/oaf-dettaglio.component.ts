@@ -113,12 +113,6 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   }
 
   richiediApprovazione() {
-    let data = {
-      anno: this.anno,
-      serie: this.serie,
-      progressivo: this.progressivo,
-
-    }
     this.openConfirmDialog(null, null);
   }
 

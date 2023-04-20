@@ -82,10 +82,26 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   richiediApprovazione(ordine: OrdineCliente) {
-    this.service.richiediOafApprovazione(ordine.anno, ordine.serie, ordine.progressivo);
+    this.service.richiediOafApprovazione(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          if (!res.error) {
+            this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+          }
+        },
+        error: (e) => console.error(e)
+      });
   }
 
   richiediApprovazioneAll(){
-    this.service.richiediOafApprovazioneAll(this.dataSource.filteredData);
+    this.service.richiediOafApprovazioneAll(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          if (!res.error) {
+            this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+          }
+        },
+        error: (e) => console.error(e)
+      });
   }
 }
