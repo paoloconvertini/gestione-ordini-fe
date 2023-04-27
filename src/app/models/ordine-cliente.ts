@@ -6,4 +6,5 @@ export class OrdineCliente {
   dataOrdine?: Date
   numeroConferma?: string
   email?: string
+  sottoConto?:string
 }

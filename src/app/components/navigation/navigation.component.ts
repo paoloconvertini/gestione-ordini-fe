@@ -13,6 +13,7 @@ export class NavigationComponent{
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
+  isLogistica: boolean = false;
 
   constructor(private authService: AuthService) {
     this.username = localStorage.getItem(environment.USERNAME);
@@ -27,6 +28,9 @@ export class NavigationComponent{
     }
     if(localStorage.getItem(environment.VENDITORE)) {
       this.isVenditore = true;
+    }
+    if(localStorage.getItem(environment.LOGISTICA)){
+      this.isLogistica = true;
     }
   }
 

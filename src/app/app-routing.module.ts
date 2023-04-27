@@ -29,12 +29,22 @@ const routes: Routes = [
     component: OafListComponent,
   },
   {
-    path: 'articoli/:anno/:serie/:progressivo/:status',
+    path: 'articoli/edit/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },
   {
-    path: 'articoli/:anno/:serie/:progressivo',
+    path: 'articoli/view/:anno/:serie/:progressivo/:status',
+    canActivate: [AuthGuard],
+    component: ArticoloComponent,
+  },
+  {
+    path: 'articoli/edit/:anno/:serie/:progressivo',
+    canActivate: [AuthGuard],
+    component: ArticoloComponent,
+  },
+  {
+    path: 'articoli/view/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },

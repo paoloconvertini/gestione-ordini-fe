@@ -40,4 +40,8 @@ export class OrdineClienteService extends CommonService{
   apriOrdine(anno: any, serie: any, progressivo: any, stato: string) {
     return this.http.get<any>(`${this.url}/apriOrdine/${anno}/${serie}/${progressivo}/${stato}`);
   }
+
+  sbloccaOrdine(anno: any, serie: any, progressivo: any) {
+    return this.http.get<any>(`${this.url}/unlock/${anno}/${serie}/${progressivo}`);
+  }
 }

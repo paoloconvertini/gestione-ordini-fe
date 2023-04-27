@@ -1,3 +1,10 @@
+.example-container {
+  /*width: 85%;*/
+  max-width: 100%;
+  overflow: auto;
+  margin: 0 auto;
+}
+
 .input {
   display: inline;
   height: fit-content;
@@ -10,29 +17,72 @@
 .mat-column-azioni {
   text-align: right;
   font-weight: bold;
-}
-
-.mat-form-field {
-  font-size: 14px;
-  width: 100%;
+  min-width: 200px;
 }
 
 .margin-left {
   margin-left: 25px;
 }
 
-.mat-column-azioni {
-  width: 165px;
-}
-
 .mat-column-descrizione {
-  width: 300px;
+  min-width: 476px;
 }
 
 .mat-column-quantita {
-  width: 120px;
+  min-width: 200px;
 }
 
 .mat-column-tono {
-  width: 180px;
+  min-width: 200px;
+}
+
+.mat-column-flConsegnato {
+  width: 5%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+.example-detail-row td {
+  border-top-width: 0;
+  background-color: #1976d2;
+  color: white;
+}
+
+.bolla-row{
+  display: flex;
+  align-items: center;
+  column-gap: 30px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-height: 104px;
+  justify-content: flex-end;
+}
+
+.bolla-data{
+  padding: 5px;
+  width: 200px;
+  height: 35px;
+  margin-top: 10px;
+  line-height: 40px;
+}
+
+.bolla-qta {
+  flex-grow: 20;
+  padding: 5px;
+  width: 201px;
+  height: 50px;
+  line-height: 50px;
+}
+
+.shipping {
+  font-size: 80px!important;
+  height: 80px!important;
+  width: 80px!important;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
 }

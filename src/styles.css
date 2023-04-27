@@ -287,6 +287,10 @@ svg#clouds {
   margin-top: 20px
 }
 
+.margin-bottom {
+  margin-bottom: 5px;
+}
+
 .mat-mdc-form-field {
   font-size: 14px;
   width: 100%;
@@ -334,6 +338,14 @@ table {
 
 .margin-right {
   margin-right: 5px;
+}
+
+.totale {
+  padding-right:12px;
+}
+
+.footer-row{
+  border-top: 1px solid;
 }
 
 /* Responsive Styles */

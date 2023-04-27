@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../../commonListComponent";
@@ -12,6 +12,7 @@ import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 import {EmailService} from "../../../services/email/email.service";
 import {AuthService} from "../../../services/auth/auth.service";
 import {takeUntil} from "rxjs";
+import {ArticoloComponent} from "../articolo/articolo.component";
 
 
 export interface Option {
@@ -36,6 +37,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isVenditore: boolean = false;
   radioPerVenditoreOptions: Option[] = [];
   filtro:any;
+  user: any;
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
@@ -65,6 +67,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     } else {
       this.getVenditori();
     }
+    this.user = localStorage.getItem(environment.USERNAME);
   }
 
   getVenditori(): void {
@@ -93,6 +96,9 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       this.service.getAll(status, update).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
+            data?.forEach(d => {
+              d.isLocked = d.locked && this.user !== d.userLock;
+            })
             this.createPaginator(data);
             this.loader = false;
           },
@@ -112,7 +118,10 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.loader = true;
     this.service.filtra(this.status, this.filtro.codVenditore).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-      next: (data) => {
+      next: (data: any[] | undefined) => {
+        data?.forEach(d => {
+          d.isLocked = d.locked && this.user !== d.userLock;
+        })
         this.createPaginator(data);
         this.loader = false;
       },
@@ -228,11 +237,35 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   }
 
-  apriDettaglio(ordine: OrdineCliente) {
-    let url = "/articoli/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+  editDettaglio(ordine: OrdineCliente) {
+    let url = "/articoli/edit/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
     if (this.status) {
       url += "/" + this.status;
     }
     this.route.navigateByUrl(url);
+  }
+
+  vediDettaglio(ordine: OrdineCliente) {
+    let url = "/articoli/view/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+    if (this.status) {
+      url += "/" + this.status;
+    }
+    this.route.navigateByUrl(url);
+  }
+
+  sbloccaOrdine(ordine: OrdineCliente) {
+    this.loader = true;
+    this.service.sbloccaOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          if(res && !res.error) {
+            this.refreshPage();
+          }
+          this.loader = false
+        }, error: (e:any) => {
+          console.log(e);
+          this.loader = false;
+        }
+      })
   }
 }

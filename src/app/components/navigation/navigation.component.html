@@ -14,6 +14,9 @@
     <mat-icon *ngIf="isAmministrativo" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
               matTooltip="{{username}}">fax
     </mat-icon>
+    <mat-icon *ngIf="isLogistica" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
+              matTooltip="{{username}}">local_shipping
+    </mat-icon>
     <mat-icon class="example-icon pointer" aria-hidden="false" aria-label="Example user verified icon" matTooltip="Esci"
               (click)="logout()">logout
     </mat-icon>
@@ -23,10 +26,10 @@
     <mat-menu #clienti="matMenu">
       <button mat-menu-item *ngIf="isVenditore || isAdmin" class="pointer" routerLink="/ordini-clienti">Confermati
       </button>
-      <button mat-menu-item *ngIf="!isAmministrativo" class="pointer"
+      <button mat-menu-item *ngIf="!isAmministrativo && !isLogistica" class="pointer"
               [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']">Da processare
       </button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']">Da ordinare</button>
+      <button *ngIf="!isLogistica" mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']">Da ordinare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</button>

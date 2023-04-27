@@ -18,11 +18,6 @@ export class LoginComponent extends BaseComponent{
     password: new FormControl(null, Validators.required),
   });
 
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-
   constructor(private authService: AuthService, private router: Router, private sanckbar: MatSnackBar) {
     super();
   }
@@ -38,6 +33,8 @@ export class LoginComponent extends BaseComponent{
             this.router.navigate(['/ordini-clienti/DA_PROCESSARE']);
           } else if (localStorage.getItem(environment.AMMINISTRATIVO)) {
             this.router.navigate(['/ordini-clienti/DA_ORDINARE']);
+          } else if(localStorage.getItem(environment.LOGISTICA)) {
+            this.router.navigate(['/ordini-clienti/INCOMPLETO']);
           } else {
             this.router.navigate(['/ordini-clienti']);
           }
