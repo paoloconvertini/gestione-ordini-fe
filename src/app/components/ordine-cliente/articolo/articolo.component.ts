@@ -339,11 +339,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         .subscribe({
           next: (data: OrdineDettaglio) => {
             if (data && data.articoli) {
-              data.articoli.forEach(d => {
-                if (d.tipoRigo !== 'C' && d.prezzo && d.quantita) {
-                  this.totale += (d.prezzo * d.quantita);
-                }
-              })
+              this.totale = data.totale;
               this.articoli = data.articoli;
               this.sottoConto = data.sottoConto;
               this.intestazione = data.intestazione;

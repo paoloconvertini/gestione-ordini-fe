@@ -17,8 +17,9 @@
     <div class="col-lg-4 col-md-4 col-sm-12">
       <mat-card class="float-end">
         <mat-card-content>
-          Numero ordine: {{anno}}/{{serie}}/{{progressivo}}<br>
-          Intestazione: {{intestazione}} - {{sottoConto}}
+          Numero ordine: <b>{{anno}}/{{serie}}/{{progressivo}}</b><br>
+          Intestazione: <b>{{intestazione}} - {{sottoConto}}</b><br>
+          Totale: <b>{{totale | currency: 'EUR':'symbol'}}</b>
         </mat-card-content>
       </mat-card>
     </div>

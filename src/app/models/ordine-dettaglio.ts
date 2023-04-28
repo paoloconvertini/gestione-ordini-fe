@@ -4,4 +4,5 @@ export class OrdineDettaglio{
   intestazione:string = ''
   locked: boolean = false
   userLock: string = ''
+  totale: number = 0;
 }
