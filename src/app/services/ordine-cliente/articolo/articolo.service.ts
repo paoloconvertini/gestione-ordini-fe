@@ -5,6 +5,7 @@ import {OrdineCliente} from "../../../models/ordine-cliente";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {OrdineDettaglio} from "../../../models/ordine-dettaglio";
+import {FiltroArticoli} from "../../../models/FiltroArticoli";
 
 const url = environment.baseUrl + environment.ARTICOLI_BY_NUM_ORDINE;
 
@@ -27,18 +28,8 @@ export class ArticoloService extends CommonService{
     return this.http.post(`${this.url}/addFornitore`, data);
   }
 
-  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean, vedi: boolean): Observable<OrdineDettaglio> {
-    let url = `${this.url}`;
-    if(vedi){
-      url += '/vedi'
-    }
-    url += '/' + anno;
-    url += '/' + serie;
-    url += '/' + progressivo;
-    if(filtro) {
-      url += '/' + filtro;
-    }
-    return this.http.get<any>(url);
+  getArticoliByOrdineId(filtro: FiltroArticoli): Observable<OrdineDettaglio> {
+    return this.http.post<any>(`${this.url}`, filtro);
   }
 
   annulla(anno: any, serie: any, progressivo: any): Observable<any> {

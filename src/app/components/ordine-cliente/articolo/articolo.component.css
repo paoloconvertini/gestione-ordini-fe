@@ -10,22 +10,23 @@
   height: fit-content;
 }
 
-.mat-column-nome{
-  padding-left: 16px;
-}
-
 .mat-column-azioni {
   text-align: right;
   font-weight: bold;
-  min-width: 200px;
+  min-width: 100px;
 }
 
 .margin-left {
   margin-left: 25px;
 }
 
+.mdc-data-table__header-cell{
+  padding: 0 8px;
+  font-size: 12px;
+}
+
 .mat-column-descrizione {
-  min-width: 476px;
+  min-width: 300px;
 }
 
 .mat-column-quantita {
@@ -34,10 +35,6 @@
 
 .mat-column-tono {
   min-width: 200px;
-}
-
-.mat-column-flConsegnato {
-  width: 5%;
 }
 
 tr.example-detail-row {

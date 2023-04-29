@@ -16,10 +16,11 @@ import {takeUntil} from "rxjs";
 import {OrdineDettaglio} from "../../../models/ordine-dettaglio";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Bolla} from "../../../models/Bolla";
+import {FiltroArticoli} from "../../../models/FiltroArticoli";
 
 export interface Option {
   name: string,
-  checked: boolean
+  checked: boolean | null
 }
 
 @Component({
@@ -40,46 +41,37 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   //subscription!: Subscription;
   @Input()
-  soloVisualizza: any;
   user: any;
-  locked: boolean = false;
   loaderBolle: boolean = false;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
-  anno: any;
-  serie: any;
-  progressivo: any;
+  filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
-  totale: number = 0;
-  sottoConto: string = '';
-  intestazione: string = '';
-  filtroArticoli: boolean = false;
-  filtroConsegnati: string = '';
-  filtroDaRiservare: boolean = false;
+  ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
   bolle: Bolla[] = [];
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
-  radioConsegnatoOptions: Option[] = [{name: "Da consegnare", checked: true}, {
-    name: "Consegnato",
-    checked: false
-  }, {name: "Tutti", checked: false}];
+  radioConsegnatoOptions: Option[] = [
+    {name: "Da consegnare", checked: true},
+    {name: "Consegnato", checked: false},
+    {name: "Tutti", checked: null}
+  ];
   radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: true}, {name: "Tutti", checked: false}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita'];
   expandedElement: any;
-  userLock: any;
 
 
   ngOnInit(): void {
-    this.soloVisualizza = this.route.url.includes('view');
+    this.filtroArticoli.view = this.route.url.includes('view');
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-      this.anno = params.anno;
-      this.serie = params.serie;
-      this.progressivo = params.progressivo;
+      this.filtroArticoli.anno = params.anno;
+      this.filtroArticoli.serie = params.serie;
+      this.filtroArticoli.progressivo = params.progressivo;
       this.status = params.status;
     });
     if (this.isAmministrativo && this.status === 'DA_ORDINARE') {
-      this.filtroArticoli = true;
+      this.filtroArticoli.flNonDisponibile = true;
     }
     /* this.subscription = timer(0, 5000).pipe(
        switchMap( () =>
@@ -87,13 +79,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
        .subscribe(result => console.log(result)
      )*/
     if (this.status === 'COMPLETO' || this.status === 'INCOMPLETO') {
-      this.filtroConsegnati = 'Da consegnare';
+      this.filtroArticoli.flDaConsegnare = true;
     }
     if (this.status === 'INCOMPLETO' && this.isMagazziniere) {
-      this.filtroDaRiservare = true;
+      this.filtroArticoli.flDaRiservare = true;
     }
     this.user = localStorage.getItem(environment.USERNAME);
-    this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
+    this.getArticoliByOrdineId();
   }
 
   constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, private service: ArticoloService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private router: ActivatedRoute) {
@@ -120,7 +112,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     }*/
 
   salvaOrdine() {
-    this.updateArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData, this.filtroArticoli);
+    this.updateArticoli();
   }
 
   getBolle(progrCliente: any) {
@@ -197,8 +189,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   apriFirma() {
-    let ordineId = this.anno + '_' +
-      this.serie + '_' + this.progressivo;
+    let ordineId = this.filtroArticoli.anno + '_' +
+      this.filtroArticoli.serie + '_' + this.filtroArticoli.progressivo;
     {
       const dialogRef = this.dialog.open(FirmaDialogComponent, {
         width: '30%'
@@ -234,7 +226,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   creaOrdineForn() {
     this.loader = true;
-    this.ordineFornitoreService.creaOrdineFornitori(this.anno, this.serie, this.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+    this.ordineFornitoreService.creaOrdineFornitori(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
@@ -277,7 +269,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
               this.snackbar.open(res.msg, 'Chiudi', {
                 duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
               });
-              this.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli, this.filtroConsegnati, this.filtroDaRiservare);
+              this.getArticoliByOrdineId();
             },
             error: (e) => {
               console.error(e);
@@ -291,14 +283,14 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     });
   }
 
-  updateArticoli(anno: any, serie: any, progressivo: any, data: any, filtro: boolean): void {
+  updateArticoli(): void {
     this.loader = true;
-    this.service.update(data).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.update(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
           if (!res.error) {
-            this.getArticoliByOrdineId(anno, serie, progressivo, filtro, '', false);
+            this.getArticoliByOrdineId();
           }
         },
         error: (e) => {
@@ -309,8 +301,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   annulla() {
-    if(this.user === this.userLock) {
-      this.service.annulla(this.anno, this.serie, this.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+    if(this.user === this.ordineDettaglio.userLock) {
+      this.service.annulla(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
@@ -326,35 +318,18 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     }
   }
 
-  getArticoliByOrdineId(anno: any, serie: any, progressivo: any, filtro: boolean, filtroConsegnati: any, filtroDaRiservare: boolean): void {
-    // this.filtroConsegnati = filtroConsegnati;
-    this.totale = 0;
+  getArticoliByOrdineId(): void {
     this.loader = true;
     setTimeout(() => {
-      let method = this.service.getArticoliByOrdineId(anno, serie, progressivo, filtro, false);
-      if (this.soloVisualizza) {
-        method = this.service.getArticoliByOrdineId(anno, serie, progressivo, filtro, this.soloVisualizza);
-      }
-      method.pipe(takeUntil(this.ngUnsubscribe))
+      this.service.getArticoliByOrdineId(this.filtroArticoli).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: OrdineDettaglio) => {
             if (data && data.articoli) {
-              this.totale = data.totale;
-              this.articoli = data.articoli;
-              this.sottoConto = data.sottoConto;
-              this.intestazione = data.intestazione;
-              this.userLock = data.userLock;
-              this.locked = data.locked && this.user !== this.userLock;
-              console.log("bloccato: " + this.locked);
+              this.ordineDettaglio = data;
+              this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
+              console.log("bloccato: " + this.ordineDettaglio.locked);
             }
-
-            this.createPaginator(this.articoli);
-            if (filtroConsegnati) {
-              this.filtraConsegnati();
-            }
-            if (filtroDaRiservare) {
-              this.filtraDaRiservare();
-            }
+            this.createPaginator(this.ordineDettaglio.articoli);
             this.loader = false;
           },
           error: (e: any) => {
@@ -364,30 +339,5 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         })
     }, 2000);
   }
-
-  public filtraConsegnati() {
-    if (this.filtroConsegnati === 'Da consegnare') {
-      this.createPaginator(this.articoli!.filter((el: any) => {
-        return !el.geFlagConsegnato || el.geFlagConsegnato === false;
-      }))
-    } else if (this.filtroConsegnati === 'Consegnato') {
-      this.createPaginator(this.articoli!.filter((el: any) => {
-        return el.geFlagConsegnato || el.geFlagConsegnato === true;
-      }))
-    } else {
-      this.createPaginator(this.articoli);
-    }
-  }
-
-  public filtraDaRiservare() {
-    if (this.filtroDaRiservare) {
-      this.createPaginator(this.articoli!.filter((el: any) => {
-        return !el.geFlagRiservato || el.geFlagRiservato === false;
-      }))
-    } else {
-      this.createPaginator(this.articoli);
-    }
-  }
-
 
 }
