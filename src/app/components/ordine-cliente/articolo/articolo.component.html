@@ -247,13 +247,13 @@
   <div class="row float-end">
     <div class="col-lg-12 col-md-12 col-sm-12">
       <button mat-raised-button color="primary" [disabled]="ordineDettaglio.locked"
-              *ngIf="( (isAmministrativo || isAdmin ) && status === 'DA_ORDINARE') ||
-                     ( (isMagazziniere || isAdmin ) && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO'))"
+              *ngIf="isAdmin || (isAmministrativo && status === 'DA_ORDINARE') ||
+                      (isMagazziniere && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO'))"
               (click)="salvaOrdine()" class="margin-top">Salva
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="warn" [disabled]="ordineDettaglio.locked"
-              *ngIf="( (isAmministrativo || isAdmin ) && status === 'DA_ORDINARE') ||
-                     ( (isMagazziniere || isAdmin ) && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO'))"
+              *ngIf="isAdmin || (isAmministrativo  && status === 'DA_ORDINARE') ||
+                     (isMagazziniere  && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO'))"
               (click)="chiudiOrdine()" class="margin-top margin-left">Salva e Chiudi
       </button>
       <button mat-raised-button color="warn"
