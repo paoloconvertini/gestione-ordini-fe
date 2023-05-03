@@ -66,4 +66,7 @@ export class HistoryDialogComponent extends CommonListComponent implements OnIni
   }
 
 
+  chiudi() {
+
+  }
 }

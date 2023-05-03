@@ -14,11 +14,6 @@ const routes: Routes = [
     component: OrdineClienteComponent,
   },
   {
-    path: 'ordini-fornitore',
-    canActivate: [AuthGuard],
-    component: OafListComponent,
-  },
-  {
     path: 'ordini-clienti/:status',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,

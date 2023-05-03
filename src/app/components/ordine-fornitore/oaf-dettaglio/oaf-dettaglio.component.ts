@@ -98,7 +98,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
         next: (res) => {
           this.loader = false;
           if (!res.error) {
-            this.getOafArticoliByOrdineId(anno, serie, progressivo, );
+            this.getOafArticoliByOrdineId(anno, serie, progressivo);
           }
         },
         error: (e) => {
@@ -112,29 +112,4 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     this.updateOafArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
   }
 
-  richiediApprovazione() {
-    this.openConfirmDialog();
-  }
-
-  openConfirmDialog() {
-    let msg = 'Sei sicuro di aver processato correttamente tutti gli articoli?';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '30%',
-      data: {msg: msg},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.oafService.richiediOafApprovazione(this.anno, this.serie, this.progressivo).pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
-          next: (res) => {
-            if (!res.error) {
-              this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
-            }
-          },
-          error: (e) => console.error(e)
-        });
-      }
-    });
-  }
 }

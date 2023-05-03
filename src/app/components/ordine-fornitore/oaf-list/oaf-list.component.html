@@ -4,7 +4,6 @@
       ORDINI A FORNITORE
       <span *ngIf="status==='F'"> APPROVATI</span>
       <span *ngIf="status==='T'"> DA APPROVARE</span>
-      <span *ngIf="!status"> DA PROCESSARE</span>
     </div>
   </div>
   <div class="row">
@@ -17,9 +16,6 @@
     <div class="col-lg-6 col-md-6 col-sm-6">
       <button class="float-end" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
         Aggiorna lista
-      </button>&nbsp;&nbsp;
-      <button *ngIf="!status && isAmministrativo" class="float-end margin-right" (click)="richiediApprovazioneAll()" mat-raised-button color="warn" aria-label="ordine">
-        Richiedi approvazione
       </button>&nbsp;&nbsp;
     </div>
   </div>
@@ -55,9 +51,6 @@
             <td mat-cell *matCellDef="let ordine">
               <button (click)="apriDettaglio(ordine)" mat-button matTooltip="Vai a dettaglio ordine">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
-              </button>
-              <button *ngIf="!status && isAmministrativo" (click)="richiediApprovazione(ordine)" mat-button matTooltip="Richiedi approvazione">
-                <mat-icon aria-hidden="false" aria-label="richiedi approvazione" fontIcon="live_help" color="primary"></mat-icon>
               </button>
             </td>
           </ng-container>

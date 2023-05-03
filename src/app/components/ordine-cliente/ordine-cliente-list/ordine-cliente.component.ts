@@ -62,11 +62,10 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
         this.status = params.status;
       }
     );
-    if(!this.isVenditore) {
-      this.retrieveList(this.status, false);
-    } else {
+    if(this.isVenditore) {
       this.getVenditori();
     }
+    this.retrieveList(this.status, false);
     this.user = localStorage.getItem(environment.USERNAME);
   }
 
@@ -75,13 +74,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     data.push('Venditore');
     this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next:(data) => {
-        data.forEach((d: Option) => {
-          if(d.checked) {
-            this.filtro = d;
-          }
-        });
         this.radioPerVenditoreOptions = data;
-        this.filtraPerVenditore();
       },
       error: (e: any) => {
         console.error(e);
@@ -111,6 +104,9 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   }
 
   refreshPage() {
+    if(this.isVenditore) {
+      this.getVenditori();
+    }
     this.retrieveList(this.status, true);
   }
 
