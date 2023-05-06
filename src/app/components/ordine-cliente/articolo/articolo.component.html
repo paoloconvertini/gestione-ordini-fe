@@ -91,7 +91,7 @@
                      min="0" class="form-control input"
                      [(ngModel)]="articolo.quantita"/>
               &nbsp;{{articolo.funitaMisura}}
-              <span *ngIf="articolo.flBolla">&nbsp;({{articolo.qtaDaConsegnare}})</span>
+              <span *ngIf="articolo.flBolla">&nbsp;({{articolo.qtaDaConsegnare | number : '1.2-2'}})</span>
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -195,8 +195,7 @@
                           color="primary">fact_check</mat-icon>
               </button>
               <button *ngIf="articolo.tipoRigo !=='C' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo.progrGenerale); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
-                <mat-icon *ngIf="expandedElement !== articolo">keyboard_arrow_down</mat-icon>
-                <mat-icon *ngIf="expandedElement === articolo">keyboard_arrow_up</mat-icon>
+                <mat-icon >local_shipping</mat-icon>
               </button>
             </td>
           </ng-container>
@@ -213,7 +212,7 @@
                       <mat-icon class="shipping" fontIcon="local_shipping"></mat-icon>
                       <div class="bolla-num"><b>Numero bolla:</b> {{bolla.numeroBolla}} </div>
                       <div class="bolla-data"><b>Data:</b> {{bolla.dataBolla | date: 'dd/MM/yyyy' }} </div>
-                      <div class="bolla-qta"><b>Quantità consegnata:</b> {{bolla.qta}} </div>
+                      <div class="bolla-qta"><b>Quantità consegnata:</b> {{bolla.qta | number : '1.2-2'}} </div>
                     </div>
                   </div>
                 </div>
