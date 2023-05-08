@@ -26,6 +26,10 @@ export class AuthService {
     return this.http.post<any>(url + 'users/byRole', data);
   }
 
+  updatePassword(username: string, data: any) : Observable<any> {
+    return this.http.put<any>(url + `users/${username}`, data);
+  }
+
   login(user: User): Observable<LoginResponseI> {
     return this.http.post<LoginResponseI>(url + environment.LOGIN, user).pipe(
       tap((res: LoginResponseI) => {

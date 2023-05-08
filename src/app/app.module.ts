@@ -41,6 +41,7 @@ import {OafDettaglioComponent} from './components/ordine-fornitore/oaf-dettaglio
 import { WarnDialogComponent } from './components/warn-dialog/warn-dialog.component';
 import { AddFornitoreDialogComponent } from './components/add-fornitore-dialog/add-fornitore-dialog.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 
 export function tokenGetter() {
@@ -50,7 +51,7 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent, WarnDialogComponent, AddFornitoreDialogComponent
+    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent, HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent, WarnDialogComponent, AddFornitoreDialogComponent, ResetPasswordComponent
   ],
     imports: [
         BrowserModule,

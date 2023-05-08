@@ -6,6 +6,7 @@ import {OrdineClienteComponent} from "./components/ordine-cliente/ordine-cliente
 import {ArticoloComponent} from "./components/ordine-cliente/articolo/articolo.component";
 import {OafListComponent} from "./components/ordine-fornitore/oaf-list/oaf-list.component";
 import {OafDettaglioComponent} from "./components/ordine-fornitore/oaf-dettaglio/oaf-dettaglio.component";
+import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 
 const routes: Routes = [
   {
@@ -56,6 +57,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent,
   },
   {
     path: '**',

@@ -61,4 +61,8 @@ export class LoginComponent extends BaseComponent{
     FormControl {
     return this.form.get('password') as FormControl;
   }
+
+  resetPassword() {
+    this.router.navigate(['/reset-password']);
+  }
 }
