@@ -27,10 +27,13 @@
           </mat-label>
           <input
             matInput
-            type="password"
+            [type]="hide ? 'password' : 'text'"
             placeholder="Ex. s3c3tP@ss"
             formControlName="password"
           />
+          <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
         </mat-form-field>
         <!-- /Password -->
       </mat-card-content>

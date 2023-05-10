@@ -17,6 +17,7 @@ export class LoginComponent extends BaseComponent{
     username: new FormControl(null, Validators.required),
     password: new FormControl(null, Validators.required),
   });
+  hide = true;
 
   constructor(private authService: AuthService, private router: Router, private sanckbar: MatSnackBar) {
     super();

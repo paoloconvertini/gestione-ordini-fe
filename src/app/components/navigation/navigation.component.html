@@ -2,9 +2,19 @@
   <mat-toolbar-row>
     <span>Gestione ordini</span>
     <span class="example-spacer"></span>
-    <mat-icon *ngIf="isAdmin" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
+    <mat-icon *ngIf="isAdmin" [matMenuTriggerFor]="menu" class="pointer example-icon" aria-hidden="false" aria-label="Example user verified icon"
               matTooltip="{{username}}">admin_panel_settings
     </mat-icon>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item class="pointer" [routerLink]="['/users']">
+        <mat-icon>person</mat-icon>
+        <span>Gestisci dipendenti</span>
+      </button>
+      <button mat-menu-item class="pointer" [routerLink]="['/role']">
+        <mat-icon>manage_accounts</mat-icon>
+        <span>Gestisci ruoli</span>
+      </button>
+    </mat-menu>
     <mat-icon *ngIf="isMagazziniere" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
               matTooltip="{{username}}">warehouse
     </mat-icon>

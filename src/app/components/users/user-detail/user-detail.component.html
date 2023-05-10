@@ -1,0 +1,76 @@
+<form (ngSubmit)="submitForm()" [formGroup]="userForm" autocomplete="off" class="">
+  <div class="box">
+    <mat-card class="mat-card-container">
+      <mat-card-header class="mat-card-header">
+        <mat-card-title class="mat-card-title">
+          <span *ngIf="id">Modica</span>
+          <span *ngIf="!id">Crea</span>
+          dipendente
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field>
+          <mat-label>
+            Nome
+          </mat-label>
+          <input
+            [ngModel]="dipendente.name"
+            matInput
+            placeholder="Ex. mario"
+            formControlName="name"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>
+            Cognome
+          </mat-label>
+          <input
+            [ngModel]="dipendente.lastname"
+            matInput
+            placeholder="Ex. rossi"
+            formControlName="lastname"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>
+            Password
+          </mat-label>
+          <input
+            [ngModel]="dipendente.password"
+            matInput
+            placeholder="Ex. S3cr3t"
+            formControlName="password"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>
+            Data di nascita
+          </mat-label>
+          <input
+            [ngModel]="dipendente.dataNascita"
+            matInput
+            placeholder="Ex. S3cr3t"
+            formControlName="dataNascita"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>
+            Codice venditore
+          </mat-label>
+          <input
+            [ngModel]="dipendente.codVenditore"
+            matInput
+            placeholder="Ex. S3cr3t"
+            formControlName="codVenditore"
+          />
+        </mat-form-field>
+        <mat-form-field *ngFor="let role of optionRoles">
+          <mat-label>
+            Ruolo
+          </mat-label>
+          <mat-checkbox formControlName="roles" [checked]="role.checked" >{{role.name}}</mat-checkbox>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</form>

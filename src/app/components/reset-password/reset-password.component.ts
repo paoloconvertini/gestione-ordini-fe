@@ -19,6 +19,8 @@ export class ResetPasswordComponent extends BaseComponent{
     password: new FormControl(null, Validators.required),
     password2: new FormControl(null, Validators.required),
   });
+  hide = true;
+  hide2 = true;
 
   constructor(private authService: AuthService, private router: Router, private sanckbar: MatSnackBar) {
     super();
