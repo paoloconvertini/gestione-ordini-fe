@@ -16,5 +16,7 @@ export const environment = {
   EMAIL: "mail",
   OAF: 'oaf',
   OAF_ARTICOLI: '/articoli',
-  PIANOCONTI: 'pianoconti'
+  PIANOCONTI: 'pianoconti',
+  USER: 'users',
+  ROLE: 'roles'
 };
