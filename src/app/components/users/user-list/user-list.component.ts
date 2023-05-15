@@ -5,6 +5,8 @@ import {UserService} from "../../../services/users/user.service";
 import {takeUntil} from "rxjs";
 import {Router} from "@angular/router";
 import {Dipendente} from "../../../models/Dipendente";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-user-list',
@@ -16,7 +18,7 @@ export class UserListComponent extends CommonListComponent implements OnInit {
   displayedColumns: string[] = ['username', 'nome', 'cognome', 'azioni'];
   isAdmin: boolean = false;
 
-  constructor(private service: UserService, private route: Router) {
+  constructor(private service: UserService, private route: Router, private dialog: MatDialog) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -48,4 +50,41 @@ export class UserListComponent extends CommonListComponent implements OnInit {
     }, 2000);
   }
 
+  creaNuovo() {
+    this.route.navigate(['/users-detail']);
+  }
+
+  elimina(dipendente: Dipendente) {
+    this.openConfirmDialog(null, null, dipendente.id);
+  }
+
+  openConfirmDialog(extraProp: any, preProp: any, data: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += 'Sei sicuro di voler eliminare questo dipendente. L\'azione è irreversibile.';
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.elimina(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+          next: (res) => {
+            if (!res.error) {
+              this.retrieveList();
+            }
+          },
+          error: (e) => console.error(e)
+        });
+      }
+    });
+  }
 }

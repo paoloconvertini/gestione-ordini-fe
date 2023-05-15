@@ -206,14 +206,14 @@
               <mat-spinner *ngIf="loaderBolle" class="loader"></mat-spinner>
               <div *ngIf="!loaderBolle">
                 <div  *ngFor="let bolla of bolle">
-                  <div  class="example-element-detail"
+                  <div  class=""
                         [@detailExpand]="articolo == expandedElement ? 'expanded' : 'collapsed'">
-                    <div class="bolla-row">
-                      <mat-icon class="shipping" fontIcon="local_shipping"></mat-icon>
-                      <div class="bolla-num"><b>Numero bolla:</b> {{bolla.numeroBolla}} </div>
-                      <div class="bolla-data"><b>Data:</b> {{bolla.dataBolla | date: 'dd/MM/yyyy' }} </div>
-                      <div class="bolla-qta"><b>Quantità consegnata:</b> {{bolla.qta | number : '1.2-2'}} </div>
-                    </div>
+                    <mat-grid-list cols="2" rowHeight="50px">
+                      <mat-grid-tile [colspan]="1" [rowspan]="3"><mat-icon class="icon-detail" fontIcon="local_shipping"></mat-icon></mat-grid-tile>
+                      <mat-grid-tile [colspan]="1" [rowspan]="1"><b>Numero bolla:</b> {{bolla.numeroBolla}}</mat-grid-tile>
+                      <mat-grid-tile [colspan]="1" [rowspan]="1"><b>Data:</b> {{bolla.dataBolla | date: 'dd/MM/yyyy' }} </mat-grid-tile>
+                      <mat-grid-tile [colspan]="1" [rowspan]="1"><b>Quantità consegnata:</b> {{bolla.qta | number : '1.2-2'}} </mat-grid-tile>
+                    </mat-grid-list>
                   </div>
                 </div>
               </div>

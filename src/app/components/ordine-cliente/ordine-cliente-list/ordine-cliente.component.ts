@@ -13,6 +13,8 @@ import {EmailService} from "../../../services/email/email.service";
 import {AuthService} from "../../../services/auth/auth.service";
 import {takeUntil} from "rxjs";
 import {ArticoloComponent} from "../articolo/articolo.component";
+import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
+import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 
 
 export interface Option {
@@ -204,10 +206,12 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           let dto = new EmailDto();
-          dto.to = result;
+          dto.to = result.to;
           dto.anno = ordine.anno;
           dto.serie = ordine.serie;
           dto.progressivo = ordine.progressivo;
+          dto.sottoConto = ordine.sottoConto;
+          dto.update = result.update;
           this.loader = true;
           this.emailService.inviaMail(dto).pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
@@ -230,7 +234,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
         }
       });
     }
-
   }
 
   editDettaglio(ordine: OrdineCliente) {
@@ -263,5 +266,43 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           this.loader = false;
         }
       })
+  }
+
+  aggiungiNote(ordine: OrdineCliente) {
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
+    data.anno = ordine.anno;
+    data.serie = ordine.serie;
+    data.progressivo = ordine.progressivo;
+    data.note = ordine.note;
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.service.addNotes(result).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  this.refreshPage();
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
+              }
+            });
+        }
+      });
+    }
   }
 }

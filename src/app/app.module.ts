@@ -45,10 +45,27 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { UserListComponent } from './components/users/user-list/user-list.component';
 import { UserDetailComponent } from './components/users/user-detail/user-detail.component';
 import { RoleComponent } from './components/role/role.component';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule} from '@angular/material/core';
+import {MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
+import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-note-dialog/ordine-cliente-note-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
+
+export const DateFormats = {
+  parse: {
+    dateInput: ['DD/MM/YYYY']
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 
 @NgModule({
   declarations: [
@@ -57,42 +74,49 @@ export function tokenGetter() {
     HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent,
     WarnDialogComponent, AddFornitoreDialogComponent, ResetPasswordComponent, UserListComponent,
     UserDetailComponent,
-    RoleComponent
+    RoleComponent,
+    OrdineClienteNoteDialogComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatCardModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        HttpClientModule,
-        JwtModule.forRoot({
-            config: {
-                tokenGetter: tokenGetter,
-                allowedDomains: ['localhost:8080', 'localhost:8081', '192.168.1.150:8080','192.168.1.150:8181', '192.168.1.60:8080']
-            }
-        }),
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatCheckboxModule,
-        FormsModule,
-        MatTooltipModule,
-        MatGridListModule,
-        MatRadioModule,
-        MatSidenavModule,
-        MatMenuModule,
-        MatAutocompleteModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:8080', 'localhost:8081', '192.168.1.150:8080', '192.168.1.150:8181', '192.168.1.60:8080']
+      }
+    }),
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatTooltipModule,
+    MatGridListModule,
+    MatRadioModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatMomentDateModule
+  ],
   providers: [
-    {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
+    {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: DateFormats },
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT'}
   ],
   bootstrap: [AppComponent]
 })

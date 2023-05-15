@@ -30,14 +30,12 @@ export class LoginComponent extends BaseComponent{
         password: this.password.value
       }).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (res) => {
-          if (localStorage.getItem(environment.MAGAZZINIERE)) {
-            this.router.navigate(['/ordini-clienti/DA_PROCESSARE']);
-          } else if (localStorage.getItem(environment.AMMINISTRATIVO)) {
+         if (localStorage.getItem(environment.AMMINISTRATIVO)) {
             this.router.navigate(['/ordini-clienti/DA_ORDINARE']);
           } else if(localStorage.getItem(environment.LOGISTICA)) {
             this.router.navigate(['/ordini-clienti/INCOMPLETO']);
           } else {
-            this.router.navigate(['/ordini-clienti']);
+            this.router.navigate(['/ordini-clienti/DA_PROCESSARE']);
           }
         },
         error: (e) => {

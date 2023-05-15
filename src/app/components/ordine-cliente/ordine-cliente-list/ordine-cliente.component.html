@@ -70,10 +70,12 @@
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="visibility" color="primary"></mat-icon>
               </button>
               <button *ngIf="!ordine.isLocked && (!isVenditore || (isVenditore && isAdmin))" (click)="editDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
-                <mat-icon  aria-hidden="false" aria-label="dettaglio" fontIcon="edit" color="primary"></mat-icon>
+                <mat-icon  aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
-
-              <button *ngIf="!status" (click)="apriFirma(ordine)" mat-icon-button matTooltip="Firma ordine cliente">
+              <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="!ordine.hasFirma && (isVenditore && !isAdmin)" (click)="apriFirma(ordine)" mat-icon-button matTooltip="Firma ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="draw" color="primary"></mat-icon>
               </button>
               <button *ngIf="isVenditore" (click)="inviaEmail(ordine)" mat-icon-button

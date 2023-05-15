@@ -19,15 +19,8 @@ export class OrdineFornitoreService extends CommonService{
     return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}`);
   }
 
-  getAllOaf(status:any, update: boolean): Observable<any> {
-    let url = `${this.url}`;
-    if(update) {
-      url += '/updateConsegne';
-    }
-    if(status){
-      url += '?status=' + status;
-    }
-    return this.http.get<any>(url);
+  getAllOaf(status:any): Observable<any> {
+    return this.http.get<any>(`${this.url}/${status}`);
   }
 
   richiediOafApprovazioneAll(data: any): Observable<any> {

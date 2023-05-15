@@ -15,20 +15,13 @@ export class OrdineClienteService extends CommonService{
   }
 
   filtra(status:any, codVenditore:any): Observable<any> {
-    let url = `${this.url}/${codVenditore}`;
-    if(status){
-      url += '?status=' + status;
-    }
-    return this.http.get<any>(url);
+    return this.http.get<any>(`${this.url}/${codVenditore}/${status}`);
   }
 
   getAll(status:any, update: boolean): Observable<any> {
-    let url = `${this.url}`;
+    let url = `${this.url}/${status}`;
     if(update) {
-      url += '/updateConsegne';
-    }
-    if(status){
-      url += '?status=' + status;
+      url += '/aggiornaListaOrdini';
     }
     return this.http.get<any>(url);
   }
@@ -43,5 +36,9 @@ export class OrdineClienteService extends CommonService{
 
   sbloccaOrdine(anno: any, serie: any, progressivo: any) {
     return this.http.get<any>(`${this.url}/unlock/${anno}/${serie}/${progressivo}`);
+  }
+
+  addNotes(result: any): Observable<any> {
+    return this.http.post(`${this.url}/addNotes`, result)
   }
 }

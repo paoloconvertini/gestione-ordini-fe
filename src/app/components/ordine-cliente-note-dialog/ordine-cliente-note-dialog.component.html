@@ -1,0 +1,8 @@
+<h2 class="title">Aggiungi note</h2>
+<mat-dialog-content class="mat-typography">
+  <textarea rows="5" class="form-control" [(ngModel)]="ordine.note" autofocus></textarea>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close>Chiudi</button>
+  <button mat-raised-button (click)="salva()" cdkFocusInitial color="primary">Salva</button>
+</mat-dialog-actions>

@@ -4,6 +4,9 @@
       Dipendenti
     </div>
   </div>
+  <div class="float-end">
+    <button mat-raised-button color="primary" (click)="creaNuovo()">Crea nuovo</button>
+  </div>
   <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-6">
       <mat-form-field>
@@ -45,7 +48,7 @@
               <button (click)="modifica(dipendente)" mat-icon-button matTooltip="Modifica" >
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="edit" color="primary"></mat-icon>
               </button>
-              <button class="no-pointer" mat-icon-button matTooltip="Elimina">
+              <button (click)="elimina(dipendente)" mat-icon-button matTooltip="Elimina">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="delete" color="primary"></mat-icon>
               </button>
             </td>

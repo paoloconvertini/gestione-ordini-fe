@@ -1,3 +1,7 @@
+.mat-mdc-header-cell {
+  font-size:12px!important;
+}
+
 .example-container {
   max-width: 100%;
   font-size: 12px;
@@ -7,7 +11,7 @@
 .input {
   display: inline;
   height: fit-content;
-  font-size: 12px;
+  font-size: 1rem;
   width: 70px;
 }
 
@@ -28,14 +32,25 @@
 
 .mat-column-descrizione {
   min-width: 200px;
+  font-size:1rem;
 }
 
 .mat-column-quantita {
   min-width: 150px;
+  font-size:1rem;
 }
 
 .mat-column-tono {
   min-width: 200px;
+  font-size:1rem;
+}
+
+.mat-column-prezzo {
+  font-size:1rem;
+}
+
+.mat-column-prezzoTot {
+  font-size:1rem;
 }
 
 .mat-column-tono>input{
@@ -62,6 +77,14 @@ tr.example-detail-row {
   justify-content: flex-end;
 }
 
+.bolla-num {
+  padding: 5px;
+  width: 200px;
+  height: 35px;
+  margin-top: 10px;
+  line-height: 40px;
+}
+
 .bolla-data{
   padding: 5px;
   width: 200px;
@@ -79,9 +102,9 @@ tr.example-detail-row {
 }
 
 .shipping {
-  font-size: 80px!important;
-  height: 80px!important;
-  width: 80px!important;
+  font-size: 55px!important;
+  height: 55px!important;
+  width: 55px!important;
 }
 
 .example-element-detail {
@@ -91,4 +114,10 @@ tr.example-detail-row {
 
 .mat-icon {
   font-size: 18px;
+}
+
+.icon-detail {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
 }

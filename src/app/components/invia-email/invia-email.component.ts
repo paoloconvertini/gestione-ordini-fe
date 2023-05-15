@@ -15,6 +15,7 @@ export class InviaEmailComponent {
   form = new FormGroup({
     to: new FormControl(null, [Validators.required, Validators.email]),
   });
+  update: boolean = false;
 
   constructor(private dialogRef: MatDialogRef<InviaEmailComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData) {
@@ -23,13 +24,9 @@ export class InviaEmailComponent {
     }
   }
 
-  onNoClick(): void {
-    this.dialogRef.close(this.to.setValue(''));
-  }
-
   submitForm() {
     if (this.form.valid) {
-      this.dialogRef.close(this.to.value);
+      this.dialogRef.close({'to': this.to.value, 'update': this.update});
     }
   }
 

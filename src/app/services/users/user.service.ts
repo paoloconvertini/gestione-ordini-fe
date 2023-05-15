@@ -22,8 +22,12 @@ export class UserService {
 
   create(id: any, data: any): Observable<any> {
     if(id){
-      return this.http.put(url + `/${id}`, data);
+      return this.http.put(url + `/update/${id}`, data);
     }
     return this.http.post(url, data);
+  }
+
+  elimina(id: any): Observable<any> {
+    return this.http.delete(url + `/${id}`);
   }
 }

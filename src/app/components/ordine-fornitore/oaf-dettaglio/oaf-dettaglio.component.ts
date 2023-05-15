@@ -7,6 +7,7 @@ import {OafArticoloService} from "../../../services/ordine-fornitore/dettaglio/o
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {takeUntil} from "rxjs";
+import {OrdineFornitoreDettaglio} from "../../../models/ordine-fornitore-dettaglio";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -23,8 +24,8 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   serie: any;
   progressivo: any;
   status: any;
-  totale: number = 0;
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'azioni'];
+  ordineFornitoreDettaglio: OrdineFornitoreDettaglio = new OrdineFornitoreDettaglio();
 
   ngOnInit(): void {
     this.router.params.subscribe((params: any) => {
@@ -57,13 +58,10 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     setTimeout(() => {
       this.service.getOafArticoliByOrdineId(anno, serie, progressivo)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-          next: (data: any[] | undefined) => {
+          next: (data: OrdineFornitoreDettaglio | undefined) => {
             if(data) {
-              data.forEach(d => {
-                this.totale += d.oprezzo;
-              })
-              this.articoli = data;
-              this.createPaginator(data);
+              this.ordineFornitoreDettaglio = data;
+              this.createPaginator(this.ordineFornitoreDettaglio.articoli);
             }
             this.loader = false;
           },

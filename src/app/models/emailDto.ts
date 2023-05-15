@@ -7,5 +7,8 @@ export class EmailDto {
   progressivo?: number;
 
   serie?: string;
+  sottoConto?: any;
+
+  update: boolean = false;
 
 }

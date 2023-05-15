@@ -23,14 +23,14 @@ const routes: Routes = [
     component: UserDetailComponent
   },
   {
+    path: 'users-detail',
+    canActivate: [AuthGuard],
+    component: UserDetailComponent
+  },
+  {
     path: 'role',
     canActivate: [AuthGuard],
     component: RoleComponent
-  },
-  {
-    path: 'ordini-clienti',
-    canActivate: [AuthGuard],
-    component: OrdineClienteComponent,
   },
   {
     path: 'ordini-clienti/:status',
@@ -51,21 +51,6 @@ const routes: Routes = [
     path: 'articoli/view/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
-  },
-  {
-    path: 'articoli/edit/:anno/:serie/:progressivo',
-    canActivate: [AuthGuard],
-    component: ArticoloComponent,
-  },
-  {
-    path: 'articoli/view/:anno/:serie/:progressivo',
-    canActivate: [AuthGuard],
-    component: ArticoloComponent,
-  },
-  {
-    path: 'oaf/articoli/:anno/:serie/:progressivo',
-    canActivate: [AuthGuard],
-    component: OafDettaglioComponent,
   },
   {
     path: 'oaf/articoli/:anno/:serie/:progressivo/:status',

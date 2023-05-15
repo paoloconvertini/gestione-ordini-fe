@@ -45,16 +45,16 @@ export class OafListComponent extends CommonListComponent implements OnInit {
         } else if (params.status === 'APPROVATO') {
           this.status = 'F';
         }
-      this.retrieveFornitoreList(this.status, false);
+      this.retrieveFornitoreList(this.status);
       }
     );
 
   }
 
-  retrieveFornitoreList(status: any, update: boolean): void {
+  retrieveFornitoreList(status: any): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getAllOaf(status, update)
+      this.service.getAllOaf(status)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
           next: (data: any[] | undefined) => {
             this.createPaginator(data);
@@ -69,7 +69,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   refreshPage() {
-    this.retrieveFornitoreList(this.status, true);
+    this.retrieveFornitoreList(this.status);
   }
 
   apriDettaglio(ordine: OrdineCliente) {

@@ -7,4 +7,5 @@ export class OrdineCliente {
   numeroConferma?: string
   email?: string
   sottoConto?:string
+  note?: string
 }

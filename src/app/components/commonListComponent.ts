@@ -7,7 +7,6 @@ import {BaseComponent} from "./baseComponent";
 export abstract class CommonListComponent extends BaseComponent{
   loader = false;
   dataSource = new MatTableDataSource;
-  articoli: any[] | undefined = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   protected constructor() {

@@ -14,8 +14,14 @@
       </div>
     </div>
   </div>
+  <div class="aggiorna-mail">
+    <mat-label>Aggiorna mail</mat-label>
+    <mat-checkbox [(ngModel)]="update" color="primary"></mat-checkbox>
+  </div>
   <div mat-dialog-actions style="padding: 0 16px;" align="center">
-    <button mat-button color="secondary" (click)="onNoClick()">Annulla</button>
-    <button mat-button color="primary" type="submit">Invia</button>
+    <button mat-raised-button color="secondary" mat-dialog-close>Annulla</button>
+    <button mat-raised-button color="primary" type="submit">Invia</button>
   </div>
 </form>
+
+

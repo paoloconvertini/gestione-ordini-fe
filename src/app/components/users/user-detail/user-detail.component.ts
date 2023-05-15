@@ -1,11 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {takeUntil} from "rxjs";
 import {BaseComponent} from "../../baseComponent";
 import {Dipendente} from "../../../models/Dipendente";
 import {UserService} from "../../../services/users/user.service";
-import {FormArray, FormControl, FormGroup} from "@angular/forms";
-import {environment} from "../../../../environments/environment";
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {RoleService} from "../../../services/role/role.service";
 import {Ruolo} from "../../../models/Ruolo";
@@ -18,31 +17,43 @@ import {Ruolo} from "../../../models/Ruolo";
 export class UserDetailComponent extends BaseComponent implements OnInit {
 
   loader = false;
-  id: any;
+  id: any = null;
   dipendente: Dipendente = new Dipendente();
-
-  userForm = new FormGroup({
-    name: new FormControl(''),
-    lastname: new FormControl(''),
-    dataNascita: new FormControl(''),
-    password: new FormControl(''),
-    codVenditore: new FormControl(''),
-    roles: new FormArray([])
-  });
-
+  userForm: any = FormGroup;
   optionRoles: Ruolo[] = [];
 
-  constructor(private roleService: RoleService, private service: UserService, private router: ActivatedRoute, private route: Router, private sanckbar: MatSnackBar) {
+  constructor(private fb: FormBuilder, private roleService: RoleService, private service: UserService,
+              private router: ActivatedRoute, private route: Router,
+              private sanckbar: MatSnackBar) {
     super();
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-      this.id = params.id;
+      if (params.id) {
+        this.id = params.id;
+      }
     });
   }
 
   ngOnInit(): void {
-    this.getUser();
+    this.userForm = this.fb.group({
+      name: new FormControl(this.dipendente.name, Validators.required),
+      lastname: new FormControl('', Validators.required),
+      dataNascita: new FormControl(''),
+      password: new FormControl('', this.id ? null : Validators.required),
+      codVenditore: new FormControl(''),
+      roles: new FormArray([])
+    });
     this.getAllRole();
+  }
 
+  dipendenteRuoli(): FormArray {
+    return this.userForm.get('roles') as FormArray;
+  }
+
+  newRuolo(id: any, name: string): FormGroup {
+    return this.fb.group({
+      id: id,
+      name: name
+    });
   }
 
   getUser() {
@@ -51,6 +62,15 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
       .subscribe({
         next: (data: Dipendente) => {
           this.dipendente = data;
+          this.dipendente.roles.forEach(r => {
+            this.dipendenteRuoli().push(this.newRuolo(r.id, r.name));
+            this.optionRoles.forEach(o => {
+              if(o.id === r.id){
+                o.checked = true;
+                return;
+              }
+            })
+          });
           this.loader = false;
         },
         error: (e: any) => {
@@ -66,6 +86,9 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
         next: (data: Ruolo[]) => {
           this.optionRoles = data;
           this.loader = false;
+          if(this.id) {
+            this.getUser();
+          }
         },
         error: (e: any) => {
           console.error(e);
@@ -77,21 +100,35 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
   submitForm() {
     this.loader = true;
     if (this.userForm.valid) {
-      this.service.create(this.id, this.dipendente).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-        next: (res: any) => {
-          if(res && !res.error) {
-            this.route.navigate(['/users']);
+      this.service.create(this.id, this.userForm.value).pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (res: any) => {
+            if (res && !res.error) {
+              this.route.navigate(['/users']);
+            }
+            this.loader = false;
+          }, error: (e) => {
+            this.loader = false;
+            if (e) {
+              this.sanckbar.open('Utente non creato', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+            }
           }
-          this.loader = false;
-        }, error: (e) => {
-          this.loader = false;
-          if (e) {
-            this.sanckbar.open('Utente non creato', 'Chiudi', {
-              duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-            })
-          }
-        }
-      });
+        });
     }
+  }
+
+  onCheckboxChange(role: Ruolo, event: any) {
+    if (event.checked) {
+      this.dipendenteRuoli().push(this. newRuolo(role.id, role.name));
+    } else {
+      const index = this.dipendenteRuoli().controls.findIndex(x => x.value.name === role.name);
+      this.dipendenteRuoli().removeAt(index);
+    }
+  }
+
+  indietro() {
+    this.route.navigate(['/users']);
   }
 }
