@@ -121,3 +121,9 @@ tr.example-detail-row {
   width: 36px;
   height: 36px;
 }
+
+.bolla-box {
+  display:inline-flex;
+  align-items: center;
+  column-gap: 25px;
+}
