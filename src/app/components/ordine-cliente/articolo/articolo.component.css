@@ -31,7 +31,7 @@
 }
 
 .mat-column-descrizione {
-  min-width: 200px;
+  min-width: 150px;
   font-size:1rem;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .mat-column-tono {
-  min-width: 200px;
+  min-width: 150px;
   font-size:1rem;
 }
 
