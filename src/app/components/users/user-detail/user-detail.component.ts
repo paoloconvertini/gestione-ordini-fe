@@ -37,6 +37,7 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
     this.userForm = this.fb.group({
       name: new FormControl(this.dipendente.name, Validators.required),
       lastname: new FormControl('', Validators.required),
+      email: new FormControl('', Validators.email),
       dataNascita: new FormControl(''),
       password: new FormControl('', this.id ? null : Validators.required),
       codVenditore: new FormControl(''),

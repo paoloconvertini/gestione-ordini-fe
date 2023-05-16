@@ -5,6 +5,7 @@ export class Dipendente {
   username: any;
   name: any;
   lastname: any;
+  email: any;
   roles: Ruolo[] = [];
   password: any;
   dataNascita: any;

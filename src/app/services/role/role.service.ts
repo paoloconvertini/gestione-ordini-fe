@@ -17,4 +17,15 @@ export class RoleService {
     return this.http.get<any>(url);
   }
 
+  elimina(id: any): Observable<any>{
+    return this.http.delete(url + `/${id}`);
+  }
+
+  save(data:any): Observable<any>{
+    return this.http.post(url, data);
+  }
+
+  update(data:any): Observable<any>{
+    return this.http.put(url + `/${data.id}`, data);
+  }
 }

@@ -1,1 +1,65 @@
-<p>role works!</p>
+<div class="container" *ngIf="isAdmin">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      Ruoli
+    </div>
+  </div>
+  <div class="float-end">
+    <button mat-raised-button color="primary" (click)="creaNuovo()">Crea nuovo</button>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6">
+      <mat-form-field>
+        <mat-label>Cerca...</mat-label>
+        <input matInput (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef> Nome</th>
+            <td mat-cell *matCellDef="let ruolo">
+              <div *ngIf="!ruolo.edit">{{ruolo.name}}</div>
+              <div *ngIf="ruolo.edit"><input type="text" class="form-control" [(ngModel)]="ruolo.name"></div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="azioni">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let ruolo">
+              <button *ngIf="!ruolo.edit" (click)="ruolo.edit = true" mat-icon-button matTooltip="Modifica" >
+                <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="ruolo.edit" (click)="salva(ruolo)" mat-icon-button matTooltip="Salva" >
+                <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+              </button>
+              <button (click)="elimina(ruolo.id)" mat-icon-button matTooltip="Elimina">
+                <mat-icon aria-hidden="false" aria-label="elimina" fontIcon="delete" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="ruolo.edit" (click)="ruolo.edit = false; retrieveList()" mat-icon-button matTooltip="Chiudi">
+                <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-result-list" colspan="4">Nessun risultato {{input.value ? "per la ricerca " + input.value : ""}}</td>
+          </tr>
+        </table>
+        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

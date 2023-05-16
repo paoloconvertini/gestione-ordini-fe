@@ -1,5 +1,6 @@
 export class Ruolo {
   id: any;
-  name: any;
+  name: string = '';
   checked: boolean = false;
+  edit: boolean = false;
 }
