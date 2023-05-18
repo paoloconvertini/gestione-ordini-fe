@@ -75,10 +75,10 @@
               <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"></mat-icon>
               </button>
-              <button *ngIf="!ordine.hasFirma && (isVenditore && !isAdmin)" (click)="apriFirma(ordine)" mat-icon-button matTooltip="Firma ordine cliente">
+              <button *ngIf="!ordine.hasFirma && (isVenditore || isAdmin)" (click)="apriFirma(ordine)" mat-icon-button matTooltip="Firma ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="draw" color="primary"></mat-icon>
               </button>
-              <button *ngIf="isVenditore" (click)="inviaEmail(ordine)" mat-icon-button
+              <button *ngIf="(isVenditore || isAdmin) && ordine.hasFirma" (click)="inviaEmail(ordine)" mat-icon-button
                       matTooltip="Invia email ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
@@ -88,6 +88,9 @@
               </button>
               <button class="no-pointer" mat-icon-button matTooltip="Sono presenti articoli consegnati senza bolla" *ngIf="ordine.warnNoBolla">
                 <mat-icon class="warnNoBolla" aria-hidden="false" aria-label="warning" fontIcon="report" color="warn"></mat-icon>
+              </button>
+              <button class="no-pointer" mat-icon-button matTooltip="Ordine non firmato dal cliente" *ngIf="(status === 'COMPLETO') && !ordine.hasFirma">
+                <mat-icon class="warnNoBolla warnNoFirma" aria-hidden="false" aria-label="warning" fontIcon="report"></mat-icon>
               </button>
             </td>
           </ng-container>
