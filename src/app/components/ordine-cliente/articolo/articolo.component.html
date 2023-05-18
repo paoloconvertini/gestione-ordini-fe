@@ -188,7 +188,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
               </button>
               <button class="no-pointer" *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-icon-button
-                      matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                      matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
                         {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore"
@@ -223,12 +223,6 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 
-<!--          <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>-->
-<!--          <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
-              class="example-element-row"
-              [class.example-expanded-row]="expandedElement === element"
-              (click)="expandedElement = expandedElement === element ? null : element">
-          </tr>-->
           <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
 
