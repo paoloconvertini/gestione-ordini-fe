@@ -15,11 +15,18 @@ import {takeUntil} from "rxjs";
 import {ArticoloComponent} from "../articolo/articolo.component";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 
 export interface Option {
   codVenditore: any,
   fullname: string,
+  checked: boolean
+}
+
+export interface OptStatus {
+  codice: any,
+  descrizione: string,
   checked: boolean
 }
 
@@ -30,15 +37,15 @@ export interface Option {
 })
 export class OrdineClienteComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'cliente', 'data', 'azioni'];
+  displayedColumns: string[] = ['numero', 'cliente', 'data', 'status', 'azioni'];
   signImage: any;
-  status?: string;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   radioPerVenditoreOptions: Option[] = [];
-  filtro:any;
+  radioPerStatusOptions: OptStatus[] = [];
+  filtro: FiltroOrdini = new FiltroOrdini();
   user: any;
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
@@ -61,21 +68,42 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   ngOnInit(): void {
     this.router.params.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
-        this.status = params.status;
-      }
-    );
-    if(this.isVenditore) {
+          if (params.status) {
+            this.filtro.status = params.status;
+          }
+        }
+      );
+    this.getStati();
+    if (this.isVenditore) {
       this.getVenditori();
     }
-    this.retrieveList(this.status, false);
+    this.retrieveList();
     this.user = localStorage.getItem(environment.USERNAME);
+  }
+
+  getStati(): void {
+    this.service.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data) => {
+        this.radioPerStatusOptions = data;
+        if(this.filtro.status){
+          this.radioPerStatusOptions.forEach(opt=> {
+            if(opt.descrizione === this.filtro.status) {
+              opt.checked = true;
+            }
+          })
+        }
+      },
+      error: (e: any) => {
+        console.error(e);
+      }
+    })
   }
 
   getVenditori(): void {
     let data = [];
     data.push('Venditore');
     this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next:(data) => {
+      next: (data) => {
         this.radioPerVenditoreOptions = data;
       },
       error: (e: any) => {
@@ -85,10 +113,10 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     })
   }
 
-  retrieveList(status: any, update: boolean): void {
+  retrieveList(): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getAll(status, update).pipe(takeUntil(this.ngUnsubscribe))
+      this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
             data?.forEach(d => {
@@ -106,59 +134,50 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   }
 
   refreshPage() {
-    if(this.isVenditore) {
+    if (this.isVenditore) {
       this.getVenditori();
     }
-    this.retrieveList(this.status, true);
-  }
-
-  cercaPerVenditore():void {
+    this.getStati();
     this.loader = true;
-    this.service.filtra(this.status, this.filtro.codVenditore).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-      next: (data: any[] | undefined) => {
-        data?.forEach(d => {
-          d.isLocked = d.locked && this.user !== d.userLock;
+    setTimeout(() => {
+      this.service.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            data?.forEach(d => {
+              d.isLocked = d.locked && this.user !== d.userLock;
+            })
+            this.createPaginator(data);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
         })
-        this.createPaginator(data);
-        this.loader = false;
-      },
-      error: (e: any) => {
-        console.error(e);
-        this.loader = false;
-      }
-    })
-  }
-
-  filtraPerVenditore():void {
-    if(!this.filtro.codVenditore){
-      this.retrieveList(this.status, false);
-    } else {
-      this.cercaPerVenditore();
-    }
+    }, 2000);
   }
 
   apri(ordine: OrdineCliente): void {
     this.loader = true;
     this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo, 'DA_PROCESSARE').pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-      next: (res) => {
-        this.loader = false;
-        if (res && !res.error) {
-          this.snackbar.open('Ordine riaperto', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+        next: (res) => {
+          this.loader = false;
+          if (res && !res.error) {
+            this.snackbar.open('Ordine riaperto', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
+          this.route.navigate(['/ordini-clienti', 'DA_PROCESSARE']);
+        },
+        error: (e) => {
+          console.error(e);
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
           })
+          this.loader = false;
         }
-        this.route.navigate(['/ordini-clienti', 'DA_PROCESSARE']);
-      },
-      error: (e) => {
-        console.error(e);
-        this.snackbar.open('Errore!', 'Chiudi', {
-          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-        })
-        this.loader = false;
-      }
-    });
+      });
   }
 
   apriFirma(ordine: OrdineCliente) {
@@ -215,22 +234,22 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           this.loader = true;
           this.emailService.inviaMail(dto).pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
-            next: (res) => {
-              this.loader = false;
-              if (res && !res.error) {
-                this.snackbar.open(res.msg, 'Chiudi', {
-                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
+                this.loader = false;
               }
-            },
-            error: (e) => {
-              console.error(e);
-              this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
-                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-              })
-              this.loader = false;
-            }
-          });
+            });
         }
       });
     }
@@ -238,16 +257,16 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   editDettaglio(ordine: OrdineCliente) {
     let url = "/articoli/edit/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (this.status) {
-      url += "/" + this.status;
+    if (this.filtro && this.filtro.status) {
+      url += "/" + this.filtro.status;
     }
     this.route.navigateByUrl(url);
   }
 
   vediDettaglio(ordine: OrdineCliente) {
     let url = "/articoli/view/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (this.status) {
-      url += "/" + this.status;
+    if (this.filtro && this.filtro.status) {
+      url += "/" + this.filtro.status;
     }
     this.route.navigateByUrl(url);
   }
@@ -257,11 +276,11 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.service.sbloccaOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
-          if(res && !res.error) {
+          if (res && !res.error) {
             this.refreshPage();
           }
           this.loader = false
-        }, error: (e:any) => {
+        }, error: (e: any) => {
           console.log(e);
           this.loader = false;
         }

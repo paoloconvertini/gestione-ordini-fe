@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {CommonService} from "../../CommonSerivce";
 import {environment} from "../../../../environments/environment";
 import {Observable} from "rxjs";
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 const url = environment.baseUrl + environment.ORDINI_CLIENTI;
 @Injectable({
@@ -14,16 +15,12 @@ export class OrdineClienteService extends CommonService{
     super(http, url);
   }
 
-  filtra(status:any, codVenditore:any): Observable<any> {
-    return this.http.get<any>(`${this.url}/${codVenditore}/${status}`);
+  getAll(filtro:FiltroOrdini): Observable<any> {
+    return this.http.post<any>(`${this.url}`, filtro);
   }
 
-  getAll(status:any, update: boolean): Observable<any> {
-    let url = `${this.url}/${status}`;
-    if(update) {
-      url += '/aggiornaListaOrdini';
-    }
-    return this.http.get<any>(url);
+  aggiornaLista(): Observable<any> {
+    return this.http.get<any>(`${this.url}/aggiornaListaOrdini`);
   }
 
   upload(data: any): Observable<any> {
@@ -40,5 +37,9 @@ export class OrdineClienteService extends CommonService{
 
   addNotes(result: any): Observable<any> {
     return this.http.post(`${this.url}/addNotes`, result)
+  }
+
+  getStati() : Observable<any> {
+    return this.http.get(`${this.url}/getStati`);
   }
 }

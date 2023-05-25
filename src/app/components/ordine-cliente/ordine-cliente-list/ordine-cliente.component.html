@@ -2,12 +2,11 @@
   <div class="row">
     <div class="col-md-12  ordine-title">
       ORDINI
-      <span *ngIf="status==='DA_PROCESSARE'"> DA PROCESSARE</span>
-      <span *ngIf="status==='DA_ORDINARE'"> DA ORDINARE</span>
-      <span *ngIf="!status"> CONFERMATI</span>
-      <span *ngIf="status==='INCOMPLETO'"> INCOMPLETI</span>
-      <span *ngIf="status==='COMPLETO'"> COMPLETI</span>
-      <span *ngIf="status==='ARCHIVIATO'"> ARCHIVIATI</span>
+      <span *ngIf="filtro.status==='DA_PROCESSARE'"> DA PROCESSARE</span>
+      <span *ngIf="filtro.status==='DA_ORDINARE'"> DA ORDINARE</span>
+      <span *ngIf="filtro.status==='INCOMPLETO'"> INCOMPLETI</span>
+      <span *ngIf="filtro.status==='COMPLETO'"> COMPLETI</span>
+      <span *ngIf="filtro.status==='ARCHIVIATO'"> ARCHIVIATI</span>
     </div>
   </div>
   <div class="row">
@@ -23,10 +22,24 @@
       </button>
     </div>
     <div *ngIf="isVenditore || isAdmin" class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group (change)="filtraPerVenditore()"
-                       aria-label="Select an option" [(ngModel)]="filtro">
+      <mat-radio-group (change)="retrieveList()"
+                       aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
         <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
-                          [value]="option">{{option.fullname}}</mat-radio-button>
+                          [value]="option.codVenditore">{{option.fullname}}</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <mat-radio-group (change)="retrieveList()"
+                       aria-label="Select an option" [(ngModel)]="filtro.status">
+        <mat-radio-button *ngFor="let option of radioPerStatusOptions" [checked]="option.checked"
+                          [value]="option.codice">
+          <span *ngIf="option.descrizione==='DA_PROCESSARE'"> DA PROCESSARE</span>
+          <span *ngIf="option.descrizione==='DA_ORDINARE'"> DA ORDINARE</span>
+          <span *ngIf="option.descrizione==='INCOMPLETO'"> INCOMPLETI</span>
+          <span *ngIf="option.descrizione==='COMPLETO'"> COMPLETI</span>
+          <span *ngIf="option.descrizione==='ARCHIVIATO'"> ARCHIVIATI</span>
+          <span *ngIf="option.descrizione==='TUTTI'"> TUTTI</span>
+        </mat-radio-button>
       </mat-radio-group>
     </div>
   </div>
@@ -57,6 +70,13 @@
               {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
             </td>
           </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
+            <td mat-cell *matCellDef="let ordine">
+              <b>{{ordine.status}}</b>
+            </td>
+          </ng-container>
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ordine">
@@ -82,14 +102,14 @@
                       matTooltip="Invia email ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
-              <button *ngIf="isMagazziniere && status === 'DA_ORDINARE'" (click)="apri(ordine)" mat-icon-button
+              <button *ngIf="isMagazziniere && filtro.status === 'DA_ORDINARE'" (click)="apri(ordine)" mat-icon-button
                       matTooltip="Apri ordine">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
               </button>
               <button class="no-pointer" mat-icon-button matTooltip="Sono presenti articoli consegnati senza bolla" *ngIf="ordine.warnNoBolla">
                 <mat-icon class="warnNoBolla" aria-hidden="false" aria-label="warning" fontIcon="report" color="warn"></mat-icon>
               </button>
-              <button class="no-pointer" mat-icon-button matTooltip="Ordine non firmato dal cliente" *ngIf="(status === 'COMPLETO') && !ordine.hasFirma">
+              <button class="no-pointer" mat-icon-button matTooltip="Ordine non firmato dal cliente" *ngIf="(filtro.status === 'COMPLETO') && !ordine.hasFirma">
                 <mat-icon class="warnNoBolla warnNoFirma" aria-hidden="false" aria-label="warning" fontIcon="report"></mat-icon>
               </button>
             </td>

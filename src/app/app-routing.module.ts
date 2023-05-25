@@ -33,6 +33,11 @@ const routes: Routes = [
     component: RoleComponent
   },
   {
+    path: 'ordini-clienti',
+    canActivate: [AuthGuard],
+    component: OrdineClienteComponent,
+  },
+  {
     path: 'ordini-clienti/:status',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
