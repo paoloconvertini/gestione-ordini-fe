@@ -6,7 +6,7 @@ export class FiltroArticoli {
 
   flNonDisponibile:  boolean = false;
 
-  flDaConsegnare:  boolean = false;
+  flConsegna?:  number;
 
   anno: any;
 

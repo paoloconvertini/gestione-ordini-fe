@@ -17,10 +17,18 @@ import {OrdineDettaglio} from "../../../models/ordine-dettaglio";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Bolla} from "../../../models/Bolla";
 import {FiltroArticoli} from "../../../models/FiltroArticoli";
+import {OrdineCliente} from "../../../models/ordine-cliente";
+import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
+import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 
 export interface Option {
   name: string,
   checked: boolean | null
+}
+export interface OptionCons {
+  name: string,
+  checked: boolean,
+  value: number
 }
 
 @Component({
@@ -47,15 +55,17 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
+  isLogistica: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
   bolle: Bolla[] = [];
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
-  radioConsegnatoOptions: Option[] = [
-    {name: "Da consegnare", checked: true},
-    {name: "Consegnato", checked: false},
-    {name: "Tutti", checked: null}
+  radioConsegnatoOptions: OptionCons[] = [
+    {name: "Da consegnare", checked: false, value: 0},
+    {name: "Consegnato", checked: false, value: 1},
+    {name: "Pronto consegna", checked: false, value: 2},
+    {name: "Tutti", checked: false, value: 3}
   ];
   radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: true}, {name: "Tutti", checked: false}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita'];
@@ -78,11 +88,23 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
          this.service.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli)))
        .subscribe(result => console.log(result)
      )*/
-    if (this.status === 'COMPLETO' || this.status === 'INCOMPLETO') {
-      this.filtroArticoli.flDaConsegnare = true;
+    if ((this.status === 'COMPLETO' || this.status === 'INCOMPLETO') && !this.isLogistica) {
+      this.filtroArticoli.flConsegna = 0;
+      // @ts-ignore
+      this.radioConsegnatoOptions[0].checked = true;
     }
     if (this.status === 'INCOMPLETO' && this.isMagazziniere) {
       this.filtroArticoli.flDaRiservare = true;
+    }
+    if (this.isLogistica) {
+      this.filtroArticoli.flConsegna = 2;
+      // @ts-ignore
+      this.radioConsegnatoOptions[2].checked = true;
+    }
+    if((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE') && !this.isLogistica) {
+      this.filtroArticoli.flConsegna = 3;
+      // @ts-ignore
+      this.radioConsegnatoOptions[3].checked = true;
     }
     this.user = localStorage.getItem(environment.USERNAME);
     this.getArticoliByOrdineId();
@@ -103,8 +125,11 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     if (localStorage.getItem(environment.VENDITORE)) {
       this.isVenditore = true;
     }
-    this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'tono',
-      'flRiservato', 'flDisponibile', 'flOrdinato', 'flConsegnato', 'azioni']
+    if (localStorage.getItem(environment.LOGISTICA)) {
+      this.isLogistica = true;
+    }
+    this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'tono', 'qtaRiservata', 'qtaProntoConsegna',
+      'flRiservato', 'flDisponibile', 'flOrdinato', 'flProntoConsegna', 'flConsegnato', 'azioni']
   }
 
   /*ngOnDestroy(): void {
@@ -340,4 +365,69 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     }, 2000);
   }
 
+  checkRiservati() {
+    let found = false;
+    for (const filterDatum of this.dataSource.filteredData) {
+      // @ts-ignore
+      if(filterDatum.tipoRigo !== 'C' && filterDatum.geFlagOrdinato && !filterDatum.geFlagRiservato) {
+        found = true;
+        break;
+      }
+    }
+    return found;
+  }
+
+  checkQta(articolo:any) {
+    articolo.qtaRiservata = articolo.quantita;
+    if(!articolo.geFlagRiservato) {
+      articolo.qtaRiservata = undefined;
+    }
+  }
+
+  checkFlagRiservato(articolo:any) {
+      articolo.geFlagRiservato = (articolo.qtaRiservata === articolo.quantita);
+  }
+
+  checkQtaProntoConsegna(articolo:any) {
+    articolo.qtaProntoConsegna = articolo.quantita;
+  }
+
+  aggiungiNote(articolo: any) {
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
+    data.anno = articolo.anno;
+    data.serie = articolo.serie;
+    data.progressivo = articolo.progressivo;
+    data.rigo = articolo.rigo;
+    data.note = articolo.note;
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.service.addNotes(result).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  this.getArticoliByOrdineId();
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
+              }
+            });
+        }
+      });
+    }
+  }
 }

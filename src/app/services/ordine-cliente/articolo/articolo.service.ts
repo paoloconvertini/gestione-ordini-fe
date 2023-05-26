@@ -40,4 +40,7 @@ export class ArticoloService extends CommonService{
     return this.http.get<any>(`${this.url}/getBolle/${progrCliente}`)
   }
 
+  addNotes(result: any): Observable<any> {
+    return this.http.post(`${this.url}/addNotes`, result)
+  }
 }

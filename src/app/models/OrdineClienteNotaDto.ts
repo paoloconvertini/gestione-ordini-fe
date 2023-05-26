@@ -3,4 +3,5 @@ export class OrdineClienteNotaDto {
   serie?: string
   progressivo?: number
   note?: string
+  rigo?:any
 }

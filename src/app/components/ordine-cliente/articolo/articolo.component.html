@@ -40,11 +40,11 @@
                           [value]="option.checked">{{option.name}}</mat-radio-button>
       </mat-radio-group>
     </div>
-    <div *ngIf="status === 'COMPLETO' || status === 'INCOMPLETO'" class="col-lg-8 col-md-12 col-sm-12">
+    <div *ngIf="!isAmministrativo && (status !== 'DA_PROCESSARE' || isLogistica)" class="col-lg-8 col-md-12 col-sm-12">
       <mat-radio-group (change)="getArticoliByOrdineId()"
-                       aria-label="Select an option" [(ngModel)]="filtroArticoli.flDaConsegnare">
+                       aria-label="Select an option" [(ngModel)]="filtroArticoli.flConsegna">
         <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"
-                          [value]="option.checked">{{option.name}}</mat-radio-button>
+                          [value]="option.value">{{option.name}}</mat-radio-button>
       </mat-radio-group>
     </div>
     <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-8 col-md-6 col-sm-12">
@@ -68,14 +68,14 @@
         <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="dataSource">
           <!-- Name Column -->
           <ng-container matColumnDef="codice">
-            <th mat-header-cell *matHeaderCellDef> Codice</th>
+            <th mat-header-cell *matHeaderCellDef>Codice</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C'">{{articolo.farticolo}}</span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="descrizione">
-            <th mat-header-cell *matHeaderCellDef> Descrizione</th>
+            <th mat-header-cell *matHeaderCellDef>Descrizione</th>
             <td mat-cell *matCellDef="let articolo">
               {{articolo.fdescrArticolo}}<br>
               <b>{{articolo.codArtFornitore}}</b>
@@ -83,11 +83,11 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="quantita">
-            <th mat-header-cell *matHeaderCellDef> Quantità<br>(Qtà da consegnare)</th>
+            <th mat-header-cell *matHeaderCellDef>Qtà<br>(da conseg.)</th>
             <td mat-cell *matCellDef="let articolo">
               <span
-                *ngIf="(articolo.tipoRigo !=='C' && (!isMagazziniere || (isMagazziniere && status !== 'DA_PROCESSARE')))">{{articolo.quantita}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere && status === 'DA_PROCESSARE'" type="number"
+                *ngIf="(articolo.tipoRigo !=='C' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.quantita}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere && status !== 'ARCHIVIATO'" type="number"
                      min="0" class="form-control input"
                      [(ngModel)]="articolo.quantita"/>
               &nbsp;{{articolo.funitaMisura}}
@@ -96,7 +96,7 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="qtaConsegnatoSenzaBolla">
-            <th mat-header-cell *matHeaderCellDef> Quantità senza bolla</th>
+            <th mat-header-cell *matHeaderCellDef> Qtà senza bolla</th>
             <td mat-cell *matCellDef="let articolo">
               <input *ngIf="articolo.tipoRigo !=='C' && isAdmin" type="number"
                      min="0" class="form-control input"
@@ -105,14 +105,14 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="prezzo">
-            <th mat-header-cell *matHeaderCellDef> Prezzo Unitario</th>
+            <th mat-header-cell *matHeaderCellDef>Prezzo Unit</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C'">{{articolo.prezzo | currency: 'EUR':'symbol'}}</span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="prezzoTot">
-            <th mat-header-cell *matHeaderCellDef> Prezzo Tot</th>
+            <th mat-header-cell *matHeaderCellDef>Prezzo Tot</th>
             <td mat-cell *matCellDef="let articolo">
               <span
                 *ngIf="articolo.tipoRigo !=='C'">{{ (articolo.prezzo * articolo.quantita) | currency: 'EUR':'symbol'}}</span>
@@ -120,20 +120,42 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="tono">
-            <th mat-header-cell *matHeaderCellDef> Tono</th>
+            <th mat-header-cell *matHeaderCellDef>Tono</th>
             <td mat-cell *matCellDef="let articolo">
         <span
           *ngIf="(articolo.tipoRigo !=='C' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.geTono}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere && status === 'DA_PROCESSARE'" type="text"
+              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere && status !== 'ARCHIVIATO'" type="text"
                      class="form-control input"
                      [(ngModel)]="articolo.geTono"/>
             </td>
           </ng-container>
           <!-- Name Column -->
-          <ng-container matColumnDef="flRiservato">
-            <th mat-header-cell *matHeaderCellDef> Riservato</th>
+          <ng-container matColumnDef="qtaRiservata">
+            <th mat-header-cell *matHeaderCellDef>Qtà Riserv.</th>
             <td mat-cell *matCellDef="let articolo">
-        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 1)"
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.qtaRiservata}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere && status !== 'ARCHIVIATO'" type="number"
+                     min="0" class="form-control input"
+                     [(ngModel)]="articolo.qtaRiservata" (keyup)="checkFlagRiservato(articolo)"/>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="qtaProntoConsegna">
+            <th mat-header-cell *matHeaderCellDef>Qtà Pronto Cons.</th>
+            <td mat-cell *matCellDef="let articolo">
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.qtaProntoConsegna}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && isMagazziniere && status !== 'ARCHIVIATO'" type="number"
+                     min="0" class="form-control input"
+                     [(ngModel)]="articolo.qtaProntoConsegna"/>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="flRiservato">
+            <th mat-header-cell *matHeaderCellDef>Ris.</th>
+            <td mat-cell *matCellDef="let articolo">
+        <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 1);checkQta(articolo)"
                                                              disabled="{{(!isMagazziniere || (status !== 'DA_PROCESSARE' && status !== 'INCOMPLETO') )
                                                              || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                                              [(ngModel)]="articolo.geFlagRiservato"
@@ -142,7 +164,7 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="flDisponibile">
-            <th mat-header-cell *matHeaderCellDef>Non disponibile</th>
+            <th mat-header-cell *matHeaderCellDef>Non Dis.</th>
             <td mat-cell *matCellDef="let articolo">
         <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 2)"
                                                              disabled="{{(!isMagazziniere || status !== 'DA_PROCESSARE')
@@ -153,7 +175,7 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="flOrdinato">
-            <th mat-header-cell *matHeaderCellDef> Ordinato</th>
+            <th mat-header-cell *matHeaderCellDef>Ord.</th>
             <td mat-cell *matCellDef="let articolo">
         <span *ngIf="articolo.tipoRigo !=='C'"><mat-checkbox (change)="checkFlags(articolo, 1)"
                                                              disabled="{{(!isAmministrativo || status !== 'DA_ORDINARE') || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
@@ -161,10 +183,21 @@
                                                              color="primary"></mat-checkbox></span>
             </td>
           </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="flProntoConsegna">
+            <th mat-header-cell *matHeaderCellDef>Pronto Cons.</th>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !=='C'">
+                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{(!isMagazziniere || ordineDettaglio.locked || status === 'ARCHIVIATO')}}"
+                              [(ngModel)]="articolo.flProntoConsegna" color="primary">
+                </mat-checkbox>
+              </span>
+            </td>
+          </ng-container>
 
           <!-- Name Column -->
           <ng-container matColumnDef="flConsegnato">
-            <th mat-header-cell *matHeaderCellDef> Consegnato</th>
+            <th mat-header-cell *matHeaderCellDef>Cons.</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C'">
                 <mat-checkbox disabled="{{!isAdmin}}"
@@ -180,6 +213,9 @@
               <button *ngIf="articolo.tipoRigo !=='C'" (click)="showHistory(articolo)" mat-icon-button
                       matTooltip="Storia articolo">
                 <mat-icon aria-hidden="false" aria-label="firma" color="primary">work_history</mat-icon>
+              </button>
+              <button *ngIf="articolo.tipoRigo !=='C'" (click)="aggiungiNote(articolo)" mat-icon-button matTooltip="Aggiungi note">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"></mat-icon>
               </button>
               <button
                 *ngIf="isAmministrativo && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && !articolo.articolo"
@@ -240,10 +276,10 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
       <button mat-raised-button color="primary" [disabled]="ordineDettaglio.locked"
               *ngIf="status !== 'ARCHIVIATO' && ( isAdmin || (isAmministrativo && status === 'DA_ORDINARE') ||
-                      (isMagazziniere && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO')))"
+                      (isMagazziniere && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO' || status === 'DA_ORDINARE')))"
               (click)="salvaOrdine()" class="margin-top">Salva
       </button>&nbsp;&nbsp;
-      <button mat-raised-button color="warn" [disabled]="ordineDettaglio.locked"
+      <button mat-raised-button color="warn" [disabled]="ordineDettaglio.locked || checkRiservati()"
               *ngIf="status !== 'ARCHIVIATO' && ( isAdmin || (isAmministrativo  && status === 'DA_ORDINARE') ||
                      (isMagazziniere  && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO')))"
               (click)="chiudiOrdine()" class="margin-top margin-left">Salva e Chiudi

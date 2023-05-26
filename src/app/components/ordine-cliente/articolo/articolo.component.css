@@ -6,6 +6,8 @@
   max-width: 100%;
   font-size: 12px;
   margin: 0 auto;
+  position: relative;
+  overflow: auto;
 }
 
 .input {
@@ -36,12 +38,12 @@
 }
 
 .mat-column-quantita {
-  min-width: 150px;
+  min-width: 100px;
   font-size:1rem;
 }
 
 .mat-column-tono {
-  min-width: 150px;
+  min-width: 100px;
   font-size:1rem;
 }
 
@@ -53,8 +55,24 @@
   font-size:1rem;
 }
 
+.mat-column-flRiservato {
+  text-align: center;
+}
+
+.mat-column-flConsegnato {
+  text-align: center;
+}
+
+.mat-column-flOrdinato {
+  text-align: center;
+}
+
+.mat-column-flDisponibile{
+  text-align: center;
+}
+
 .mat-column-tono>input{
-  width:fit-content;
+  width:100%;
 }
 
 tr.example-detail-row {

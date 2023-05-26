@@ -257,16 +257,16 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   editDettaglio(ordine: OrdineCliente) {
     let url = "/articoli/edit/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (this.filtro && this.filtro.status) {
-      url += "/" + this.filtro.status;
+    if (ordine.status) {
+      url += "/" + ordine.status;
     }
     this.route.navigateByUrl(url);
   }
 
   vediDettaglio(ordine: OrdineCliente) {
     let url = "/articoli/view/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (this.filtro && this.filtro.status) {
-      url += "/" + this.filtro.status;
+    if (ordine.status) {
+      url += "/" + ordine.status;
     }
     this.route.navigateByUrl(url);
   }
@@ -314,7 +314,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
               },
               error: (e) => {
                 console.error(e);
-                this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
                   duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
                 this.loader = false;

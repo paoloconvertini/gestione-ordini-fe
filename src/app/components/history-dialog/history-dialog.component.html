@@ -10,18 +10,23 @@
       [colspan]="3"
       [rowspan]="1">
       <mat-card-header>
-        <mat-card-title>{{evento.azione !== 'NON_DISPONIBILE' ? evento.azione : 'NON DISPONIBILE'}}</mat-card-title>
+        <mat-card-title *ngIf="evento.azione !== 'NON_DISPONIBILE' && evento.azione !== 'QTA_RISERVATA'
+        && evento.azione !== 'PRONTO_CONSEGNA' ">{{evento.azione}}</mat-card-title>
+        <mat-card-title *ngIf="evento.azione == 'NON_DISPONIBILE'">NON DISPONIBILE</mat-card-title>
+        <mat-card-title *ngIf="evento.azione == 'QTA_RISERVATA'">QUANTITÀ RISERVATA</mat-card-title>
+        <mat-card-title *ngIf="evento.azione == 'PRONTO_CONSEGNA'">PRONTO CONSEGNA</mat-card-title>
       </mat-card-header>
     </mat-grid-tile>
     <mat-grid-tile
       [colspan]="3"
       [rowspan]="1">
       <mat-card-content>
-        <p *ngIf="evento.azione === 'TONO' || evento.azione === 'QUANTITA'">
-          L'utente <strong>{{evento.username}}</strong> ha inserito il seguente valore: <em>{{evento.tono? evento.tono : evento.quantita}}</em>
+        <p *ngIf="evento.azione === 'TONO' || evento.azione === 'QUANTITA' || evento.azione === 'QTA_RISERVATA'">
+          L'utente <strong>{{evento.username}}</strong> ha inserito il seguente valore: <em>{{evento.tono? evento.tono : evento.quantita? evento.quantita : evento.qtaRiservata}}</em>
         </p>
-        <p *ngIf="evento.azione !== 'TONO' && evento.azione !== 'QUANTITA'">
-          L'utente <strong>{{evento.username}}</strong> ha modificato il flag.
+        <p *ngIf="evento.azione !== 'TONO' && evento.azione !== 'QUANTITA' && evento.azione !== 'QTA_RISERVATA'">
+          <span *ngIf="evento.azione !== 'PRONTO_CONSEGNA'">L'utente <strong>{{evento.username}}</strong> ha modificato il flag.</span>
+          <span *ngIf="evento.azione === 'PRONTO_CONSEGNA'">L'utente <strong>{{evento.username}}</strong> ha modificato il flag e ha inserigo il seguente valore: {{evento.qtaProntoConsegna}}</span>
         </p>
       </mat-card-content>
     </mat-grid-tile>

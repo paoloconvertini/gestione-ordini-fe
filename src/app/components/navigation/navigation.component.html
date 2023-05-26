@@ -34,8 +34,8 @@
   <mat-toolbar-row>
     <button mat-button [matMenuTriggerFor]="clienti">Ordine Clienti</button>
     <mat-menu #clienti="matMenu">
-      <button mat-menu-item *ngIf="!isAmministrativo && !isLogistica" class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']">Da processare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Tutti</button>
+      <button mat-menu-item *ngIf="!isAmministrativo && !isLogistica" class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']">Da processare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']">Da ordinare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</button>
