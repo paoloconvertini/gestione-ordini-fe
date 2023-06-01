@@ -21,7 +21,7 @@
 
 .login-container{
   display: flex;
-  justify-content: center
+  justify-content: center;
 }
 
 .mat-card-container {

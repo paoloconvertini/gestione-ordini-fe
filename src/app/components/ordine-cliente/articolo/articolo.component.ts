@@ -20,6 +20,8 @@ import {FiltroArticoli} from "../../../models/FiltroArticoli";
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
+import {Acconto} from "../../../models/Acconto";
+import {MatTableDataSource} from "@angular/material/table";
 
 export interface Option {
   name: string,
@@ -50,16 +52,19 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   //subscription!: Subscription;
   @Input()
   user: any;
+  loaderAcconti: boolean = false;
   loaderBolle: boolean = false;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   isLogistica: boolean = false;
+  showAcconti: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
   bolle: Bolla[] = [];
+  acconti: Acconto[] = [];
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
   radioConsegnatoOptions: OptionCons[] = [
     {name: "Da consegnare", checked: false, value: 0},
@@ -67,8 +72,9 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     {name: "Pronto consegna", checked: false, value: 2},
     {name: "Tutti", checked: false, value: 3}
   ];
-  radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: true}, {name: "Tutti", checked: false}];
+  radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita'];
+  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzo'];
   expandedElement: any;
 
 
@@ -92,9 +98,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       this.filtroArticoli.flConsegna = 0;
       // @ts-ignore
       this.radioConsegnatoOptions[0].checked = true;
-    }
-    if (this.status === 'INCOMPLETO' && this.isMagazziniere) {
-      this.filtroArticoli.flDaRiservare = true;
     }
     if (this.isLogistica) {
       this.filtroArticoli.flConsegna = 2;
@@ -429,5 +432,26 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         }
       });
     }
+  }
+
+  mostraAcconti(sottoConto: string) {
+    this.showAcconti = !this.showAcconti;
+    if(this.showAcconti){
+      this.loaderAcconti = true;
+      this.service.getAcconti(sottoConto).pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (data: Acconto[]) => {
+            if (data) {
+              this.acconti = data;
+            }
+            this.loaderAcconti = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loaderAcconti = false;
+          }
+        })
+    }
+
   }
 }
