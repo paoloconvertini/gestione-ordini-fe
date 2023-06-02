@@ -277,7 +277,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       .subscribe({
         next: (res: any) => {
           if (res && !res.error) {
-            this.refreshPage();
+            this.retrieveList();
           }
           this.loader = false
         }, error: (e: any) => {
