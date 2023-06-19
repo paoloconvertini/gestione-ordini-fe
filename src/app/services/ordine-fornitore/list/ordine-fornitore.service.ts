@@ -20,14 +20,18 @@ export class OrdineFornitoreService extends CommonService{
   }
 
   getAllOaf(status:any): Observable<any> {
-    return this.http.get<any>(`${this.url}/${status}`);
+    let url = `${this.url}`;
+    if(status) {
+      url += `/${status}`;
+    }
+    return this.http.get<any>(url);
   }
 
-  richiediOafApprovazioneAll(data: any): Observable<any> {
-    return this.http.post(`${this.url}/richiediApprovazione`, data);
+  richiediOafApprovazioneArticoli(anno: any, serie: any, progressivo: any, data: any): Observable<any> {
+    return this.http.post(`${this.url}/articoli/richiediApprovazione/${anno}/${serie}/${progressivo}`, data);
   }
 
-  richiediOafApprovazione(anno: any, serie: any, progressivo: any): Observable<any> {
+  richiediOafApprovazione(anno: any, serie: any, progressivo: any ): Observable<any> {
     return this.http.get(`${this.url}/richiediApprovazione/${anno}/${serie}/${progressivo}`);
   }
 }

@@ -73,8 +73,12 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   apriDettaglio(ordine: OrdineCliente) {
-    this.route.navigateByUrl("/oaf/articoli/" + ordine.anno
-      + "/" + ordine.serie + "/" + ordine.progressivo + "/" + this.status);
+    let url = "/oaf/articoli/" + ordine.anno
+      + "/" + ordine.serie + "/" + ordine.progressivo;
+    if(this.status) {
+      url += "/" + this.status
+    }
+    this.route.navigateByUrl(url);
   }
 
 }

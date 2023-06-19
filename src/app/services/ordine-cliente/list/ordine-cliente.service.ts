@@ -4,6 +4,7 @@ import {CommonService} from "../../CommonSerivce";
 import {environment} from "../../../../environments/environment";
 import {Observable} from "rxjs";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {OrdineCliente} from "../../../models/ordine-cliente";
 
 const url = environment.baseUrl + environment.ORDINI_CLIENTI;
 @Injectable({
@@ -41,5 +42,9 @@ export class OrdineClienteService extends CommonService{
 
   getStati() : Observable<any> {
     return this.http.get(`${this.url}/getStati`);
+  }
+
+  download(ordine: OrdineCliente) {
+    window.document.location.href = `${this.url}/downloadOrdine/${ordine.sottoConto}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
   }
 }

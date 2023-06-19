@@ -324,4 +324,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       });
     }
   }
+
+  downloadOrdine(ordine: OrdineCliente) {
+    this.service.download(ordine);
+  }
 }

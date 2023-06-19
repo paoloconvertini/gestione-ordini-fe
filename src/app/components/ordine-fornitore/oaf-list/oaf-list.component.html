@@ -2,6 +2,7 @@
   <div class="row">
     <div class="col-md-12  ordine-title">
       ORDINI A FORNITORE
+      <span *ngIf="!status"> SOSPESI</span>
       <span *ngIf="status==='F'"> APPROVATI</span>
       <span *ngIf="status==='T'"> DA APPROVARE</span>
     </div>

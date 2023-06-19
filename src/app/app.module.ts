@@ -49,6 +49,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule} from '@angular/material/core';
 import {MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
 import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-note-dialog/ordine-cliente-note-dialog.component';
+import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiungi-oafdialog/aggiungi-oafdialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -75,7 +76,8 @@ export const DateFormats = {
     WarnDialogComponent, AddFornitoreDialogComponent, ResetPasswordComponent, UserListComponent,
     UserDetailComponent,
     RoleComponent,
-    OrdineClienteNoteDialogComponent
+    OrdineClienteNoteDialogComponent,
+    AggiungiOAFDialogComponent
   ],
   imports: [
     BrowserModule,

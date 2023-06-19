@@ -17,11 +17,9 @@ import {OrdineDettaglio} from "../../../models/ordine-dettaglio";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Bolla} from "../../../models/Bolla";
 import {FiltroArticoli} from "../../../models/FiltroArticoli";
-import {OrdineCliente} from "../../../models/ordine-cliente";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {Acconto} from "../../../models/Acconto";
-import {MatTableDataSource} from "@angular/material/table";
 
 export interface Option {
   name: string,
@@ -72,7 +70,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     {name: "Pronto consegna", checked: false, value: 2},
     {name: "Tutti", checked: false, value: 3}
   ];
-  radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
+  //radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita'];
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzo'];
   expandedElement: any;
@@ -206,12 +204,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   checkFlags(articolo: any, from: number) {
     if (from === 1) {
-      if (articolo.geFlagNonDisponibile) {
-        articolo.geFlagNonDisponibile = false;
+      if (articolo.flagNonDisponibile) {
+        articolo.flagNonDisponibile = false;
       }
     } else if (from === 2) {
-      if (articolo.geFlagRiservato) {
-        articolo.geFlagRiservato = false;
+      if (articolo.flagRiservato) {
+        articolo.flagRiservato = false;
       }
     }
   }
@@ -334,7 +332,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.route.navigate(['/ordini-clienti', this.status]);
+              this.route.navigate(['/ordini-clienti']);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -342,7 +340,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           }
         })
     } else {
-      this.route.navigate(['/ordini-clienti', this.status]);
+      this.route.navigate(['/ordini-clienti']);
     }
   }
 
@@ -372,27 +370,37 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     let found = false;
     for (const filterDatum of this.dataSource.filteredData) {
       // @ts-ignore
-      if(filterDatum.tipoRigo !== 'C' && filterDatum.geFlagOrdinato && !filterDatum.geFlagRiservato) {
+      if(filterDatum.tipoRigo !== 'C' && filterDatum.flagOrdinato && !filterDatum.flagRiservato) {
         found = true;
         break;
       }
     }
     return found;
+
+
   }
 
   checkQta(articolo:any) {
     articolo.qtaRiservata = articolo.quantita;
-    if(!articolo.geFlagRiservato) {
+    if(!articolo.flagRiservato) {
       articolo.qtaRiservata = undefined;
     }
   }
 
   checkFlagRiservato(articolo:any) {
-      articolo.geFlagRiservato = (articolo.qtaRiservata === articolo.quantita);
+      articolo.flagRiservato = (articolo.qtaRiservata === articolo.quantita);
+  }
+
+  checkFlagProntoConsegna(articolo:any) {
+    articolo.flProntoConsegna = (articolo.qtaProntoConsegna && articolo.qtaProntoConsegna !== 0);
   }
 
   checkQtaProntoConsegna(articolo:any) {
-    articolo.qtaProntoConsegna = articolo.quantita;
+    if(articolo.flProntoConsegna) {
+      articolo.qtaProntoConsegna = articolo.quantita;
+    } else {
+      articolo.qtaProntoConsegna = undefined;
+    }
   }
 
   aggiungiNote(articolo: any) {

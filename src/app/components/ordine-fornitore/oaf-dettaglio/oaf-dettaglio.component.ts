@@ -8,6 +8,7 @@ import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.compon
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {takeUntil} from "rxjs";
 import {OrdineFornitoreDettaglio} from "../../../models/ordine-fornitore-dettaglio";
+import {AggiungiOAFDialogComponent} from "../aggiungi-oafdialog/aggiungi-oafdialog.component";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -24,7 +25,8 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   serie: any;
   progressivo: any;
   status: any;
-  displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'azioni'];
+  rigo: number = 0;
+  displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'sconto', 'prezzoTot', 'azioni'];
   ordineFornitoreDettaglio: OrdineFornitoreDettaglio = new OrdineFornitoreDettaglio();
 
   ngOnInit(): void {
@@ -32,7 +34,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       this.anno = params.anno;
       this.serie = params.serie;
       this.progressivo = params.progressivo;
-      this.status = params.status;
+      this.status = params.status?params.status:undefined;
     });
     this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
   }
@@ -53,6 +55,36 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     }
   }
 
+  annulla() {
+    let url = '/ordini-fornitore';
+    if(this.status) {
+      url += '/' + this.status;
+    }
+      this.route.navigateByUrl(url);
+  }
+
+  aggiungiRigo() {
+    const dialogRef = this.dialog.open(AggiungiOAFDialogComponent, {
+      width: '80%',
+      data:{rigo: this.rigo}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loader = true
+        this.service.salvaOafArticoli(this.anno, this.serie, this.progressivo, result).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              if (!res.error) {
+                this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
+              }
+            },
+            error: (e) => console.error(e)
+          });
+      }
+    });
+  }
+
   getOafArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
     this.loader = true;
     setTimeout(() => {
@@ -61,6 +93,10 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
           next: (data: OrdineFornitoreDettaglio | undefined) => {
             if(data) {
               this.ordineFornitoreDettaglio = data;
+              if(this.ordineFornitoreDettaglio.articoli) {
+                this.ordineFornitoreDettaglio.articoli.forEach(a => this.calcolaTotale(a));
+               this.rigo = this.ordineFornitoreDettaglio.articoli[this.ordineFornitoreDettaglio.articoli.length -1].rigo;
+              }
               this.createPaginator(this.ordineFornitoreDettaglio.articoli);
             }
             this.loader = false;
@@ -106,8 +142,62 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       });
   }
 
-  salvaOrdine() {
+  salva() {
     this.updateOafArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
   }
 
+  richiediApprovazione() {
+    this.openConfirmDialog(null, null);
+  }
+
+  openConfirmDialog(extraProp: any, preProp: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+          let data:any = [];
+          this.dataSource.filteredData.forEach(d => data.push(d));
+          data.forEach((d:any) => delete d["prezzoTot"]);
+          this.oafService.richiediOafApprovazioneArticoli(this.anno, this.serie, this.progressivo, data).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                if (!res.error) {
+                  this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+                }
+              },
+              error: (e) => console.error(e)
+            });
+        }
+      });
+  }
+
+  calcolaTotale(articolo: any) {
+    articolo.prezzoTot = 0;
+    let prezzo = articolo.oprezzo;
+    if(articolo.scontoF1) {
+      prezzo = (prezzo - (prezzo*(articolo.scontoF1/100)));
+    }
+    if(articolo.scontoF2) {
+      prezzo = (prezzo - (prezzo*(articolo.scontoF2/100)));
+    }
+    if(articolo.fscontoP) {
+      prezzo = (prezzo - (prezzo*(articolo.fscontoP/100)));
+    }
+    articolo.prezzoTot = prezzo * articolo.oquantita;
+    this.ordineFornitoreDettaglio.totale = 0;
+    this.ordineFornitoreDettaglio.articoli?.forEach(a => this.ordineFornitoreDettaglio.totale += a.prezzoTot);
+  }
 }

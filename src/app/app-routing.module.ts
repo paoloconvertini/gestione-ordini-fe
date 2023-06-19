@@ -48,6 +48,11 @@ const routes: Routes = [
     component: OafListComponent,
   },
   {
+    path: 'ordini-fornitore',
+    canActivate: [AuthGuard],
+    component: OafListComponent,
+  },
+  {
     path: 'articoli/edit/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
@@ -59,6 +64,11 @@ const routes: Routes = [
   },
   {
     path: 'oaf/articoli/:anno/:serie/:progressivo/:status',
+    canActivate: [AuthGuard],
+    component: OafDettaglioComponent,
+  },
+  {
+    path: 'oaf/articoli/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: OafDettaglioComponent,
   },

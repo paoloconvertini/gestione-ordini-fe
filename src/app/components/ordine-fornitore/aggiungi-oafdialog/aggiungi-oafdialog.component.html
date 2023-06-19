@@ -1,0 +1,118 @@
+<form (ngSubmit)="submitForm()" [formGroup]="rigoOafForm" autocomplete="off" class="">
+  <div class="container">
+    <h3 class="title">
+      Aggiungi rigo
+    </h3>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Tipo rigo
+          </mat-label>
+          <input
+            matInput
+            formControlName="tipoRigo"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Codice
+          </mat-label>
+          <input
+            matInput
+            formControlName="oarticolo"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Descrizione
+          </mat-label>
+          <input
+            matInput
+            formControlName="odescrArticolo"
+            required
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Quantità
+          </mat-label>
+          <input
+            matInput
+            formControlName="oquantita"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            UM
+          </mat-label>
+          <input
+            matInput
+            formControlName="ounitaMisura"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Prezzo
+          </mat-label>
+          <input
+            matInput
+            formControlName="oprezzo"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Sconto 1
+          </mat-label>
+          <input
+            matInput
+            formControlName="scontoF1"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Sconto 2
+          </mat-label>
+          <input
+            matInput
+            formControlName="scontoF2"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Sconto 3
+          </mat-label>
+          <input
+            matInput
+            formControlName="fscontoP"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="float-end">
+      <button mat-raised-button mat-dialog-close>Annulla</button>&nbsp;&nbsp;
+      <button mat-raised-button color="primary" type="submit">Salva</button>
+    </div>
+  </div>
+</form>
+

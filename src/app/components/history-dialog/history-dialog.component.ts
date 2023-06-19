@@ -55,6 +55,12 @@ export class HistoryDialogComponent extends CommonListComponent implements OnIni
             if (d.azione === 'CONSEGNATO') {
               d.color = '#aff1b6';
             }
+            if (d.azione === 'PRONTO_CONSEGNA') {
+              d.color = '#057712';
+            }
+            if (d.azione === 'QTA_RISERVATA') {
+              d.color = 'rgba(55,19,143,0.79)';
+            }
           })
           this.list = data;
         },

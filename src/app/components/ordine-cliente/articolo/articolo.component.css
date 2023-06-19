@@ -145,3 +145,7 @@ tr.example-detail-row {
   align-items: center;
   column-gap: 25px;
 }
+
+.nota-presente {
+  color:#d11f0c!important;
+}

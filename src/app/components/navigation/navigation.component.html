@@ -43,6 +43,7 @@
     </mat-menu>
     <button mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
     <mat-menu #fornitori="matMenu">
+      <button mat-menu-item class="pointer" routerLink="/ordini-fornitore">Sospesi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'DA_APPROVARE']">Da approvare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'APPROVATO']">Approvati</button>
     </mat-menu>

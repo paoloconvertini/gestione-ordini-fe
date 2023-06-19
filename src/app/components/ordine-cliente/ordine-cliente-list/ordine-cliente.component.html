@@ -25,7 +25,8 @@
       <mat-radio-group (change)="retrieveList()"
                        aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
         <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
-                          [value]="option.codVenditore">{{option.fullname}}</mat-radio-button>
+                          [value]="option.codVenditore">{{option.fullname}}
+        </mat-radio-button>
       </mat-radio-group>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12">
@@ -83,7 +84,7 @@
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ordine">
-              <button (click)="sbloccaOrdine(ordine)" mat-icon-button matTooltip="Sblocca ordine" *ngIf="isAdmin">
+              <button (click)="sbloccaOrdine(ordine)" mat-icon-button matTooltip="Sblocca ordine" *ngIf="isAdmin && ordine.isLocked">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock_open" color="primary"></mat-icon>
               </button>
               <button class="no-pointer" mat-icon-button [matTooltip]="'Ordine in carico a ' + ordine.userLock" *ngIf="ordine.isLocked">
@@ -96,7 +97,10 @@
                 <mat-icon  aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
               <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"></mat-icon>
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
+              </button>
+              <button *ngIf="ordine.hasFirma" (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file">
+                <mat-icon aria-hidden="false" aria-label="download" fontIcon="file_download" color="primary"></mat-icon>
               </button>
               <button *ngIf="!ordine.hasFirma && (isVenditore || isAdmin)" (click)="apriFirma(ordine)" mat-icon-button matTooltip="Firma ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="draw" color="primary"></mat-icon>
