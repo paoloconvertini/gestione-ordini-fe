@@ -26,6 +26,8 @@
             </button>
           </span>
           <br>
+          <span>Tel: <b>{{ordineDettaglio.telefono}}</b></span>
+          <br>
           <span>Totale: <b>{{ordineDettaglio.totale | currency: 'EUR':'symbol'}}</b></span>
         </mat-card-content>
       </mat-card>
@@ -339,7 +341,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
       <button mat-raised-button color="primary" [disabled]="ordineDettaglio.locked"
               *ngIf="status !== 'ARCHIVIATO' && ( isAdmin || (isAmministrativo && status === 'DA_ORDINARE') ||
-                      (isMagazziniere && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO' || status === 'DA_ORDINARE')))"
+                      (isMagazziniere && ( status === 'DA_PROCESSARE' || status === 'INCOMPLETO' || status === 'DA_ORDINARE' || status==='COMPLETO')))"
               (click)="salvaOrdine()" class="margin-top">Salva
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="warn" [disabled]="ordineDettaglio.locked || checkRiservati()"

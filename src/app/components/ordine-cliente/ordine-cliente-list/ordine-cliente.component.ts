@@ -137,7 +137,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     if (this.isVenditore) {
       this.getVenditori();
     }
-    this.getStati();
     this.loader = true;
     setTimeout(() => {
       this.service.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
@@ -146,6 +145,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             data?.forEach(d => {
               d.isLocked = d.locked && this.user !== d.userLock;
             })
+            this.filtro.status = '';
+            this.getStati();
             this.createPaginator(data);
             this.loader = false;
           },
