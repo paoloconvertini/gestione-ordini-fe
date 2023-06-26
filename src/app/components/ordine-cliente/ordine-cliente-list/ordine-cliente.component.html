@@ -101,7 +101,7 @@
               <button (click)="sbloccaOrdine(ordine)" mat-icon-button matTooltip="Sblocca ordine" *ngIf="isAdmin && ordine.isLocked">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock_open" color="primary"></mat-icon>
               </button>
-              <button class="no-pointer" mat-icon-button [matTooltip]="'Ordine in carico a ' + ordine.userLock" *ngIf="ordine.isLocked">
+              <button  mat-icon-button [matTooltip]="'Ordine in carico a ' + ordine.userLock" *ngIf="ordine.isLocked" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock" color="primary"></mat-icon>
               </button>
               <button *ngIf="ordine.isLocked || (isVenditore && !isAdmin)" (click)="vediDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
@@ -127,13 +127,13 @@
                       matTooltip="Apri ordine">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
               </button>
-              <button class="no-pointer" mat-icon-button matTooltip="Sono presenti articoli consegnati senza bolla" *ngIf="ordine.warnNoBolla">
+              <button  mat-icon-button matTooltip="Sono presenti articoli consegnati senza bolla" *ngIf="ordine.warnNoBolla" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon class="warnNoBolla" aria-hidden="false" aria-label="warning" fontIcon="report" color="warn"></mat-icon>
               </button>
-              <button class="no-pointer" mat-icon-button matTooltip="Ordine non firmato dal cliente" *ngIf="(filtro.status === 'COMPLETO') && !ordine.hasFirma">
+              <button  mat-icon-button matTooltip="Ordine non firmato dal cliente" *ngIf="(filtro.status === 'COMPLETO') && !ordine.hasFirma" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon class="warnNoBolla warnNoFirma" aria-hidden="false" aria-label="warning" fontIcon="report"></mat-icon>
               </button>
-              <button class="no-pointer" mat-icon-button [matTooltip]="'Articoli in pronta consegna'" *ngIf="ordine.hasProntoConsegna">
+              <button  mat-icon-button [matTooltip]="'Articoli in pronta consegna'" *ngIf="ordine.hasProntoConsegna" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="rocket_launch" color="primary"></mat-icon>
               </button>
             </td>

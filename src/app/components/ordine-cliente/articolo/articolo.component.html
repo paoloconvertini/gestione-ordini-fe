@@ -97,7 +97,7 @@
                           [value]="option.checked">{{option.name}}</mat-radio-button>
       </mat-radio-group>
     </div>
-    <div *ngIf="!isAmministrativo && (status !== 'DA_PROCESSARE' || isLogistica)" class="col-lg-8 col-md-12 col-sm-12">
+    <div *ngIf="status !== 'ARCHIVIATO' && (!isAmministrativo && (status !== 'DA_PROCESSARE' || isLogistica))" class="col-lg-8 col-md-12 col-sm-12">
       <mat-radio-group (change)="getArticoliByOrdineId()"
                        aria-label="Select an option" [(ngModel)]="filtroArticoli.flConsegna">
         <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"
@@ -282,18 +282,18 @@
                 matTooltip="Associa fornitore">
                 <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
               </button>
-              <button class="no-pointer" *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-icon-button
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.annoOAF" mat-icon-button
                       matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
-                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}">
+                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore"
-                          color="primary">fact_check</mat-icon>
+                          color="primary">store</mat-icon>
               </button>
-              <button class="no-pointer" *ngIf="articolo.tipoRigo !=='C' && articolo.noteOrdCli && (isAdmin || isAmministrativo || isVenditore)" mat-icon-button
-                      matTooltip="{{articolo.noteOrdCli}}">
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.noteOrdCli && (isAdmin || isAmministrativo || isVenditore)" mat-icon-button
+                      matTooltip="{{articolo.noteOrdCli}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore"
-                          color="primary">event_note</mat-icon>
+                          color="primary">info</mat-icon>
               </button>
               <button *ngIf="articolo.tipoRigo !=='C' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo.progrGenerale); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
                 <mat-icon color="primary">local_shipping</mat-icon>

@@ -367,6 +367,9 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   checkRiservati() {
+    if(this.isAmministrativo){
+      return false;
+    }
     let found = false;
     for (const filterDatum of this.dataSource.filteredData) {
       // @ts-ignore
