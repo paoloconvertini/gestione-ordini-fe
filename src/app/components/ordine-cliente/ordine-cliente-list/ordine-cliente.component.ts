@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../../commonListComponent";
@@ -12,7 +12,6 @@ import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 import {EmailService} from "../../../services/email/email.service";
 import {AuthService} from "../../../services/auth/auth.service";
 import {takeUntil} from "rxjs";
-import {ArticoloComponent} from "../articolo/articolo.component";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
@@ -37,7 +36,7 @@ export interface OptStatus {
 })
 export class OrdineClienteComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'cliente', 'data', 'status', 'azioni'];
+  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'provincia', 'data', 'status', 'azioni'];
   signImage: any;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;

@@ -14,7 +14,7 @@ import {MatDialog} from "@angular/material/dialog";
 })
 export class OafListComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'fornitore', 'data', 'azioni'];
+  displayedColumns: string[] = ['numero', 'fornitore', 'data', 'dataModifica',  'azioni'];
   status?: string;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;

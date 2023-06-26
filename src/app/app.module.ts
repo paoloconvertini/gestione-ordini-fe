@@ -50,6 +50,7 @@ import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule} fro
 import {MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
 import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-note-dialog/ordine-cliente-note-dialog.component';
 import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiungi-oafdialog/aggiungi-oafdialog.component';
+import {MatSortModule} from "@angular/material/sort";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -79,41 +80,42 @@ export const DateFormats = {
     OrdineClienteNoteDialogComponent,
     AggiungiOAFDialogComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    HttpClientModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080', 'localhost:8081', '192.168.1.150:8080', '192.168.1.150:8181', '192.168.1.60:8080', '192.168.1.56:8080', '192.168.1.56:8081']
-      }
-    }),
-    MatProgressSpinnerModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatCheckboxModule,
-    FormsModule,
-    MatTooltipModule,
-    MatGridListModule,
-    MatRadioModule,
-    MatSidenavModule,
-    MatMenuModule,
-    MatAutocompleteModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatMomentDateModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatCardModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        HttpClientModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter: tokenGetter,
+                allowedDomains: ['localhost:8080', 'localhost:8081', '192.168.1.150:8080', '192.168.1.150:8181', '192.168.1.60:8080', '192.168.1.56:8080', '192.168.1.56:8081']
+            }
+        }),
+        MatProgressSpinnerModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatCheckboxModule,
+        FormsModule,
+        MatTooltipModule,
+        MatGridListModule,
+        MatRadioModule,
+        MatSidenavModule,
+        MatMenuModule,
+        MatAutocompleteModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatMomentDateModule,
+        MatSortModule
+    ],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
