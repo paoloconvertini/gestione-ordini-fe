@@ -1,6 +1,6 @@
-<h1 mat-dialog-title>Ordine creato per i seguenti fornitori:</h1>
-<div mat-dialog-content *ngFor="let fornitore of data; index as i">
-    {{fornitore}}
+<h1 mat-dialog-title>{{data.msg}}</h1>
+<div mat-dialog-content *ngFor="let element of data.data; index as i">
+    {{element}}
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Chiudi</button>

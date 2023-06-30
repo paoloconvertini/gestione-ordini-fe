@@ -4,7 +4,6 @@ import {MatDialog} from "@angular/material/dialog";
 import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
 import {OafArticoloService} from "../../../services/ordine-fornitore/dettaglio/oaf-articolo.service";
-import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {takeUntil} from "rxjs";
 import {OrdineFornitoreDettaglio} from "../../../models/ordine-fornitore-dettaglio";
@@ -147,40 +146,17 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   }
 
   richiediApprovazione() {
-    this.openConfirmDialog(null, null);
-  }
-
-  openConfirmDialog(extraProp: any, preProp: any) {
-    let msg = '';
-    if (preProp) {
-      msg += preProp;
-    }
-    msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
-    if (extraProp) {
-      msg += " ";
-      msg += extraProp;
-    }
-    msg += '?';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '30%',
-      data: {msg: msg},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-          let data:any = [];
-          this.dataSource.filteredData.forEach(d => data.push(d));
-          data.forEach((d:any) => delete d["prezzoTot"]);
-          this.oafService.richiediOafApprovazioneArticoli(this.anno, this.serie, this.progressivo, data).pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe({
-              next: (res) => {
-                if (!res.error) {
-                  this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
-                }
-              },
-              error: (e) => console.error(e)
-            });
-        }
+    let data:any = [];
+    this.dataSource.filteredData.forEach(d => data.push(d));
+    data.forEach((d:any) => delete d["prezzoTot"]);
+    this.oafService.richiediOafApprovazioneArticoli(this.anno, this.serie, this.progressivo, data).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          if (!res.error) {
+            this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+          }
+        },
+        error: (e) => console.error(e)
       });
   }
 

@@ -7,6 +7,10 @@
   padding-left: 16px;
 }
 
+.mat-column-status{
+  font-size: 13px;
+}
+
 .mat-column-azioni {
   text-align: right;
   font-weight: bold;

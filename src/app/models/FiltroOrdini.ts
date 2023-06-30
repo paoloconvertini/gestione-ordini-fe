@@ -4,4 +4,6 @@ export class FiltroOrdini {
 
   codVenditore:  string = '';
 
+  prontoConsegna: boolean = false;
+
 }

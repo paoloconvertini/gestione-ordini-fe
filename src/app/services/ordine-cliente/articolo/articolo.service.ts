@@ -47,4 +47,8 @@ export class ArticoloService extends CommonService{
   getAcconti(sottoConto: string): Observable<any> {
     return this.http.get(`${this.url}/getAcconti/${sottoConto}`)
   }
+
+  codificaArticoli(list: any): Observable<any> {
+    return this.http.post(`${this.url}/codificaArticoli`, list)
+  }
 }

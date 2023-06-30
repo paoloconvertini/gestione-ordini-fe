@@ -36,12 +36,13 @@ export interface OptStatus {
 })
 export class OrdineClienteComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'provincia', 'data', 'status', 'azioni'];
+  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
   signImage: any;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
+  isLogistica: boolean = false;
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [];
   filtro: FiltroOrdini = new FiltroOrdini();
@@ -60,6 +61,10 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
     if (localStorage.getItem(environment.VENDITORE)) {
       this.isVenditore = true;
+    }
+    if (localStorage.getItem(environment.LOGISTICA)) {
+      this.isLogistica = true;
+      this.filtro.prontoConsegna = true;
     }
   }
 

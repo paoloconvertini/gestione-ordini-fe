@@ -104,9 +104,14 @@
                           [value]="option.value">{{option.name}}</mat-radio-button>
       </mat-radio-group>
     </div>
-    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-8 col-md-6 col-sm-12">
+    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE' && !codifica" class="col-lg-8 col-md-6 col-sm-12">
       <button mat-raised-button color="primary" (click)="creaOrdineForn()" class="float-end">
         Crea Ordine a fornitori
+      </button>
+    </div>
+    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE' && codifica" class="col-lg-8 col-md-6 col-sm-12">
+      <button mat-raised-button color="primary" (click)="codificaArticoli()" class="float-end">
+        Codifica articoli
       </button>
     </div>
     <!--<div *ngIf="isMagazziniere && status === 'INCOMPLETO'" class="col-lg-4 col-md-6 col-sm-12">
@@ -134,8 +139,14 @@
           <ng-container matColumnDef="descrizione">
             <th mat-header-cell *matHeaderCellDef>Descrizione</th>
             <td mat-cell *matCellDef="let articolo">
-              {{articolo.fdescrArticolo}}<br>
-              <b>{{articolo.codArtFornitore}}</b>
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo) && status !== 'DA_ORDINARE'">
+                {{articolo.fdescrArticolo}}<br><b>{{articolo.codArtFornitore}}</b>
+              </span>
+                <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status === 'DA_ORDINARE'" type="text" class="form-control"
+                     [(ngModel)]="articolo.fdescrArticolo" />
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status === 'DA_ORDINARE'" type="text" class="form-control"
+                     [(ngModel)]="articolo.codArtFornitore" />
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -277,7 +288,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':articolo.note}"></mat-icon>
               </button>
               <button
-                *ngIf="isAmministrativo && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo"
+                *ngIf="isAmministrativo && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ'"
                 (click)="addFornitore(articolo.farticolo)" mat-icon-button
                 matTooltip="Associa fornitore">
                 <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
@@ -320,7 +331,7 @@
             </td>
           </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 

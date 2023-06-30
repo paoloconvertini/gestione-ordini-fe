@@ -6,7 +6,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
 import {HistoryDialogComponent} from "../../history-dialog/history-dialog.component";
-import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
@@ -58,6 +57,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   isVenditore: boolean = false;
   isLogistica: boolean = false;
   showAcconti: boolean = false;
+  codifica: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
@@ -165,40 +165,17 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   chiudiOrdine() {
-    this.openConfirmDialog(null, null);
-  }
-
-  openConfirmDialog(extraProp: any, preProp: any) {
-    let msg = '';
-    if (preProp) {
-      msg += preProp;
-    }
-    msg += 'Sei sicuro di aver processato correttamente tutti gli articoli';
-    if (extraProp) {
-      msg += " ";
-      msg += extraProp;
-    }
-    msg += '?';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '30%',
-      data: {msg: msg},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.service.chiudi(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-          next: (res) => {
-            if (!res.error) {
-              let url = '/ordini-clienti';
-              if (res.msg) {
-                url += '/' + res.msg;
-              }
-              this.route.navigate([url]);
-            }
-          },
-          error: (e) => console.error(e)
-        });
-      }
+    this.service.chiudi(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (res) => {
+        if (!res.error) {
+          let url = '/ordini-clienti';
+          if (res.msg) {
+            url += '/' + res.msg;
+          }
+          this.route.navigate([url]);
+        }
+      },
+      error: (e) => console.error(e)
     });
   }
 
@@ -259,7 +236,10 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           if (res && res instanceof Array) {
             const dialogRef = this.dialog.open(WarnDialogComponent, {
               width: '30%',
-              data: res
+              data: {
+                data: res,
+                msg: "Ordine creato per i seguenti fornitori:"
+              }
             });
             dialogRef.afterClosed().subscribe(result => {
 
@@ -354,6 +334,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
               this.ordineDettaglio = data;
               this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
               console.log("bloccato: " + this.ordineDettaglio.locked);
+              for (const a of data.articoli) {
+                if(a.farticolo === '*PZ' || a.farticolo === '*MQ'){
+                  this.codifica = true;
+                  break;
+                }
+              }
             }
             this.createPaginator(this.ordineDettaglio.articoli);
             this.loader = false;
@@ -464,5 +450,39 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         })
     }
 
+  }
+
+  codificaArticoli() {
+    var list = this.ordineDettaglio.articoli?.filter(a => (a.farticolo === '*PZ' || a.farticolo === '*MQ'));
+    this.loader = true;
+    this.service.codificaArticoli(list).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && res instanceof Array) {
+            const dialogRef = this.dialog.open(WarnDialogComponent, {
+              width: '30%',
+              data: {
+                data: res,
+                msg: "La codifica ha prodotti i seguenti errori:"
+              }
+            });
+            dialogRef.afterClosed().subscribe(result => {
+
+            });
+            this.getArticoliByOrdineId();
+          } else if (res.error) {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          }
+        },
+        error: () => {
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.loader = false;
+        }
+      })
   }
 }
