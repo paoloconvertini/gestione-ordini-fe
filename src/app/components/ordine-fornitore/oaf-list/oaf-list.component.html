@@ -20,12 +20,30 @@
       </button>&nbsp;&nbsp;
     </div>
   </div>
+  <div class="row margin-bottom">
+    <div class="col-lg-6 col-md-6 col-sm-6"></div>
+    <div class="col-lg-6 col-md-6 col-sm-6" *ngIf="isAmministrativo && !status">
+      <button class="float-end" (click)="unisciOrdini()" mat-raised-button color="primary" aria-label="ordine">
+        Unisci ordini
+      </button>&nbsp;&nbsp;
+    </div>
+  </div>
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
       <div class="mat-elevation-z8">
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
         <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
-
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox color="primary" *ngIf="isAmministrativo && !status"
+                            (click)="$event.stopPropagation();"
+                            (change)="$event ? selection.toggle(row) : null"
+                            [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="numero">
             <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
@@ -64,7 +82,7 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
 
           <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>

@@ -15,8 +15,8 @@ export class OrdineFornitoreService extends CommonService{
     super(http, url);
   }
 
-  creaOrdineFornitori(anno: any, serie: any, progressivo: any) {
-    return this.http.get<any>(`${this.url}/${anno}/${serie}/${progressivo}`);
+  creaOrdineFornitori(articoli: any) {
+    return this.http.post<any>(`${this.url}`, articoli);
   }
 
   getAllOaf(status:any): Observable<any> {
@@ -34,4 +34,9 @@ export class OrdineFornitoreService extends CommonService{
   richiediOafApprovazione(anno: any, serie: any, progressivo: any ): Observable<any> {
     return this.http.get(`${this.url}/richiediApprovazione/${anno}/${serie}/${progressivo}`);
   }
+
+  unisciOrdini(data: any[]): Observable<any> {
+    return this.http.post(`${this.url}/unisciOrdini`, data);
+  }
+
 }

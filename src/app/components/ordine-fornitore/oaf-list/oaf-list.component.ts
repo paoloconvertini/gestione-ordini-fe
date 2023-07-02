@@ -6,6 +6,9 @@ import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/or
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {takeUntil} from "rxjs";
 import {MatDialog} from "@angular/material/dialog";
+import {SelectionModel} from "@angular/cdk/collections";
+import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-oaf-list',
@@ -14,14 +17,15 @@ import {MatDialog} from "@angular/material/dialog";
 })
 export class OafListComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'fornitore', 'data', 'dataModifica',  'azioni'];
+  displayedColumns: string[] = ['select', 'numero', 'fornitore', 'data', 'dataModifica',  'azioni'];
   status?: string;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
+  selection = new SelectionModel<any>(true, []);
 
-  constructor(private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
+  constructor(private snackbar: MatSnackBar, private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -49,6 +53,29 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       }
     );
 
+  }
+
+  unisciOrdini() {
+    this.loader = true;
+    this.service.unisciOrdini(this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && !res.error) {
+            this.retrieveFornitoreList(null);
+          } else {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          }
+        },
+        error: () => {
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.loader = false;
+        }
+      })
   }
 
   retrieveFornitoreList(status: any): void {

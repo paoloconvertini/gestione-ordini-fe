@@ -19,6 +19,7 @@ import {FiltroArticoli} from "../../../models/FiltroArticoli";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {Acconto} from "../../../models/Acconto";
+import { SelectionModel } from '@angular/cdk/collections';
 
 export interface Option {
   name: string,
@@ -57,10 +58,10 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   isVenditore: boolean = false;
   isLogistica: boolean = false;
   showAcconti: boolean = false;
-  codifica: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
+  selection = new SelectionModel<any>(true, []);
   bolle: Bolla[] = [];
   acconti: Acconto[] = [];
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
@@ -71,7 +72,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     {name: "Tutti", checked: false, value: 3}
   ];
   //radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
-  displayedColumns: string[] = ['codice', 'descrizione', 'quantita'];
+  displayedColumns: string[] = ['select', 'codice', 'descrizione', 'quantita'];
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzo'];
   expandedElement: any;
 
@@ -227,9 +228,27 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     }
   }
 
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
   creaOrdineForn() {
     this.loader = true;
-    this.ordineFornitoreService.creaOrdineFornitori(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+    const list = this.selection.selected.filter(a => a.farticolo !== '*PZ' && a.farticolo !== '*MQ' && a.farticolo !== '*ML');
+    this.ordineFornitoreService.creaOrdineFornitori(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
@@ -334,14 +353,9 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
               this.ordineDettaglio = data;
               this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
               console.log("bloccato: " + this.ordineDettaglio.locked);
-              for (const a of data.articoli) {
-                if(a.farticolo === '*PZ' || a.farticolo === '*MQ'){
-                  this.codifica = true;
-                  break;
-                }
-              }
             }
             this.createPaginator(this.ordineDettaglio.articoli);
+            this.selection = new SelectionModel<any>(true, []);
             this.loader = false;
           },
           error: (e: any) => {
@@ -453,7 +467,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   codificaArticoli() {
-    var list = this.ordineDettaglio.articoli?.filter(a => (a.farticolo === '*PZ' || a.farticolo === '*MQ'));
+    const list = this.ordineDettaglio.articoli?.filter(a => (a.farticolo === '*PZ' || a.farticolo === '*MQ' || a.farticolo === '*ML'));
     this.loader = true;
     this.service.codificaArticoli(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -470,12 +484,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             dialogRef.afterClosed().subscribe(result => {
 
             });
-            this.getArticoliByOrdineId();
+
           } else if (res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
           }
+          this.getArticoliByOrdineId();
         },
         error: () => {
           this.snackbar.open('Errore!', 'Chiudi', {
