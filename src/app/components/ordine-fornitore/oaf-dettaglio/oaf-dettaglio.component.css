@@ -4,6 +4,11 @@
   margin: 20px 20px 0 0;
 }
 
+.mat-column-prezzo {
+  min-width: 100px;
+  font-size:1rem;
+}
+
 .mat-column-quantita {
   min-width: 100px;
   font-size:1rem;

@@ -163,6 +163,9 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   calcolaTotale(articolo: any) {
     articolo.prezzoTot = 0;
     let prezzo = articolo.oprezzo;
+    if(articolo.fscontoArticolo) {
+      prezzo = (prezzo - (prezzo*(articolo.fscontoArticolo/100)));
+    }
     if(articolo.scontoF1) {
       prezzo = (prezzo - (prezzo*(articolo.scontoF1/100)));
     }

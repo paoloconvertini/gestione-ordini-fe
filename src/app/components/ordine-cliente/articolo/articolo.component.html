@@ -165,12 +165,12 @@
                 {{articolo.fdescrArticolo}}
               </span>
               <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo) || status !== 'DA_ORDINARE'">
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo) || status === 'ARCHIVIATO'">
                 {{articolo.fdescrArticolo}}<br><b>{{articolo.codArtFornitore}}</b>
               </span>
-                <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status === 'DA_ORDINARE'" type="text" class="form-control"
+                <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status !== 'ARCHIVIATO'" type="text" class="form-control"
                      [(ngModel)]="articolo.fdescrArticolo" />
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status === 'DA_ORDINARE'" type="text" class="form-control"
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status !== 'ARCHIVIATO'" type="text" class="form-control"
                      [(ngModel)]="articolo.codArtFornitore" />
             </td>
           </ng-container>
