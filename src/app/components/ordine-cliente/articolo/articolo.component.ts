@@ -197,7 +197,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       this.filtroArticoli.serie + '_' + this.filtroArticoli.progressivo;
     {
       const dialogRef = this.dialog.open(FirmaDialogComponent, {
-        width: '30%'
+        width: '60%'
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
@@ -373,7 +373,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     let found = false;
     for (const filterDatum of this.dataSource.filteredData) {
       // @ts-ignore
-      if(filterDatum.tipoRigo !== 'C' && filterDatum.flagOrdinato && !filterDatum.flagRiservato) {
+      if(filterDatum.tipoRigo !== 'C' && filterDatum.flagOrdinato && !filterDatum.flagRiservato ) {
         found = true;
         break;
       }

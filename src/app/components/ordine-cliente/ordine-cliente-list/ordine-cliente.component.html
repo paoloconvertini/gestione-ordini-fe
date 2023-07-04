@@ -97,7 +97,7 @@
               <button (click)="sbloccaOrdine(ordine)" mat-icon-button matTooltip="Sblocca ordine" *ngIf="isAdmin && ordine.isLocked">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock_open" color="primary"></mat-icon>
               </button>
-              <button  mat-icon-button [matTooltip]="'Ordine in carico a ' + ordine.userLock" *ngIf="ordine.isLocked" #tooltip="matTooltip" (click)="tooltip.toggle()">
+              <button  mat-icon-button [matTooltip]="'Ordine in carico a ' + ordine.userLock" *ngIf="ordine.userLock" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock" color="primary"></mat-icon>
               </button>
               <button *ngIf="ordine.isLocked || (isVenditore && !isAdmin)" (click)="vediDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
@@ -119,7 +119,7 @@
                       matTooltip="Invia email ordine cliente">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
-              <button *ngIf="isMagazziniere && filtro.status === 'DA_ORDINARE'" (click)="apri(ordine)" mat-icon-button
+              <button *ngIf="isMagazziniere && filtro.status !== 'ARCHIVIATO' && filtro.status !== 'DA_PROCESSARE'" (click)="apri(ordine)" mat-icon-button
                       matTooltip="Apri ordine">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
               </button>

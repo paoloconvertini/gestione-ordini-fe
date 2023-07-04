@@ -173,7 +173,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             })
           }
-          this.route.navigate(['/ordini-clienti', 'DA_PROCESSARE']);
+          ordine.status = "DA_PROCESSARE";
+          this.editDettaglio(ordine);
         },
         error: (e) => {
           console.error(e);
@@ -190,7 +191,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       ordine.serie + '_' + ordine.progressivo;
     {
       const dialogRef = this.dialog.open(FirmaDialogComponent, {
-        width: '30%'
+        width: '60%'
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
