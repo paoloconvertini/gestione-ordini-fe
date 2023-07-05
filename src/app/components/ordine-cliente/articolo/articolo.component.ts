@@ -73,7 +73,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   ];
   //radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
   displayedColumns: string[] = ['select', 'codice', 'descrizione', 'quantita'];
-  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzo'];
+  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto'];
   expandedElement: any;
 
 

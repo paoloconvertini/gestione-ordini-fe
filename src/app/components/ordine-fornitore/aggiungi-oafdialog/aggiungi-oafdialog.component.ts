@@ -37,6 +37,7 @@ export class AggiungiOAFDialogComponent extends BaseComponent implements OnInit 
       oquantita: new FormControl(''),
       ounitaMisura: new FormControl(''),
       oprezzo: new FormControl(''),
+      fscontoArticolo: new FormControl(''),
       scontoF1: new FormControl(''),
       scontoF2: new FormControl(''),
       fscontoP: new FormControl('')
