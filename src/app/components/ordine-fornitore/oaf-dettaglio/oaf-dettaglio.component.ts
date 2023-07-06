@@ -8,6 +8,7 @@ import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/or
 import {takeUntil} from "rxjs";
 import {OrdineFornitoreDettaglio} from "../../../models/ordine-fornitore-dettaglio";
 import {AggiungiOAFDialogComponent} from "../aggiungi-oafdialog/aggiungi-oafdialog.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -38,7 +39,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
   }
 
-  constructor(private oafService: OrdineFornitoreService, private service: OafArticoloService, private dialog: MatDialog, private route: Router, private router: ActivatedRoute) {
+  constructor(private snackbar: MatSnackBar, private oafService: OrdineFornitoreService, private service: OafArticoloService, private dialog: MatDialog, private route: Router, private router: ActivatedRoute) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -62,23 +63,37 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       this.route.navigateByUrl(url);
   }
 
-  aggiungiRigo() {
+  aggiungiRigo(articolo: any) {
     const dialogRef = this.dialog.open(AggiungiOAFDialogComponent, {
       width: '80%',
-      data:{rigo: this.rigo}
+      data:{rigo: articolo.rigo}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loader = true
-        this.service.salvaOafArticoli(this.anno, this.serie, this.progressivo, result).pipe(takeUntil(this.ngUnsubscribe))
+        result.anno = this.anno;
+        result.serie = this.serie;
+        result.progressivo = this.progressivo;
+        this.service.salvaOafArticoli(result).pipe(takeUntil(this.ngUnsubscribe))
           .subscribe({
             next: (res) => {
               if (!res.error) {
                 this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
+              } else {
+                this.loader = false;
+                this.snackbar.open(res.msg, 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
               }
             },
-            error: (e) => console.error(e)
+            error: (e) => {
+              console.error(e);
+              this.loader = false;
+              this.snackbar.open('Errore! Riga non creata', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+            }
           });
       }
     });

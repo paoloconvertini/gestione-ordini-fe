@@ -28,7 +28,7 @@ export class OafArticoloService extends CommonService{
     return this.http.get(`${this.url}/richiediApprovazione/${anno}/${serie}/${progressivo}`);
   }
 
-  salvaOafArticoli(anno: any, serie: any, progressivo: any, result: any): Observable<any> {
-    return this.http.post(`${this.url}/salvaRigo/${anno}/${serie}/${progressivo}`, result);
+  salvaOafArticoli(result: any): Observable<any> {
+    return this.http.post(`${this.url}/salvaRigo`, result);
   }
 }
