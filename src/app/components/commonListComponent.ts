@@ -23,7 +23,7 @@ export abstract class CommonListComponent extends BaseComponent{
       this.paginator._intl.lastPageLabel = 'Ultima';
       this.paginator.pageSize = 100;
       this.paginator.showFirstLastButtons = true;
-      this.paginator.pageSizeOptions = [5, 10, 25, 50, 100];
+      this.paginator.pageSizeOptions = [5, 10, 15, 25, 50, 100];
       this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
         if (length == 0 || pageSize == 0) {
           return `0 di ${length}`;
