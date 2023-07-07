@@ -9,6 +9,7 @@ import {takeUntil} from "rxjs";
 import {OrdineFornitoreDettaglio} from "../../../models/ordine-fornitore-dettaglio";
 import {AggiungiOAFDialogComponent} from "../aggiungi-oafdialog/aggiungi-oafdialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -196,25 +197,49 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   }
 
   elimina(articolo:any) {
-    this.loader = true;
-    this.service.eliminaArticolo(articolo.anno, articolo.serie, articolo.progressivo, articolo.rigo).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res) => {
-          this.loader = false;
-          if (res && !res.error) {
-            this.snackbar.open('Articolo eliminato', 'Chiudi', {
-              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-            })
-          }
-          this.getOafArticoliByOrdineId(articolo.anno, articolo.serie, articolo.progressivo);
-        },
-        error: (e) => {
-          console.error(e);
-          this.snackbar.open('Errore!', 'Chiudi', {
-            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-          })
-          this.loader = false;
-        }
-      });
+    this.openConfirmDialog('', '', articolo);
   }
+
+  openConfirmDialog(extraProp: any, preProp: any, articolo: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += "Sei sicuro di voler eliminare l'articolo";
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loader = true;
+        this.service.eliminaArticolo(articolo.anno, articolo.serie, articolo.progressivo, articolo.rigo).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open('Articolo eliminato', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+              }
+              this.getOafArticoliByOrdineId(articolo.anno, articolo.serie, articolo.progressivo);
+            },
+            error: (e) => {
+              console.error(e);
+              this.snackbar.open('Errore!', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+              this.loader = false;
+            }
+          });
+      }
+    });
+  }
+
 }

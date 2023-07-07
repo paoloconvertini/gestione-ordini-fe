@@ -47,4 +47,11 @@ export class OrdineFornitoreService extends CommonService{
     return this.http.delete<any>(`${this.url}/eliminaOrdine/${anno}/${serie}/${progressivo}`)
   }
 
+  addNotes(result: any): Observable<any> {
+    return this.http.post(`${this.url}/addNotes`, result)
+  }
+
+  updateOaf(filteredData: any) : Observable<any> {
+      return this.http.put(`${this.url}/inviato`, filteredData);
+  }
 }

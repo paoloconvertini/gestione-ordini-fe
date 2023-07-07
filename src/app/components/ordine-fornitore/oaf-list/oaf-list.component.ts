@@ -9,6 +9,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {SelectionModel} from "@angular/cdk/collections";
 import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
+import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-oaf-list',
@@ -17,7 +20,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 })
 export class OafListComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['select', 'numero', 'fornitore', 'data', 'dataModifica',  'azioni'];
+  displayedColumns: string[] = ['select', 'numero', 'fornitore', 'data', 'dataModifica', 'flInviato', 'azioni'];
   status?: string;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
@@ -51,6 +54,61 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       }
     );
 
+  }
+
+  updateOaf(): void {
+    this.loader = true;
+    this.service.updateOaf(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (!res.error) {
+            this.retrieveFornitoreList(this.status);
+          }
+        },
+        error: (e) => {
+          console.error(e);
+          this.loader = false;
+        }
+      });
+  }
+
+  aggiungiNote(ordine:any) {
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
+    data.anno = ordine.anno;
+    data.serie = ordine.serie;
+    data.progressivo = ordine.progressivo;
+    data.note = ordine.note;
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.service.addNotes(result).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  this.refreshPage();
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
+              }
+            });
+        }
+      });
+    }
   }
 
   unisciOrdini() {
@@ -131,25 +189,48 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   elimina(ordine:any) {
-    this.loader = true;
-    this.service.eliminaOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res) => {
-          this.loader = false;
-          if (res && !res.error) {
-            this.snackbar.open('Ordine eliminato', 'Chiudi', {
-              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-            })
-          }
-          this.retrieveFornitoreList(this.status);
-        },
-        error: (e) => {
-          console.error(e);
-          this.snackbar.open('Errore!', 'Chiudi', {
-            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-          })
-          this.loader = false;
-        }
-      });
+    this.openConfirmDialog('', '', ordine);
+  }
+
+  openConfirmDialog(extraProp: any, preProp: any, ordine: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += "Sei sicuro di voler eliminare l'ordine";
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loader = true;
+        this.service.eliminaOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open('Ordine eliminato', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+              }
+              this.retrieveFornitoreList(this.status);
+            },
+            error: (e) => {
+              console.error(e);
+              this.snackbar.open('Errore!', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+              this.loader = false;
+            }
+          });
+      }
+    });
   }
 }
