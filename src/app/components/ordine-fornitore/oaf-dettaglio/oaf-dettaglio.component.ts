@@ -130,7 +130,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       next: (res) => {
         this.loader = false;
         if(!res.error) {
-          this.route.navigate(['/ordini-fornitore', 'APPROVATO'])
+          this.route.navigate(['/ordini-fornitore'])
         }
       }, error: (e) => {
         console.error(e);
@@ -168,7 +168,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       .subscribe({
         next: (res) => {
           if (!res.error) {
-            this.route.navigate(['/ordini-fornitore', 'DA_APPROVARE']);
+            this.route.navigate(['/ordini-fornitore', 'T']);
           }
         },
         error: (e) => console.error(e)
@@ -193,5 +193,28 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     articolo.prezzoTot = prezzo * articolo.oquantita;
     this.ordineFornitoreDettaglio.totale = 0;
     this.ordineFornitoreDettaglio.articoli?.forEach(a => this.ordineFornitoreDettaglio.totale += a.prezzoTot);
+  }
+
+  elimina(articolo:any) {
+    this.loader = true;
+    this.service.eliminaArticolo(articolo.anno, articolo.serie, articolo.progressivo, articolo.rigo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && !res.error) {
+            this.snackbar.open('Articolo eliminato', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
+          this.getOafArticoliByOrdineId(articolo.anno, articolo.serie, articolo.progressivo);
+        },
+        error: (e) => {
+          console.error(e);
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+          this.loader = false;
+        }
+      });
   }
 }

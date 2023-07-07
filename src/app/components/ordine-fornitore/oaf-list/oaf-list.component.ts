@@ -44,10 +44,8 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   ngOnInit(): void {
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-        if (params.status === 'DA_APPROVARE') {
-          this.status = 'T';
-        } else if (params.status === 'APPROVATO') {
-          this.status = 'F';
+        if (params.status) {
+          this.status = params.status;
         }
       this.retrieveFornitoreList(this.status);
       }
@@ -108,4 +106,50 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.route.navigateByUrl(url);
   }
 
+  apri(ordine:any) {
+    this.loader = true;
+    this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && !res.error) {
+            this.snackbar.open('Ordine riaperto', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
+          this.status = "F";
+          this.apriDettaglio(ordine);
+        },
+        error: (e) => {
+          console.error(e);
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+          this.loader = false;
+        }
+      });
+  }
+
+  elimina(ordine:any) {
+    this.loader = true;
+    this.service.eliminaOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && !res.error) {
+            this.snackbar.open('Ordine eliminato', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
+          this.retrieveFornitoreList(this.status);
+        },
+        error: (e) => {
+          console.error(e);
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+          this.loader = false;
+        }
+      });
+  }
 }

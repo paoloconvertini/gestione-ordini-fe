@@ -1,7 +1,7 @@
 <div style="text-align: center;margin-top:30px;">
   <h4>Firma qui</h4>
   <div>
-    <canvas #signPadCanvas (touchstart)="startSignPadDrawing($event)" (touchmove)="movedFinger($event)"></canvas>
+    <canvas width="600" #signPadCanvas (touchstart)="startSignPadDrawing($event)" (touchmove)="movedFinger($event)"></canvas>
   </div>
   <button color="primary" mat-raised-button (click)="saveSignPad()">Salva</button>
   <button color="secondary" mat-raised-button (click)="clearSignPad()">Pulisci</button>

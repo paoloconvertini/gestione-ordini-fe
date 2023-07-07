@@ -39,4 +39,12 @@ export class OrdineFornitoreService extends CommonService{
     return this.http.post(`${this.url}/unisciOrdini`, data);
   }
 
+  apriOrdine(anno: any, serie: any, progressivo: any) {
+    return this.http.get<any>(`${this.url}/apriOrdine/${anno}/${serie}/${progressivo}`);
+  }
+
+  eliminaOrdine(anno: any, serie: any, progressivo: any): Observable<any> {
+    return this.http.delete<any>(`${this.url}/eliminaOrdine/${anno}/${serie}/${progressivo}`)
+  }
+
 }
