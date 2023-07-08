@@ -112,7 +112,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
                 this.ordineFornitoreDettaglio.articoli.forEach(a => this.calcolaTotale(a));
                this.rigo = this.ordineFornitoreDettaglio.articoli[this.ordineFornitoreDettaglio.articoli.length -1].rigo;
               }
-              this.createPaginator(this.ordineFornitoreDettaglio.articoli);
+              this.createPaginator(this.ordineFornitoreDettaglio.articoli, 100);
             }
             this.loader = false;
           },

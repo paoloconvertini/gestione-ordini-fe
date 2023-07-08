@@ -73,7 +73,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   ];
   //radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
   displayedColumns: string[] = ['select', 'codice', 'descrizione', 'quantita'];
-  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto'];
+  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
   expandedElement: any;
 
 
@@ -354,7 +354,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
               this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
               console.log("bloccato: " + this.ordineDettaglio.locked);
             }
-            this.createPaginator(this.ordineDettaglio.articoli);
+            this.createPaginator(this.ordineDettaglio.articoli, 100);
             this.selection = new SelectionModel<any>(true, []);
             this.loader = false;
           },

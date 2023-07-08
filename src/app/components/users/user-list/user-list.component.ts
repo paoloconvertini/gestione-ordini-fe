@@ -39,7 +39,7 @@ export class UserListComponent extends CommonListComponent implements OnInit {
       this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
-            this.createPaginator(data);
+            this.createPaginator(data, 100);
             this.loader = false;
           },
           error: (e: any) => {

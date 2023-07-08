@@ -126,7 +126,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             data?.forEach(d => {
               d.isLocked = d.locked && this.user !== d.userLock;
             })
-            this.createPaginator(data);
+            this.createPaginator(data, 100);
             this.loader = false;
           },
           error: (e: any) => {
@@ -151,7 +151,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             })
             this.filtro.status = '';
             this.getStati();
-            this.createPaginator(data);
+            this.createPaginator(data, 100);
             this.loader = false;
           },
           error: (e: any) => {

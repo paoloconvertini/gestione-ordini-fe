@@ -36,7 +36,7 @@ export class RoleComponent extends CommonListComponent implements OnInit {
       this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[]) => {
-            this.createPaginator(data);
+            this.createPaginator(data, 100);
             this.loader = false;
           },
           error: (e: any) => {

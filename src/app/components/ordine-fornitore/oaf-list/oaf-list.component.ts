@@ -50,7 +50,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
         if (params.status) {
           this.status = params.status;
         }
-      this.retrieveFornitoreList(this.status);
+        this.retrieveFornitoreList(this.status);
       }
     );
 
@@ -73,7 +73,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       });
   }
 
-  aggiungiNote(ordine:any) {
+  aggiungiNote(ordine: any) {
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;
     data.serie = ordine.serie;
@@ -95,7 +95,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                   })
-                  this.refreshPage();
+                  ordine.note = result.note;
                 }
               },
               error: (e) => {
@@ -139,15 +139,15 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     setTimeout(() => {
       this.service.getAllOaf(status)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-          next: (data: any[] | undefined) => {
-            this.createPaginator(data);
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
-          }
-        })
+        next: (data: any[] | undefined) => {
+          this.createPaginator(data, 15);
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
     }, 2000);
   }
 
@@ -158,37 +158,17 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   apriDettaglio(ordine: OrdineCliente) {
     let url = "/oaf/articoli/" + ordine.anno
       + "/" + ordine.serie + "/" + ordine.progressivo;
-    if(this.status) {
+    if (this.status) {
       url += "/" + this.status
     }
     this.route.navigateByUrl(url);
   }
 
-  apri(ordine:any) {
-    this.loader = true;
-    this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res) => {
-          this.loader = false;
-          if (res && !res.error) {
-            this.snackbar.open('Ordine riaperto', 'Chiudi', {
-              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-            })
-          }
-          this.status = "F";
-          this.apriDettaglio(ordine);
-        },
-        error: (e) => {
-          console.error(e);
-          this.snackbar.open('Errore!', 'Chiudi', {
-            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-          })
-          this.loader = false;
-        }
-      });
+  apri(ordine: any) {
+    this.openConfirmDialogApri('', '', ordine);
   }
 
-  elimina(ordine:any) {
+  elimina(ordine: any) {
     this.openConfirmDialog('', '', ordine);
   }
 
@@ -221,6 +201,49 @@ export class OafListComponent extends CommonListComponent implements OnInit {
                 })
               }
               this.retrieveFornitoreList(this.status);
+            },
+            error: (e) => {
+              console.error(e);
+              this.snackbar.open('Errore!', 'Chiudi', {
+                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+              })
+              this.loader = false;
+            }
+          });
+      }
+    });
+  }
+
+  openConfirmDialogApri(extraProp: any, preProp: any, ordine: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += "Sei sicuro di voler riaprire l'ordine";
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loader = true;
+        this.service.apriOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open('Ordine riaperto', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+              }
+              this.status = "F";
+              this.apriDettaglio(ordine);
             },
             error: (e) => {
               console.error(e);
