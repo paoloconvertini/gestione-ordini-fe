@@ -54,4 +54,8 @@ export class OrdineFornitoreService extends CommonService{
   updateOaf(filteredData: any) : Observable<any> {
       return this.http.put(`${this.url}/inviato`, filteredData);
   }
+
+  download(ordine: any) {
+    window.document.location.href = `${this.url}/scaricaOrdine/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
+  }
 }

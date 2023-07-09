@@ -256,4 +256,8 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       }
     });
   }
+
+  downloadOrdine(ordine: any) {
+    this.service.download(ordine);
+  }
 }
