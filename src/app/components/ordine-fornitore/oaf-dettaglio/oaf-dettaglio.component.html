@@ -52,7 +52,7 @@
           <ng-container matColumnDef="quantita">
             <th mat-header-cell *matHeaderCellDef> Quantità</th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="(!isAmministrativo || !status) && articolo.tipoRigo !== 'C'">{{articolo.oquantita}}&nbsp;</span>
+              <span *ngIf="(!isAmministrativo || status!=='F') && articolo.tipoRigo !== 'C'">{{articolo.oquantita}}&nbsp;</span>
               <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" *ngIf="isAmministrativo && articolo.tipoRigo !== 'C' && status==='F'" type="number" min="0" class="form-control input" [(ngModel)]="articolo.oquantita">
               {{articolo.ounitaMisura}}
             </td>
@@ -61,7 +61,7 @@
           <ng-container matColumnDef="prezzo">
             <th mat-header-cell *matHeaderCellDef> Prezzo</th>
             <td mat-cell *matCellDef="let articolo">
-             <span *ngIf="(!isAmministrativo || !status) && articolo.tipoRigo !== 'C'">{{articolo.oprezzo | currency: 'EUR':'symbol'}}</span>
+             <span *ngIf="(!isAmministrativo || status!=='F') && articolo.tipoRigo !== 'C'">{{articolo.oprezzo | currency: 'EUR':'symbol'}}</span>
               <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" *ngIf="isAmministrativo && articolo.tipoRigo !== 'C' && status==='F'" type="number" min="0" class="form-control" [(ngModel)]="articolo.oprezzo">
             </td>
           </ng-container>
@@ -69,7 +69,7 @@
           <ng-container matColumnDef="sconto">
             <th mat-header-cell *matHeaderCellDef> Sconto</th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="(!isAmministrativo || !status) && articolo.tipoRigo !== 'C'">{{articolo.fscontoArticolo}}&nbsp;{{articolo.scontoF1 }}&nbsp;{{articolo.scontoF2}}&nbsp;{{articolo.fscontoP}}</span>
+              <span *ngIf="(!isAmministrativo || status!=='F') && articolo.tipoRigo !== 'C'">{{articolo.fscontoArticolo}}&nbsp;{{articolo.scontoF1 }}&nbsp;{{articolo.scontoF2}}&nbsp;{{articolo.fscontoP}}</span>
               <span *ngIf="isAmministrativo && articolo.tipoRigo !== 'C' && status==='F'">
                 <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" type="number" min="0" class="form-control input" [(ngModel)]="articolo.fscontoArticolo">
                 <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" type="number" min="0" class="form-control input" [(ngModel)]="articolo.scontoF1">
