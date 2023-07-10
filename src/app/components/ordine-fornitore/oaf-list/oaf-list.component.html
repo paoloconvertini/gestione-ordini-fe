@@ -102,7 +102,7 @@
               <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
               </button>
-              <button (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file">
+              <button (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file" *ngIf="status!=='F'">
                 <mat-icon aria-hidden="false" aria-label="download" fontIcon="file_download" color="primary"></mat-icon>
               </button>
             </td>
