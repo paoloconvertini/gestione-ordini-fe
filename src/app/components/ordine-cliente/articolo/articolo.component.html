@@ -26,7 +26,8 @@
             </button>
           </span>
           <br>
-          <span>Tel: <b>{{ordineDettaglio.telefono}}</b></span>
+          <span style="font-size: 0.75em">Rif: {{ordineDettaglio.riferimento}}</span><br>
+          <span>Tel: <b>{{ordineDettaglio.telefono}} - {{ordineDettaglio.cellulare}}</b></span>
           <br>
           <span>Totale: <b>{{ordineDettaglio.totale | currency: 'EUR':'symbol'}}</b></span>
         </mat-card-content>
