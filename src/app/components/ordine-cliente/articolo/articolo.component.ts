@@ -429,7 +429,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                   })
-                  this.getArticoliByOrdineId();
+                  articolo.note = result.note;
                 }
               },
               error: (e) => {

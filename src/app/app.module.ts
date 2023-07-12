@@ -51,6 +51,7 @@ import {MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-a
 import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-note-dialog/ordine-cliente-note-dialog.component';
 import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiungi-oafdialog/aggiungi-oafdialog.component';
 import {MatSortModule} from "@angular/material/sort";
+import {MatSelectModule} from "@angular/material/select";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -114,7 +115,8 @@ export const DateFormats = {
         MatDatepickerModule,
         MatNativeDateModule,
         MatMomentDateModule,
-        MatSortModule
+        MatSortModule,
+        MatSelectModule
     ],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},

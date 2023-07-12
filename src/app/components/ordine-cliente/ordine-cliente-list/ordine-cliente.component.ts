@@ -45,6 +45,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   isLogistica: boolean = false;
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [];
+  selectStatusOptions: OptStatus[] = [];
   filtro: FiltroOrdini = new FiltroOrdini();
   user: any;
 
@@ -85,6 +86,25 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.user = localStorage.getItem(environment.USERNAME);
   }
 
+  update(ordine: OrdineCliente): void {
+    this.loader = true;
+    this.service.update(ordine).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (!res.error) {
+            this.snackbar.open('Stato aggiornato', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
+        },
+        error: (e) => {
+          console.error(e);
+          this.loader = false;
+        }
+      });
+  }
+
   getStati(): void {
     this.service.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
@@ -96,6 +116,12 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             }
           })
         }
+        this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
+        this.radioPerStatusOptions.forEach(opt=> {
+          if(opt.descrizione === this.filtro.status) {
+            opt.checked = true;
+          }
+        })
       },
       error: (e: any) => {
         console.error(e);
@@ -315,7 +341,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                   })
-                  this.refreshPage();
+                  ordine.note = result.note;
                 }
               },
               error: (e) => {

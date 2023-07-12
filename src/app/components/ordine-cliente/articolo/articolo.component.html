@@ -172,12 +172,12 @@
                 {{articolo.fdescrArticolo}}
               </span>
               <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo) || status === 'ARCHIVIATO'">
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo && !isAdmin) || status === 'ARCHIVIATO'">
                 {{articolo.fdescrArticolo}}<br><b>{{articolo.codArtFornitore}}</b>
               </span>
-                <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status !== 'ARCHIVIATO'" type="text" class="form-control"
+                <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin) && status !== 'ARCHIVIATO'" type="text" class="form-control"
                      [(ngModel)]="articolo.fdescrArticolo" />
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo && status !== 'ARCHIVIATO'" type="text" class="form-control"
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin) && status !== 'ARCHIVIATO'" type="text" class="form-control"
                      [(ngModel)]="articolo.codArtFornitore" />
             </td>
           </ng-container>
@@ -186,8 +186,8 @@
             <th mat-header-cell *matHeaderCellDef>Qtà<br>(da conseg.)</th>
             <td mat-cell *matCellDef="let articolo">
               <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.quantita}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isMagazziniere && status !== 'ARCHIVIATO'" type="number"
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere && !isAdmin) || status === 'ARCHIVIATO'">{{articolo.quantita}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isMagazziniere || isAdmin) && status !== 'ARCHIVIATO'" type="number"
                      min="0" class="form-control input"
                      [(ngModel)]="articolo.quantita"/>
               &nbsp;{{articolo.funitaMisura}}
@@ -233,8 +233,8 @@
             <th mat-header-cell *matHeaderCellDef>Tono</th>
             <td mat-cell *matCellDef="let articolo">
         <span
-          *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.tono}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isMagazziniere && status !== 'ARCHIVIATO'" type="text"
+          *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere && !isAdmin) || status === 'ARCHIVIATO'">{{articolo.tono}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isMagazziniere || isAdmin) && status !== 'ARCHIVIATO'" type="text"
                      class="form-control input"
                      [(ngModel)]="articolo.tono"/>
             </td>
@@ -244,8 +244,8 @@
             <th mat-header-cell *matHeaderCellDef>Qtà Riserv.</th>
             <td mat-cell *matCellDef="let articolo">
               <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.qtaRiservata}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isMagazziniere && status !== 'ARCHIVIATO'" type="number"
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere && !isAdmin) || status === 'ARCHIVIATO'">{{articolo.qtaRiservata}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isMagazziniere || isAdmin) && status !== 'ARCHIVIATO'" type="number"
                      min="0" class="form-control input"
                      [(ngModel)]="articolo.qtaRiservata" (keyup)="checkFlagRiservato(articolo)"
                      (change)="checkFlagRiservato(articolo)"/>
@@ -256,8 +256,8 @@
             <th mat-header-cell *matHeaderCellDef>Qtà Pronto Cons.</th>
             <td mat-cell *matCellDef="let articolo">
               <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere) || status === 'ARCHIVIATO'">{{articolo.qtaProntoConsegna}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isMagazziniere && status !== 'ARCHIVIATO'" type="number"
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere && !isAdmin) || status === 'ARCHIVIATO'">{{articolo.qtaProntoConsegna}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isMagazziniere || isAdmin) && status !== 'ARCHIVIATO'" type="number"
                      min="0" class="form-control input"
                      [(ngModel)]="articolo.qtaProntoConsegna" (keyup)="checkFlagProntoConsegna(articolo)"
                      (change)="checkFlagProntoConsegna(articolo)"/>
@@ -268,7 +268,7 @@
             <th mat-header-cell *matHeaderCellDef>Ris.</th>
             <td mat-cell *matCellDef="let articolo">
         <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"><mat-checkbox (change)="checkFlags(articolo, 1);checkQta(articolo)"
-                                                             disabled="{{(!isMagazziniere || (status !== 'DA_PROCESSARE' && status !== 'INCOMPLETO') )
+                                                             disabled="{{(!isAdmin && !isMagazziniere || (status !== 'DA_PROCESSARE' && status !== 'INCOMPLETO') )
                                                              || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                                              [(ngModel)]="articolo.flagRiservato"
                                                              color="primary"></mat-checkbox></span>
@@ -280,7 +280,7 @@
               <td mat-cell *matCellDef="let articolo">
                 <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
                   <mat-checkbox (change)="checkFlags(articolo, 2)"
-                                disabled="{{(!isMagazziniere || status !== 'DA_PROCESSARE')
+                                disabled="{{(!isAdmin && !isMagazziniere || status !== 'DA_PROCESSARE')
                                           || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                 [(ngModel)]="articolo.flagNonDisponibile" color="primary">
                   </mat-checkbox>
@@ -291,13 +291,13 @@
           <ng-container matColumnDef="flOrdinato">
             <th mat-header-cell *matHeaderCellDef>Ord.</th>
             <td mat-cell *matCellDef="let articolo">
-                <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && isAmministrativo"><mat-checkbox (change)="checkFlags(articolo, 1)"
-                                                                     disabled="{{!isAmministrativo ||
+                <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin)"><mat-checkbox (change)="checkFlags(articolo, 1)"
+                                                                     disabled="{{!isAdmin && !isAmministrativo ||
                                                                        status !== 'DA_ORDINARE' || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                                                      [(ngModel)]="articolo.flagOrdinato"
                                                                      color="primary"></mat-checkbox>
                 </span>
-              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo"><mat-checkbox (change)="checkFlags(articolo, 1)"
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAdmin &&  !isAmministrativo"><mat-checkbox (change)="checkFlags(articolo, 1)"
                                                                                                 disabled="{{!isMagazziniere || !articolo.farticolo.startsWith('943')
                                                                                                 || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                                                                                 [(ngModel)]="articolo.flagOrdinato"
@@ -310,7 +310,7 @@
             <th mat-header-cell *matHeaderCellDef>Pronto Cons.</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
-                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{(!isMagazziniere || ordineDettaglio.locked || status === 'ARCHIVIATO')}}"
+                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{(!isAdmin && !isMagazziniere || ordineDettaglio.locked || status === 'ARCHIVIATO')}}"
                               [(ngModel)]="articolo.flProntoConsegna" color="primary">
                 </mat-checkbox>
               </span>
@@ -340,7 +340,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':articolo.note}"></mat-icon>
               </button>
               <button
-                *ngIf="isAmministrativo && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ' && articolo.farticolo !== '*ML'"
+                *ngIf="(isAdmin || isAmministrativo) && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ' && articolo.farticolo !== '*ML'"
                 (click)="addFornitore(articolo.farticolo)" mat-icon-button
                 matTooltip="Associa fornitore">
                 <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>

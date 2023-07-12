@@ -11,6 +11,18 @@
   font-size: 13px;
 }
 
+.stato {
+  width: 200px;
+}
+
+.select {
+  width:100px;
+}
+
+.option {
+  font-size: 0.65em;
+}
+
 .mat-column-azioni {
   text-align: right;
   font-weight: bold;

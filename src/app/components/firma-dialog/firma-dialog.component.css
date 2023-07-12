@@ -2,7 +2,6 @@ canvas {
   display: block;
   border: 1px solid rgba(105, 105, 105, 0.73);
   margin:auto;
-  width: 95%;
 }
 button {
   margin: 10px;
