@@ -47,4 +47,8 @@ export class OrdineClienteService extends CommonService{
   download(ordine: OrdineCliente) {
     window.document.location.href = `${this.url}/downloadOrdine/${ordine.sottoConto}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
   }
+
+  cercaBolle(): Observable<any>  {
+    return this.http.get<any>(`${this.url}/aggiornaBolle`);
+  }
 }

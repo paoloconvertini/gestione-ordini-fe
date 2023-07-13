@@ -102,7 +102,6 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
 
   getOafArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
     this.loader = true;
-    setTimeout(() => {
       this.service.getOafArticoliByOrdineId(anno, serie, progressivo)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
           next: (data: OrdineFornitoreDettaglio | undefined) => {
@@ -121,7 +120,6 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
             this.loader = false;
           }
         })
-    }, 2000);
   }
 
   approva(): void {

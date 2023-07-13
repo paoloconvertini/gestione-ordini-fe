@@ -31,7 +31,6 @@ export class AddFornitoreDialogComponent extends CommonListComponent implements 
 
   getFornitori(): void {
     this.loader = true;
-    setTimeout(() => {
       this.service.getFornitori().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data) => {
@@ -43,7 +42,6 @@ export class AddFornitoreDialogComponent extends CommonListComponent implements 
             this.loader = false;
           }
         })
-    }, 2000);
   }
 
   private _filter(value: any): any[] {

@@ -65,7 +65,9 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
     if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
-      this.filtro.prontoConsegna = true;
+      if(!this.filtro.status) {
+        this.filtro.status = "COMPLETO";
+      }
     }
   }
 
@@ -145,7 +147,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   retrieveList(): void {
     this.loader = true;
-    setTimeout(() => {
       this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
@@ -160,7 +161,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             this.loader = false;
           }
         })
-    }, 2000);
   }
 
   refreshPage() {
@@ -168,15 +168,14 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       this.getVenditori();
     }
     this.loader = true;
-    setTimeout(() => {
       this.service.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
             data?.forEach(d => {
               d.isLocked = d.locked && this.user !== d.userLock;
             })
-            this.filtro.status = '';
-            this.getStati();
+           // this.filtro.status = '';
+            // this.getStati();
             this.createPaginator(data, 100);
             this.loader = false;
           },
@@ -185,7 +184,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             this.loader = false;
           }
         })
-    }, 2000);
   }
 
   apri(ordine: OrdineCliente): void {
@@ -359,5 +357,28 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   downloadOrdine(ordine: OrdineCliente) {
     this.service.download(ordine);
+  }
+
+  cercaBolle() {
+    if (this.isVenditore) {
+      this.getVenditori();
+    }
+    this.loader = true;
+      this.service.cercaBolle().pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (data: any[] | undefined) => {
+            data?.forEach(d => {
+              d.isLocked = d.locked && this.user !== d.userLock;
+            })
+            this.filtro.status = '';
+            this.getStati();
+            this.createPaginator(data, 100);
+            this.loader = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loader = false;
+          }
+        })
   }
 }

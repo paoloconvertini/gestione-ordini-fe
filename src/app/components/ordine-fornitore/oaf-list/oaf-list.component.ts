@@ -136,7 +136,6 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   retrieveFornitoreList(status: any): void {
     this.loader = true;
-    setTimeout(() => {
       this.service.getAllOaf(status)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (data: any[] | undefined) => {
@@ -148,7 +147,6 @@ export class OafListComponent extends CommonListComponent implements OnInit {
           this.loader = false;
         }
       })
-    }, 2000);
   }
 
   refreshPage() {

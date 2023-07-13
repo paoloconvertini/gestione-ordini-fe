@@ -19,12 +19,13 @@ import {FiltroArticoli} from "../../../models/FiltroArticoli";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {Acconto} from "../../../models/Acconto";
-import { SelectionModel } from '@angular/cdk/collections';
+import {SelectionModel} from '@angular/cdk/collections';
 
 export interface Option {
   name: string,
   checked: boolean | null
 }
+
 export interface OptionCons {
   name: string,
   checked: boolean,
@@ -103,7 +104,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       // @ts-ignore
       this.radioConsegnatoOptions[2].checked = true;
     }
-    if((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE') && !this.isLogistica) {
+    if ((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE') && !this.isLogistica) {
       this.filtroArticoli.flConsegna = 3;
       // @ts-ignore
       this.radioConsegnatoOptions[3].checked = true;
@@ -326,12 +327,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   annulla() {
-    if(this.user === this.ordineDettaglio.userLock) {
+    if (this.user === this.ordineDettaglio.userLock) {
       this.service.annulla(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.route.navigate(['/ordini-clienti']);
+              this.route.navigate(['/ordini-clienti', this.status]);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -345,35 +346,33 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   getArticoliByOrdineId(): void {
     this.loader = true;
-    setTimeout(() => {
-      this.service.getArticoliByOrdineId(this.filtroArticoli).pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: OrdineDettaglio) => {
-            if (data && data.articoli) {
-              this.ordineDettaglio = data;
-              this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
-              console.log("bloccato: " + this.ordineDettaglio.locked);
-            }
-            this.createPaginator(this.ordineDettaglio.articoli, 100);
-            this.selection = new SelectionModel<any>(true, []);
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
+    this.service.getArticoliByOrdineId(this.filtroArticoli).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: OrdineDettaglio) => {
+          if (data && data.articoli) {
+            this.ordineDettaglio = data;
+            this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
+            console.log("bloccato: " + this.ordineDettaglio.locked);
           }
-        })
-    }, 2000);
+          this.createPaginator(this.ordineDettaglio.articoli, 100);
+          this.selection = new SelectionModel<any>(true, []);
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
   checkRiservati() {
-    if(this.isAmministrativo){
+    if (this.isAmministrativo) {
       return false;
     }
     let found = false;
     for (const filterDatum of this.dataSource.filteredData) {
       // @ts-ignore
-      if(filterDatum.tipoRigo !== 'C' && filterDatum.flagOrdinato && !filterDatum.flagRiservato ) {
+      if (filterDatum.tipoRigo !== 'C' && filterDatum.flagOrdinato && !filterDatum.flagRiservato) {
         found = true;
         break;
       }
@@ -383,23 +382,23 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   }
 
-  checkQta(articolo:any) {
+  checkQta(articolo: any) {
     articolo.qtaRiservata = articolo.quantita;
-    if(!articolo.flagRiservato) {
+    if (!articolo.flagRiservato) {
       articolo.qtaRiservata = undefined;
     }
   }
 
-  checkFlagRiservato(articolo:any) {
-      articolo.flagRiservato = (articolo.qtaRiservata === articolo.quantita);
+  checkFlagRiservato(articolo: any) {
+    articolo.flagRiservato = (articolo.qtaRiservata === articolo.quantita);
   }
 
-  checkFlagProntoConsegna(articolo:any) {
+  checkFlagProntoConsegna(articolo: any) {
     articolo.flProntoConsegna = (articolo.qtaProntoConsegna && articolo.qtaProntoConsegna !== 0);
   }
 
-  checkQtaProntoConsegna(articolo:any) {
-    if(articolo.flProntoConsegna) {
+  checkQtaProntoConsegna(articolo: any) {
+    if (articolo.flProntoConsegna) {
       articolo.qtaProntoConsegna = articolo.quantita;
     } else {
       articolo.qtaProntoConsegna = undefined;
@@ -447,7 +446,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   mostraAcconti(sottoConto: string) {
     this.showAcconti = !this.showAcconti;
-    if(this.showAcconti){
+    if (this.showAcconti) {
       this.loaderAcconti = true;
       this.service.getAcconti(sottoConto).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
