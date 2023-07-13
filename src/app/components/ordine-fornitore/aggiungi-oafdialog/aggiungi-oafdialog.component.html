@@ -1,4 +1,3 @@
-<form (ngSubmit)="submitForm()" [formGroup]="rigoOafForm" autocomplete="off" class="">
   <div class="container">
     <h3 class="title">
       Aggiungi rigo
@@ -7,12 +6,87 @@
       <div class="col-lg-4 col-md-4 col-sm-12">
         <mat-form-field>
           <mat-label>
-            Tipo rigo
+            Cerca per descrizione
+          </mat-label>
+          <textarea
+            [matAutocomplete]="autoDesc"
+            matInput
+            [(ngModel)]="filtro.descrizione" (keyup)="onType(filtro.descrizione, 1)">
+          </textarea>
+          <mat-autocomplete #autoDesc="matAutocomplete" [displayWith]="displayFnDesc" (optionSelected)="settaArticolo($event.option.value)">
+            <mat-option *ngIf="loading" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+            <ng-container *ngIf="!loading">
+              <mat-option *ngFor="let articolo of articoli" [value]="articolo">
+                <span>{{ articolo.descrArticolo }}</span>
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Cerca per Descr. suppl.
+          </mat-label>
+          <textarea
+            [matAutocomplete]="autoDescSuppl"
+            matInput
+            [(ngModel)]="filtro.descrSuppl" (keyup)="onType(filtro.descrSuppl, 2)">
+          </textarea>
+          <mat-autocomplete #autoDescSuppl="matAutocomplete" [displayWith]="displayFnDescSuppl" (optionSelected)="settaArticolo($event.option.value)">
+            <mat-option *ngIf="loading" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+            <ng-container *ngIf="!loading">
+              <mat-option *ngFor="let articolo of articoli" [value]="articolo">
+                <span>{{ articolo.descrArtSuppl }}</span>
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Cerca per Codice
           </mat-label>
           <input
+            [matAutocomplete]="autoCodice"
             matInput
-            formControlName="tipoRigo"
+            [(ngModel)]="filtro.codice" (keyup)="onType(filtro.codice, 3)"
           />
+          <mat-autocomplete #autoCodice="matAutocomplete" [displayWith]="displayFn" (optionSelected)="settaArticolo($event.option.value)">
+            <mat-option *ngIf="loading" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+            <ng-container *ngIf="!loading">
+              <mat-option *ngFor="let articolo of articoli" [value]="articolo">
+                <span>{{ articolo.articolo }}</span>
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Descrizione
+          </mat-label>
+          <textarea
+            matInput
+            required
+            [(ngModel)]="selectedArticolo.descrArticolo">
+          </textarea>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Descr. suppl.
+          </mat-label>
+          <textarea
+            matInput
+            [(ngModel)]="selectedArticolo.descrArtSuppl" >
+          </textarea>
         </mat-form-field>
       </div>
       <div class="col-lg-4 col-md-4 col-sm-12">
@@ -22,24 +96,23 @@
           </mat-label>
           <input
             matInput
-            formControlName="oarticolo"
-          />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field>
-          <mat-label>
-            Descrizione
-          </mat-label>
-          <input
-            matInput
-            formControlName="odescrArticolo"
-            required
+            [(ngModel)]="selectedArticolo.articolo"
           />
         </mat-form-field>
       </div>
     </div>
     <div class="row">
+      <div class="col-lg-2 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Tipo rigo
+          </mat-label>
+          <input [disabled]="selectedArticolo.articolo"
+                 matInput
+                 [(ngModel)]="selectedArticolo.tipoRigo"
+          />
+        </mat-form-field>
+      </div>
       <div class="col-lg-4 col-md-4 col-sm-12">
         <mat-form-field>
           <mat-label>
@@ -47,18 +120,18 @@
           </mat-label>
           <input
             matInput
-            formControlName="oquantita"
+            [(ngModel)]="selectedArticolo.quantita"
           />
         </mat-form-field>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-12">
+      <div class="col-lg-2 col-md-4 col-sm-12">
         <mat-form-field>
           <mat-label>
             UM
           </mat-label>
           <input
             matInput
-            formControlName="ounitaMisura"
+            [(ngModel)]="selectedArticolo.unitaMisura"
           />
         </mat-form-field>
       </div>
@@ -69,7 +142,7 @@
           </mat-label>
           <input
             matInput
-            formControlName="oprezzo"
+            [(ngModel)]="selectedArticolo.prezzoBase"
           />
         </mat-form-field>
       </div>
@@ -82,7 +155,7 @@
           </mat-label>
           <input
             matInput
-            formControlName="fscontoArticolo"
+            [(ngModel)]="selectedArticolo.fscontoArticolo"
           />
         </mat-form-field>
       </div>
@@ -93,7 +166,7 @@
           </mat-label>
           <input
             matInput
-            formControlName="scontoF1"
+            [(ngModel)]="selectedArticolo.scontoF1"
           />
         </mat-form-field>
       </div>
@@ -104,7 +177,7 @@
           </mat-label>
           <input
             matInput
-            formControlName="scontoF2"
+            [(ngModel)]="selectedArticolo.scontoF2"
           />
         </mat-form-field>
       </div>
@@ -115,15 +188,14 @@
           </mat-label>
           <input
             matInput
-            formControlName="fscontoP"
+            [(ngModel)]="selectedArticolo.fscontoP"
           />
         </mat-form-field>
       </div>
     </div>
     <div class="float-end">
       <button mat-raised-button mat-dialog-close>Annulla</button>&nbsp;&nbsp;
-      <button mat-raised-button color="primary" type="submit">Salva</button>
+      <button mat-raised-button color="primary" type="button" (click)="save()">Salva</button>
     </div>
   </div>
-</form>
 

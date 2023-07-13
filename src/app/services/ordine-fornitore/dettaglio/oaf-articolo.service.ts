@@ -35,4 +35,8 @@ export class OafArticoloService extends CommonService{
   eliminaArticolo(anno: any, serie: any, progressivo: any, rigo:any): Observable<any> {
     return this.http.delete<any>(`${this.url}/eliminaArticolo/${anno}/${serie}/${progressivo}/${rigo}`)
   }
+
+  search(data: any): Observable<any> {
+    return this.http.post<any>(`${this.url}/cercaArticoli`, data);
+  }
 }
