@@ -25,8 +25,7 @@ export interface Option {
 
 export interface OptStatus {
   codice: any,
-  descrizione: string,
-  checked: boolean
+  descrizione: string
 }
 
 @Component({
@@ -51,6 +50,15 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params: any) => {
+          if (params.status) {
+            this.filtro.status = params.status;
+          } else {
+            this.filtro.status = 'TUTTI';
+          }
+        }
+      );
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -65,7 +73,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
     if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
-      if(!this.filtro.status) {
+      if(!this.filtro.status || this.filtro.status === 'TUTTI') {
         this.filtro.status = "COMPLETO";
       }
     }
@@ -73,15 +81,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
 
   ngOnInit(): void {
-    this.router.params.pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params: any) => {
-          if (params.status) {
-            this.filtro.status = params.status;
-          }
-        }
-      );
     this.getStati();
-    if (this.isVenditore) {
+    if (this.isVenditore || this.isAdmin) {
       this.getVenditori();
     }
     this.retrieveList();
@@ -111,19 +112,10 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.service.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.radioPerStatusOptions = data;
-        if(this.filtro.status){
-          this.radioPerStatusOptions.forEach(opt=> {
-            if(opt.descrizione === this.filtro.status) {
-              opt.checked = true;
-            }
-          })
+        if(!this.filtro.status){
+          this.filtro.status = 'TUTTI';
         }
         this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
-        this.radioPerStatusOptions.forEach(opt=> {
-          if(opt.descrizione === this.filtro.status) {
-            opt.checked = true;
-          }
-        })
       },
       error: (e: any) => {
         console.error(e);
@@ -164,7 +156,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   }
 
   refreshPage() {
-    if (this.isVenditore) {
+    if (this.isVenditore || this.isAdmin) {
       this.getVenditori();
     }
     this.loader = true;
@@ -360,7 +352,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   }
 
   cercaBolle() {
-    if (this.isVenditore) {
+    if (this.isVenditore || this.isAdmin) {
       this.getVenditori();
     }
     this.loader = true;

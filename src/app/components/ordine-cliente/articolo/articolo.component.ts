@@ -89,22 +89,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     if (this.isAmministrativo && this.status === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
     }
-    /* this.subscription = timer(0, 5000).pipe(
-       switchMap( () =>
-         this.service.getArticoliByOrdineId(this.anno, this.serie, this.progressivo, this.filtroArticoli)))
-       .subscribe(result => console.log(result)
-     )*/
-    if ((this.status === 'COMPLETO' || this.status === 'INCOMPLETO') && !this.isLogistica) {
+    if ((this.status === 'COMPLETO' || this.status === 'INCOMPLETO')) {
       this.filtroArticoli.flConsegna = 0;
       // @ts-ignore
       this.radioConsegnatoOptions[0].checked = true;
     }
-    if (this.isLogistica) {
-      this.filtroArticoli.flConsegna = 2;
-      // @ts-ignore
-      this.radioConsegnatoOptions[2].checked = true;
-    }
-    if ((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE') && !this.isLogistica) {
+    if ((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE')) {
       this.filtroArticoli.flConsegna = 3;
       // @ts-ignore
       this.radioConsegnatoOptions[3].checked = true;
@@ -340,7 +330,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           }
         })
     } else {
-      this.route.navigate(['/ordini-clienti']);
+      this.route.navigate(['/ordini-clienti', this.status]);
     }
   }
 

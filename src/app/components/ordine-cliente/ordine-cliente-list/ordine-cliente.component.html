@@ -40,7 +40,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
       <mat-radio-group (change)="retrieveList()"
                        aria-label="Select an option" [(ngModel)]="filtro.status" >
-        <mat-radio-button *ngFor="let option of radioPerStatusOptions" [checked]="option.checked"
+        <mat-radio-button *ngFor="let option of radioPerStatusOptions"
                           [value]="option.codice">
           <div [ngSwitch]="option.descrizione">
             <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>

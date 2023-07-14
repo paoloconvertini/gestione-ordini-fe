@@ -15,29 +15,31 @@
       <span *ngIf="status==='ARCHIVIATO'"> ARCHIVIATO</span>
     </div>
     <div class="col-lg-4 col-md-4 col-sm-12">
-      <mat-card class="float-end">
+    </div>
+  </div>
+  <div class="row" >
+    <div class="col-lg-12">
+      <mat-card class="margin-bottom testata-margin-top">
         <mat-card-content>
-          <span>Numero ordine: <b>{{filtroArticoli.anno}}/{{filtroArticoli.serie}}/{{filtroArticoli.progressivo}}</b><br></span>
-          <span>Intestazione:<br>
+          <span class="padding-right">Numero ordine: <b>{{filtroArticoli.anno}}/{{filtroArticoli.serie}}/{{filtroArticoli.progressivo}}</b> del <b>{{ordineDettaglio.dataOrdine | date: 'dd/MM/yyyy'}}</b></span>
+          <span class="padding-right">intestato a
             <b>{{ordineDettaglio.intestazione}} - {{ordineDettaglio.sottoConto}}</b>&nbsp;
-            <button (click)="mostraAcconti(ordineDettaglio.sottoConto)" mat-icon-button
-                              matTooltip="Mostra acconti">
-              <mat-icon aria-hidden="false" aria-label="mostra acconti" color="primary">receipt_long</mat-icon>
-            </button>
+            <span style="font-size: 0.75em" *ngIf="ordineDettaglio.riferimento && ordineDettaglio.riferimento !== ' '">({{ordineDettaglio.riferimento}})</span>
           </span>
-          <br>
-          <span style="font-size: 0.75em">Rif: {{ordineDettaglio.riferimento}}</span><br>
-          <span>Tel: <b>{{ordineDettaglio.telefono}} - {{ordineDettaglio.cellulare}}</b></span>
-          <br>
-          <span>Totale: <b>{{ordineDettaglio.totale | currency: 'EUR':'symbol'}}</b></span>
+          <span class="padding-right">Totale: <b>{{ordineDettaglio.totale | currency: 'EUR':'symbol'}}</b></span>
+          <span class="padding-right">Pagam: <b>{{ordineDettaglio.modalitaPagamento}}</b></span>
+          <span class="padding-right">Tel: <b>{{ordineDettaglio.telefono}} - {{ordineDettaglio.cellulare}}</b></span>
+          <button class="float-end" (click)="mostraAcconti(ordineDettaglio.sottoConto)" mat-button
+                  matTooltip="Mostra acconti">
+            <mat-icon aria-hidden="false" aria-label="mostra acconti" color="primary">receipt_long</mat-icon>
+          </button>
         </mat-card-content>
       </mat-card>
     </div>
   </div>
   <div class="row margin-top" *ngIf="showAcconti">
-    <div class="col-lg-4 col-md-4 col-sm-12"></div>
-    <div class="col-lg-8 col-md-8 col-sm-12">
-      <section class="example-container mat-elevation-z8" tabindex="0">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <section class="acconti-container mat-elevation-z8" tabindex="0">
         <mat-spinner *ngIf="loaderAcconti" class="loader"></mat-spinner>
         <table class="table-container" *ngIf="!loaderAcconti" mat-table multiTemplateDataRows [dataSource]="acconti">
           <!-- Name Column -->
@@ -176,10 +178,10 @@
                 *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isAmministrativo && !isAdmin) || status === 'ARCHIVIATO'">
                 {{articolo.fdescrArticolo}}<br><b>{{articolo.codArtFornitore}}</b>
               </span>
-                <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin) && status !== 'ARCHIVIATO'" type="text" class="form-control"
-                     [(ngModel)]="articolo.fdescrArticolo" />
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin) && status !== 'ARCHIVIATO'" type="text" class="form-control"
-                     [(ngModel)]="articolo.codArtFornitore" />
+                <textarea *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin) && status !== 'ARCHIVIATO'" type="text" class="form-control"
+                     [(ngModel)]="articolo.fdescrArticolo" ></textarea>
+              <textarea *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin) && status !== 'ARCHIVIATO'" type="text" class="form-control"
+                     [(ngModel)]="articolo.codArtFornitore"> </textarea>
             </td>
           </ng-container>
           <!-- Name Column -->

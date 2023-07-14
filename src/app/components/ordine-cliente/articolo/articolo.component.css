@@ -11,6 +11,18 @@
   height: 600px;
 }
 
+.padding-right {
+  padding-right: 5px;
+}
+
+.acconti-container{
+  max-width: 100%;
+  font-size: 12px;
+  margin: 0 auto 5px;
+  position: relative;
+  overflow: auto;
+}
+
 .input {
   display: inline;
   height: fit-content;
@@ -149,4 +161,12 @@ tr.example-detail-row {
 
 .nota-presente {
   color:#d11f0c!important;
+}
+
+.testata-margin-top {
+  margin-top: 5px;
+}
+
+mat-card-content {
+  padding: 5px!important;
 }
