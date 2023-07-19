@@ -47,5 +47,10 @@
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'T']">Da approvare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore']">Approvati</button>
     </mat-menu>
+    <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
+    <mat-menu #logistica="matMenu">
+      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Pronto consegna</button>
+      <button mat-menu-item class="pointer" [routerLink]="['/logistica-ordini']">Gestione consegne</button>
+    </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>

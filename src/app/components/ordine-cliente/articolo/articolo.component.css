@@ -98,49 +98,10 @@ tr.example-detail-row {
   color: white;
 }
 
-.bolla-row{
-  display: flex;
-  align-items: center;
-  column-gap: 30px;
-  flex-direction: column;
-  flex-wrap: wrap;
-  max-height: 104px;
-  justify-content: flex-end;
-}
-
-.bolla-num {
-  padding: 5px;
-  width: 200px;
-  height: 35px;
-  margin-top: 10px;
-  line-height: 40px;
-}
-
-.bolla-data{
-  padding: 5px;
-  width: 200px;
-  height: 35px;
-  margin-top: 10px;
-  line-height: 40px;
-}
-
-.bolla-qta {
-  flex-grow: 20;
-  padding: 5px;
-  width: 201px;
-  height: 50px;
-  line-height: 50px;
-}
-
 .shipping {
   font-size: 55px!important;
   height: 55px!important;
   width: 55px!important;
-}
-
-.example-element-detail {
-  overflow: hidden;
-  display: flex;
 }
 
 .mat-icon {

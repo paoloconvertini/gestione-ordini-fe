@@ -1,0 +1,23 @@
+.nota-presente {
+  color:#d11f0c!important;
+}
+
+.note {
+  font-size:0.75em;
+  min-width: 300px;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+.example-detail-row td {
+  border-top-width: 0;
+  background-color: #b0cca2;
+  color: #050505;
+}
+
+.table{
+  font-size: 0.85em;
+
+}

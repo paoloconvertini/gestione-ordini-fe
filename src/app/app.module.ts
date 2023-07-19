@@ -52,6 +52,7 @@ import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-no
 import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiungi-oafdialog/aggiungi-oafdialog.component';
 import {MatSortModule} from "@angular/material/sort";
 import {MatSelectModule} from "@angular/material/select";
+import { ListaComponent } from './components/ordine-cliente/logistica/lista/lista.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -79,7 +80,8 @@ export const DateFormats = {
     UserDetailComponent,
     RoleComponent,
     OrdineClienteNoteDialogComponent,
-    AggiungiOAFDialogComponent
+    AggiungiOAFDialogComponent,
+    ListaComponent
   ],
     imports: [
         BrowserModule,

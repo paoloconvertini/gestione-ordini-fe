@@ -73,9 +73,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
     if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
-      if(!this.filtro.status || this.filtro.status === 'TUTTI') {
-        this.filtro.status = "COMPLETO";
-      }
+      this.filtro.prontoConsegna = true;
     }
   }
 

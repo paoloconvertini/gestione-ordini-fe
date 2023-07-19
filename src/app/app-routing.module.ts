@@ -10,6 +10,7 @@ import {ResetPasswordComponent} from "./components/reset-password/reset-password
 import { UserDetailComponent } from './components/users/user-detail/user-detail.component';
 import {UserListComponent} from "./components/users/user-list/user-list.component";
 import {RoleComponent} from "./components/role/role.component";
+import {ListaComponent} from "./components/ordine-cliente/logistica/lista/lista.component";
 
 const routes: Routes = [
   {
@@ -36,6 +37,11 @@ const routes: Routes = [
     path: 'ordini-clienti',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
+  },
+  {
+    path: 'logistica-ordini',
+    canActivate: [AuthGuard],
+    component: ListaComponent,
   },
   {
     path: 'ordini-clienti/:status',

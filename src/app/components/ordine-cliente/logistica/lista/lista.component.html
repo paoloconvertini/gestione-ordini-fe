@@ -1,0 +1,153 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      ORDINI DA CONSEGNARE <span><mat-icon (click)="mostraMappa()" color="primary">location_on</mat-icon></span>
+    </div>
+  </div>
+  <div *ngIf="showMappa" class="row">
+    <div class="col-lg-12">
+      mappa qui
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6">
+      <mat-form-field>
+        <mat-label>Cerca...</mat-label>
+        <input matInput (keyup)="applyFilter($event)" #input>
+      </mat-form-field>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6">
+      <button class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
+        Bolle
+      </button>
+      <button class="float-end margin-right" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
+        Aggiorna lista
+      </button>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <mat-radio-group (change)="retrieveList()"
+                       aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
+        <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
+                          [value]="option.codVenditore">{{option.fullname}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="dataSource">
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="numero">
+            <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
+            <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef> Cliente</th>
+            <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              {{ordine.intestazione}}<br><span style="font-size:11px">{{ordine.riferimento}}</span>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="localita">
+            <th mat-header-cell *matHeaderCellDef> Luogo</th>
+            <td class="pointer" mat-cell *matCellDef="let ordine"  (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              {{ordine.localita}} ({{ordine.provincia}})
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef> Data</th>
+            <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
+            <td class="pointer" mat-cell *matCellDef="let ordine" [ngClass]="{'stato': isAdmin}" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              <div [ngSwitch]="ordine.status" *ngIf="!isAdmin" >
+                <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
+                <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
+                <b *ngSwitchDefault>{{ordine.status}}</b>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="azioni">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let ordine">
+              <button (click)="aggiungiNote(ordine)" mat-icon-button [matTooltip]="ordine.note" matTooltipClass="note">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"
+                          [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Sono presenti articoli consegnati senza bolla"
+                      *ngIf="ordine.warnNoBolla" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                <mat-icon class="warnNoBolla" aria-hidden="false" aria-label="warning" fontIcon="report"
+                          color="warn"></mat-icon>
+              </button>
+              <button mat-icon-button [matTooltip]="'Articoli in pronta consegna'" *ngIf="ordine.hasProntoConsegna"
+                      #tooltip="matTooltip" (click)="tooltip.toggle()">
+                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="rocket_launch"
+                          color="primary"></mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let ordine" [attr.colspan]="displayedColumns.length">
+              <mat-spinner *ngIf="loaderDettaglio" class="loader"></mat-spinner>
+              <div *ngIf="!loaderDettaglio">
+                <div [@detailExpand]="ordine == expandedElement ? 'expanded' : 'collapsed'">
+                  <table class="table">
+                    <thead>
+                        <tr>
+                          <th>Cod.:</th>
+                          <th>Cod. forn.:</th>
+                          <th>Descr.:</th>
+                          <th>Qta da cons.:</th>
+                          <th>Qta tot.:</th>
+                          <th>U.M.:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let articolo of articoli">
+                          <td>{{articolo.farticolo}}</td>
+                          <td>{{articolo.codArtFornitore}}</td>
+                          <td>{{articolo.fdescrArticolo}}</td>
+                          <td>{{articolo.qtaDaConsegnare | number : '1.2-2'}}</td>
+                          <td>{{articolo.quantita | number : '1.2-2'}}</td>
+                          <td>{{articolo.funitaMisura}}</td>
+                        </tr>
+                      </tbody>
+                  </table>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-result-list" colspan="4">Nessun
+              risultato {{input.value ? "per la ricerca " + input.value : ""}}</td>
+          </tr>
+        </table>
+
+        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
