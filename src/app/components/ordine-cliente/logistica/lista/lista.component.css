@@ -21,3 +21,8 @@ tr.example-detail-row {
   font-size: 0.85em;
 
 }
+
+.map-container {
+  width: 100%;
+  height: 400px;
+}

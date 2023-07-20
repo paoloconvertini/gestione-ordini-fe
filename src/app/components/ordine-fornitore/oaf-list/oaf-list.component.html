@@ -80,7 +80,7 @@
             <td mat-cell *matCellDef="let ordine">
               <span *ngIf="!status">
                 <mat-checkbox disabled="{{(!isAmministrativo && !isAdmin )}}"
-                              [(ngModel)]="ordine.flInviato" color="primary">
+                              [(ngModel)]="ordine.flInviato" color="primary" (change)="aggiungiLista(ordine)">
                 </mat-checkbox>
               </span>
             </td>

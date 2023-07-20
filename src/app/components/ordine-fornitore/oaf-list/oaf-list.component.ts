@@ -27,6 +27,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   selection = new SelectionModel<any>(true, []);
+  updateList: any = [];
 
   constructor(private snackbar: MatSnackBar, private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
     super();
@@ -57,8 +58,11 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   updateOaf(): void {
+    if(this.updateList.length === 0){
+      return;
+    }
     this.loader = true;
-    this.service.updateOaf(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.updateOaf(this.updateList).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
@@ -136,6 +140,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   retrieveFornitoreList(status: any): void {
     this.loader = true;
+    this.updateList = [];
       this.service.getAllOaf(status)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (data: any[] | undefined) => {
@@ -257,5 +262,14 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   downloadOrdine(ordine: any) {
     this.service.download(ordine);
+  }
+
+  aggiungiLista(ordine: any) {
+    if(this.updateList.includes(ordine)){
+      this.updateList.splice(ordine, 1);
+    } else {
+      this.updateList.push(ordine);
+    }
+
   }
 }

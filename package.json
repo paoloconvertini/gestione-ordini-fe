@@ -24,6 +24,7 @@
     "@auth0/angular-jwt": "^5.1.2",
     "bootstrap": "^5.2.3",
     "moment": "^2.29.4",
+    "ol": "^7.4.0",
     "rxjs": "~7.5.0",
     "signature_pad": "^4.1.4",
     "tslib": "^2.3.0",
@@ -31,7 +32,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.1.2",
-    "@angular/cli": "~15.1.2",
+    "@angular/cli": "^15.2.9",
     "@angular/compiler-cli": "^15.1.1",
     "@types/jasmine": "~4.0.0",
     "gh-pages": "^5.0.0",

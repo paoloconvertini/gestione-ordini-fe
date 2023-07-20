@@ -4,9 +4,9 @@
       ORDINI DA CONSEGNARE <span><mat-icon (click)="mostraMappa()" color="primary">location_on</mat-icon></span>
     </div>
   </div>
-  <div *ngIf="showMappa" class="row">
+  <div class="row">
     <div class="col-lg-12">
-      mappa qui
+      <div id="map" [ngClass]="{'map-container':showMappa}"></div>
     </div>
   </div>
   <div class="row">
@@ -63,14 +63,14 @@
           <ng-container matColumnDef="data">
             <th mat-header-cell *matHeaderCellDef> Data</th>
             <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
-              {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
+              {{ordine.dataConferma | date:'dd/MM/yyyy'}}
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
-            <td class="pointer" mat-cell *matCellDef="let ordine" [ngClass]="{'stato': isAdmin}" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
-              <div [ngSwitch]="ordine.status" *ngIf="!isAdmin" >
+            <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              <div [ngSwitch]="ordine.status" >
                 <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
                 <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
                 <b *ngSwitchDefault>{{ordine.status}}</b>

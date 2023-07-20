@@ -82,7 +82,7 @@
           <ng-container matColumnDef="data">
             <th mat-header-cell *matHeaderCellDef> Data</th>
             <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
-              {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
+              {{ordine.dataConferma | date:'dd/MM/yyyy'}}
             </td>
           </ng-container>
           <!-- Name Column -->
