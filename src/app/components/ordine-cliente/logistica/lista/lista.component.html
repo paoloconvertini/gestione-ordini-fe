@@ -119,8 +119,12 @@
                           <td>{{articolo.farticolo}}</td>
                           <td>{{articolo.codArtFornitore}}</td>
                           <td>{{articolo.fdescrArticolo}}</td>
-                          <td>{{articolo.qtaDaConsegnare | number : '1.2-2'}}</td>
-                          <td>{{articolo.quantita | number : '1.2-2'}}</td>
+                          <td>
+                            <span *ngIf="mostraNonDisponibile(articolo) === 0">{{articolo.qtaDaConsegnare | number : '1.2-2'}}</span>
+                            <span *ngIf="mostraNonDisponibile(articolo) === 1">N.D.</span>
+                            <span *ngIf="mostraNonDisponibile(articolo) === 2"></span>
+                          </td>
+                          <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.quantita | number : '1.2-2'}}</span></td>
                           <td>{{articolo.funitaMisura}}</td>
                         </tr>
                       </tbody>

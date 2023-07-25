@@ -32,7 +32,7 @@
     </mat-icon>
   </mat-toolbar-row>
   <mat-toolbar-row>
-    <button mat-button [matMenuTriggerFor]="clienti">Ordine Clienti</button>
+    <button *ngIf="!isLogistica" mat-button [matMenuTriggerFor]="clienti">Ordine Clienti</button>
     <mat-menu #clienti="matMenu">
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Tutti</button>
       <button mat-menu-item *ngIf="!isAmministrativo && !isLogistica" class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']">Da processare</button>
@@ -41,7 +41,7 @@
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</button>
     </mat-menu>
-    <button mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
+    <button *ngIf="!isLogistica" mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
     <mat-menu #fornitori="matMenu">
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'F']">Sospesi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'T']">Da approvare</button>

@@ -442,4 +442,14 @@ export class ListaComponent extends CommonListComponent implements OnInit {
           this.map.render();
         }
   }
+
+  mostraNonDisponibile(articolo:any):number {
+    if( articolo.tipoRigo !== '' && articolo.tipoRigo !== ' ') {
+      return 2;
+    } else if(articolo.flagNonDisponibile || (articolo.flagOrdinato && !articolo.flagRiservato)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 }

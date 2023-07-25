@@ -18,13 +18,9 @@ export class FirmaDialogComponent {
 
   ngAfterViewInit() {
     this.signPad = new SignaturePad(this.signaturePadElement.nativeElement);
-  }
-  /*It's work in devices*/
-  startSignPadDrawing(event: Event) {
-    console.log(event);
-  }
-  /*It's work in devices*/
-  movedFinger(event: Event) {
+    this.signPad.minWidth = 0.5;
+    this.signPad.maxWidth = 1;
+
   }
   /*Clean whole the signature*/
   clearSignPad() {

@@ -32,8 +32,6 @@ export class LoginComponent extends BaseComponent{
         next: (res) => {
          if (localStorage.getItem(environment.AMMINISTRATIVO)) {
             this.router.navigate(['/ordini-clienti/DA_ORDINARE']);
-          } else if(localStorage.getItem(environment.LOGISTICA)) {
-            this.router.navigate(['/logistica-ordini']);
          } else {
            this.router.navigate(['/ordini-clienti']);
          }
