@@ -22,61 +22,24 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import Map from 'ol/Map';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM';
-import {useGeographic} from "ol/proj";
-import {Icon, Style, Text} from 'ol/style.js';
-import {Cluster, Vector as VectorSource} from 'ol/source.js';
-import {LineString, Point} from 'ol/geom.js';
+import {fromLonLat, useGeographic} from "ol/proj";
+import {Icon, RegularShape, Style} from 'ol/style.js';
+import {Vector as VectorSource} from 'ol/source.js';
+import {Point} from 'ol/geom.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {Feature} from "ol";
-import {GeoJSON} from "ol/format";
+import Popup from "ol-popup";
+import {SymbolType} from "ol/style/literal";
+import TRIANGLE = SymbolType.TRIANGLE;
+import {Circle} from "ol/geom";
 import {Fill, Stroke} from "ol/style";
-import CircleStyle from "ol/style/Circle";
 
 useGeographic();
 
 const sedeLonLat = [17.5083, 40.6472];
 const sede = new Point(sedeLonLat);
-const circleDistanceMultiplier = 1;
-const circleFootSeparation = 28;
-const circleStartAngle = Math.PI / 2;
-
-const convexHullFill = new Fill({
-  color: 'rgba(255, 153, 0, 0.4)',
-});
-const convexHullStroke = new Stroke({
-  color: 'rgba(204, 85, 0, 1)',
-  width: 1.5,
-});
-const outerCircleFill = new Fill({
-  color: 'rgba(255, 153, 102, 0.3)',
-});
-const innerCircleFill = new Fill({
-  color: 'rgba(255, 165, 0, 0.7)',
-});
-const textFill = new Fill({
-  color: '#fff',
-});
-const textStroke = new Stroke({
-  color: 'rgba(0, 0, 0, 0.6)',
-  width: 3,
-});
-const innerCircle = new CircleStyle({
-  radius: 14,
-  fill: innerCircleFill,
-});
-const outerCircle = new CircleStyle({
-  radius: 20,
-  fill: outerCircleFill,
-});
-const darkIcon = new Icon({
-  src: 'data/icons/emoticon-cool.svg',
-});
-const lightIcon = new Icon({
-  src: 'data/icons/emoticon-cool-outline.svg',
-});
-let clickFeature: any;
-let clickResolution: any;
-let hoverFeature:any;
+const stroke = new Stroke({color: 'black', width: 2});
+const fill = new Fill({color: 'red'});
 
 
 @Component({
@@ -279,9 +242,6 @@ export class ListaComponent extends CommonListComponent implements OnInit {
 
           const iconFeature = new Feature({
             geometry: sede,
-            name: 'Null Island',
-            population: 4000,
-            rainfall: 500,
           });
 
           const iconStyle = new Style({
@@ -305,142 +265,66 @@ export class ListaComponent extends CommonListComponent implements OnInit {
 
           this.map.addLayer(vectorLayer);
 
-
-          const vectorSourcePhoto = new VectorSource({
-            format: new GeoJSON(),
-            url: 'data/geojson/photovoltaic.json',
-          });
-
-          const clusterSource = new Cluster({
-            attributions:
-              'Data: <a href="https://www.data.gv.at/auftritte/?organisation=stadt-wien">Stadt Wien</a>',
-            distance: 35,
-            source: vectorSourcePhoto,
-          });
-
-
-// Layer displaying the clusters and individual features.
-          const clusters = new VectorLayer({
-            source: clusterSource,
-            style: clusterStyle,
-          });
-
-// Layer displaying the expanded view of overlapping cluster members.
-          const clusterCircles = new VectorLayer({
-            source: clusterSource,
-            style: clusterCircleStyle,
-          });
-
-
-
-
-          function clusterStyle(feature:any) {
-            const size = feature.get('features').length;
-            if (size > 1) {
-              return [
-                new Style({
-                  image: outerCircle,
-                }),
-                new Style({
-                  image: innerCircle,
-                  text: new Text({
-                    text: size.toString(),
-                    fill: textFill,
-                    stroke: textStroke,
-                  }),
-                }),
-              ];
-            }
-            const originalFeature = feature.get('features')[0];
-            return clusterMemberStyle(originalFeature);
+          const markerFeatures = []
+          for (let e of this.dataSource.filteredData) {
+            // @ts-ignore
+            let lon = e.longitudine;
+            // @ts-ignore
+            let lat = e.latitudine;
+            // @ts-ignore
+            let name = e.intestazione;
+            // @ts-ignore
+            let cellulare = e.cellulare;
+            // @ts-ignore
+            let telefono = e.telefono;
+            // @ts-ignore
+            let indirizzo = e.indirizzo;
+            markerFeatures.push(new Feature({
+              geometry: new Point([lon,lat]),
+              name:  name,
+              telefono: telefono,
+              indirizzo: indirizzo,
+              cellulare: cellulare
+            }));
           }
 
-          /**
-           * From
-           * https://github.com/Leaflet/Leaflet.markercluster/blob/31360f2/src/MarkerCluster.Spiderfier.js#L55-L72
-           * Arranges points in a circle around the cluster center, with a line pointing from the center to
-           * each point.
-           * @param {number} count Number of cluster members.
-           * @param {Array<number>} clusterCenter Center coordinate of the cluster.
-           * @param {number} resolution Current view resolution.
-           * @return {Array<Array<number>>} An array of coordinates representing the cluster members.
-           */
-          function generatePointsCircle(count: any, clusterCenter:any, resolution:any) {
-            const circumference =
-              circleDistanceMultiplier * circleFootSeparation * (2 + count);
-            let legLength = circumference / (Math.PI * 2); //radius from circumference
-            const angleStep = (Math.PI * 2) / count;
-            const res = [];
-            let angle;
+          const markerStyle = new Style({
+            image: new RegularShape({
+            fill: fill,
+            stroke: stroke,
+            points: 3,
+            radius: 10,
+            angle: 0
+          })});
+          markerFeatures.forEach(m => m.setStyle(markerStyle));
 
-            legLength = Math.max(legLength, 35) * resolution; // Minimum distance to get outside the cluster icon.
+          const markerLayer = new VectorLayer({
+            source: new VectorSource({
+              features: markerFeatures
+            }),
+          });
+          this.map.addLayer(markerLayer);
 
-            for (let i = 0; i < count; ++i) {
-              // Clockwise, like spiral.
-              angle = circleStartAngle + i * angleStep;
-              res.push([
-                clusterCenter[0] + legLength * Math.cos(angle),
-                clusterCenter[1] + legLength * Math.sin(angle),
-              ]);
-            }
+          const popup = new Popup();
+          this.map.addOverlay(popup);
 
-            return res;
-          }
-
-          /**
-           * Single feature style, users for clusters with 1 feature and cluster circles.
-           * @param {Feature} clusterMember A feature from a cluster.
-           * @return {Style} An icon style for the cluster member's location.
-           */
-          function clusterMemberStyle(clusterMember: any) {
-            return new Style({
-              geometry: clusterMember.getGeometry(),
-              image: clusterMember.get('LEISTUNG') > 5 ? darkIcon : lightIcon,
+          this.map.on("click", (evt) => {
+            const feature = this.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+              return feature;
             });
-          }
-
-
-          /**
-           * Style for clusters with features that are too close to each other, activated on click.
-           * @param {Feature} cluster A cluster with overlapping members.
-           * @param {number} resolution The current view resolution.
-           * @return {Style|null} A style to render an expanded view of the cluster members.
-           */
-          function clusterCircleStyle(cluster: any, resolution: any):any {
-            if (cluster !== clickFeature || resolution !== clickResolution) {
-              return null;
+            if (!feature) {
+              return;
             }
-            const clusterMembers = cluster.get('features');
-            const centerCoordinates = cluster.getGeometry().getCoordinates();
-            return generatePointsCircle(
-              clusterMembers.length,
-              cluster.getGeometry().getCoordinates(),
-              resolution
-            ).reduce((styles, coordinates, i) => {
-              const point = new Point(coordinates);
-              const line = new LineString([centerCoordinates, coordinates]);
-              styles.unshift(
-                new Style({
-                  geometry: line,
-                  stroke: convexHullStroke,
-                })
-              );
-              styles.push(
-                clusterMemberStyle(
-                  new Feature({
-                    ...clusterMembers[i].getProperties(),
-                    geometry: point,
-                  })
-                )
-              );
-              return styles;
-            }, []);
-          }
+            let html = "<div style='font-size:0.75em'>" + feature.get("name") + "<br>" +
+              feature.get("indirizzo") + "<br>tel:&nbsp;" +
+              feature.get("telefono") + "<br>cell:&nbsp" +
+              feature.get("cellulare") + "<br>" +
+              "</div>";
+            popup.show(evt.coordinate, html);
+          });
 
-          this.map.addLayer(clusters);
-          this.map.addLayer(clusterCircles);
-          this.map.render();
         }
+
   }
 
   mostraNonDisponibile(articolo:any):number {

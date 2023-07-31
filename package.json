@@ -25,6 +25,7 @@
     "bootstrap": "^5.2.3",
     "moment": "^2.29.4",
     "ol": "^7.4.0",
+    "ol-popup": "^5.1.0",
     "rxjs": "~7.5.0",
     "signature_pad": "^4.1.4",
     "tslib": "^2.3.0",
