@@ -22,17 +22,16 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import Map from 'ol/Map';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM';
-import {fromLonLat, useGeographic} from "ol/proj";
+import {useGeographic} from "ol/proj";
 import {Icon, RegularShape, Style} from 'ol/style.js';
-import {Vector as VectorSource} from 'ol/source.js';
+import {Cluster, Vector as VectorSource} from 'ol/source.js';
 import {Point} from 'ol/geom.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {Feature} from "ol";
 import Popup from "ol-popup";
-import {SymbolType} from "ol/style/literal";
-import TRIANGLE = SymbolType.TRIANGLE;
-import {Circle} from "ol/geom";
-import {Fill, Stroke} from "ol/style";
+import {Fill, Stroke, Text} from "ol/style";
+import {boundingExtent} from 'ol/extent.js';
+import CircleStyle from "ol/style/Circle";
 
 useGeographic();
 
@@ -279,8 +278,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
             let telefono = e.telefono;
             // @ts-ignore
             let indirizzo = e.indirizzo;
+            // @ts-ignore
+            let sottoConto= e.sottoConto;
             markerFeatures.push(new Feature({
               geometry: new Point([lon,lat]),
+              id:sottoConto,
               name:  name,
               telefono: telefono,
               indirizzo: indirizzo,
@@ -298,33 +300,118 @@ export class ListaComponent extends CommonListComponent implements OnInit {
           })});
           markerFeatures.forEach(m => m.setStyle(markerStyle));
 
-          const markerLayer = new VectorLayer({
-            source: new VectorSource({
-              features: markerFeatures
-            }),
+          const source = new VectorSource({
+            features: markerFeatures,
           });
-          this.map.addLayer(markerLayer);
 
-          const popup = new Popup();
-          this.map.addOverlay(popup);
+          const clusterSource = new Cluster({
+            distance:  10,
+            minDistance:10,
+            source: source
+          });
 
-          this.map.on("click", (evt) => {
-            const feature = this.map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-              return feature;
-            });
-            if (!feature) {
-              return;
+          const styleCache:any = {};
+          function getStyle (feature:any) {
+            const size = feature.get('features').length;
+            let style = styleCache[size];
+            if (!style) {
+              style = new Style({
+                image: new CircleStyle({
+                  radius: 10,
+                  stroke: new Stroke({
+                    color: '#fff',
+                  }),
+                  fill: new Fill({
+                    color: '#3399CC',
+                  }),
+                }),
+                text: new Text({
+                  text: size.toString(),
+                  fill: new Fill({
+                    color: '#fff',
+                  }),
+                }),
+              });
+              styleCache[size] = style;
             }
-            let html = "<div style='font-size:0.75em'>" + feature.get("name") + "<br>" +
-              feature.get("indirizzo") + "<br>tel:&nbsp;" +
-              feature.get("telefono") + "<br>cell:&nbsp" +
-              feature.get("cellulare") + "<br>" +
-              "</div>";
-            popup.show(evt.coordinate, html);
+            return style;
+          }
+
+          const clusterLayer = new VectorLayer({
+            source: clusterSource,
+            style: getStyle
           });
 
-        }
+          this.map.addLayer(clusterLayer);
 
+          let popup = new Popup();
+
+          this.map.on('pointermove', (evt) => {
+            this.map.getTargetElement().style.cursor =
+              this.map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
+          });
+
+          this.map.on('click', (e) => {
+            this.map.getOverlays().clear();
+            let markers:any = [];
+            this.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+              if (feature.get('features').length > 1) {
+                let lat:any = feature.get('features')[0].getGeometry().getFlatCoordinates()[1];
+                let lon:any = feature.get('features')[0].getGeometry().getFlatCoordinates()[0];
+                let id:any =  feature.get('features')[0].get("id");
+                let feat:any = feature.get('features')[0];
+                markers.push(feat);
+                if(feature.get("expanded") === true){
+                  return;
+                }
+                for(let f of feature.get('features')){
+                  if(f.get("id") === id) {
+                    continue;
+                  }
+                  if(lat !== f.getGeometry().getFlatCoordinates()[1]) {
+                    break;
+                  } else if(lon !== f.getGeometry().getFlatCoordinates()[0]) {
+                    break;
+                  } else {
+                    markers.push(f);
+                  }
+
+                }
+                if(markers.length > 1) {
+                  for(let f of markers) {
+                    let coords = [f.getGeometry().getFlatCoordinates()[0] + Math.random()/100,
+                      f.getGeometry().getFlatCoordinates()[1]];
+                    popup = new Popup();
+                    popup.show(coords, this.generateHtmlPopup(f));
+                    this.map.addOverlay(popup);
+                  }
+                } else {
+                  const extent = boundingExtent(
+                    feature.get("features").map((r:any) => r.getGeometry().getCoordinates())
+                  );
+                  this.map.getView().fit(extent, {duration: 1000, padding: [25, 25, 25, 25]});
+                }
+              } else {
+                const feature = this.map.forEachFeatureAtPixel(e.pixel, function (feature) {
+                  return feature.get("features")[0];
+                });
+                if (!feature) {
+                  return;
+                }
+                popup.show(e.coordinate, this.generateHtmlPopup(feature));
+                this.map.addOverlay(popup);
+              }
+            });
+          });
+        }
+  }
+
+  generateHtmlPopup(feature:any): string {
+   return "<div style='font-size:0.75em'>" + feature.get("name") + "<br>" +
+      feature.get("indirizzo") + "<br>tel:&nbsp;" +
+      feature.get("telefono") + "<br>cell:&nbsp" +
+      feature.get("cellulare") + "<br>" +
+      "</div>";
   }
 
   mostraNonDisponibile(articolo:any):number {
