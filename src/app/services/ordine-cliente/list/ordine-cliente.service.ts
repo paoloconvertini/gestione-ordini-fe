@@ -36,8 +36,8 @@ export class OrdineClienteService extends CommonService{
     return this.http.get<any>(`${this.url}/unlock/${anno}/${serie}/${progressivo}`);
   }
 
-  addNotes(result: any): Observable<any> {
-    return this.http.post(`${this.url}/addNotes`, result)
+  addNotes(result: any, from:number): Observable<any> {
+    return this.http.post(`${this.url}/addNotes/${from}`, result)
   }
 
   getStati() : Observable<any> {

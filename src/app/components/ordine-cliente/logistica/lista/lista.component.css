@@ -1,6 +1,9 @@
 .nota-presente {
   color:#d11f0c!important;
 }
+.nota-logistica-presente {
+  color: #25be32 !important;
+}
 
 .note {
   font-size:0.75em;
@@ -25,4 +28,8 @@ tr.example-detail-row {
 .map-container {
   width: 100%;
   height: 400px;
+}
+
+.mat-mdc-icon-button[disabled] {
+  pointer-events: auto!important;
 }

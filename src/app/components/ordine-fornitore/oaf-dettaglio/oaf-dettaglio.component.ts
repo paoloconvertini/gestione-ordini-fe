@@ -10,6 +10,7 @@ import {OrdineFornitoreDettaglio} from "../../../models/ordine-fornitore-dettagl
 import {AggiungiOAFDialogComponent} from "../aggiungi-oafdialog/aggiungi-oafdialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -29,6 +30,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   rigo: number = 0;
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'sconto', 'prezzoTot', 'azioni'];
   ordineFornitoreDettaglio: OrdineFornitoreDettaglio = new OrdineFornitoreDettaglio();
+  filtro: FiltroOrdini = new FiltroOrdini();
 
   ngOnInit(): void {
     this.router.params.subscribe((params: any) => {
@@ -112,6 +114,9 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
                this.rigo = this.ordineFornitoreDettaglio.articoli[this.ordineFornitoreDettaglio.articoli.length -1].rigo;
               }
               this.createPaginator(this.ordineFornitoreDettaglio.articoli, 100);
+              if(this.filtro.searchText){
+                this.applyFilter();
+              }
             }
             this.loader = false;
           },
@@ -238,6 +243,17 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
           });
       }
     });
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.tipoRigo !=='C' &&
+        (data.oarticolo.toLowerCase().includes(filter)
+        || data.odescrArticolo.toLowerCase().includes(filter))
+      )
+    }
   }
 
 }

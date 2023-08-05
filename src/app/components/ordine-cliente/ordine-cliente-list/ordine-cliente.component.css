@@ -49,3 +49,11 @@
 .nota-presente {
   color:#d11f0c!important;
 }
+
+.nota-logistica-presente {
+  color: #25be32 !important;
+}
+
+.mat-mdc-icon-button[disabled] {
+  pointer-events: auto!important;
+}

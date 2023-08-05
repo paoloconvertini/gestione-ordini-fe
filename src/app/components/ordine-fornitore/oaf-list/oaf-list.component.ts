@@ -12,6 +12,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 @Component({
   selector: 'app-oaf-list',
@@ -28,6 +29,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   isVenditore: boolean = false;
   selection = new SelectionModel<any>(true, []);
   updateList: any = [];
+  filtro: FiltroOrdini = new FiltroOrdini();
 
   constructor(private snackbar: MatSnackBar, private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
     super();
@@ -145,6 +147,9 @@ export class OafListComponent extends CommonListComponent implements OnInit {
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (data: any[] | undefined) => {
           this.createPaginator(data, 15);
+          if(this.filtro.searchText){
+            this.applyFilter();
+          }
           this.loader = false;
         },
         error: (e: any) => {
@@ -271,5 +276,18 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       this.updateList.push(ordine);
     }
 
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.intestazione.toLowerCase().includes(filter)
+        || data.serie.toLowerCase().includes(filter)
+        || data.dataOrdine.includes(filter)
+        || data.anno.toString().toLowerCase().includes(filter)
+        || data.progressivo.toString().toLowerCase().includes(filter)
+      )
+    }
   }
 }

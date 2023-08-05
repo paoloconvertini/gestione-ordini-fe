@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../commonListComponent";
-import {UserService} from "../../services/users/user.service";
 import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../../environments/environment";
@@ -8,6 +7,7 @@ import {RoleService} from "../../services/role/role.service";
 import {takeUntil} from "rxjs";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {Ruolo} from "../../models/Ruolo";
+import {FiltroOrdini} from "../../models/FiltroOrdini";
 
 @Component({
   selector: 'app-role',
@@ -18,6 +18,8 @@ export class RoleComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['nome', 'azioni'];
   isAdmin: boolean = false;
+  filtro: FiltroOrdini = new FiltroOrdini();
+
 
   constructor(private service: RoleService, private route: Router, private dialog: MatDialog) {
     super();
@@ -37,6 +39,9 @@ export class RoleComponent extends CommonListComponent implements OnInit {
         .subscribe({
           next: (data: any[]) => {
             this.createPaginator(data, 100);
+            if(this.filtro.searchText){
+              this.applyFilter();
+            }
             this.loader = false;
           },
           error: (e: any) => {
@@ -105,6 +110,15 @@ export class RoleComponent extends CommonListComponent implements OnInit {
         },
         error: (e) => console.error(e)
       });
+    }
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.name.toLowerCase().includes(filter)
+      )
     }
   }
 }

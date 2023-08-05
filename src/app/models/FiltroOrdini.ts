@@ -6,4 +6,6 @@ export class FiltroOrdini {
 
   prontoConsegna: boolean = false;
 
+  searchText: string = '';
+
 }

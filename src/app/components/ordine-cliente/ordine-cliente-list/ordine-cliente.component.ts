@@ -55,7 +55,11 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
           if (params.status) {
             this.filtro.status = params.status;
           } else {
-            this.filtro.status = 'TUTTI';
+            if(localStorage.getItem(environment.LOGISTICA)){
+              this.filtro.status = 'COMPLETO';
+            } else {
+              this.filtro.status = 'TUTTI';
+            }
           }
         }
       );
@@ -73,7 +77,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
     if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
-      this.filtro.prontoConsegna = true;
+      //this.filtro.prontoConsegna = true;
     }
   }
 
@@ -144,6 +148,9 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
               d.isLocked = d.locked && this.user !== d.userLock;
             })
             this.createPaginator(data, 100);
+            if(this.filtro.searchText){
+              this.applyFilter();
+            }
             this.loader = false;
           },
           error: (e: any) => {
@@ -160,13 +167,8 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     this.loader = true;
       this.service.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
-          next: (data: any[] | undefined) => {
-            data?.forEach(d => {
-              d.isLocked = d.locked && this.user !== d.userLock;
-            })
-           // this.filtro.status = '';
-            // this.getStati();
-            this.createPaginator(data, 100);
+          next: () => {
+            this.retrieveList();
             this.loader = false;
           },
           error: (e: any) => {
@@ -307,12 +309,20 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       })
   }
 
-  aggiungiNote(ordine: OrdineCliente) {
+  aggiungiNote(ordine: OrdineCliente, from: number) {
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;
     data.serie = ordine.serie;
     data.progressivo = ordine.progressivo;
-    data.note = ordine.note;
+    if(from === 0) {
+      data.note = ordine.note;
+    } else {
+      if(!this.isLogistica && !this.isAdmin) {
+        return;
+      }
+      data.note = ordine.noteLogistica;
+    }
+
     {
       const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
         width: '50%',
@@ -321,7 +331,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.loader = true;
-          this.service.addNotes(result).pipe(takeUntil(this.ngUnsubscribe))
+          this.service.addNotes(result, from).pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
               next: (res) => {
                 this.loader = false;
@@ -329,7 +339,11 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                   })
-                  ordine.note = result.note;
+                  if(from === 0) {
+                    ordine.note = result.note;
+                  } else {
+                    ordine.noteLogistica = result.note;
+                  }
                 }
               },
               error: (e) => {
@@ -370,5 +384,19 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             this.loader = false;
           }
         })
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.intestazione.toLowerCase().includes(filter)
+        || data.serie.toLowerCase().includes(filter)
+        || data.dataConferma.includes(filter)
+        || data.localita.toLowerCase().includes(filter)
+        || data.anno.toString().toLowerCase().includes(filter)
+        || data.progressivo.toString().toLowerCase().includes(filter)
+      )
+    }
   }
 }

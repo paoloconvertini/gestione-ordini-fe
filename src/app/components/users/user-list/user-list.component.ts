@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {Dipendente} from "../../../models/Dipendente";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 @Component({
   selector: 'app-user-list',
@@ -17,6 +18,8 @@ export class UserListComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['username', 'nome', 'cognome', 'azioni'];
   isAdmin: boolean = false;
+  filtro: FiltroOrdini = new FiltroOrdini();
+
 
   constructor(private service: UserService, private route: Router, private dialog: MatDialog) {
     super();
@@ -40,6 +43,9 @@ export class UserListComponent extends CommonListComponent implements OnInit {
         .subscribe({
           next: (data: any[] | undefined) => {
             this.createPaginator(data, 100);
+            if(this.filtro.searchText){
+              this.applyFilter();
+            }
             this.loader = false;
           },
           error: (e: any) => {
@@ -86,5 +92,16 @@ export class UserListComponent extends CommonListComponent implements OnInit {
         });
       }
     });
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.username.toLowerCase().includes(filter)
+        || data.name.toLowerCase().includes(filter)
+        || data.lastname.includes(filter)
+      )
+    }
   }
 }

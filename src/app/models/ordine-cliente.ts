@@ -8,5 +8,6 @@ export class OrdineCliente {
   email?: string
   sottoConto?:string
   note?: string
+  noteLogistica?: string
   status?: string
 }

@@ -10,11 +10,16 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-6">
+    <div class="col-lg-5 col-md-5 col-sm-5">
       <mat-form-field>
         <mat-label>Cerca...</mat-label>
-        <input matInput (keyup)="applyFilter($event)" #input>
+        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
       </mat-form-field>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
+        Reset
+      </button>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6">
       <button class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
@@ -129,11 +134,15 @@
                       (click)="editDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
                 <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
               </button>
-              <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
+              <button (click)="aggiungiNote(ordine, 0)" mat-icon-button [matTooltip]="ordine.note">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"
                           [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
               </button>
-              <button (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file">
+              <button (click)="aggiungiNote(ordine, 1)" mat-icon-button [matTooltip]="ordine.noteLogistica" matTooltipClass="note">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
+                          [ngClass]="{'nota-logistica-presente':ordine.noteLogistica}"></mat-icon>
+              </button>
+              <button *ngIf="!isLogistica" (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file">
                 <mat-icon aria-hidden="false" aria-label="download" fontIcon="file_download" color="primary"></mat-icon>
               </button>
               <button *ngIf="!ordine.hasFirma && (isVenditore || isAdmin)" (click)="apriFirma(ordine)" mat-icon-button
@@ -175,7 +184,7 @@
           <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell no-result-list" colspan="4">Nessun
-              risultato {{input.value ? "per la ricerca " + input.value : ""}}</td>
+              risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
           </tr>
         </table>
 

@@ -11,4 +11,9 @@ export class ArticoloCliente {
   serie:any
   progressivo:any
   note:any
+  intestazione:any
+  annoOAF:any
+  serieOAF:any
+  progressivoOAF:any
+  dataOrdineOAF: any
 }

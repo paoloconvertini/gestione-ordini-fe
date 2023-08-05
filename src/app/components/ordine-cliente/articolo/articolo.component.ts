@@ -20,6 +20,7 @@ import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {Acconto} from "../../../models/Acconto";
 import {SelectionModel} from '@angular/cdk/collections';
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 export interface Option {
   name: string,
@@ -76,7 +77,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   displayedColumns: string[] = ['select', 'codice', 'descrizione', 'quantita'];
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
   expandedElement: any;
-
+  filtro: FiltroOrdini = new FiltroOrdini();
 
   ngOnInit(): void {
     this.filtroArticoli.view = this.route.url.includes('view');
@@ -346,6 +347,9 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           }
           this.createPaginator(this.ordineDettaglio.articoli, 100);
           this.selection = new SelectionModel<any>(true, []);
+          if(this.filtro.searchText){
+            this.applyFilter();
+          }
           this.loader = false;
         },
         error: (e: any) => {
@@ -488,5 +492,17 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           this.loader = false;
         }
       })
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.tipoRigo !=='C' && data.tipoRigo !=='AC' &&
+        (data.farticolo.toLowerCase().includes(filter)
+        || data.fdescrArticolo.toLowerCase().includes(filter)
+        || data.codArtFornitore.toLowerCase().includes(filter)
+      ))
+    }
   }
 }

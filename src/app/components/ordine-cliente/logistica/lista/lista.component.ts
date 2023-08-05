@@ -15,7 +15,7 @@ import {OrdineClienteNotaDto} from "../../../../models/OrdineClienteNotaDto";
 import {
   OrdineClienteNoteDialogComponent
 } from "../../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
-import {Option} from "../../ordine-cliente-list/ordine-cliente.component";
+import {Option, OptStatus} from "../../ordine-cliente-list/ordine-cliente.component";
 import {ArticoloCliente} from "../../../../models/ArticoloCliente";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
@@ -63,6 +63,8 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   isLogistica: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
   radioPerVenditoreOptions: Option[] = [];
+  radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'}, {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'},
+    {codice: 'COMPLETO', descrizione: 'COMPLETO'}];
   stato: string = '';
   loaderDettaglio: boolean = false;
   expandedElement: any;
@@ -75,6 +77,12 @@ export class ListaComponent extends CommonListComponent implements OnInit {
               private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router,
               private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService) {
     super();
+    if(localStorage.getItem(environment.LOGISTICA)){
+      this.filtro.status = 'COMPLETO';
+      this.isLogistica = true;
+    } else {
+      this.filtro.status = 'TUTTI';
+    }
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
@@ -86,9 +94,6 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     }
     if (localStorage.getItem(environment.VENDITORE)) {
       this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
     }
   }
 
@@ -103,6 +108,9 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       .subscribe({
         next: (data: any[] | undefined) => {
           this.createPaginator(data, 100);
+          if(this.filtro.searchText){
+            this.applyFilter();
+          }
           this.loader = false;
         },
         error: (e: any) => {
@@ -128,7 +136,18 @@ export class ListaComponent extends CommonListComponent implements OnInit {
 
   refreshPage() {
     this.getVenditori();
-    this.retrieveList();
+    this.loader = true;
+    this.ordineClienteService.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: () => {
+          this.retrieveList();
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
   editDettaglio(ordine: OrdineCliente) {
@@ -147,12 +166,19 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     this.route.navigateByUrl(url);
   }
 
-  aggiungiNote(ordine: OrdineCliente) {
+  aggiungiNote(ordine: OrdineCliente, from: number) {
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;
     data.serie = ordine.serie;
     data.progressivo = ordine.progressivo;
-    data.note = ordine.note;
+    if(from === 0) {
+      data.note = ordine.note;
+    } else {
+      if(!this.isLogistica && !this.isAdmin) {
+        return;
+      }
+      data.note = ordine.noteLogistica;
+    }
     {
       const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
         width: '50%',
@@ -161,7 +187,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.loader = true;
-          this.ordineClienteService.addNotes(result).pipe(takeUntil(this.ngUnsubscribe))
+          this.ordineClienteService.addNotes(result, from).pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
               next: (res) => {
                 this.loader = false;
@@ -169,7 +195,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                   })
-                  ordine.note = result.note;
+                  if(from === 0) {
+                    ordine.note = result.note;
+                  } else {
+                    ordine.noteLogistica = result.note;
+                  }
                 }
               },
               error: (e) => {
@@ -421,6 +451,20 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       return 1;
     } else {
       return 0;
+    }
+  }
+
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      return (
+        data.intestazione.toLowerCase().includes(filter)
+        || data.serie.toLowerCase().includes(filter)
+        || data.dataConferma.includes(filter)
+        || data.localita.toLowerCase().includes(filter)
+        || data.anno.toString().toLowerCase().includes(filter)
+        || data.progressivo.toString().toLowerCase().includes(filter)
+      )
     }
   }
 }
