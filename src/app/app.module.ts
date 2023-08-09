@@ -53,6 +53,8 @@ import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiun
 import {MatSortModule} from "@angular/material/sort";
 import {MatSelectModule} from "@angular/material/select";
 import { ListaComponent } from './components/ordine-cliente/logistica/lista/lista.component';
+import { ListaBollaComponent } from './components/ordine-cliente/logistica/lista-bolla/lista-bolla.component';
+import { AccontoDialogComponent } from './components/ordine-cliente/logistica/acconto-dialog/acconto-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -81,7 +83,9 @@ export const DateFormats = {
     RoleComponent,
     OrdineClienteNoteDialogComponent,
     AggiungiOAFDialogComponent,
-    ListaComponent
+    ListaComponent,
+    ListaBollaComponent,
+    AccontoDialogComponent
   ],
     imports: [
         BrowserModule,

@@ -21,6 +21,9 @@ import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog
 import {Acconto} from "../../../models/Acconto";
 import {SelectionModel} from '@angular/cdk/collections';
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
+import {ListaComponent} from "../logistica/lista/lista.component";
+import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
 
 export interface Option {
   name: string,
@@ -64,6 +67,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
   selection = new SelectionModel<any>(true, []);
+  selectionProntaConsegna = new SelectionModel<any>(true, []);
   bolle: Bolla[] = [];
   acconti: Acconto[] = [];
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
@@ -78,6 +82,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
   expandedElement: any;
   filtro: FiltroOrdini = new FiltroOrdini();
+  accontiDaUsare: Acconto[] = [];
 
   ngOnInit(): void {
     this.filtroArticoli.view = this.route.url.includes('view');
@@ -235,6 +240,111 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     }
 
     this.selection.select(...this.dataSource.data);
+  }
+
+  isAllSelectedPC() {
+    const numSelected = this.selectionProntaConsegna.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  toggleAllRowsPC() {
+    if (this.isAllSelectedPC()) {
+      this.selectionProntaConsegna.clear();
+      return;
+    }
+
+    this.selectionProntaConsegna.select(...this.dataSource.data);
+  }
+
+  cercaAltriOrdini() {
+    this.loader = true;
+    let list = this.selectionProntaConsegna.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
+    let  o = list[0];
+    this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && res.length > 0) {
+            const dialogRef = this.dialog.open(ListaBollaComponent, {
+              width: '90%',
+              data: {ordini: res}
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                this.selectionProntaConsegna.select(...result);
+                this.cercaAcconti();
+              }
+            });
+          } else {
+            this.cercaAcconti();
+          }
+        },
+        error: () => {
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.loader = false;
+        }
+      })
+
+  }
+
+  cercaAcconti(){
+    this.loader = true;
+    const list = this.selectionProntaConsegna.selected.filter(a => a.flProntoConsegna);
+    this.service.cercaAcconti(this.ordineDettaglio.sottoConto, list).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && res.length > 0) {
+            const dialogRef = this.dialog.open(AccontoDialogComponent, {
+              width: '90%',
+              data: {acconti: res}
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                this.accontiDaUsare = result;
+                this.creaBolla();
+              }
+            });
+          } else {
+            this.creaBolla();
+          }
+        },
+        error: () => {
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.loader = false;
+        }
+      })
+  }
+
+  creaBolla() {
+    this.loader = true;
+    this.service.creaBolla(this.selectionProntaConsegna.selected, this.accontiDaUsare).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if(res && !res.error) {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          } else {
+            this.snackbar.open('Errore! Bolla non creata', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            });
+            this.loader = false;
+          }
+        },
+        error: () => {
+          this.snackbar.open('Server non raggiungibile!', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.loader = false;
+        }
+      })
   }
 
   creaOrdineForn() {

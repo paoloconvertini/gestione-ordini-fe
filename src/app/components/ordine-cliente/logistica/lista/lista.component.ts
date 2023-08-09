@@ -150,22 +150,6 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       })
   }
 
-  editDettaglio(ordine: OrdineCliente) {
-    let url = "/articoli/edit/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (ordine.status) {
-      url += "/" + ordine.status;
-    }
-    this.route.navigateByUrl(url);
-  }
-
-  vediDettaglio(ordine: OrdineCliente) {
-    let url = "/articoli/view/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (ordine.status) {
-      url += "/" + ordine.status;
-    }
-    this.route.navigateByUrl(url);
-  }
-
   aggiungiNote(ordine: OrdineCliente, from: number) {
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;

@@ -4,6 +4,7 @@ export class ArticoloCliente {
   fdescrArticolo: any
   codArtFornitore: any
   quantita:any
+  qtaProntoConsegna: any
   funitaMisura: any
   qtaDaConsegnare: any
   rigo: any
@@ -16,4 +17,5 @@ export class ArticoloCliente {
   serieOAF:any
   progressivoOAF:any
   dataOrdineOAF: any
+  flProntoConsegna: any
 }

@@ -55,4 +55,16 @@ export class ArticoloService extends CommonService{
   getArticoli(anno: number | undefined, serie: string | undefined, progressivo: number | undefined): Observable<any> {
     return this.http.get(`${this.url}/getArticoli/${anno}/${serie}/${progressivo}`);
   }
+
+  creaBolla(data: any, accontoDtos: any): Observable<any> {
+    let body = {
+      list: data,
+      accontoDtos: accontoDtos
+    }
+    return this.http.post(`${this.url}/creaBolla`, body);
+  }
+
+  cercaAcconti(sottoConto: string, list: any[]): Observable<any> {
+    return this.http.post(`${this.url}/cercaAcconti/${sottoConto}`, list);
+  }
 }
