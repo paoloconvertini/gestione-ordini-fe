@@ -92,7 +92,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
 
   getArticoli(ordine: OrdineCliente) {
     this.loaderDettaglio = true;
-    this.articoloService.getArticoli(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+    this.articoloService.getArticoli("Y", ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: ArticoloCliente[]) => {
           if (data) {

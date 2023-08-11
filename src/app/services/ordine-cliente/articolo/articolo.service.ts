@@ -52,8 +52,8 @@ export class ArticoloService extends CommonService{
     return this.http.post(`${this.url}/codificaArticoli`, list)
   }
 
-  getArticoli(anno: number | undefined, serie: string | undefined, progressivo: number | undefined): Observable<any> {
-    return this.http.get(`${this.url}/getArticoli/${anno}/${serie}/${progressivo}`);
+  getArticoli(bolla:string, anno: number | undefined, serie: string | undefined, progressivo: number | undefined): Observable<any> {
+    return this.http.get(`${this.url}/getArticoli/${bolla}/${anno}/${serie}/${progressivo}`);
   }
 
   creaBolla(data: any, accontoDtos: any): Observable<any> {

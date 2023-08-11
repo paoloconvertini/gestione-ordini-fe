@@ -273,8 +273,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             dialogRef.afterClosed().subscribe(result => {
               if (result) {
                 this.selectionProntaConsegna.select(...result);
-                this.cercaAcconti();
               }
+              this.cercaAcconti();
             });
           } else {
             this.cercaAcconti();
@@ -305,8 +305,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             dialogRef.afterClosed().subscribe(result => {
               if (result) {
                 this.accontiDaUsare = result;
-                this.creaBolla();
               }
+              this.creaBolla();
             });
           } else {
             this.creaBolla();
