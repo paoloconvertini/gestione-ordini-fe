@@ -22,7 +22,8 @@ export const environment = {
   OAF_ARTICOLI: '/articoli',
   PIANOCONTI: 'pianoconti',
   USER: 'users',
-  ROLE: 'roles'
+  ROLE: 'roles',
+  //DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };
 
 /*
