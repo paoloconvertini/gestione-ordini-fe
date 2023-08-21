@@ -1,0 +1,40 @@
+tr.example-detail-row {
+  height: 0;
+}
+
+.mat-column-codice {
+  font-weight: bold;
+  min-width: 35px;
+}
+
+.box {
+  display: flex;
+  flex-direction: row;
+}
+
+.box-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: normal;
+  align-items: stretch;
+  align-content: normal;
+  padding: 15px;
+}
+
+.box-item {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.img-box {
+  display: inline;
+}
+
+.dettaglio {
+  background-color: #eeeeee;
+}

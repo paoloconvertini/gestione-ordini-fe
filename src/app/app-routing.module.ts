@@ -11,6 +11,7 @@ import { UserDetailComponent } from './components/users/user-detail/user-detail.
 import {UserListComponent} from "./components/users/user-list/user-list.component";
 import {RoleComponent} from "./components/role/role.component";
 import {ListaComponent} from "./components/ordine-cliente/logistica/lista/lista.component";
+import {BoxDocciaComponent} from "./components/box-doccia/box-doccia.component";
 
 const routes: Routes = [
   {
@@ -77,6 +78,11 @@ const routes: Routes = [
     path: 'oaf/articoli/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: OafDettaglioComponent,
+  },
+  {
+    path: 'box-doccia',
+    canActivate: [AuthGuard],
+    component: BoxDocciaComponent,
   },
   {
     path: 'login',

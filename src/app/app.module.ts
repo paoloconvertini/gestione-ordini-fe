@@ -55,6 +55,7 @@ import {MatSelectModule} from "@angular/material/select";
 import { ListaComponent } from './components/ordine-cliente/logistica/lista/lista.component';
 import { ListaBollaComponent } from './components/ordine-cliente/logistica/lista-bolla/lista-bolla.component';
 import { AccontoDialogComponent } from './components/ordine-cliente/logistica/acconto-dialog/acconto-dialog.component';
+import { BoxDocciaComponent } from './components/box-doccia/box-doccia.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -85,7 +86,8 @@ export const DateFormats = {
     AggiungiOAFDialogComponent,
     ListaComponent,
     ListaBollaComponent,
-    AccontoDialogComponent
+    AccontoDialogComponent,
+    BoxDocciaComponent
   ],
     imports: [
         BrowserModule,

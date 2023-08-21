@@ -19,5 +19,6 @@ export const environment = {
   PIANOCONTI: 'pianoconti',
   USER: 'users',
   ROLE: 'roles',
+  BOX_DOCCIA: 'box-doccia'
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };
