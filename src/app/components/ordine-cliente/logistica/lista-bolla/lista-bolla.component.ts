@@ -76,7 +76,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
+    const numRows = this.articoli.length;
     return numSelected === numRows;
   }
 
@@ -87,7 +87,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
       return;
     }
 
-    this.selection.select(...this.dataSource.data);
+    this.selection.select(...this.articoli);
   }
 
   getArticoli(ordine: OrdineCliente) {

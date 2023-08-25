@@ -503,7 +503,11 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   checkQtaProntoConsegna(articolo: any) {
     if (articolo.flProntoConsegna) {
-      articolo.qtaProntoConsegna = articolo.quantita;
+      if(articolo.qtaDaConsegnare) {
+        articolo.qtaProntoConsegna = articolo.qtaDaConsegnare;
+      } else {
+        articolo.qtaProntoConsegna = articolo.quantita;
+      }
     } else {
       articolo.qtaProntoConsegna = undefined;
     }
