@@ -67,4 +67,8 @@ export class ArticoloService extends CommonService{
   cercaAcconti(sottoConto: string, list: any[]): Observable<any> {
     return this.http.post(`${this.url}/cercaAcconti/${sottoConto}`, list);
   }
+
+  scaricaSchedeTecniche(list: any[]) : Observable<any> {
+    return this.http.post(`${this.url}/scaricaSchedeTecniche`, list);
+  }
 }

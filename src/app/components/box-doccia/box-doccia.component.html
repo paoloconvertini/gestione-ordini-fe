@@ -33,7 +33,8 @@
             <ng-container matColumnDef="descrizione">
               <th mat-header-cell *matHeaderCellDef> Descrizione</th>
               <td class="pointer" mat-cell *matCellDef="let articolo" (click)="getDetail(articolo); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
-                {{articolo.descrizione}}
+                {{articolo.descrizione}}.
+                {{articolo.profilo}}. {{articolo.estensibilita}}. {{articolo.versione}}
               </td>
             </ng-container>
             <!-- Name Column -->

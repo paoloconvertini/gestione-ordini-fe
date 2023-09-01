@@ -67,7 +67,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
   selection = new SelectionModel<any>(true, []);
-  selectionProntaConsegna = new SelectionModel<any>(true, []);
   bolle: Bolla[] = [];
   acconti: Acconto[] = [];
   radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
@@ -238,28 +237,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       this.selection.clear();
       return;
     }
-
     this.selection.select(...this.dataSource.data);
-  }
-
-  isAllSelectedPC() {
-    const numSelected = this.selectionProntaConsegna.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  toggleAllRowsPC() {
-    if (this.isAllSelectedPC()) {
-      this.selectionProntaConsegna.clear();
-      return;
-    }
-
-    this.selectionProntaConsegna.select(...this.dataSource.data);
   }
 
   cercaAltriOrdini() {
     this.loader = true;
-    let list = this.selectionProntaConsegna.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
+    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
     let  o = list[0];
     this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -272,7 +255,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             });
             dialogRef.afterClosed().subscribe(result => {
               if (result) {
-                this.selectionProntaConsegna.select(...result);
+                this.selection.select(...result);
               }
               this.cercaAcconti();
             });
@@ -292,7 +275,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   cercaAcconti(){
     this.loader = true;
-    const list = this.selectionProntaConsegna.selected.filter(a => a.flProntoConsegna);
+    const list = this.selection.selected.filter(a => a.flProntoConsegna);
     this.service.cercaAcconti(this.ordineDettaglio.sottoConto, list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
@@ -323,7 +306,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   creaBolla() {
     this.loader = true;
-    this.service.creaBolla(this.selectionProntaConsegna.selected, this.accontiDaUsare).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.creaBolla(this.selection.selected, this.accontiDaUsare).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
@@ -618,5 +601,30 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         || data.codArtFornitore.toLowerCase().includes(filter)
       ))
     }
+  }
+
+  scaricaSchedeTecniche() {
+    const list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
+    this.loader = true;
+    this.service.scaricaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res) {
+
+              //TODO gestire i file eventualmente trovati
+          } else {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          }
+        },
+        error: () => {
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.loader = false;
+        }
+      })
   }
 }

@@ -135,6 +135,9 @@ export class BoxDocciaComponent extends CommonListComponent implements OnInit {
       return (
         data.codice.toLowerCase().includes(filter)
         || data.descrizione.toLowerCase().includes(filter)
+        || data.profilo?.toLowerCase().includes(filter)
+        || data.estensibilita?.toLowerCase().includes(filter)
+        || data.versione?.toLowerCase().includes(filter)
       )
     }
   }
