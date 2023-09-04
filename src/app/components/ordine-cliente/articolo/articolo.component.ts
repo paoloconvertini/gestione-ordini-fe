@@ -620,16 +620,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             a.download = "schede_tecniche.zip";
             a.click();
             window.URL.revokeObjectURL(url);
-
-            /*let downloadUrl = URL.createObjectURL(data.fileBlob);
-            let downloadButton = document.createElement('a');
-            downloadButton.setAttribute('href', downloadUrl);
-            downloadButton.setAttribute('download', data.name);
-            downloadButton.setAttribute('class', 'button');
-            downloadButton.innerText = 'Download: ' + data.name;
-            document.getElementById('results')?.appendChild(downloadButton);
-            */
-
           } else {
             this.snackbar.open('Errore', 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
