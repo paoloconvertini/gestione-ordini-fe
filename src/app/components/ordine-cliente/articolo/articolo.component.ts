@@ -608,18 +608,36 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.loader = true;
     this.service.scaricaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (res) => {
+        next: (data) => {
           this.loader = false;
-          if (res) {
+          if (data) {
+            let a: any = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            let blob = new Blob([data], { type: 'application/zip' });
+            let url= window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = "schede_tecniche.zip";
+            a.click();
+            window.URL.revokeObjectURL(url);
 
-              //TODO gestire i file eventualmente trovati
+            /*let downloadUrl = URL.createObjectURL(data.fileBlob);
+            let downloadButton = document.createElement('a');
+            downloadButton.setAttribute('href', downloadUrl);
+            downloadButton.setAttribute('download', data.name);
+            downloadButton.setAttribute('class', 'button');
+            downloadButton.innerText = 'Download: ' + data.name;
+            document.getElementById('results')?.appendChild(downloadButton);
+            */
+
           } else {
-            this.snackbar.open(res.msg, 'Chiudi', {
+            this.snackbar.open('Errore', 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
           }
         },
-        error: () => {
+        error: (e:any) => {
+          console.log(e);
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });

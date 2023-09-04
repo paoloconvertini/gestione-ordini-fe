@@ -69,6 +69,9 @@ export class ArticoloService extends CommonService{
   }
 
   scaricaSchedeTecniche(list: any[]) : Observable<any> {
-    return this.http.post(`${this.url}/scaricaSchedeTecniche`, list);
+    const httpOptions = {
+      responseType: 'blob' as 'json'
+    };
+    return this.http.post(`${this.url}/scaricaSchedeTecniche`, list, httpOptions);
   }
 }
