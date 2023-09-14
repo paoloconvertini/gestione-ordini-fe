@@ -56,6 +56,7 @@ import { ListaComponent } from './components/ordine-cliente/logistica/lista/list
 import { ListaBollaComponent } from './components/ordine-cliente/logistica/lista-bolla/lista-bolla.component';
 import { AccontoDialogComponent } from './components/ordine-cliente/logistica/acconto-dialog/acconto-dialog.component';
 import { BoxDocciaComponent } from './components/box-doccia/box-doccia.component';
+import { SchedeTecnicheComponent } from './components/ordine-cliente/schede-tecniche/schede-tecniche.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -87,7 +88,8 @@ export const DateFormats = {
     ListaComponent,
     ListaBollaComponent,
     AccontoDialogComponent,
-    BoxDocciaComponent
+    BoxDocciaComponent,
+    SchedeTecnicheComponent
   ],
     imports: [
         BrowserModule,

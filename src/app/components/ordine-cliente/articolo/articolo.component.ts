@@ -24,6 +24,7 @@ import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
 import {ListaComponent} from "../logistica/lista/lista.component";
 import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
+import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
 
 export interface Option {
   name: string,
@@ -603,8 +604,37 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     }
   }
 
-  scaricaSchedeTecniche() {
+  cercaSchedeTecniche(): void {
+    this.loader = true;
     const list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
+    this.service.cercaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if(res){
+            if(res.codArtFornList && res.codArtFornList.length > 0) {
+              this.dialog.open(SchedeTecnicheComponent, {
+                width: '80%',
+                data: {
+                  articoliList: res.codArtFornList
+                }
+              });
+            } else {
+              this.scaricaSchedeTecniche(res.searchDTOS);
+            }
+          }
+        },
+        error: (e) => {
+          console.error(e);
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+          this.loader = false;
+        }
+      });
+  }
+
+  scaricaSchedeTecniche(list:any[]) {
     this.loader = true;
     this.service.scaricaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({

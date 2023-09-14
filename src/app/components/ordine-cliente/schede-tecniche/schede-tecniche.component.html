@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>Aggiungi schede tecniche</h1>
+<div mat-dialog-content>
+  <form class="example-form">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Articolo</th>
+          <th>Fornitore</th>
+          <th>upload</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let articolo of list; index as i">
+          <td>{{articolo.codArtFornitore}}</td>
+          <td>
+            <mat-form-field class="example-full-width" appearance="fill">
+              <input type="text"
+                     placeholder="Fornitore"
+                     aria-label="Number"
+                     matInput
+                     [(ngModel)]="articolo.folder"
+                     [formControl]="myControl"
+                     [matAutocomplete]="auto">
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="articolo.folder = $event.option.value" [displayWith]="getOption" >
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                  {{option}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td>
+            <input type="file" class="file-input" (change)="onFileSelected($event, articolo)" #fileUpload>
+            <div class="file-upload">
+              {{articolo.fileName || "No file uploaded yet."}}
+              <button mat-mini-fab color="primary" class="upload-btn"
+                      (click)="fileUpload.click()" [disabled]="!articolo.folder">
+                <mat-icon>attach_file</mat-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="chiudi()">Indietro</button>
+</div>
+

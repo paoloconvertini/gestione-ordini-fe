@@ -68,6 +68,18 @@ export class ArticoloService extends CommonService{
     return this.http.post(`${this.url}/cercaAcconti/${sottoConto}`, list);
   }
 
+  cercaSchedeTecniche(list: any[]): Observable<any> {
+    return this.http.post(`${this.url}/cercaSchedeTecniche`, list);
+  }
+
+  cercaCartelleSchedeTecniche(): Observable<any> {
+    return this.http.get(`${this.url}/cercaCartelleSchedeTecniche`);
+  }
+
+  uploadSchedeTecniche(data: any): Observable<any> {
+    return this.http.post(`${this.url}/uploadSchedeTecniche`, data);
+  }
+
   scaricaSchedeTecniche(list: any[]) : Observable<any> {
     const httpOptions = {
       responseType: 'blob' as 'json'
