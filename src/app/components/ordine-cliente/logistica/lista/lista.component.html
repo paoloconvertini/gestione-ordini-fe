@@ -63,7 +63,7 @@
           <ng-container matColumnDef="cliente">
             <th mat-header-cell *matHeaderCellDef> Cliente</th>
             <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
-              {{ordine.intestazione}}<br><span style="font-size:11px">{{ordine.riferimento}}</span>
+              <span matTooltip="{{ordine.telefono}} - {{ordine.cellulare}}">{{ordine.intestazione}}</span><br><span style="font-size:11px">{{ordine.riferimento}}</span>
             </td>
           </ng-container>
           <!-- Name Column -->
