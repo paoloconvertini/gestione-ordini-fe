@@ -605,8 +605,16 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   cercaSchedeTecniche(): void {
-    this.loader = true;
     const list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
+    for (const l of list) {
+      if(!l.codArtFornitore) {
+        this.snackbar.open('Articolo senza codice fornitore: ' + l.farticolo, 'Chiudi', {
+          duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+        })
+        return;
+      }
+    }
+    this.loader = true;
     this.service.cercaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
