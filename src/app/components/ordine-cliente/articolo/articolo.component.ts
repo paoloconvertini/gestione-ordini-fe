@@ -242,8 +242,14 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   cercaAltriOrdini() {
+    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC' && row.flProntoConsegna);
+    if(list.length == 0) {
+      this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna!', 'Chiudi', {
+        duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+      });
+      return;
+    }
     this.loader = true;
-    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
     let  o = list[0];
     this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -276,8 +282,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   cercaAcconti(){
     this.loader = true;
-    const list = this.selection.selected.filter(a => a.flProntoConsegna);
-    this.service.cercaAcconti(this.ordineDettaglio.sottoConto, list).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.cercaAcconti(this.ordineDettaglio.sottoConto, this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
