@@ -316,6 +316,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       .subscribe({
         next: (res) => {
           this.loader = false;
+          this.accontiDaUsare = [];
           if(res && !res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               horizontalPosition: 'center', verticalPosition: 'top'

@@ -56,7 +56,7 @@ export class AccontoDialogComponent extends CommonListComponent implements OnIni
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
+    const numRows = this.acconti.length;
     return numSelected === numRows;
   }
 
@@ -67,7 +67,7 @@ export class AccontoDialogComponent extends CommonListComponent implements OnIni
       return;
     }
 
-    this.selection.select(...this.dataSource.data);
+    this.selection.select(...this.acconti);
   }
 
   onNoClick(): void {
