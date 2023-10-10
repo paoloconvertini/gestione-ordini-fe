@@ -86,4 +86,8 @@ export class ArticoloService extends CommonService{
     };
     return this.http.post(`${this.url}/scaricaSchedeTecniche`, list, httpOptions);
   }
+
+  updateVeicolo(articolo: any) {
+    return this.http.put(`${this.url}/updateVeicolo`, articolo);
+  }
 }

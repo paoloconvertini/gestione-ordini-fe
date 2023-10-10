@@ -14,6 +14,10 @@ tr.example-detail-row {
   height: 0;
 }
 
+.select {
+  width:100px;
+}
+
 .example-detail-row td {
   border-top-width: 0;
   background-color: #b0cca2;

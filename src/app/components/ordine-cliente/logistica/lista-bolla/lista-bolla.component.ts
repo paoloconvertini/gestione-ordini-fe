@@ -91,6 +91,9 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   }
 
   getArticoli(ordine: OrdineCliente) {
+    if(this.expandedElement === ordine) {
+      return;
+    }
     this.loaderDettaglio = true;
     this.articoloService.getArticoli("Y", ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -106,7 +109,6 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
         }
       })
   }
-
 
 
   mostraNonDisponibile(articolo:any):number {

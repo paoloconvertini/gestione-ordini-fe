@@ -322,7 +322,7 @@
             <th mat-header-cell *matHeaderCellDef>Pronto Cons.</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
-                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{(!isAdmin && !isMagazziniere || ordineDettaglio.locked || status === 'ARCHIVIATO')}}"
+                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{( (!isAdmin && !isMagazziniere) || ordineDettaglio.locked || status === 'ARCHIVIATO' || articolo.flagConsegnato )}}"
                               [(ngModel)]="articolo.flProntoConsegna" color="primary">
                 </mat-checkbox>
               </span>
@@ -370,7 +370,7 @@
                           aria-label="nota ordine fornitore"
                           color="primary">info</mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo.progrGenerale); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
                 <mat-icon color="primary">local_shipping</mat-icon>
               </button>
             </td>
@@ -379,11 +379,10 @@
           <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
           <ng-container matColumnDef="expandedDetail">
             <td mat-cell *matCellDef="let articolo" [attr.colspan]="displayedColumns.length">
-              <mat-spinner *ngIf="loaderBolle" class="loader"></mat-spinner>
-              <div *ngIf="!loaderBolle">
                 <div  *ngFor="let bolla of bolle">
                   <div [@detailExpand]="articolo == expandedElement ? 'expanded' : 'collapsed'">
-                      <div class="bolla-box">
+                    <mat-spinner *ngIf="loaderBolle" class="loader"></mat-spinner>
+                      <div class="bolla-box"  *ngIf="!loaderBolle">
                         <div class="d-inline"><mat-icon class="icon-detail" fontIcon="local_shipping"></mat-icon></div>
                         <div class="d-inline"><b>Numero bolla:</b> {{bolla.numeroBolla}}</div>
                         <div class="d-inline"><b>Data:</b> {{bolla.dataBolla | date: 'dd/MM/yyyy' }}</div>
@@ -391,7 +390,6 @@
                       </div>
                   </div>
                 </div>
-              </div>
             </td>
           </ng-container>
 

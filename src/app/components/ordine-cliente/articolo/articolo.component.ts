@@ -139,9 +139,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.updateArticoli();
   }
 
-  getBolle(progrCliente: any) {
+  getBolle(articolo: any) {
+    if(this.expandedElement === articolo) {
+      return;
+    }
     this.loaderBolle = true;
-    this.service.getBolle(progrCliente).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.service.getBolle(articolo.progrGenerale).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data: any) => {
         this.loaderBolle = false;
         this.bolle = data;
@@ -242,9 +245,9 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   cercaAltriOrdini() {
-    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC' && row.flProntoConsegna);
+    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC' && row.flProntoConsegna && !row.flagConsegnato);
     if(list.length == 0) {
-      this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna!', 'Chiudi', {
+      this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna che non sia già stato consegnato!', 'Chiudi', {
         duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
       });
       return;

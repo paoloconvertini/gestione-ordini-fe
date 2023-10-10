@@ -18,4 +18,5 @@ export class ArticoloCliente {
   progressivoOAF:any
   dataOrdineOAF: any
   flProntoConsegna: any
+  idVeicolo: any
 }

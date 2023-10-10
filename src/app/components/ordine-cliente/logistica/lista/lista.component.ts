@@ -32,6 +32,8 @@ import Popup from "ol-popup";
 import {Fill, Stroke, Text} from "ol/style";
 import {boundingExtent} from 'ol/extent.js';
 import CircleStyle from "ol/style/Circle";
+import {VeicoloService} from "../../../../services/ordine-cliente/veicolo/veicolo.service";
+
 
 useGeographic();
 
@@ -40,6 +42,11 @@ const sede = new Point(sedeLonLat);
 const stroke = new Stroke({color: 'black', width: 2});
 const fill = new Fill({color: 'red'});
 
+
+export interface VStatus {
+  id: any,
+  descrizione: string
+}
 
 @Component({
   selector: 'app-lista',
@@ -71,11 +78,13 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   articoli: ArticoloCliente[] = [];
   showMappa: boolean = false;
   map: Map = new Map();
+  selectStatusOptions: VStatus[] = [];
+
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
               private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router,
-              private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService) {
+              private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
     super();
     if(localStorage.getItem(environment.LOGISTICA)){
       this.filtro.status = 'COMPLETO';
@@ -98,6 +107,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getVeicoli();
     this.getVenditori();
     this.retrieveList();
   }
@@ -222,6 +232,9 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   }
 
   getArticoli(ordine: OrdineCliente) {
+    if(this.expandedElement === ordine){
+      return;
+    }
     this.loaderDettaglio = true;
     this.articoloService.getArticoli("N", ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -437,6 +450,45 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       return 0;
     }
   }
+
+
+  getVeicoli() {
+    //this.loader = true;
+    this.veicoloService.getVeicoli().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.selectStatusOptions = data;
+          }
+         // this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          //this.loader= false;
+        }
+      })
+  }
+
+
+  update(articolo: any): void {
+    this.articoloService.updateVeicolo(articolo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          if (!res.error) {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              duration: 1000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
+        },
+        error: (e) => {
+          console.error(e);
+          this.snackbar.open('Errore veicolo non salvato', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+        }
+      });
+  }
+
 
   override applyFilter() {
     super.applyFilter(this.filtro.searchText);
