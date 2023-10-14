@@ -12,6 +12,7 @@ export const environment = {
   LOGIN: 'login',
   ORDINI_CLIENTI: 'ordini-clienti',
   ARTICOLI_BY_NUM_ORDINE: "articoli",
+  VEICOLO: "veicoli",
   REGISTRO: "registro",
   EMAIL: "mail",
   OAF: 'oaf',
