@@ -90,6 +90,23 @@
               </div>
             </td>
           </ng-container>
+          <ng-container matColumnDef="veicolo">
+            <th mat-header-cell *matHeaderCellDef> Veicolo</th>
+            <td *matCellDef="let ordine">
+              <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
+                <mat-select  [(value)]="ordine.veicoloList" class="select" multiple>
+                  <mat-option *ngFor="let option of selectStatusOptions" [value]="option.id" class="option">
+                    {{option.descrizione}}
+                  </mat-option>
+                </mat-select>
+                <button mat-button color="primary"
+                        *ngIf="isAdmin || isLogistica"
+                        (click)="update(ordine)" >
+                  <mat-icon color="primary" fontIcon="save"></mat-icon>
+                </button>&nbsp;&nbsp;
+              </span>
+            </td>
+          </ng-container>
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ordine">
@@ -129,7 +146,6 @@
                           <th>Qta da cons.:</th>
                           <th>Qta tot.:</th>
                           <th>U.M.:</th>
-                          <th>Veicolo</th>
                           <th></th>
                         </tr>
                     </thead>
@@ -145,20 +161,6 @@
                           </td>
                           <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.quantita | number : '1.2-2'}}</span></td>
                           <td>{{articolo.funitaMisura}}</td>
-                          <td>
-                            <span *ngIf="( articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC')">
-                              <mat-select  [(value)]="articolo.idVeicolo" class="select">
-                                <mat-option *ngFor="let option of selectStatusOptions" [value]="option.id" class="option">
-                                  {{option.descrizione}}
-                                </mat-option>
-                              </mat-select>
-                              <button mat-button color="primary"
-                                      *ngIf="isAdmin || isLogistica"
-                                      (click)="update(articolo)" >
-                                <mat-icon color="primary" fontIcon="save"></mat-icon>
-                              </button>&nbsp;&nbsp;
-                            </span>
-                          </td>
                           <td><button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-button
                                        matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
                         {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">

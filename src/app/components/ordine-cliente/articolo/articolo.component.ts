@@ -85,7 +85,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   accontiDaUsare: Acconto[] = [];
 
   ngOnInit(): void {
-    this.filtroArticoli.view = this.route.url.includes('view');
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
       this.filtroArticoli.anno = params.anno;
       this.filtroArticoli.serie = params.serie;

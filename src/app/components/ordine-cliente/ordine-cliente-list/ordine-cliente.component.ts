@@ -47,6 +47,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   selectStatusOptions: OptStatus[] = [];
   filtro: FiltroOrdini = new FiltroOrdini();
   user: any;
+  countHasCarico: number = 0;
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
@@ -141,11 +142,15 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
 
   retrieveList(): void {
     this.loader = true;
+    this.countHasCarico = 0;
       this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[] | undefined) => {
             data?.forEach(d => {
               d.isLocked = d.locked && this.user !== d.userLock;
+              if(d.hasCarico){
+                this.countHasCarico++;
+              }
             })
             this.createPaginator(data, 100);
             if(this.filtro.searchText){

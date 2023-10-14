@@ -57,3 +57,38 @@
 .mat-mdc-icon-button[disabled] {
   pointer-events: auto!important;
 }
+
+.hasCarico {
+  padding: 5px;
+  background-color: #fbf403;
+}
+
+.blink_text
+{
+  animation:2s blinker linear infinite;
+  -webkit-animation:2s blinker linear infinite;
+  -moz-animation:2s blinker linear infinite;
+  color: red;
+  text-align: center;
+}
+
+@-moz-keyframes blinker
+{
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker
+{
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@keyframes blinker
+{
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}

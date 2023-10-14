@@ -62,7 +62,7 @@ export interface VStatus {
 })
 export class ListaComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
+  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'veicolo', 'azioni'];
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
@@ -471,7 +471,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
 
 
   update(articolo: any): void {
-    this.articoloService.updateVeicolo(articolo).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.updateVeicolo(articolo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
           if (!res.error) {

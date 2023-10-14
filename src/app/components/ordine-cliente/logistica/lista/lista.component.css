@@ -14,8 +14,12 @@ tr.example-detail-row {
   height: 0;
 }
 
+.mat-column-veicolo{
+  min-width: 206px;
+}
+
 .select {
-  width:100px;
+  width:140px;
 }
 
 .example-detail-row td {

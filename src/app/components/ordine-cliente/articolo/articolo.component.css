@@ -131,3 +131,8 @@ tr.example-detail-row {
 mat-card-content {
   padding: 5px!important;
 }
+
+.hasCarico {
+  padding: 5px;
+  background-color: #fbf403;
+}
