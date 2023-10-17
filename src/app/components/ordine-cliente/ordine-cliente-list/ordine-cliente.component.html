@@ -139,7 +139,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"
                           [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
               </button>
-              <button *ngIf="isLogistica || isAdmin" (click)="aggiungiNote(ordine, 1)" mat-icon-button [matTooltip]="ordine.noteLogistica" matTooltipClass="note">
+              <button (click)="aggiungiNote(ordine, 1)" mat-icon-button [matTooltip]="ordine.noteLogistica" matTooltipClass="note">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
                           [ngClass]="{'nota-logistica-presente':ordine.noteLogistica}"></mat-icon>
               </button>
@@ -155,7 +155,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
               <button
-                *ngIf="isAdmin || ( isMagazziniere && filtro.status !== 'ARCHIVIATO' && filtro.status !== 'DA_PROCESSARE')"
+                *ngIf="isAmministrativo || isAdmin || ( isMagazziniere && filtro.status !== 'ARCHIVIATO' && filtro.status !== 'DA_PROCESSARE')"
                 (click)="apri(ordine)" mat-icon-button
                 matTooltip="Apri ordine">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
