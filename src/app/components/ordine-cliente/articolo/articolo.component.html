@@ -284,7 +284,7 @@
             <th mat-header-cell *matHeaderCellDef>Ris.</th>
             <td mat-cell *matCellDef="let articolo">
         <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"><mat-checkbox (change)="checkFlags(articolo, 1);checkQta(articolo)"
-                                                             disabled="{{(!isAdmin && !isMagazziniere || (status !== 'DA_PROCESSARE' && status !== 'INCOMPLETO') )
+                                                             disabled="{{(!isAdmin && !isMagazziniere && !isAmministrativo || (status !== 'DA_PROCESSARE' && status !== 'INCOMPLETO') )
                                                              || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                                              [(ngModel)]="articolo.flagRiservato"
                                                              color="primary"></mat-checkbox></span>
@@ -296,7 +296,7 @@
               <td mat-cell *matCellDef="let articolo">
                 <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
                   <mat-checkbox (change)="checkFlags(articolo, 2)"
-                                disabled="{{(!isAdmin && !isMagazziniere || status !== 'DA_PROCESSARE')
+                                disabled="{{(isVenditore || isLogistica  )
                                           || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                 [(ngModel)]="articolo.flagNonDisponibile" color="primary">
                   </mat-checkbox>
