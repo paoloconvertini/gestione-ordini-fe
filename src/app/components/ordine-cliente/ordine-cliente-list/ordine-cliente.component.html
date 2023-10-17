@@ -155,7 +155,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
               <button
-                *ngIf="isAmministrativo || isAdmin || ( isMagazziniere && filtro.status !== 'ARCHIVIATO' && filtro.status !== 'DA_PROCESSARE')"
+                *ngIf="filtro.status !== 'DA_PROCESSARE' && (isAmministrativo || isAdmin || ( isMagazziniere && filtro.status !== 'ARCHIVIATO'))"
                 (click)="apri(ordine)" mat-icon-button
                 matTooltip="Apri ordine">
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
