@@ -326,7 +326,7 @@
             <th mat-header-cell *matHeaderCellDef>Pronto Cons.</th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
-                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{( (!isAdmin && !isMagazziniere) || ordineDettaglio.locked || status === 'ARCHIVIATO' || articolo.flagConsegnato )}}"
+                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{( (!isAdmin && !isMagazziniere && !isAmministrativo) || ordineDettaglio.locked || status === 'ARCHIVIATO' || articolo.flagConsegnato )}}"
                               [(ngModel)]="articolo.flProntoConsegna" color="primary">
                 </mat-checkbox>
               </span>
