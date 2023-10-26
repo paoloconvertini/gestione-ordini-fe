@@ -12,6 +12,8 @@ import {UserListComponent} from "./components/users/user-list/user-list.componen
 import {RoleComponent} from "./components/role/role.component";
 import {ListaComponent} from "./components/ordine-cliente/logistica/lista/lista.component";
 import {BoxDocciaComponent} from "./components/box-doccia/box-doccia.component";
+import {CespiteComponent} from "./components/cespite/cespite.component";
+import {RiservatoMagazzinoComponent} from "./components/riservato-magazzino/riservato-magazzino.component";
 
 const routes: Routes = [
   {
@@ -83,6 +85,16 @@ const routes: Routes = [
     path: 'box-doccia',
     canActivate: [AuthGuard],
     component: BoxDocciaComponent,
+  },
+  {
+    path: 'cespiti',
+    canActivate: [AuthGuard],
+    component: CespiteComponent,
+  },
+  {
+    path: 'riserve',
+    canActivate: [AuthGuard],
+    component: RiservatoMagazzinoComponent,
   },
   {
     path: 'login',

@@ -1,0 +1,159 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      RISERVATO IN MAGAZZINO
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-5 col-md-5 col-sm-5">
+      <mat-form-field>
+        <mat-label>Cerca...</mat-label>
+        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
+      </mat-form-field>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
+        Reset
+      </button>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6">
+      <button class="float-end margin-right" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
+        Aggiorna lista
+      </button>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <mat-radio-group (change)="retrieveList()"
+                       aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
+        <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
+                          [value]="option.codVenditore">{{option.fullname}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <mat-radio-group (change)="retrieveList()"
+                       aria-label="Select an option" [(ngModel)]="filtro.status" >
+        <mat-radio-button *ngFor="let option of radioPerStatusOptions"
+                          [value]="option.codice">
+          {{option.descrizione}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="mat-elevation-z8">
+          <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+          <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="dataSource">
+            <!-- Name Column -->
+            <ng-container matColumnDef="numero">
+              <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
+              <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+                {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
+              </td>
+            </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="cliente">
+              <th mat-header-cell *matHeaderCellDef> Cliente</th>
+              <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+                <span matTooltip="{{ordine.telefono}} - {{ordine.cellulare}}">{{ordine.intestazione}}</span><br><span style="font-size:11px">{{ordine.riferimento}}</span>
+              </td>
+            </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="localita">
+              <th mat-header-cell *matHeaderCellDef> Luogo</th>
+              <td class="pointer" mat-cell *matCellDef="let ordine"  (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+                {{ordine.localita}} ({{ordine.provincia}})
+              </td>
+            </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="data">
+              <th mat-header-cell *matHeaderCellDef> Data</th>
+              <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+                {{ordine.dataConferma | date:'dd/MM/yyyy'}}
+              </td>
+            </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
+              <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+                <div [ngSwitch]="ordine.status" >
+                  <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
+                  <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
+                  <b *ngSwitchDefault>{{ordine.status}}</b>
+                </div>
+              </td>
+            </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="totale">
+              <th mat-header-cell *matHeaderCellDef> Tot</th>
+              <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+                {{ordine.importoRiservati | currency: 'EUR':'symbol'}}
+              </td>
+            </ng-container>
+
+            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let ordine" [attr.colspan]="displayedColumns.length">
+                <div>
+                  <div [@detailExpand]="ordine == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-spinner *ngIf="loaderDettaglio" class="loader"></mat-spinner>
+                    <table class="table" *ngIf="!loaderDettaglio">
+                      <thead>
+                      <tr>
+                        <th>Cod.:</th>
+                        <th>Cod. forn.:</th>
+                        <th>Descr.:</th>
+                        <th>Qta da cons.:</th>
+                        <th>U.M.:</th>
+                        <th>Prezzo</th>
+                        <th></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let articolo of articoli">
+                        <td>{{articolo.farticolo}}</td>
+                        <td>{{articolo.codArtFornitore}}</td>
+                        <td>{{articolo.fdescrArticolo}}</td>
+                        <td>
+                          <span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">
+                            {{articolo.qtaDaConsegnare | number : '1.2-2'}}
+                          </span>
+                        </td>
+                        <td>{{articolo.funitaMisura}}</td>
+                        <td>{{articolo.prezzo | currency: 'EUR':'symbol'}}</td>
+                        <td><button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-button
+                                     matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                          <mat-icon aria-hidden="false"
+                                    aria-label="nota ordine fornitore">store</mat-icon>
+                        </button>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-result-list" colspan="4">Nessun
+                risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
+            </tr>
+          </table>
+
+          <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

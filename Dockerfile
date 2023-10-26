@@ -1,9 +1,9 @@
 #stage 1
-FROM node as node
+FROM node:20.3 as node
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm run build --prod
+RUN npm run build --omit=dev
 #stage 2
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf

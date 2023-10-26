@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      AMMORTAMENTO CESPITI
+    </div>
+  </div>
+  <div class="row">
+    <div class="mat-elevation-z8">
+      <div class="row box" *ngFor="let cat of cespiteList; index as i">
+        <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}}</div>
+        <div class="row" *ngFor="let cespite of cat.cespiteViewDtoList; index as i">
+            <div class="col-lg-2 col-md-2 col-sm-6">
+              {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6">
+              {{cespite.cespite}}&nbsp;&nbsp;{{cespite.importo | currency: 'EUR':'symbol'}}
+            </div>
+            <div class="col-lg-7 col-md-7 col-sm-12">
+              <b>{{cespite.fornitore}}</b>: Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}
+            </div>
+          <table class="table">
+            <thead>
+              <th>Data</th>
+              <th>Descrizione</th>
+              <th>% amm</th>
+              <th>Quota</th>
+              <th>Fondo</th>
+              <th>Residuo</th>
+            </thead>
+            <tbody>
+            <tr *ngFor="let ammortamento of cespite.ammortamentoCespiteList; index as i">
+              <td>{{ammortamento.dataAmm | date: 'dd/MM/yyyy'}}</td>
+              <td>{{ammortamento.descrizione}}</td>
+              <td>{{ammortamento.percAmm}}</td>
+              <td>{{ammortamento.quota | number : '1.2-2'}}</td>
+              <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
+              <td>{{ammortamento.residuo | number : '1.2-2'}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

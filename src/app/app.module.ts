@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -57,6 +57,9 @@ import { ListaBollaComponent } from './components/ordine-cliente/logistica/lista
 import { AccontoDialogComponent } from './components/ordine-cliente/logistica/acconto-dialog/acconto-dialog.component';
 import { BoxDocciaComponent } from './components/box-doccia/box-doccia.component';
 import { SchedeTecnicheComponent } from './components/ordine-cliente/schede-tecniche/schede-tecniche.component';
+import {ForbiddenInterceptor} from "./providers/forbidden.interceptor";
+import { CespiteComponent } from './components/cespite/cespite.component';
+import { RiservatoMagazzinoComponent } from './components/riservato-magazzino/riservato-magazzino.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -89,7 +92,9 @@ export const DateFormats = {
     ListaBollaComponent,
     AccontoDialogComponent,
     BoxDocciaComponent,
-    SchedeTecnicheComponent
+    SchedeTecnicheComponent,
+    CespiteComponent,
+    RiservatoMagazzinoComponent
   ],
     imports: [
         BrowserModule,
@@ -129,10 +134,12 @@ export const DateFormats = {
         MatSelectModule
     ],
   providers: [
-    {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
+    { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
     { provide: MAT_DATE_FORMATS, useValue: DateFormats },
-    { provide: MAT_DATE_LOCALE, useValue: 'it-IT'}
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT'},
+    { provide: HTTP_INTERCEPTORS, useClass: ForbiddenInterceptor, multi: true,
+    }
   ],
   bootstrap: [AppComponent]
 })

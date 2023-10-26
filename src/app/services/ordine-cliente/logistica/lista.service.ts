@@ -23,4 +23,8 @@ export class ListaService extends CommonService{
   updateVeicolo(articolo: any) {
     return this.http.put(`${this.url}/updateVeicolo`, articolo);
   }
+
+  getAllRiservati(filtro: FiltroOrdini) {
+    return this.http.post<any>(`${this.url}/riservati`, filtro);
+  }
 }

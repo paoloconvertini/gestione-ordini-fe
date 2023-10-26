@@ -1,0 +1,9 @@
+tr.example-detail-row {
+  height: 0;
+}
+
+.example-detail-row td {
+  border-top-width: 0;
+  background-color: #b0cca2;
+  color: #050505;
+}

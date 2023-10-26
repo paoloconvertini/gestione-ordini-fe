@@ -19,4 +19,5 @@ export class ArticoloCliente {
   dataOrdineOAF: any
   flProntoConsegna: any
   idVeicolo: any
+  prezzo: any
 }
