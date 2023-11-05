@@ -17,6 +17,11 @@ export class ForbiddenInterceptor implements HttpInterceptor {
           this.snackbar.open('Accesso vietato! Non hai i permessi per compiere questa azione.', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           })
+        } else if (error.status >= 404 || error.status === 400 || error.status === 401 || error.status === 402) {
+          console.error('Server error! Riprovare dopo.');
+          this.snackbar.open('Server error! Riprovare dopo.', 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
         }
         return throwError(error);
       })

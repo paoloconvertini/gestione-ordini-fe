@@ -7,3 +7,13 @@ tr.example-detail-row {
   background-color: #b0cca2;
   color: #050505;
 }
+
+.container-importo {
+  display: flex;
+  justify-content: space-between;
+}
+
+.box-importo{
+  padding:3px;
+  margin:5px;
+}

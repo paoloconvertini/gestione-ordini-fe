@@ -16,6 +16,7 @@ import {environment} from "../../../environments/environment";
 import {takeUntil} from "rxjs";
 import {OrdineCliente} from "../../models/ordine-cliente";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {ImportoVenditore} from "../../models/ImportoVenditore";
 
 @Component({
   selector: 'app-riservato-magazzino',
@@ -48,11 +49,12 @@ export class RiservatoMagazzinoComponent extends CommonListComponent implements 
   loaderDettaglio: boolean = false;
   expandedElement: any;
   articoli: ArticoloCliente[] = [];
+  importiMap: any = new Map<string, number>();
+  importiList: ImportoVenditore[] = [];
 
-  constructor(private authService: AuthService, private router: ActivatedRoute,
-              private emailService: EmailService, private service: ListaService,
-              private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router,
-              private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
+  constructor(private authService: AuthService, private service: ListaService,
+              private dialog: MatDialog, private snackbar: MatSnackBar,
+              private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService) {
     super();
     if(localStorage.getItem(environment.LOGISTICA)){
       this.filtro.status = 'COMPLETO';
@@ -75,7 +77,6 @@ export class RiservatoMagazzinoComponent extends CommonListComponent implements 
   }
 
   ngOnInit(): void {
-    this.getVenditori();
     this.retrieveList();
   }
 
@@ -84,12 +85,16 @@ export class RiservatoMagazzinoComponent extends CommonListComponent implements 
     this.loader = true;
     this.service.getAllRiservati(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (data: any[] | undefined) => {
-          this.createPaginator(data, 100);
+        next: (data: any | undefined) => {
+          this.importiMap = data.importoRiservatiMap;
+          this.createPaginator(data.ordineDTOList, 100);
           if(this.filtro.searchText){
             this.applyFilter();
           }
           this.loader = false;
+          if(!this.filtro.codVenditore) {
+            this.getVenditori();
+          }
         },
         error: (e: any) => {
           console.error(e);
@@ -103,7 +108,21 @@ export class RiservatoMagazzinoComponent extends CommonListComponent implements 
     data.push('Venditore');
     this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
+        this.importiList = [];
         this.radioPerVenditoreOptions = data;
+        let totale = 0;
+        this.radioPerVenditoreOptions.forEach(opt => {
+          let i = new ImportoVenditore();
+          i.codice = opt.codVenditore;
+          i.fullname = opt.fullname;
+          if(opt.fullname === 'tutti') {
+            i.import = totale;
+          } else {
+            i.import = this.importiMap[opt.codVenditore]?this.importiMap[opt.codVenditore]:0;
+            totale += i.import;
+          }
+          this.importiList.push(i);
+        })
       },
       error: (e: any) => {
         console.error(e);
