@@ -1,0 +1,261 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      AMMORTAMENTO CESPITI
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4 col-md-4 col-sm-12">
+      <form (ngSubmit)="calcola()" [formGroup]="dateForm" autocomplete="off" class="">
+        <mat-form-field appearance="fill">
+          <mat-label>Seleziona una data di calcolo ammortamento</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dataCalcolo" (dateChange)="calcola()">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="mat-elevation-z8">
+      <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+      <div *ngIf="!loader">
+        <div class="row text" *ngFor="let cat of cespiteList; index as i">
+          <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}}</div>
+          <div class="col-md-12 cesp-progr" *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
+            <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteViewDtoList; index as i">
+              <div class="col-lg-2 col-md-2 col-sm-6">
+                {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6">
+                {{cespite.cespite}}&nbsp;&nbsp;{{cespite.importo | currency: 'EUR':'symbol'}}
+              </div>
+              <div class="col-lg-7 col-md-7 col-sm-12">
+                <b>{{cespite.fornitore}}</b>: Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-2"></div>
+              <div class="col-lg-10 col-md-10 col-sm-10">
+                <table class="table">
+                  <thead>
+                  <th>Data</th>
+                  <th>Descrizione</th>
+                  <th>% amm</th>
+                  <th>Quota</th>
+                  <th>Quota {{cespite.superAmmDesc}}</th>
+                  <th>Fondo</th>
+                  <th>Residuo</th>
+                  </thead>
+                  <tbody class="progr2">
+                  <tr *ngFor="let ammortamento of cespite.ammortamentoCespiteList; index as i">
+                    <td>{{ammortamento.dataAmm | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{ammortamento.descrizione}}</td>
+                    <td>{{ammortamento.percAmm | number : '1.2-2'}}</td>
+                    <td>{{ammortamento.quota | number : '1.2-2'}}</td>
+                    <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
+                    <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
+                    <td>{{ammortamento.residuo | number : '1.2-2'}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!--Riepilogo-->
+          <div class="col-md-12 ">
+            <table class="table">
+              <thead>
+              <th>Fiscale</th>
+              <th>Valore agg.to</th>
+              <th>Amm. ordinario</th>
+              <th>Amm. anticipato</th>
+              <th>Totale amm.ti</th>
+              <th>Non amm.ti</th>
+              <th>Fondo amm.ti</th>
+              <th>Residuo amm.ti</th>
+              </thead>
+              <tbody class="">
+              <tr>
+                <td>A inizio esercizio</td>
+                <td>{{cat.somma.inizioEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{cat.somma.inizioEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td>{{cat.somma.inizioEsercizio.residuo | number : '1.2-2'}}</td>
+              </tr>
+              <tr>
+                <td>Acquisti</td>
+                <td>{{cat.somma.acquisti.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Vendite</td>
+                <td>{{cat.somma.vendite.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Amm.ti deducibili</td>
+                <td>{{cat.somma.ammortamentiDeducibili.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td>{{cat.somma.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
+                <td></td>
+                <td>{{cat.somma.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td>{{cat.somma.ammortamentiDeducibili.residuo | number : '1.2-2'}}</td>
+              </tr>
+              <!--            <tr>
+                            <td>Amm.ti non deducibili</td>
+                            <td>{{cat.somma.acquisti.valoreAggiornato}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{cat.somma.inizioEsercizio.fondoAmmortamenti</td>
+                            <td>{{cat.somma.inizioEsercizio.residuo</td>
+                          </tr>-->
+              <tr>
+                <td>A fine esercizio</td>
+                <td>{{cat.somma.fineEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td>{{cat.somma.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
+                <td></td>
+                <td>{{cat.somma.fineEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td>{{cat.somma.fineEsercizio.residuo | number : '1.2-2'}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--Riepilogo Plus/minus -->
+          <div class="col-md-12 riep-plus-grid" *ngIf="cat.somma.plusMinus">
+            <div>Plus/Minusvalenze annue:  {{cat.somma.plusMinus.totale  | number : '1.2-2'}}</div>
+          </div>
+          <!--Riepilogo Maggiorazione -->
+          <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3">
+            <div class="riep-magg-grid">
+              <div class="totale">Totale Maggiorazioni deducibili: {{
+                (cat.somma.superAmm1?cat.somma.superAmm1.totale:0 +
+                  cat.somma.superAmm2?cat.somma.superAmm2.totale:0 +
+                  cat.somma.superAmm3?cat.somma.superAmm3.totale:0)  | number : '1.2-2'}}</div>
+              <div class="elenco-magg">
+                <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}: {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
+                <div *ngIf="cat.somma.superAmm2">{{cat.somma.superAmm2.desc}}: {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
+                <div *ngIf="cat.somma.superAmm3">{{cat.somma.superAmm3.desc}}: {{cat.somma.superAmm3.totale | number : '1.2-2'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Riepilogo totale-->
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <table class="table">
+              <thead>
+              <th>Fiscale</th>
+              <th>Valore agg.to</th>
+              <th>Amm. ordinario</th>
+              <th>Amm. anticipato</th>
+              <th>Totale amm.ti</th>
+              <th>Non amm.ti</th>
+              <th>Fondo amm.ti</th>
+              <th>Residuo amm.ti</th>
+              </thead>
+              <tbody class="">
+              <tr>
+                <td>A inizio esercizio</td>
+                <td>{{sommaAmm.inizioEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{sommaAmm.inizioEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td>{{sommaAmm.inizioEsercizio.residuo | number : '1.2-2'}}</td>
+              </tr>
+              <tr>
+                <td>Acquisti</td>
+                <td>{{sommaAmm.acquisti.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Vendite</td>
+                <td>{{sommaAmm.vendite.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Amm.ti deducibili</td>
+                <td>{{sommaAmm.ammortamentiDeducibili.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td>{{sommaAmm.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
+                <td></td>
+                <td>{{sommaAmm.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td>{{sommaAmm.ammortamentiDeducibili.residuo | number : '1.2-2'}}</td>
+              </tr>
+              <!--            <tr>
+                            <td>Amm.ti non deducibili</td>
+                            <td>{{cat.somma.acquisti.valoreAggiornato}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{cat.somma.inizioEsercizio.fondoAmmortamenti</td>
+                            <td>{{cat.somma.inizioEsercizio.residuo</td>
+                          </tr>-->
+              <tr>
+                <td>A fine esercizio</td>
+                <td>{{sommaAmm.fineEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
+                <td></td>
+                <td></td>
+                <td>{{sommaAmm.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
+                <td></td>
+                <td>{{sommaAmm.fineEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td>{{sommaAmm.fineEsercizio.residuo | number : '1.2-2'}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--Riepilogo Plus/minus -->
+          <div class="col-md-12 riep-plus-grid" *ngIf="sommaAmm.plusMinus">
+            <div>Plus/Minusvalenze annue:  {{sommaAmm.plusMinus.totale  | number : '1.2-2'}}</div>
+          </div>
+          <!--Riepilogo Maggiorazione -->
+          <div class="col-md-12" *ngIf="sommaAmm.superAmm1 || sommaAmm.superAmm2 || sommaAmm.superAmm3">
+            <div class="riep-magg-grid">
+              <div class="totale">Totale Maggiorazioni deducibili: {{
+                (sommaAmm.superAmm1?sommaAmm.superAmm1.totale:0 +
+                sommaAmm.superAmm2?sommaAmm.superAmm2.totale:0 +
+                sommaAmm.superAmm3?sommaAmm.superAmm3.totale:0)  | number : '1.2-2'}}</div>
+              <div class="elenco-magg">
+                <div *ngIf="sommaAmm.superAmm1">{{sommaAmm.superAmm1.desc}}: {{sommaAmm.superAmm1.totale | number : '1.2-2'}}</div>
+                <div *ngIf="sommaAmm.superAmm2">{{sommaAmm.superAmm2.desc}}: {{sommaAmm.superAmm2.totale | number : '1.2-2'}}</div>
+                <div *ngIf="sommaAmm.superAmm3">{{sommaAmm.superAmm3.desc}}: {{sommaAmm.superAmm3.totale | number : '1.2-2'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="no-result-list" *ngIf="!cespiteList || cespiteList.length === 0">
+            Nessun risultato
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

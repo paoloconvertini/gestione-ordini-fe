@@ -21,4 +21,11 @@ export class CespiteService extends CommonService{
   }
 
 
+  getAllCespiti(): Observable<any> {
+    return this.http.get<any>(`${this.url}/cespiti`);
+  }
+
+  calcola(dataCalcolo: any) {
+    return this.http.get<any>(`${this.url}/calcola/${dataCalcolo}`)
+  }
 }

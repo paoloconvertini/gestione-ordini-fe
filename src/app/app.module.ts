@@ -58,8 +58,9 @@ import { AccontoDialogComponent } from './components/ordine-cliente/logistica/ac
 import { BoxDocciaComponent } from './components/box-doccia/box-doccia.component';
 import { SchedeTecnicheComponent } from './components/ordine-cliente/schede-tecniche/schede-tecniche.component';
 import {ForbiddenInterceptor} from "./providers/forbidden.interceptor";
-import { CespiteComponent } from './components/cespite/cespite.component';
+import { AmmortamentoComponent } from './components/cespite/ammortamenti/ammortamento.component';
 import { RiservatoMagazzinoComponent } from './components/riservato-magazzino/riservato-magazzino.component';
+import { CespiteComponent } from './components/cespite/cespite/cespite.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -93,8 +94,9 @@ export const DateFormats = {
     AccontoDialogComponent,
     BoxDocciaComponent,
     SchedeTecnicheComponent,
-    CespiteComponent,
-    RiservatoMagazzinoComponent
+    AmmortamentoComponent,
+    RiservatoMagazzinoComponent,
+    CespiteComponent
   ],
     imports: [
         BrowserModule,

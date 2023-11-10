@@ -53,7 +53,11 @@
       <button mat-menu-item class="pointer" [routerLink]="['/logistica-ordini']">Gestione consegne</button>
     </mat-menu>
     <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
-    <button mat-button *ngIf="isAdmin" [routerLink]="['/cespiti']">Cespiti</button>
     <button mat-button [routerLink]="['/riserve']">Riservato Magazzino</button>
+    <button *ngIf="isAdmin" mat-button [matMenuTriggerFor]="cespiti">Cespiti</button>
+    <mat-menu #cespiti="matMenu">
+      <button mat-menu-item class="pointer" [routerLink]="['/cespiti']">Modifica cespiti</button>
+      <button mat-menu-item class="pointer" [routerLink]="['/ammortamenti']">Ammortamenti</button>
+    </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>

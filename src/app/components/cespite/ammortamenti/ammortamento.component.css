@@ -17,3 +17,16 @@
   border-bottom: 1px dashed;
   padding-bottom: 3px;
 }
+
+.riep-magg-grid {
+  border-bottom: 1px dashed;
+  border-top: 1px dashed;
+  padding: 5px 0;
+  display: flex;
+}
+
+.riep-plus-grid {
+  border-bottom: 1px dashed;
+  border-top: 1px dashed;
+  padding: 5px 0;
+}
