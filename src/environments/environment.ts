@@ -28,7 +28,8 @@ export const environment = {
   CESPITI: 'cespiti',
   RISERVE: 'riserve',
   //DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
-  PRIMANOTA: 'primanota'
+  PRIMANOTA: 'primanota',
+  TIPOCESPITE: 'tipocespite'
 };
 
 /*

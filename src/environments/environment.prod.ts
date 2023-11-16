@@ -23,6 +23,7 @@ export const environment = {
   BOX_DOCCIA: 'box-doccia',
   CESPITI: 'cespiti',
   RISERVE: 'riserve',
-  PRIMANOTA: 'primanota'
+  PRIMANOTA: 'primanota',
+  TIPOCESPITE: 'tipocespite'
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };

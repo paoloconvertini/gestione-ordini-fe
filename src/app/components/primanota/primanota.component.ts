@@ -7,6 +7,8 @@ import {environment} from "../../../environments/environment";
 import {takeUntil} from "rxjs";
 import {PrimanotaService} from "../../services/primanota/primanota.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {WarnDialogComponent} from "../warn-dialog/warn-dialog.component";
+import {TipocespiteDialogComponent} from "./tipocespite-dialog/tipocespite-dialog.component";
 
 @Component({
   selector: 'app-primanota',
@@ -59,11 +61,24 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
             this.snackbar.open(res.msg, 'Chiudi', {
               horizontalPosition: 'center', verticalPosition: 'top'
             });
+            primanota.edit = false;
           },
           error: (e: any) => {
             console.error(e);
           }
         })
     }, 2000);
+  }
+
+  cercaConto(primanota: any) {
+    const dialogRef = this.dialog.open(TipocespiteDialogComponent, {
+      width: '90%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        primanota.gruppoconto = result.costoGruppo;
+        primanota.sottoconto = result.costoConto;
+      }
+    });
   }
 }

@@ -143,9 +143,9 @@
           <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3">
             <div class="riep-magg-grid">
               <div class="totale">Totale Maggiorazioni deducibili: {{
-                (cat.somma.superAmm1?cat.somma.superAmm1.totale:0 +
-                  cat.somma.superAmm2?cat.somma.superAmm2.totale:0 +
-                  cat.somma.superAmm3?cat.somma.superAmm3.totale:0)  | number : '1.2-2'}}</div>
+                ((cat.somma.superAmm1?cat.somma.superAmm1.totale:0) +
+                (cat.somma.superAmm2?cat.somma.superAmm2.totale:0) +
+                (cat.somma.superAmm3?cat.somma.superAmm3.totale:0))  | number : '1.2-2'}}</div>
               <div class="elenco-magg">
                 <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}: {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
                 <div *ngIf="cat.somma.superAmm2">{{cat.somma.superAmm2.desc}}: {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
@@ -240,9 +240,9 @@
           <div class="col-md-12" *ngIf="sommaAmm.superAmm1 || sommaAmm.superAmm2 || sommaAmm.superAmm3">
             <div class="riep-magg-grid">
               <div class="totale">Totale Maggiorazioni deducibili: {{
-                (sommaAmm.superAmm1?sommaAmm.superAmm1.totale:0 +
-                sommaAmm.superAmm2?sommaAmm.superAmm2.totale:0 +
-                sommaAmm.superAmm3?sommaAmm.superAmm3.totale:0)  | number : '1.2-2'}}</div>
+                ((sommaAmm.superAmm1?sommaAmm.superAmm1.totale:0) +
+                (sommaAmm.superAmm2?sommaAmm.superAmm2.totale:0) +
+                (sommaAmm.superAmm3?sommaAmm.superAmm3.totale:0))  | number : '1.2-2'}}</div>
               <div class="elenco-magg">
                 <div *ngIf="sommaAmm.superAmm1">{{sommaAmm.superAmm1.desc}}: {{sommaAmm.superAmm1.totale | number : '1.2-2'}}</div>
                 <div *ngIf="sommaAmm.superAmm2">{{sommaAmm.superAmm2.desc}}: {{sommaAmm.superAmm2.totale | number : '1.2-2'}}</div>
