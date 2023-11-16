@@ -1,0 +1,126 @@
+<div class="container" *ngIf="isAdmin">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      Primanota
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <mat-form-field>
+        <mat-label>giornale...</mat-label>
+        <input matInput [(ngModel)]="filtro.giornale">
+      </mat-form-field>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-2">
+      <mat-form-field>
+        <mat-label>anno...</mat-label>
+        <input matInput [(ngModel)]="filtro.anno">
+      </mat-form-field>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-4">
+      <mat-form-field>
+        <mat-label>protocollo...</mat-label>
+        <input matInput [(ngModel)]="filtro.protocollo">
+      </mat-form-field>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="primary" (click)="retrieveList()">
+        Cerca
+      </button>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="warn" (click)="reset()">
+        Reset
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="dataDoc">
+            <th mat-header-cell *matHeaderCellDef> Data doc</th>
+            <td mat-cell *matCellDef="let primanota">
+              {{primanota.datamovimento | date: 'dd/MM/yyyy'}}
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="numDoc">
+            <th mat-header-cell *matHeaderCellDef> Num doc</th>
+            <td mat-cell *matCellDef="let primanota">
+              {{primanota.numerodocumento}}
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="causale">
+            <th mat-header-cell *matHeaderCellDef> Causale</th>
+            <td mat-cell *matCellDef="let primanota">
+              {{primanota.causale}}
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="gruppoconto">
+            <th mat-header-cell *matHeaderCellDef> Gruppoconto</th>
+            <td mat-cell *matCellDef="let primanota">
+              <div *ngIf="!primanota.edit">{{primanota.gruppoconto}}</div>
+              <div *ngIf="primanota.edit"><input type="text" class="form-control input" [(ngModel)]="primanota.gruppoconto"></div>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="sottoconto">
+            <th mat-header-cell *matHeaderCellDef> Sottoconto</th>
+            <td mat-cell *matCellDef="let primanota">
+              <div *ngIf="!primanota.edit">{{primanota.sottoconto}}</div>
+              <div *ngIf="primanota.edit"><input type="text" class="form-control input" [(ngModel)]="primanota.sottoconto"></div>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="descrsuppl">
+            <th mat-header-cell *matHeaderCellDef> Descrizione</th>
+            <td mat-cell *matCellDef="let primanota">
+              <div *ngIf="!primanota.edit">{{primanota.descrsuppl}}</div>
+              <div *ngIf="primanota.edit"><input type="text" class="form-control input" [(ngModel)]="primanota.descrsuppl"></div>
+            </td>
+          </ng-container>
+          <!-- Name Column -->
+          <ng-container matColumnDef="importo">
+            <th mat-header-cell *matHeaderCellDef> Importo</th>
+            <td mat-cell *matCellDef="let primanota">
+               {{primanota.importo | currency: 'EUR':'symbol'}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="azioni">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let primanota">
+              <button *ngIf="!primanota.edit" (click)="primanota.edit = true" mat-icon-button matTooltip="Modifica" >
+                <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="primanota.edit" (click)="salva(primanota)" mat-icon-button matTooltip="Salva" >
+                <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="primanota.edit" (click)="primanota.edit = false; retrieveList()" mat-icon-button matTooltip="Chiudi">
+                <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-result-list" colspan="4">Nessun risultato per la ricerca effettuata</td>
+          </tr>
+        </table>
+        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

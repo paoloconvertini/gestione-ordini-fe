@@ -61,6 +61,7 @@ import {ForbiddenInterceptor} from "./providers/forbidden.interceptor";
 import { AmmortamentoComponent } from './components/cespite/ammortamenti/ammortamento.component';
 import { RiservatoMagazzinoComponent } from './components/riservato-magazzino/riservato-magazzino.component';
 import { CespiteComponent } from './components/cespite/cespite/cespite.component';
+import { PrimanotaComponent } from './components/primanota/primanota.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -96,7 +97,8 @@ export const DateFormats = {
     SchedeTecnicheComponent,
     AmmortamentoComponent,
     RiservatoMagazzinoComponent,
-    CespiteComponent
+    CespiteComponent,
+    PrimanotaComponent
   ],
     imports: [
         BrowserModule,

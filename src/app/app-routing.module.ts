@@ -15,6 +15,7 @@ import {BoxDocciaComponent} from "./components/box-doccia/box-doccia.component";
 import { AmmortamentoComponent } from './components/cespite/ammortamenti/ammortamento.component';
 import {RiservatoMagazzinoComponent} from "./components/riservato-magazzino/riservato-magazzino.component";
 import {CespiteComponent} from "./components/cespite/cespite/cespite.component";
+import {PrimanotaComponent} from "./components/primanota/primanota.component";
 
 const routes: Routes = [
   {
@@ -88,14 +89,19 @@ const routes: Routes = [
     component: BoxDocciaComponent,
   },
   {
-    path: 'ammortamenti',
+    path: ':param/ammortamenti',
     canActivate: [AuthGuard],
     component: AmmortamentoComponent,
   },
   {
-    path: 'cespiti',
+    path: ':param/cespiti',
     canActivate: [AuthGuard],
     component: CespiteComponent,
+  },
+  {
+    path: ':param/primanota',
+    canActivate: [AuthGuard],
+    component: PrimanotaComponent,
   },
   {
     path: 'riserve',

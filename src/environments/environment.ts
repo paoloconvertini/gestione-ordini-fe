@@ -26,8 +26,9 @@ export const environment = {
   ROLE: 'roles',
   BOX_DOCCIA: 'box-doccia',
   CESPITI: 'cespiti',
-  RISERVE: 'riserve'
+  RISERVE: 'riserve',
   //DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
+  PRIMANOTA: 'primanota'
 };
 
 /*
