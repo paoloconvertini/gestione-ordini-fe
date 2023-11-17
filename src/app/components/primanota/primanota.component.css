@@ -4,3 +4,15 @@
   font-size: 1rem;
   width: 70px;
 }
+
+.desc{
+  width: 130px;
+}
+
+.giornale {
+  text-transform: uppercase;
+}
+
+th {
+  padding: 0.5rem 0.5rem;
+}

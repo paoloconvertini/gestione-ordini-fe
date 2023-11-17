@@ -15,6 +15,33 @@
         </mat-form-field>
       </form>
     </div>
+    <div class="col-lg-4 col-md-4 col-sm-12">
+      <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <input type="text"
+                 placeholder="Tipo cespite"
+                 aria-label="Number"
+                 matInput
+                 [formControl]="myControl"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="filtroCespite.tipoCespite = $event.option.value.tipoCespite" [displayWith]="getOption" >
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option.tipoCespite}} - {{option.descrizione}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="primary" (click)="retrieveList()">
+        Cerca
+      </button>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="warn" (click)="reset()">
+        Reset
+      </button>
+    </div>
     <div class="mat-elevation-z8">
       <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
       <div *ngIf="!loader">
@@ -29,7 +56,9 @@
                 {{cespite.cespite}}&nbsp;&nbsp;{{cespite.importo | currency: 'EUR':'symbol'}}
               </div>
               <div class="col-lg-7 col-md-7 col-sm-12">
-                <b>{{cespite.fornitore}}</b>: Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}
+                <b>{{cespite.fornitore}}</b><br>
+                Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}<br>
+                <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}/{{cespite.anno}}</span>
               </div>
               <div class="col-lg-2 col-md-2 col-sm-2"></div>
               <div class="col-lg-10 col-md-10 col-sm-10">

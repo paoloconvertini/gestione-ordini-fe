@@ -22,7 +22,7 @@ export class PrimanotaService extends CommonService{
   }
 
   save(primanota: any): Observable<any> {
-    return this.http.put<any>(`${this.url}`, primanota);
+    return this.http.post<any>(`${this.url}/salva`, primanota);
   }
 
 }

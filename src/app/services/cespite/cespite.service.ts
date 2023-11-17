@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {FiltroOrdini} from "../../models/FiltroOrdini";
 import {Observable} from "rxjs";
+import {FiltroCespite} from "../../models/FiltroCespite";
 
 const url = environment.baseUrl + environment.CESPITI;
 
@@ -16,8 +17,8 @@ export class CespiteService extends CommonService{
     super(http, url);
   }
 
-  getAll(): Observable<any> {
-    return this.http.get<any>(`${this.url}`);
+  getAll(filtro: FiltroCespite): Observable<any> {
+    return this.http.post<any>(`${this.url}`, filtro);
   }
 
 
@@ -28,4 +29,5 @@ export class CespiteService extends CommonService{
   calcola(dataCalcolo: any) {
     return this.http.get<any>(`${this.url}/calcola/${dataCalcolo}`)
   }
+
 }

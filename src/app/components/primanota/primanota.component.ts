@@ -17,10 +17,9 @@ import {TipocespiteDialogComponent} from "./tipocespite-dialog/tipocespite-dialo
 })
 export class PrimanotaComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['dataDoc', 'numDoc', 'causale', 'gruppoconto',
-    'sottoconto', 'descrsuppl', 'importo', 'azioni'];
   isAdmin: boolean = false;
   filtro: FiltroPrimanota = new FiltroPrimanota();
+  primanotaList: any[] = [];
 
   constructor(private service: PrimanotaService, private route: Router, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
@@ -38,7 +37,7 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
       this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[]) => {
-            this.createPaginator(data, 100);
+            this.primanotaList = data;
             this.loader = false;
           },
           error: (e: any) => {
@@ -80,5 +79,20 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
         primanota.sottoconto = result.costoConto;
       }
     });
+  }
+
+  aggiungiRigo() {
+    let primanota: any = {};
+    primanota.progrprimanota = this.primanotaList.length + 1;
+    primanota.importo = 0;
+    primanota.gruppoconto = undefined;
+    primanota.sottoconto = '';
+    primanota.descrsuppl = '';
+    primanota.datamovimento = this.primanotaList[0].datamovimento;
+    primanota.numerodocumento = this.primanotaList[0].numerodocumento;
+    primanota.giornale = this.primanotaList[0].giornale;
+    primanota.anno = this.primanotaList[0].anno;
+    primanota.protocollo = this.primanotaList[0].protocollo;
+    this.primanotaList.push(primanota);
   }
 }

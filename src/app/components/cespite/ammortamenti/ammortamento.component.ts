@@ -4,10 +4,12 @@ import {AuthService} from "../../../services/auth/auth.service";
 import {ActivatedRoute} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {take, takeUntil} from "rxjs";
+import {map, Observable, startWith, take, takeUntil} from "rxjs";
 import {environment} from "../../../../environments/environment";
 import {CespiteService} from "../../../services/cespite/cespite.service";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FiltroCespite} from "../../../models/FiltroCespite";
+import {TipocespiteService} from "../../../services/tipocespite/tipocespite.service";
 
 @Component({
   selector: 'app-ammortamento',
@@ -24,8 +26,12 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   cespiteList: any;
   dateForm: any = FormGroup;
   sommaAmm: any;
+  filtroCespite: FiltroCespite = new FiltroCespite();
+  myControl = new FormControl('');
+  tipoCespiti: any = [];
+  filteredOptions: Observable<FiltroCespite[]> | undefined;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
+  constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -48,7 +54,11 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     this.dateForm = this.fb.group({
       dataCalcolo: new FormControl('')
     })
-
+    this.getTipoCespiti();
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    );
     this.retrieveList();
   }
 
@@ -71,7 +81,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   retrieveList(): void {
     this.loader = true;
-    this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
+    this.service.getAll(this.filtroCespite).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any | undefined) => {
           this.cespiteList = data.cespiteList;
@@ -85,4 +95,39 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       })
   }
 
+  getTipoCespiti(): void {
+    this.tipocespiteService.getTipoCespiti().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data) => {
+          this.tipoCespiti = data;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
+  }
+
+  private _filter(value: any): any[] {
+    let filterValue: string;
+    if(value instanceof Object) {
+      filterValue = value.tipoCespite.toLowerCase();
+    } else {
+      filterValue = value.toLowerCase();
+    }
+    return this.tipoCespiti.filter((option: { tipoCespite: string; }) => option.tipoCespite.toLowerCase().includes(filterValue));
+  }
+
+  getOption(option: any) {
+    if(option) {
+      return option.tipoCespite + " - " + option.descrizione;
+    } else {
+      return option.tipoCespite;
+    }
+  }
+
+  reset() {
+    this.filtroCespite = new FiltroCespite();
+    this.retrieveList();
+  }
 }
