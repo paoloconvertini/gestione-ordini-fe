@@ -6,6 +6,7 @@ import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../../../environments/environment";
 import {CespiteService} from "../../../services/cespite/cespite.service";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-cespite',
@@ -61,6 +62,40 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
         error: (e) => console.error(e)
       });
     }
+  }
+
+  elimina(id: any) {
+    this.openConfirmDialog(null, null, id);
+  }
+
+  openConfirmDialog(extraProp: any, preProp: any, data: any) {
+    let msg = '';
+    if (preProp) {
+      msg += preProp;
+    }
+    msg += 'Sei sicuro di voler eliminare questo cespite? L\'azione è irreversibile.';
+    if (extraProp) {
+      msg += " ";
+      msg += extraProp;
+    }
+    msg += '?';
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.elimina(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+          next: (res) => {
+            if (!res.error) {
+              this.retrieveList();
+            }
+          },
+          error: (e) => console.error(e)
+        });
+      }
+    });
   }
 
   override applyFilter() {

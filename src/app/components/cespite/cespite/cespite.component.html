@@ -64,6 +64,9 @@
               <button *ngIf="cespite.edit" (click)="cespite.edit = false" mat-icon-button matTooltip="Chiudi">
                 <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
               </button>
+              <button (click)="elimina(cespite.id)" mat-icon-button matTooltip="Elimina">
+                <mat-icon aria-hidden="false" aria-label="elimina" fontIcon="delete" color="primary"></mat-icon>
+              </button>
             </td>
           </ng-container>
 

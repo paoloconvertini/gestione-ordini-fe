@@ -30,4 +30,7 @@ export class CespiteService extends CommonService{
     return this.http.get<any>(`${this.url}/calcola/${dataCalcolo}`)
   }
 
+  elimina(id: any): Observable<any>{
+    return this.http.delete(url + `/${id}`);
+  }
 }
