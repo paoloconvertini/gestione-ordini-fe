@@ -23,4 +23,12 @@ export class TipocespiteService extends CommonService{
   getTipoCespiti(): Observable<any>{
     return this.http.get<any>(`${this.url}/tipocespiti`);
   }
+
+  getById(id: any) : Observable<any> {
+    return this.http.get(url + `/${id}`);
+  }
+
+  save(data: any) : Observable<any> {
+    return this.http.post(url, data);
+  }
 }

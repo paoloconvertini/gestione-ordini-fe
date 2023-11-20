@@ -62,7 +62,9 @@ import { AmmortamentoComponent } from './components/cespite/ammortamenti/ammorta
 import { RiservatoMagazzinoComponent } from './components/riservato-magazzino/riservato-magazzino.component';
 import { CespiteComponent } from './components/cespite/cespite/cespite.component';
 import { PrimanotaComponent } from './components/primanota/primanota.component';
-import { TipocespiteDialogComponent } from './components/primanota/tipocespite-dialog/tipocespite-dialog.component';
+import { TipocespiteDialogComponent } from './components/tipo-cespite/tipocespite-dialog/tipocespite-dialog.component';
+import { TipoCespiteListComponent } from './components/tipo-cespite/tipo-cespite-list/tipo-cespite-list.component';
+import { TipoCespiteDetailComponent } from './components/tipo-cespite/tipo-cespite-detail/tipo-cespite-detail.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -100,7 +102,9 @@ export const DateFormats = {
     RiservatoMagazzinoComponent,
     CespiteComponent,
     PrimanotaComponent,
-    TipocespiteDialogComponent
+    TipocespiteDialogComponent,
+    TipoCespiteListComponent,
+    TipoCespiteDetailComponent
   ],
     imports: [
         BrowserModule,

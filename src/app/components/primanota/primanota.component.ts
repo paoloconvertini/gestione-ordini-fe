@@ -7,8 +7,7 @@ import {environment} from "../../../environments/environment";
 import {takeUntil} from "rxjs";
 import {PrimanotaService} from "../../services/primanota/primanota.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {WarnDialogComponent} from "../warn-dialog/warn-dialog.component";
-import {TipocespiteDialogComponent} from "./tipocespite-dialog/tipocespite-dialog.component";
+import {TipocespiteDialogComponent} from "../tipo-cespite/tipocespite-dialog/tipocespite-dialog.component";
 
 @Component({
   selector: 'app-primanota',

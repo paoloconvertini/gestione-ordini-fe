@@ -16,6 +16,8 @@ import { AmmortamentoComponent } from './components/cespite/ammortamenti/ammorta
 import {RiservatoMagazzinoComponent} from "./components/riservato-magazzino/riservato-magazzino.component";
 import {CespiteComponent} from "./components/cespite/cespite/cespite.component";
 import {PrimanotaComponent} from "./components/primanota/primanota.component";
+import {TipoCespiteListComponent} from "./components/tipo-cespite/tipo-cespite-list/tipo-cespite-list.component";
+import {TipoCespiteDetailComponent} from "./components/tipo-cespite/tipo-cespite-detail/tipo-cespite-detail.component";
 
 const routes: Routes = [
   {
@@ -102,6 +104,21 @@ const routes: Routes = [
     path: ':param/primanota',
     canActivate: [AuthGuard],
     component: PrimanotaComponent,
+  },
+  {
+    path: ':param/tipo-cespiti',
+    canActivate: [AuthGuard],
+    component: TipoCespiteListComponent,
+  },
+  {
+    path: ':param/tipo-cespiti-detail/:id',
+    canActivate: [AuthGuard],
+    component: TipoCespiteDetailComponent,
+  },
+  {
+    path: ':param/tipo-cespiti-detail',
+    canActivate: [AuthGuard],
+    component: TipoCespiteDetailComponent,
   },
   {
     path: 'riserve',
