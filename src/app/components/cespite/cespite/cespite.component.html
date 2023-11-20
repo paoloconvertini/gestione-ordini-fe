@@ -25,33 +25,36 @@
 
           <!-- Name Column -->
           <ng-container matColumnDef="codice">
-            <th mat-header-cell *matHeaderCellDef> Codice</th>
+            <th mat-header-cell *matHeaderCellDef>Tipo cespite</th>
             <td mat-cell *matCellDef="let cespite">
-              <div >{{cespite.tipoCespite}}</div>
+              <span style="vertical-align: super;">{{cespite.tipoCespite}}</span>
+              <button *ngIf="cespite.edit" (click)="cercaConto(cespite)" mat-icon-button matTooltip="Cerca conto" >
+                <mat-icon aria-hidden="false" aria-label="save" fontIcon="search" color="primary"></mat-icon>
+              </button>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="progressivo">
-            <th mat-header-cell *matHeaderCellDef> Progressivo</th>
+            <th mat-header-cell *matHeaderCellDef>Progressivo</th>
             <td mat-cell *matCellDef="let cespite">
               <div >{{cespite.progressivo1}}.{{cespite.progressivo2}}</div>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="desc">
-            <th mat-header-cell *matHeaderCellDef> Descrizione</th>
+            <th mat-header-cell *matHeaderCellDef>Descrizione</th>
             <td mat-cell *matCellDef="let cespite">
               <div >{{cespite.cespite}}</div>
             </td>
           </ng-container>
           <!-- Name Column -->
-          <ng-container matColumnDef="perc">
-            <th mat-header-cell *matHeaderCellDef> Percentuale</th>
-            <td mat-cell *matCellDef="let cespite">
-              <div *ngIf="!cespite.edit">{{cespite.ammortamento}}</div>
-              <div *ngIf="cespite.edit"><input type="number" class="form-control input" [(ngModel)]="cespite.ammortamento"></div>
-            </td>
-          </ng-container>
+<!--          <ng-container matColumnDef="perc">-->
+<!--            <th mat-header-cell *matHeaderCellDef> Percentuale</th>-->
+<!--            <td mat-cell *matCellDef="let cespite">-->
+<!--              <div *ngIf="!cespite.edit">{{cespite.ammortamento}}</div>-->
+<!--              <div *ngIf="cespite.edit"><input type="number" class="form-control input" [(ngModel)]="cespite.ammortamento"></div>-->
+<!--            </td>-->
+<!--          </ng-container>-->
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let cespite">

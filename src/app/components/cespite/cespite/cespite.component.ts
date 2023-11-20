@@ -7,6 +7,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../../../environments/environment";
 import {CespiteService} from "../../../services/cespite/cespite.service";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {TipocespiteDialogComponent} from "../../tipo-cespite/tipocespite-dialog/tipocespite-dialog.component";
 
 @Component({
   selector: 'app-cespite',
@@ -15,7 +16,9 @@ import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.compon
 })
 export class CespiteComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['codice', 'progressivo', 'desc', 'perc', 'azioni'];
+  displayedColumns: string[] = ['codice', 'progressivo', 'desc',
+   /*'perc',*/
+    'azioni'];
   isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
 
@@ -28,6 +31,17 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
 
   ngOnInit(): void {
     this.retrieveList();
+  }
+
+  cercaConto(cespite: any) {
+    const dialogRef = this.dialog.open(TipocespiteDialogComponent, {
+      width: '90%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        cespite.tipoCespite = result.tipoCespite;
+      }
+    });
   }
 
   retrieveList(): void {
@@ -55,9 +69,9 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
 
   salva(cespite: any) {
     if(cespite.id){
-      this.service.update({id: cespite.id, perc: cespite.ammortamento}).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      this.service.update({id: cespite.id, tipoCespite: cespite.tipoCespite}).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: () => {
-          cespite.edit = false;
+          this.retrieveList();
         },
         error: (e) => console.error(e)
       });
