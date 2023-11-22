@@ -27,19 +27,17 @@ export class TipocespiteDialogComponent extends CommonListComponent implements O
 
   retrieveList(): void {
     this.loader = true;
-    setTimeout(() => {
-      this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: any[]) => {
-            this.createPaginator(data, 5);
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
-          }
-        })
-    }, 2000);
+    this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any[]) => {
+          this.createPaginator(data, 15);
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
   onNoClick(): void {

@@ -73,7 +73,8 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
     super.applyFilter(this.filtro.searchText);
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
-        data.cespite.toLowerCase().includes(filter)
+        data.tipoCespite.toLowerCase().includes(filter)
+        || data.descrizione.toLowerCase().includes(filter)
       )
     }
   }

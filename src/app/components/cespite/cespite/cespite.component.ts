@@ -17,7 +17,7 @@ import {TipocespiteDialogComponent} from "../../tipo-cespite/tipocespite-dialog/
 export class CespiteComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['codice', 'progressivo', 'desc',
-   /*'perc',*/
+    /*'perc',*/
     'azioni'];
   isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
@@ -46,30 +46,31 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
 
   retrieveList(): void {
     this.loader = true;
-    setTimeout(() => {
-      this.service.getAllCespiti().pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: any[]) => {
-            data.forEach(el => {
-              el.venduto = !!el.dataVend;
-            })
-            this.createPaginator(data, 100);
-            if(this.filtro.searchText){
-              this.applyFilter();
-            }
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
+    this.service.getAllCespiti().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any[]) => {
+          data.forEach(el => {
+            el.venduto = !!el.dataVend;
+          })
+          this.createPaginator(data, 100);
+          if (this.filtro.searchText) {
+            this.applyFilter();
           }
-        })
-    }, 2000);
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
   salva(cespite: any) {
-    if(cespite.id){
-      this.service.update({id: cespite.id, tipoCespite: cespite.tipoCespite}).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    if (cespite.id) {
+      this.service.update({
+        id: cespite.id,
+        tipoCespite: cespite.tipoCespite
+      }).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: () => {
           this.retrieveList();
         },
@@ -116,7 +117,8 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
     super.applyFilter(this.filtro.searchText);
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
-        data.cespite.toLowerCase().includes(filter)
+        data.tipoCespite.toLowerCase().includes(filter)
+        || data.cespite.toLowerCase().includes(filter)
       )
     }
   }
