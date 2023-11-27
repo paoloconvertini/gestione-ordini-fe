@@ -18,7 +18,6 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
   displayedColumns: string[] = ['tipoCespite', 'descrizione', 'gruppoConto', 'sottoConto', 'azioni']
   isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
-  origin: string = '';
 
   constructor(private service: TipocespiteService, private router: ActivatedRoute, private route: Router, private dialog: MatDialog) {
     super();
@@ -41,7 +40,7 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
   retrieveList(): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
+      this.service.getAll(this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[]) => {
             this.createPaginator(data, 100);
@@ -60,7 +59,7 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
 
   salva(cespite: any) {
     if(cespite.id){
-      this.service.update({id: cespite.id, perc: cespite.ammortamento}).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      this.service.update({id: cespite.id, perc: cespite.ammortamento}, this.origin).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: () => {
           cespite.edit = false;
         },

@@ -48,6 +48,11 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
     }
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
+      if (params.param) {
+        this.origin = params.param;
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -65,7 +70,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   calcola() : void {
     this.loader = true;
     let param = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
-    this.service.calcola(param).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.calcola(param, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           if(!res.error) {
@@ -81,7 +86,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   retrieveList(): void {
     this.loader = true;
-    this.service.getAll(this.filtroCespite).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.getAll(this.filtroCespite, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any | undefined) => {
           this.cespiteList = data.cespiteList;
@@ -96,7 +101,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   }
 
   getTipoCespiti(): void {
-    this.tipocespiteService.getTipoCespiti().pipe(takeUntil(this.ngUnsubscribe))
+    this.tipocespiteService.getTipoCespiti(this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data) => {
           this.tipoCespiti = data;

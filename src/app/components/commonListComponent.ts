@@ -8,6 +8,7 @@ export abstract class CommonListComponent extends BaseComponent{
   loader = false;
   dataSource = new MatTableDataSource;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  origin: string = '';
 
   protected constructor() {
     super();

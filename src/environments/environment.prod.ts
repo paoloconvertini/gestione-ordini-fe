@@ -8,6 +8,8 @@ export const environment = {
   LOGISTICA: 'Logistica',
   production: false,
   baseUrl: (window as any)["env"]['baseUrl'] || 'http://192.168.1.150:8080/api/',
+  baseUrlCeglie: (window as any)["env"]['baseUrlCeglie'] || 'http://localhost:8083/api/',
+  baseUrlOstuni: (window as any)["env"]['baseUrlOstuni'] || 'http://localhost:8082/api/',
   baseAuthUrl: (window as any)['env']['baseAuthUrl'] || 'http://192.168.1.150:8081/api/',
   LOGIN: 'login',
   ORDINI_CLIENTI: 'ordini-clienti',

@@ -17,11 +17,13 @@ export class PrimanotaService extends CommonService{
     super(http, url);
   }
 
-  getAll(filtro: FiltroPrimanota): Observable<any> {
+  getAll(filtro: FiltroPrimanota, origin: string): Observable<any> {
+    this.selezionaServer(origin, environment.PRIMANOTA);
     return this.http.post<any>(`${this.url}`, filtro);
   }
 
-  save(primanota: any): Observable<any> {
+  save(primanota: any, origin: string): Observable<any> {
+    this.selezionaServer(origin, environment.PRIMANOTA);
     return this.http.post<any>(`${this.url}/salva`, primanota);
   }
 

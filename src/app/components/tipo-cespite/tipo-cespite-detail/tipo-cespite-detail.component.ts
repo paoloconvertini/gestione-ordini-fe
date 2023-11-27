@@ -54,7 +54,7 @@ export class TipoCespiteDetailComponent extends BaseComponent implements OnInit 
   submitForm() {
     this.loader = true;
     if (this.tipoCespiteForm.valid) {
-      this.service.save(this.tipoCespiteForm.value).pipe(takeUntil(this.ngUnsubscribe))
+      this.service.save(this.tipoCespiteForm.value, this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
             if (res && !res.error) {
@@ -72,7 +72,7 @@ export class TipoCespiteDetailComponent extends BaseComponent implements OnInit 
 
   getTipoCespite() {
     this.loader = true;
-    this.service.getById(this.id).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.getById(this.id, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any) => {
           this.categoriaCespite = data;

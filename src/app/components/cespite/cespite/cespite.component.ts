@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {takeUntil} from "rxjs";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../../../environments/environment";
 import {CespiteService} from "../../../services/cespite/cespite.service";
@@ -22,11 +22,16 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
   isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(private service: CespiteService, private route: Router, private dialog: MatDialog) {
+  constructor(private service: CespiteService, private route: Router, private dialog: MatDialog, private router: ActivatedRoute) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
+      if (params.param) {
+        this.origin = params.param;
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -46,7 +51,7 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
 
   retrieveList(): void {
     this.loader = true;
-    this.service.getAllCespiti().pipe(takeUntil(this.ngUnsubscribe))
+    this.service.getAllCespiti(this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any[]) => {
           data.forEach(el => {
@@ -70,7 +75,7 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
       this.service.update({
         id: cespite.id,
         tipoCespite: cespite.tipoCespite
-      }).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      }, this.origin).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: () => {
           this.retrieveList();
         },
@@ -101,7 +106,7 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.service.elimina(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+        this.service.elimina(data, this.origin).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
           next: (res) => {
             if (!res.error) {
               this.retrieveList();

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../commonListComponent";
 import {FiltroPrimanota} from "../../models/FiltroPrimanota";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../../environments/environment";
 import {takeUntil} from "rxjs";
@@ -20,11 +20,18 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
   filtro: FiltroPrimanota = new FiltroPrimanota();
   primanotaList: any[] = [];
 
-  constructor(private service: PrimanotaService, private route: Router, private dialog: MatDialog, private snackbar: MatSnackBar) {
+  constructor(private service: PrimanotaService, private route: Router, private dialog: MatDialog, private snackbar: MatSnackBar, private router: ActivatedRoute) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
     }
+    this.router.params.pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params: any) => {
+          if (params.param) {
+            this.origin = params.param;
+          }
+        }
+      );
   }
 
   ngOnInit(): void {
@@ -33,7 +40,7 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
   retrieveList(): void {
     this.loader = true;
     setTimeout(() => {
-      this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+      this.service.getAll(this.filtro, this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[]) => {
             this.primanotaList = data;
@@ -53,7 +60,7 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
 
   salva(primanota: any) {
     setTimeout(() => {
-      this.service.save(primanota).pipe(takeUntil(this.ngUnsubscribe))
+      this.service.save(primanota, this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
             this.snackbar.open(res.msg, 'Chiudi', {

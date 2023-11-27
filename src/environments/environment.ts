@@ -12,6 +12,8 @@ export const environment = {
   LOGISTICA: 'Logistica',
   production: false,
   baseUrl: 'http://localhost:8080/api/',
+  baseUrlCeglie: 'http://localhost:8083/api/',
+  baseUrlOstuni: 'http://localhost:8082/api/',
   baseAuthUrl: 'http://localhost:8081/api/',
   LOGIN: 'login',
   ORDINI_CLIENTI: 'ordini-clienti',

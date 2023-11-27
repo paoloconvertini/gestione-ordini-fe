@@ -17,20 +17,25 @@ export class CespiteService extends CommonService{
     super(http, url);
   }
 
-  getAll(filtro: FiltroCespite): Observable<any> {
+  getAll(filtro: FiltroCespite, origin: string): Observable<any> {
+    this.selezionaServer(origin, environment.CESPITI);
     return this.http.post<any>(`${this.url}`, filtro);
   }
 
 
-  getAllCespiti(): Observable<any> {
+  getAllCespiti(origin: string): Observable<any> {
+    this.selezionaServer(origin, environment.CESPITI);
     return this.http.get<any>(`${this.url}/cespiti`);
   }
 
-  calcola(dataCalcolo: any) {
+  calcola(dataCalcolo: any, origin: string) {
+    this.selezionaServer(origin, environment.CESPITI);
     return this.http.get<any>(`${this.url}/calcola/${dataCalcolo}`)
   }
 
-  elimina(id: any): Observable<any>{
+  elimina(id: any, origin: string): Observable<any>{
+    this.selezionaServer(origin, environment.CESPITI);
     return this.http.delete(url + `/${id}`);
   }
+
 }

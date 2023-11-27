@@ -77,7 +77,7 @@
               </td>
               <td>
                 <div *ngIf="!primanota.edit">{{primanota.descrsuppl}}</div>
-                <div *ngIf="primanota.edit"><input type="text" class="form-control input desc" [(ngModel)]="primanota.descrsuppl"></div>
+                <div *ngIf="primanota.edit"><input type="text" class="form-control input desc" [maxlength]="50" [(ngModel)]="primanota.descrsuppl"></div>
               </td>
               <td>
                 <div *ngIf="!primanota.edit">{{primanota.importo | currency: 'EUR':'symbol'}}</div>
