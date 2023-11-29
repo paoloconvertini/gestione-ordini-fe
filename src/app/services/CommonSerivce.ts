@@ -20,6 +20,9 @@ export abstract class CommonService {
       case 'o':
         this.url = environment.baseUrlOstuni + api;
         break;
+      case 't':
+        this.url = environment.baseUrl + api;
+        break;
       default:
     }
   }

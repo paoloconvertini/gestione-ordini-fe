@@ -49,20 +49,20 @@
           <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}}</div>
           <div class="col-md-12 cesp-progr" *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
             <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteViewDtoList; index as i">
-              <div class="col-lg-2 col-md-2 col-sm-6">
+              <div class="col-lg-1 col-md-1 col-sm-6">
                 {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
               </div>
               <div class="col-lg-3 col-md-3 col-sm-6">
                 {{cespite.cespite}}&nbsp;&nbsp;{{cespite.importo | currency: 'EUR':'symbol'}}
               </div>
-              <div class="col-lg-7 col-md-7 col-sm-12">
+              <div class="col-lg-8 col-md-8 col-sm-12">
                 <b>{{cespite.fornitore}}</b><br>
                 Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}<br>
                 <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}/{{cespite.anno}}</span>
               </div>
-              <div class="col-lg-2 col-md-2 col-sm-2"></div>
-              <div class="col-lg-10 col-md-10 col-sm-10">
-                <table class="table">
+              <div class="col-lg-1 col-md-1 col-sm-1"></div>
+              <div class="col-lg-11 col-md-11 col-sm-11">
+                <table class="table" *ngIf="cespite.ammortamentoCespiteList.length > 0">
                   <thead>
                   <th>Data</th>
                   <th>Descrizione</th>
