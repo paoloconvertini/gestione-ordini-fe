@@ -133,6 +133,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   reset() {
     this.filtroCespite = new FiltroCespite();
+    this.myControl.setValue('');
     this.retrieveList();
   }
 }
