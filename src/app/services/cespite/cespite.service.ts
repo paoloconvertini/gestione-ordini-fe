@@ -5,6 +5,7 @@ import {environment} from "../../../environments/environment";
 import {FiltroOrdini} from "../../models/FiltroOrdini";
 import {Observable} from "rxjs";
 import {FiltroCespite} from "../../models/FiltroCespite";
+import {QuadraturaCespite} from "../../models/QuadraturaCespite";
 
 const url = environment.baseUrl + environment.CESPITI;
 
@@ -38,4 +39,8 @@ export class CespiteService extends CommonService{
     return this.http.delete(url + `/${id}`);
   }
 
+  salvaQuad(quad: QuadraturaCespite) : Observable<any>{
+    this.selezionaServer(origin, environment.CESPITI);
+    return this.http.post(url + `/salvaQuadratura`, quad);
+  }
 }

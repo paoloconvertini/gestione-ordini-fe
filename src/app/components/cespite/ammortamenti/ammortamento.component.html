@@ -24,7 +24,9 @@
                  matInput
                  [formControl]="myControl"
                  [matAutocomplete]="auto">
-          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="filtroCespite.tipoCespite = $event.option.value.tipoCespite" [displayWith]="getOption" >
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                            (optionSelected)="filtroCespite.tipoCespite = $event.option.value.tipoCespite"
+                            [displayWith]="getOption">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
               {{option.tipoCespite}} - {{option.descrizione}}
             </mat-option>
@@ -47,7 +49,8 @@
       <div *ngIf="!loader">
         <div class="row text" *ngFor="let cat of cespiteList; index as i">
           <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}}</div>
-          <div class="col-md-12 cesp-progr" *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
+          <div class="col-md-12 cesp-progr"
+               *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
             <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteViewDtoList; index as i">
               <div class="col-lg-1 col-md-1 col-sm-6">
                 {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
@@ -58,7 +61,8 @@
               <div class="col-lg-8 col-md-8 col-sm-12">
                 <b>{{cespite.fornitore}}</b><br>
                 Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}<br>
-                <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}/{{cespite.anno}}</span>
+                <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}
+                  /{{cespite.anno}}</span>
               </div>
               <div class="col-lg-1 col-md-1 col-sm-1"></div>
               <div class="col-lg-11 col-md-11 col-sm-11">
@@ -76,7 +80,19 @@
                   <tr *ngFor="let ammortamento of cespite.ammortamentoCespiteList; index as i">
                     <td>{{ammortamento.dataAmm | date: 'dd/MM/yyyy'}}</td>
                     <td>{{ammortamento.descrizione}}</td>
-                    <td>{{ammortamento.percAmm | number : '1.2-2'}}</td>
+                    <td>
+                      {{ammortamento.percAmm | number : '1.2-2'}}
+                      <div *ngIf="ammortamento.edit"><input type="number" [(ngModel)]="quad.ammortamento"></div>
+                      <button *ngIf="!ammortamento.edit" (click)="ammortamento.edit = true" mat-icon-button matTooltip="Modifica" >
+                        <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+                      </button>
+                      <button *ngIf="ammortamento.edit" (click)="salvaQuad(cespite, ammortamento)" mat-icon-button matTooltip="Salva" >
+                        <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+                      </button>
+                      <button *ngIf="ammortamento.edit" (click)="ammortamento.edit = false" mat-icon-button matTooltip="Chiudi">
+                        <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+                      </button>
+                    </td>
                     <td>{{ammortamento.quota | number : '1.2-2'}}</td>
                     <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
                     <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
@@ -172,13 +188,16 @@
           <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3">
             <div class="riep-magg-grid">
               <div class="totale">Totale Maggiorazioni deducibili: {{
-                ((cat.somma.superAmm1?cat.somma.superAmm1.totale:0) +
-                (cat.somma.superAmm2?cat.somma.superAmm2.totale:0) +
-                (cat.somma.superAmm3?cat.somma.superAmm3.totale:0))  | number : '1.2-2'}}</div>
+                ((cat.somma.superAmm1 ? cat.somma.superAmm1.totale : 0) +
+                  (cat.somma.superAmm2 ? cat.somma.superAmm2.totale : 0) +
+                  (cat.somma.superAmm3 ? cat.somma.superAmm3.totale : 0))  | number : '1.2-2'}}</div>
               <div class="elenco-magg">
-                <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}: {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
-                <div *ngIf="cat.somma.superAmm2">{{cat.somma.superAmm2.desc}}: {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
-                <div *ngIf="cat.somma.superAmm3">{{cat.somma.superAmm3.desc}}: {{cat.somma.superAmm3.totale | number : '1.2-2'}}</div>
+                <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}
+                  : {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
+                <div *ngIf="cat.somma.superAmm2">{{cat.somma.superAmm2.desc}}
+                  : {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
+                <div *ngIf="cat.somma.superAmm3">{{cat.somma.superAmm3.desc}}
+                  : {{cat.somma.superAmm3.totale | number : '1.2-2'}}</div>
               </div>
             </div>
           </div>
@@ -269,19 +288,22 @@
           <div class="col-md-12" *ngIf="sommaAmm.superAmm1 || sommaAmm.superAmm2 || sommaAmm.superAmm3">
             <div class="riep-magg-grid">
               <div class="totale">Totale Maggiorazioni deducibili: {{
-                ((sommaAmm.superAmm1?sommaAmm.superAmm1.totale:0) +
-                (sommaAmm.superAmm2?sommaAmm.superAmm2.totale:0) +
-                (sommaAmm.superAmm3?sommaAmm.superAmm3.totale:0))  | number : '1.2-2'}}</div>
+                ((sommaAmm.superAmm1 ? sommaAmm.superAmm1.totale : 0) +
+                  (sommaAmm.superAmm2 ? sommaAmm.superAmm2.totale : 0) +
+                  (sommaAmm.superAmm3 ? sommaAmm.superAmm3.totale : 0))  | number : '1.2-2'}}</div>
               <div class="elenco-magg">
-                <div *ngIf="sommaAmm.superAmm1">{{sommaAmm.superAmm1.desc}}: {{sommaAmm.superAmm1.totale | number : '1.2-2'}}</div>
-                <div *ngIf="sommaAmm.superAmm2">{{sommaAmm.superAmm2.desc}}: {{sommaAmm.superAmm2.totale | number : '1.2-2'}}</div>
-                <div *ngIf="sommaAmm.superAmm3">{{sommaAmm.superAmm3.desc}}: {{sommaAmm.superAmm3.totale | number : '1.2-2'}}</div>
+                <div *ngIf="sommaAmm.superAmm1">{{sommaAmm.superAmm1.desc}}
+                  : {{sommaAmm.superAmm1.totale | number : '1.2-2'}}</div>
+                <div *ngIf="sommaAmm.superAmm2">{{sommaAmm.superAmm2.desc}}
+                  : {{sommaAmm.superAmm2.totale | number : '1.2-2'}}</div>
+                <div *ngIf="sommaAmm.superAmm3">{{sommaAmm.superAmm3.desc}}
+                  : {{sommaAmm.superAmm3.totale | number : '1.2-2'}}</div>
               </div>
             </div>
           </div>
         </div>
         <div class="no-result-list" *ngIf="!cespiteList || cespiteList.length === 0">
-            Nessun risultato
+          Nessun risultato
         </div>
       </div>
     </div>

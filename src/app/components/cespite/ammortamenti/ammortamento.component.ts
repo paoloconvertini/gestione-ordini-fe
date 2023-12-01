@@ -10,6 +10,7 @@ import {CespiteService} from "../../../services/cespite/cespite.service";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {FiltroCespite} from "../../../models/FiltroCespite";
 import {TipocespiteService} from "../../../services/tipocespite/tipocespite.service";
+import {QuadraturaCespite} from "../../../models/QuadraturaCespite";
 
 @Component({
   selector: 'app-ammortamento',
@@ -30,6 +31,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   myControl = new FormControl('');
   tipoCespiti: any = [];
   filteredOptions: Observable<FiltroCespite[]> | undefined;
+  quad:QuadraturaCespite = new QuadraturaCespite();
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
@@ -135,5 +137,24 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     this.filtroCespite = new FiltroCespite();
     this.myControl.setValue('');
     this.retrieveList();
+  }
+
+  salvaQuad(cespite: any, ammortamento: any) {
+    this.quad.anno = new Date(ammortamento.dataAmm).getFullYear();
+    this.quad.idCespite = cespite.id;
+    ammortamento.edit = false;
+    this.service.salvaQuad(this.quad).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next:(res) => {
+          if(!res.error) {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          }
+        },
+        error: (e: any) => {
+          console.error(e);
+        }
+      })
   }
 }
