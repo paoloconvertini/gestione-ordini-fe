@@ -59,7 +59,6 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
   }
 
   salva(primanota: any) {
-    setTimeout(() => {
       this.service.save(primanota, this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
@@ -72,7 +71,6 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
             console.error(e);
           }
         })
-    }, 2000);
   }
 
   cercaConto(primanota: any) {
@@ -100,5 +98,19 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
     primanota.anno = this.primanotaList[0].anno;
     primanota.protocollo = this.primanotaList[0].protocollo;
     this.primanotaList.push(primanota);
+  }
+
+  registraVendita() {
+    this.service.registraVendita(this.primanotaList[0], this.origin).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          this.snackbar.open(res.msg, 'Chiudi', {
+            horizontalPosition: 'center', verticalPosition: 'top'
+          });
+        },
+        error: (e: any) => {
+          console.error(e);
+        }
+      })
   }
 }

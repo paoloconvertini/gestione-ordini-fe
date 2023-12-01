@@ -9,7 +9,7 @@
       <form (ngSubmit)="calcola()" [formGroup]="dateForm" autocomplete="off" class="">
         <mat-form-field appearance="fill">
           <mat-label>Seleziona una data di calcolo ammortamento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="dataCalcolo" (dateChange)="calcola()">
+          <input matInput [matDatepicker]="picker" formControlName="dataCalcolo" (dateChange)="calcola()" >
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
@@ -42,6 +42,11 @@
     <div class="col-lg-1 col-md-1 col-sm-1">
       <button mat-raised-button color="warn" (click)="reset()">
         Reset
+      </button>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1" *ngIf="ultimoGiornoAnno">
+      <button mat-raised-button color="warn" (click)="contabilizzaAmm()">
+        Contabilizza amm.
       </button>
     </div>
     <div class="mat-elevation-z8">

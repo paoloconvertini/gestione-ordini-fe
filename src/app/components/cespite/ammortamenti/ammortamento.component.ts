@@ -32,6 +32,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   tipoCespiti: any = [];
   filteredOptions: Observable<FiltroCespite[]> | undefined;
   quad:QuadraturaCespite = new QuadraturaCespite();
+  ultimoGiornoAnno:boolean = false;
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
@@ -70,6 +71,10 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   }
 
   calcola() : void {
+    if(this.dateForm.value.dataCalcolo.date() == 31
+      && this.dateForm.value.dataCalcolo.month() == 11){
+      this.ultimoGiornoAnno = true;
+    }
     this.loader = true;
     let param = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
     this.service.calcola(param, this.origin).pipe(takeUntil(this.ngUnsubscribe))
@@ -157,4 +162,24 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
         }
       })
   }
+
+  contabilizzaAmm() {
+    this.loader = true;
+    this.service.contabilizzaAmm().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next:(res) => {
+          this.loader = false;
+          if(!res.error) {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          }
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
+  }
+
 }

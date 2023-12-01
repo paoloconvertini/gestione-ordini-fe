@@ -43,4 +43,9 @@ export class CespiteService extends CommonService{
     this.selezionaServer(origin, environment.CESPITI);
     return this.http.post(url + `/salvaQuadratura`, quad);
   }
+
+  contabilizzaAmm(): Observable<any> {
+    this.selezionaServer(origin, environment.CESPITI);
+    return this.http.get(url + `/contabilizzaAmm`);
+  }
 }
