@@ -27,8 +27,8 @@ export class PrimanotaService extends CommonService{
     return this.http.post<any>(`${this.url}/salva`, primanota);
   }
 
-  registraVendita(primanota: any, origin: string) : Observable<any> {
+  registraVendita(data: any, origin: string) : Observable<any> {
     this.selezionaServer(origin, environment.PRIMANOTA);
-    return this.http.post<any>(`${this.url}/registraVendita`, primanota);
+    return this.http.post<any>(`${this.url}/registraVendita`, data);
   }
 }

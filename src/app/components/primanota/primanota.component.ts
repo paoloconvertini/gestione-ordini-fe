@@ -8,6 +8,7 @@ import {takeUntil} from "rxjs";
 import {PrimanotaService} from "../../services/primanota/primanota.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {TipocespiteDialogComponent} from "../tipo-cespite/tipocespite-dialog/tipocespite-dialog.component";
+import { CespiteDialogComponent } from '../cespite/cespite-dialog/cespite-dialog.component';
 
 @Component({
   selector: 'app-primanota',
@@ -101,16 +102,30 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
   }
 
   registraVendita() {
-    this.service.registraVendita(this.primanotaList[0], this.origin).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res: any) => {
-          this.snackbar.open(res.msg, 'Chiudi', {
-            horizontalPosition: 'center', verticalPosition: 'top'
-          });
-        },
-        error: (e: any) => {
-          console.error(e);
+    const dialogRef = this.dialog.open(CespiteDialogComponent, {
+      width: '90%',
+      data: this.origin
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        let data = {
+          protocollo: this.primanotaList[0].protocollo,
+          giornale: this.primanotaList[0].giornale,
+          anno: this.primanotaList[0].anno,
+          idCespite: result.id,
         }
-      })
+        this.service.registraVendita(data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res: any) => {
+              this.snackbar.open(res.msg, 'Chiudi', {
+                horizontalPosition: 'center', verticalPosition: 'top'
+              });
+            },
+            error: (e: any) => {
+              console.error(e);
+            }
+          })
+      }
+    });
   }
 }

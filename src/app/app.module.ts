@@ -65,6 +65,7 @@ import { PrimanotaComponent } from './components/primanota/primanota.component';
 import { TipocespiteDialogComponent } from './components/tipo-cespite/tipocespite-dialog/tipocespite-dialog.component';
 import { TipoCespiteListComponent } from './components/tipo-cespite/tipo-cespite-list/tipo-cespite-list.component';
 import { TipoCespiteDetailComponent } from './components/tipo-cespite/tipo-cespite-detail/tipo-cespite-detail.component';
+import { CespiteDialogComponent } from './components/cespite/cespite-dialog/cespite-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -104,7 +105,8 @@ export const DateFormats = {
     PrimanotaComponent,
     TipocespiteDialogComponent,
     TipoCespiteListComponent,
-    TipoCespiteDetailComponent
+    TipoCespiteDetailComponent,
+    CespiteDialogComponent
   ],
     imports: [
         BrowserModule,

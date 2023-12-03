@@ -18,8 +18,8 @@ export class ForbiddenInterceptor implements HttpInterceptor {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           })
         } else if (error.status >= 404 || error.status === 400 || error.status === 401 || error.status === 402) {
-          console.error('Server error! Riprovare dopo.');
-          this.snackbar.open('Server error! Riprovare dopo.', 'Chiudi', {
+          console.error(error.error&&error.error.msg?error.error.msg:'');
+          this.snackbar.open("Error! " + error.error&&error.error.msg?error.error.msg:'', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           })
         }
