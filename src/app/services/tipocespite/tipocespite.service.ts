@@ -27,11 +27,11 @@ export class TipocespiteService extends CommonService{
 
   getById(id: any, origin: string) : Observable<any> {
     this.selezionaServer(origin, environment.TIPOCESPITE);
-    return this.http.get(url + `/${id}`);
+    return this.http.get(`${this.url}/${id}`);
   }
 
   save(data: any, origin: string) : Observable<any> {
     this.selezionaServer(origin, environment.TIPOCESPITE);
-    return this.http.post(url, data);
+    return this.http.post(`${this.url}`, data);
   }
 }

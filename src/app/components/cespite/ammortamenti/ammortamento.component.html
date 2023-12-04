@@ -1,7 +1,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12  ordine-title">
-      AMMORTAMENTO CESPITI
+      REGISTRO CESPITI
+      <span *ngIf="origin==='t'"> TRADING</span>
+      <span *ngIf="origin==='c'"> CEGLIE</span>
+      <span *ngIf="origin==='o'"> OSTUNI</span>
     </div>
   </div>
   <div class="row">
@@ -45,8 +48,8 @@
       </button>
     </div>
     <div class="col-lg-1 col-md-1 col-sm-1" *ngIf="ultimoGiornoAnno">
-      <button mat-raised-button color="warn" (click)="contabilizzaAmm()">
-        Contabilizza amm.
+      <button mat-raised-button color="primary" (click)="contabilizzaAmm()">
+        Cont.zza amm.
       </button>
     </div>
     <div class="mat-elevation-z8">
@@ -147,9 +150,9 @@
                 <td>{{cat.somma.vendite.valoreAggiornato | number : '1.2-2'}}</td>
                 <td></td>
                 <td></td>
+                <td>{{cat.somma.vendite.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <td>{{cat.somma.vendite.fondoAmmortamenti | number : '1.2-2'}}</td>
                 <td></td>
               </tr>
               <tr>

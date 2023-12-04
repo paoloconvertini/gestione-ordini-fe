@@ -36,16 +36,16 @@ export class CespiteService extends CommonService{
 
   elimina(id: any, origin: string): Observable<any>{
     this.selezionaServer(origin, environment.CESPITI);
-    return this.http.delete(url + `/${id}`);
+    return this.http.delete(`${this.url}/${id}`);
   }
 
-  salvaQuad(quad: QuadraturaCespite) : Observable<any>{
+  salvaQuad(quad: QuadraturaCespite, origin:string) : Observable<any>{
     this.selezionaServer(origin, environment.CESPITI);
-    return this.http.post(url + `/salvaQuadratura`, quad);
+    return this.http.post(`${this.url}/salvaQuadratura`, quad);
   }
 
-  contabilizzaAmm(): Observable<any> {
+  contabilizzaAmm( origin: string): Observable<any> {
     this.selezionaServer(origin, environment.CESPITI);
-    return this.http.get(url + `/contabilizzaAmm`);
+    return this.http.get(`${this.url}/contabilizzaAmm`);
   }
 }

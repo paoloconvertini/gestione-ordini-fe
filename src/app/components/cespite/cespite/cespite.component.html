@@ -1,7 +1,10 @@
 <div class="container" *ngIf="isAdmin">
   <div class="row">
     <div class="col-md-12  ordine-title">
-      Cespiti
+      CESPITI
+      <span *ngIf="origin==='t'"> TRADING</span>
+      <span *ngIf="origin==='c'"> CEGLIE</span>
+      <span *ngIf="origin==='o'"> OSTUNI</span>
     </div>
   </div>
   <div class="row">

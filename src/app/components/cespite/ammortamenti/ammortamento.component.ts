@@ -148,7 +148,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     this.quad.anno = new Date(ammortamento.dataAmm).getFullYear();
     this.quad.idCespite = cespite.id;
     ammortamento.edit = false;
-    this.service.salvaQuad(this.quad).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.salvaQuad(this.quad, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           if(!res.error) {
@@ -165,7 +165,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   contabilizzaAmm() {
     this.loader = true;
-    this.service.contabilizzaAmm().pipe(takeUntil(this.ngUnsubscribe))
+    this.service.contabilizzaAmm(this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           this.loader = false;
