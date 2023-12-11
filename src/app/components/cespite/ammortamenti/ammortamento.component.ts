@@ -76,8 +76,8 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       this.ultimoGiornoAnno = true;
     }
     this.loader = true;
-    let param = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
-    this.service.calcola(param, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+    this.filtroCespite.data = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
+    this.service.calcola(this.filtroCespite.data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           if(!res.error) {
@@ -177,6 +177,35 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
         },
         error: (e: any) => {
           console.error(e);
+          this.loader = false;
+        }
+      })
+  }
+
+  scaricaRegistroCespite() {
+    this.loader = true;
+    this.service.scaricaRegistroCespite(this.filtroCespite, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data) => {
+          this.loader = false;
+          if (data) {
+            let a: any = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            let blob = new Blob([data], { type: 'application/pdf' });
+            let url= window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = data.filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          } else {
+            this.snackbar.open('Errore', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            });
+          }
+        },
+        error: (e:any) => {
+          console.log(e);
           this.loader = false;
         }
       })
