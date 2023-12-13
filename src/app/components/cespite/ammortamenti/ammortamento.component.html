@@ -37,23 +37,19 @@
         </mat-form-field>
       </form>
     </div>
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="primary" (click)="retrieveList()" matTooltip="Cerca">
+    <div class="col-lg-2 col-md-2 col-sm-2">
+      <button mat-icon-button color="primary" (click)="retrieveList()" matTooltip="Cerca">
         <mat-icon>search</mat-icon>
       </button>
-    </div>
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="warn" (click)="reset()" matTooltip="Reset ricerca">
-       <mat-icon>reset</mat-icon>
+      <button mat-icon-button color="warn" (click)="reset()" matTooltip="Reset ricerca">
+        <mat-icon>backspace</mat-icon>
       </button>
     </div>
-    <div class="col-lg-1 col-md-1 col-sm-1" *ngIf="ultimoGiornoAnno">
-      <button mat-raised-button color="primary" (click)="contabilizzaAmm()" matTooltip="Contabilizza ammortamenti">
-        Cont.zza amm.
+    <div class="col-lg-2 col-md-2 col-sm-2">
+      <button *ngIf="ultimoGiornoAnno" mat-icon-button color="primary" (click)="contabilizzaAmm()" matTooltip="Contabilizza ammortamenti">
+        <mat-icon >assignment</mat-icon>
       </button>
-    </div>
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="primary" (click)="scaricaRegistroCespite()" matTooltip="Scarica registro cespite">
+      <button mat-icon-button color="primary" (click)="scaricaRegistroCespite()" matTooltip="Scarica registro cespite">
         <mat-icon>download</mat-icon>
       </button>
     </div>

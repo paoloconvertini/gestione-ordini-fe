@@ -33,6 +33,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   filteredOptions: Observable<FiltroCespite[]> | undefined;
   quad:QuadraturaCespite = new QuadraturaCespite();
   ultimoGiornoAnno:boolean = false;
+  cespiteView: any;
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
@@ -98,6 +99,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
         next: (data: any | undefined) => {
           this.cespiteList = data.cespiteList;
           this.sommaAmm = data.cespiteSommaDto;
+          this.cespiteView = data;
           this.loader = false;
         },
         error: (e: any) => {
@@ -184,7 +186,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   scaricaRegistroCespite() {
     this.loader = true;
-    this.service.scaricaRegistroCespite(this.filtroCespite, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.scaricaRegistroCespite(this.cespiteView, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data) => {
           this.loader = false;
