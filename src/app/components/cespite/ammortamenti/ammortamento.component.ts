@@ -24,7 +24,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   isLogistica: boolean = false;
-  cespiteList: any;
+  cespiteCategoriaDtoList: any;
   dateForm: any = FormGroup;
   sommaAmm: any;
   filtroCespite: FiltroCespite = new FiltroCespite();
@@ -33,7 +33,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   filteredOptions: Observable<FiltroCespite[]> | undefined;
   quad:QuadraturaCespite = new QuadraturaCespite();
   ultimoGiornoAnno:boolean = false;
-  cespiteView: any;
+  registroCespitiDto: any;
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
@@ -68,7 +68,9 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       startWith(''),
       map(value => this._filter(value || '')),
     );
-    this.retrieveList();
+    if(this.origin !== 'o'){
+      this.retrieveList();
+    }
   }
 
   calcola() : void {
@@ -78,7 +80,14 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     }
     this.loader = true;
     this.filtroCespite.data = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
-    this.service.calcola(this.filtroCespite.data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+
+    let observable;
+    if(this.origin === 'o'){
+      observable = this.service.calcolaPost(this.filtroCespite, this.origin);
+    } else {
+      observable = this.service.calcola(this.filtroCespite, this.origin);
+    }
+    observable.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           if(!res.error) {
@@ -97,9 +106,9 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     this.service.getAll(this.filtroCespite, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any | undefined) => {
-          this.cespiteList = data.cespiteList;
+          this.cespiteCategoriaDtoList = data.cespiteCategoriaDtoList;
           this.sommaAmm = data.cespiteSommaDto;
-          this.cespiteView = data;
+          this.registroCespitiDto = data;
           this.loader = false;
         },
         error: (e: any) => {
@@ -186,7 +195,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   scaricaRegistroCespite() {
     this.loader = true;
-    this.service.scaricaRegistroCespite(this.cespiteView, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.scaricaRegistroCespite(this.registroCespitiDto, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data) => {
           this.loader = false;

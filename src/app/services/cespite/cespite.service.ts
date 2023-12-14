@@ -34,6 +34,11 @@ export class CespiteService extends CommonService{
     return this.http.get<any>(`${this.url}/calcola/${dataCalcolo}`)
   }
 
+  calcolaPost(filtro: any, origin: string) {
+    this.selezionaServer(origin, environment.CESPITI);
+    return this.http.post<any>(`${this.url}/calcola`, filtro)
+  }
+
   elimina(id: any, origin: string): Observable<any>{
     this.selezionaServer(origin, environment.CESPITI);
     return this.http.delete(`${this.url}/${id}`);

@@ -12,9 +12,9 @@
       <form (ngSubmit)="calcola()" [formGroup]="dateForm" autocomplete="off" class="">
         <mat-form-field appearance="fill">
           <mat-label>Seleziona una data di calcolo ammortamento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="dataCalcolo" (dateChange)="calcola()" >
+          <input matInput [matDatepicker]="picker" formControlName="dataCalcolo" (dateChange)="calcola()" [disabled]="origin === 'o' && filtroCespite.tipoCespite === ''">
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker #picker [disabled]="origin === 'o' && filtroCespite.tipoCespite === ''"></mat-datepicker>
         </mat-form-field>
       </form>
     </div>
@@ -38,7 +38,7 @@
       </form>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2">
-      <button mat-icon-button color="primary" (click)="retrieveList()" matTooltip="Cerca">
+      <button *ngIf="origin !== 'o'" mat-icon-button color="primary" (click)="retrieveList()" matTooltip="Cerca">
         <mat-icon>search</mat-icon>
       </button>
       <button mat-icon-button color="warn" (click)="reset()" matTooltip="Reset ricerca">
@@ -56,11 +56,9 @@
     <div class="mat-elevation-z8">
       <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
       <div *ngIf="!loader">
-        <div class="row text" *ngFor="let cat of cespiteList; index as i">
+        <div class="row text" *ngFor="let cat of cespiteCategoriaDtoList; index as i">
           <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}} Perc. amm: {{cat.perc}}%</div>
-          <div class="col-md-12 cesp-progr"
-               *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
-            <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteViewDtoList; index as i">
+            <div class="row" *ngFor="let cespite of cat.cespiteDtoList; index as i">
               <div class="col-lg-1 col-md-1 col-sm-6">
                 {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
               </div>
@@ -120,7 +118,6 @@
                 </table>
               </div>
             </div>
-          </div>
           <!--Riepilogo-->
           <div class="col-md-12 ">
             <table class="table">
@@ -211,7 +208,7 @@
           </div>
         </div>
         <!--Riepilogo totale-->
-        <div class="row">
+        <div class="row"  *ngIf="cespiteCategoriaDtoList && cespiteCategoriaDtoList.length > 0">
           <div class="col-lg-12 col-md-12 col-sm-12">
             <table class="table">
               <thead>
@@ -300,7 +297,7 @@
             </div>
           </div>
         </div>
-        <div class="no-result-list" *ngIf="!cespiteList || cespiteList.length === 0">
+        <div class="no-result-list" *ngIf="!cespiteCategoriaDtoList || cespiteCategoriaDtoList.length === 0">
           Nessun risultato
         </div>
       </div>
