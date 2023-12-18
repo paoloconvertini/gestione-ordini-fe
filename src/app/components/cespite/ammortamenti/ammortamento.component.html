@@ -4,7 +4,6 @@
       REGISTRO CESPITI
       <span *ngIf="origin==='t'"> TRADING</span>
       <span *ngIf="origin==='c'"> CEGLIE</span>
-      <span *ngIf="origin==='o'"> OSTUNI</span>
     </div>
   </div>
   <div class="row">
@@ -64,11 +63,8 @@
               <div class="col-lg-1 col-md-1 col-sm-6">
                 {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
               </div>
-              <div class="col-lg-3 col-md-3 col-sm-6">
+              <div class="col-lg-6 col-md-6 col-sm-6">
                 {{cespite.cespite}}&nbsp;&nbsp;Costo storico: {{cespite.importo | currency: 'EUR':'symbol'}}
-              </div>
-              <div class="col-lg-3 col-md-3 col-sm-6">
-                Costo rivalutato: {{cespite.importoRivalutazione | currency: 'EUR':'symbol'}}
               </div>
               <div class="col-lg-5 col-md-5 col-sm-12">
                 <b>{{cespite.fornitore}}</b><br>
@@ -81,14 +77,11 @@
                 <table class="table" *ngIf="cespite.ammortamentoCespiteList.length > 0">
                   <thead>
                   <th>Data</th>
-                  <th>Descr.</th>
+                  <th>Descrizione</th>
                   <th>% Amm</th>
-                  <th>Q.ta Amm Ord.</th>
-                  <th *ngIf="origin === 'o'">Q.ta Amm Riv.</th>
-                  <th>Q.ta Super {{cespite.superAmmDesc}}</th>
-                  <th>Fondo Ord.</th>
-                  <th>Fondo Riv.</th>
-                  <th>Fondo tot.</th>
+                  <th>Q.ta Amm</th>
+                  <th>Q.ta Super Amm. {{cespite.superAmmDesc}}</th>
+                  <th>Fondo Amm.</th>
                   <th>V.N.C.</th>
                   </thead>
                   <tbody class="progr2">
@@ -109,11 +102,8 @@
                       </button>
                     </td>
                     <td>{{ammortamento.quota | number : '1.2-2'}}</td>
-                    <td *ngIf="origin === 'o'">{{ammortamento.quotaRivalutazione | number : '1.2-2'}}</td>
                     <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
                     <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.fondo + ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
                     <td>{{ammortamento.residuo | number : '1.2-2'}}</td>
                   </tr>
                   </tbody>
@@ -128,7 +118,6 @@
               <th>Fiscale</th>
               <th>Valore agg.to</th>
               <th>Amm. ordinario</th>
-              <th>Amm. rivalutato</th>
               <th>Totale amm.ti</th>
               <th>Non amm.ti</th>
               <th>Fondo amm.ti</th>
@@ -138,7 +127,6 @@
               <tr>
                 <td>A inizio esercizio</td>
                 <td>{{cat.somma.inizioEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -153,12 +141,10 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
               </tr>
               <tr>
                 <td>Vendite</td>
                 <td>{{cat.somma.vendite.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
                 <td></td>
                 <td>{{cat.somma.vendite.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
@@ -169,7 +155,6 @@
                 <td>Amm.ti deducibili</td>
                 <td>{{cat.somma.ammortamentiDeducibili.valoreAggiornato | number : '1.2-2'}}</td>
                 <td>{{cat.somma.ammortamentiDeducibili.ammortamentoOrdinario | number : '1.2-2'}}</td>
-                <td>{{cat.somma.ammortamentiDeducibili.ammortamentoAnticipato | number : '1.2-2'}}</td>
                 <td>{{cat.somma.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{cat.somma.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
@@ -178,7 +163,6 @@
               <tr>
                 <td>A fine esercizio</td>
                 <td>{{cat.somma.fineEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
                 <td></td>
                 <td>{{cat.somma.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
@@ -218,7 +202,6 @@
               <th>Fiscale</th>
               <th>Valore agg.to</th>
               <th>Amm. ordinario</th>
-              <th>Amm. rivalutato</th>
               <th>Totale amm.ti</th>
               <th>Non amm.ti</th>
               <th>Fondo amm.ti</th>
@@ -228,7 +211,6 @@
               <tr>
                 <td>A inizio esercizio</td>
                 <td>{{sommaAmm.inizioEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -243,12 +225,10 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
               </tr>
               <tr>
                 <td>Vendite</td>
                 <td>{{sommaAmm.vendite.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -259,7 +239,6 @@
                 <td>Amm.ti deducibili</td>
                 <td>{{sommaAmm.ammortamentiDeducibili.valoreAggiornato | number : '1.2-2'}}</td>
                 <td>{{sommaAmm.ammortamentiDeducibili.ammortamentoOrdinario | number : '1.2-2'}}</td>
-                <td>{{sommaAmm.ammortamentiDeducibili.ammortamentoAnticipato | number : '1.2-2'}}</td>
                 <td>{{sommaAmm.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{sommaAmm.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
@@ -268,7 +247,6 @@
               <tr>
                 <td>A fine esercizio</td>
                 <td>{{sommaAmm.fineEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
                 <td></td>
                 <td>{{sommaAmm.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
@@ -306,5 +284,4 @@
       </div>
     </div>
   </div>
-
 </div>
