@@ -1,0 +1,32 @@
+.text {
+  font-size: 13px;
+}
+
+.cesp-progr {
+  border-bottom: 1px dashed;
+  margin-bottom: 15px;
+}
+
+.categoria {
+  padding: 10px;
+  background: #97cce3;
+  border-bottom: 1px solid;
+}
+
+.progr2 {
+  border-bottom: 1px dashed;
+  padding-bottom: 3px;
+}
+
+.riep-magg-grid {
+  border-bottom: 1px dashed;
+  border-top: 1px dashed;
+  padding: 5px 0;
+  display: flex;
+}
+
+.riep-plus-grid {
+  border-bottom: 1px dashed;
+  border-top: 1px dashed;
+  padding: 5px 0;
+}

@@ -1,10 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12  ordine-title">
-      REGISTRO CESPITI
-      <span *ngIf="origin==='t'"> TRADING</span>
-      <span *ngIf="origin==='c'"> CEGLIE</span>
-      <span *ngIf="origin==='o'"> OSTUNI</span>
+      REGISTRO CESPITI OSTUNI
     </div>
   </div>
   <div class="row">
@@ -28,17 +25,17 @@
                  [formControl]="myControl"
                  [matAutocomplete]="auto">
           <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
-                            (optionSelected)="filtroCespite.tipoCespite = $event.option.value.tipoCespite"
+                            (optionSelected)="filtroRegistroCespite.cespite = $event.option.value.cespite"
                             [displayWith]="getOption">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.tipoCespite}} - {{option.descrizione}}
+              {{option.cespite}}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
       </form>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2">
-      <button mat-icon-button color="primary" (click)="retrieveList()" matTooltip="Cerca">
+      <button mat-icon-button color="primary" (click)="espandiAndsearch()" matTooltip="Cerca">
         <mat-icon>search</mat-icon>
       </button>
       <button mat-icon-button color="warn" (click)="reset()" matTooltip="Reset ricerca">
@@ -55,10 +52,105 @@
     </div>
     <div class="mat-elevation-z8">
       <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
-      <div *ngIf="!loader">
-        <div class="row text" *ngFor="let cat of cespiteList; index as i">
-          <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}} Perc. amm: {{cat.perc}}%</div>
-          <div class="col-md-12 cesp-progr"
+      <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="cespiteList">
+        <!-- Name Column -->
+        <ng-container matColumnDef="cat">
+          <th mat-header-cell *matHeaderCellDef> </th>
+          <td class="pointer" mat-cell *matCellDef="let cat" (click)="getAmmortamenti(cat); (expandedElement = expandedElement === cat ? null : cat); $event.stopPropagation()">
+            {{cat.tipoCespite}} - {{cat.categoria}} Perc. amm: {{cat.perc}}%
+            <!--Riepilogo-->
+            <div class="col-md-12 ">
+              <table class="table">
+                <thead>
+                <th>Fiscale</th>
+                <th>Valore agg.to</th>
+                <th>Amm. ordinario</th>
+                <th>Amm. rivalutato</th>
+                <th>Totale amm.ti</th>
+                <th>Non amm.ti</th>
+                <th>Fondo amm.ti</th>
+                <th>Residuo amm.ti</th>
+                </thead>
+                <tbody class="">
+                <tr>
+                  <td>A inizio esercizio</td>
+                  <td>{{cat.somma.inizioEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>{{cat.somma.inizioEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                  <td>{{cat.somma.inizioEsercizio.residuo | number : '1.2-2'}}</td>
+                </tr>
+                <tr>
+                  <td>Acquisti</td>
+                  <td>{{cat.somma.acquisti.valoreAggiornato | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Vendite</td>
+                  <td>{{cat.somma.vendite.valoreAggiornato | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td></td>
+                  <td>{{cat.somma.vendite.totaleAmmortamento | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td>{{cat.somma.vendite.fondoAmmortamenti | number : '1.2-2'}}</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Amm.ti deducibili</td>
+                  <td>{{cat.somma.ammortamentiDeducibili.valoreAggiornato | number : '1.2-2'}}</td>
+                  <td>{{cat.somma.ammortamentiDeducibili.ammortamentoOrdinario | number : '1.2-2'}}</td>
+                  <td>{{cat.somma.ammortamentiDeducibili.ammortamentoAnticipato | number : '1.2-2'}}</td>
+                  <td>{{cat.somma.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td>{{cat.somma.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
+                  <td>{{cat.somma.ammortamentiDeducibili.residuo | number : '1.2-2'}}</td>
+                </tr>
+                <tr>
+                  <td>A fine esercizio</td>
+                  <td>{{cat.somma.fineEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td></td>
+                  <td>{{cat.somma.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
+                  <td></td>
+                  <td>{{cat.somma.fineEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                  <td>{{cat.somma.fineEsercizio.residuo | number : '1.2-2'}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!--Riepilogo Plus/minus -->
+            <div class="col-md-12 riep-plus-grid" *ngIf="cat.somma.plusMinus">
+              <div>Plus/Minusvalenze annue:  {{cat.somma.plusMinus.totale  | number : '1.2-2'}}</div>
+            </div>
+            <!--Riepilogo Maggiorazione -->
+            <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3">
+              <div class="riep-magg-grid">
+                <div class="totale">Totale Maggiorazioni deducibili: {{
+                  ((cat.somma.superAmm1 ? cat.somma.superAmm1.totale : 0) +
+                    (cat.somma.superAmm2 ? cat.somma.superAmm2.totale : 0) +
+                    (cat.somma.superAmm3 ? cat.somma.superAmm3.totale : 0))  | number : '1.2-2'}}</div>
+                <div class="elenco-magg">
+                  <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}
+                    : {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
+                  <div *ngIf="cat.somma.superAmm2">{{cat.somma.superAmm2.desc}}
+                    : {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
+                  <div *ngIf="cat.somma.superAmm3">{{cat.somma.superAmm3.desc}}
+                    : {{cat.somma.superAmm3.totale | number : '1.2-2'}}</div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <!--<div class="col-md-12 cesp-progr"
                *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
             <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteDtoList; index as i">
               <div class="col-lg-1 col-md-1 col-sm-6">
@@ -81,7 +173,7 @@
                 <table class="table" *ngIf="cespite.ammortamentoCespiteList.length > 0">
                   <thead>
                   <th>Data</th>
-                  <th>Descrizione</th>
+                  <th>Descr.</th>
                   <th>% Amm</th>
                   <th>Q.ta Amm Ord.</th>
                   <th *ngIf="origin === 'o'">Q.ta Amm Riv.</th>
@@ -120,98 +212,20 @@
                 </table>
               </div>
             </div>
-          </div>
-          <!--Riepilogo-->
-          <div class="col-md-12 ">
-            <table class="table">
-              <thead>
-              <th>Fiscale</th>
-              <th>Valore agg.to</th>
-              <th>Amm. ordinario</th>
-              <th>Amm. rivalutato</th>
-              <th>Totale amm.ti</th>
-              <th>Non amm.ti</th>
-              <th>Fondo amm.ti</th>
-              <th>Residuo amm.ti</th>
-              </thead>
-              <tbody class="">
-              <tr>
-                <td>A inizio esercizio</td>
-                <td>{{cat.somma.inizioEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{{cat.somma.inizioEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
-                <td>{{cat.somma.inizioEsercizio.residuo | number : '1.2-2'}}</td>
-              </tr>
-              <tr>
-                <td>Acquisti</td>
-                <td>{{cat.somma.acquisti.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Vendite</td>
-                <td>{{cat.somma.vendite.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
-                <td></td>
-                <td>{{cat.somma.vendite.totaleAmmortamento | number : '1.2-2'}}</td>
-                <td></td>
-                <td>{{cat.somma.vendite.fondoAmmortamenti | number : '1.2-2'}}</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Amm.ti deducibili</td>
-                <td>{{cat.somma.ammortamentiDeducibili.valoreAggiornato | number : '1.2-2'}}</td>
-                <td>{{cat.somma.ammortamentiDeducibili.ammortamentoOrdinario | number : '1.2-2'}}</td>
-                <td>{{cat.somma.ammortamentiDeducibili.ammortamentoAnticipato | number : '1.2-2'}}</td>
-                <td>{{cat.somma.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
-                <td></td>
-                <td>{{cat.somma.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
-                <td>{{cat.somma.ammortamentiDeducibili.residuo | number : '1.2-2'}}</td>
-              </tr>
-              <tr>
-                <td>A fine esercizio</td>
-                <td>{{cat.somma.fineEsercizio.valoreAggiornato | number : '1.2-2'}}</td>
-                <td></td>
-                <td></td>
-                <td>{{cat.somma.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
-                <td></td>
-                <td>{{cat.somma.fineEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
-                <td>{{cat.somma.fineEsercizio.residuo | number : '1.2-2'}}</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <!--Riepilogo Plus/minus -->
-          <div class="col-md-12 riep-plus-grid" *ngIf="cat.somma.plusMinus">
-            <div>Plus/Minusvalenze annue:  {{cat.somma.plusMinus.totale  | number : '1.2-2'}}</div>
-          </div>
-          <!--Riepilogo Maggiorazione -->
-          <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3">
-            <div class="riep-magg-grid">
-              <div class="totale">Totale Maggiorazioni deducibili: {{
-                ((cat.somma.superAmm1 ? cat.somma.superAmm1.totale : 0) +
-                  (cat.somma.superAmm2 ? cat.somma.superAmm2.totale : 0) +
-                  (cat.somma.superAmm3 ? cat.somma.superAmm3.totale : 0))  | number : '1.2-2'}}</div>
-              <div class="elenco-magg">
-                <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}
-                  : {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
-                <div *ngIf="cat.somma.superAmm2">{{cat.somma.superAmm2.desc}}
-                  : {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
-                <div *ngIf="cat.somma.superAmm3">{{cat.somma.superAmm3.desc}}
-                  : {{cat.somma.superAmm3.totale | number : '1.2-2'}}</div>
-              </div>
-            </div>
-          </div>
-        </div>
+          </div>-->
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-result-list" colspan="4">Nessun
+            risultato {{filtroRegistroCespite.cespite ? "per la ricerca " + filtroRegistroCespite.cespite : ""}}</td>
+        </tr>
+      </table>
         <!--Riepilogo totale-->
-        <div class="row">
+        <div class="row" *ngIf="cespiteList && cespiteList.length > 0">
           <div class="col-lg-12 col-md-12 col-sm-12">
             <table class="table">
               <thead>
@@ -300,10 +314,7 @@
             </div>
           </div>
         </div>
-        <div class="no-result-list" *ngIf="!cespiteList || cespiteList.length === 0">
-          Nessun risultato
-        </div>
       </div>
     </div>
   </div>
-</div>
+

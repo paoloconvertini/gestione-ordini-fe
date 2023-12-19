@@ -18,6 +18,9 @@ import {CespiteComponent} from "./components/cespite/cespite/cespite.component";
 import {PrimanotaComponent} from "./components/primanota/primanota.component";
 import {TipoCespiteListComponent} from "./components/tipo-cespite/tipo-cespite-list/tipo-cespite-list.component";
 import {TipoCespiteDetailComponent} from "./components/tipo-cespite/tipo-cespite-detail/tipo-cespite-detail.component";
+import {
+  AmmortamentiRivalutatoComponent
+} from "./components/cespite/ammortamenti-rivalutato/ammortamenti-rivalutato.component";
 
 const routes: Routes = [
   {
@@ -94,6 +97,11 @@ const routes: Routes = [
     path: ':param/ammortamenti',
     canActivate: [AuthGuard],
     component: AmmortamentoComponent,
+  },
+  {
+    path: 'ammortamenti/:param',
+    canActivate: [AuthGuard],
+    component: AmmortamentiRivalutatoComponent,
   },
   {
     path: ':param/cespiti',

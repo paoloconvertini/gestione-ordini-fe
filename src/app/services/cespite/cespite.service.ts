@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {CommonService} from "../CommonSerivce";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {FiltroOrdini} from "../../models/FiltroOrdini";
 import {Observable} from "rxjs";
 import {FiltroCespite} from "../../models/FiltroCespite";
 import {QuadraturaCespite} from "../../models/QuadraturaCespite";
@@ -18,7 +17,7 @@ export class CespiteService extends CommonService{
     super(http, url);
   }
 
-  getAll(filtro: FiltroCespite, origin: string): Observable<any> {
+  getAll(filtro: any, origin: string): Observable<any> {
     this.selezionaServer(origin, environment.CESPITI);
     return this.http.post<any>(`${this.url}`, filtro);
   }
