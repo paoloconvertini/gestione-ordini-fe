@@ -11,6 +11,7 @@ import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {FiltroCespite} from "../../../models/FiltroCespite";
 import {TipocespiteService} from "../../../services/tipocespite/tipocespite.service";
 import {QuadraturaCespite} from "../../../models/QuadraturaCespite";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-ammortamento',
@@ -20,6 +21,7 @@ import {QuadraturaCespite} from "../../../models/QuadraturaCespite";
 export class AmmortamentoComponent extends CommonListComponent implements OnInit {
 
   isAdmin: boolean = false;
+  collapse: boolean = true;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;

@@ -52,13 +52,17 @@
       <button mat-icon-button color="primary" (click)="scaricaRegistroCespite()" matTooltip="Scarica registro cespite">
         <mat-icon>download</mat-icon>
       </button>
+      <button mat-icon-button color="primary" (click)="collapse=!collapse" >
+        <mat-icon *ngIf="!collapse" matTooltip="Espandi">unfold_less_double</mat-icon>
+        <mat-icon *ngIf="collapse" matTooltip="Collassa">unfold_more_double</mat-icon>
+      </button>
     </div>
     <div class="mat-elevation-z8">
       <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
       <div *ngIf="!loader">
         <div class="row text" *ngFor="let cat of cespiteList; index as i">
           <div class="col-md-12 categoria">{{cat.tipoCespite}} - {{cat.categoria}} Perc. amm: {{cat.perc}}%</div>
-          <div class="col-md-12 cesp-progr"
+          <div class="col-md-12 cesp-progr" [hidden]="collapse"
                *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
             <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteDtoList; index as i">
               <div class="col-lg-1 col-md-1 col-sm-6">
@@ -97,7 +101,7 @@
                     <td>{{ammortamento.descrizione}}</td>
                     <td>
                       {{ammortamento.percAmm | number : '1.2-2'}}
-                      <div *ngIf="ammortamento.edit"><input type="number" [(ngModel)]="quad.ammortamento"></div>
+                      <div *ngIf="ammortamento.edit && ammortamento.percAmm"><input type="number" [(ngModel)]="quad.ammortamento"></div>
                       <button *ngIf="!ammortamento.edit" (click)="ammortamento.edit = true" mat-icon-button matTooltip="Modifica" >
                         <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
                       </button>
