@@ -91,8 +91,8 @@
                   <th *ngIf="origin === 'o'">Q.ta Amm Riv.</th>
                   <th>Q.ta Super {{cespite.superAmmDesc}}</th>
                   <th>Fondo Ord.</th>
-                  <th>Fondo Riv.</th>
-                  <th>Fondo tot.</th>
+                  <th *ngIf="origin === 'o'">Fondo Riv.</th>
+                  <th *ngIf="origin === 'o'">Fondo tot.</th>
                   <th>V.N.C.</th>
                   </thead>
                   <tbody class="progr2">
@@ -116,8 +116,8 @@
                     <td *ngIf="origin === 'o'">{{ammortamento.quotaRivalutazione | number : '1.2-2'}}</td>
                     <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
                     <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.fondo + ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
+                    <td *ngIf="origin === 'o'">{{ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
+                    <td *ngIf="origin === 'o'">{{ammortamento.fondo + ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
                     <td>{{ammortamento.residuo | number : '1.2-2'}}</td>
                   </tr>
                   </tbody>
@@ -132,10 +132,12 @@
               <th>Fiscale</th>
               <th>Valore agg.to</th>
               <th>Amm. ordinario</th>
-              <th>Amm. rivalutato</th>
+              <th>Amm. <span *ngIf="origin !== 'o'">anticipato</span><span *ngIf="origin === 'o'">rivalutato</span></th>
               <th>Totale amm.ti</th>
               <th>Non amm.ti</th>
               <th>Fondo amm.ti</th>
+              <th *ngIf="origin === 'o'">Fondo amm.ti Riv.</th>
+              <th *ngIf="origin === 'o'">Fondo amm.ti Tot.</th>
               <th>Residuo amm.ti</th>
               </thead>
               <tbody class="">
@@ -147,6 +149,8 @@
                 <td></td>
                 <td></td>
                 <td>{{cat.somma.inizioEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.inizioEsercizio.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.inizioEsercizio.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td>{{cat.somma.inizioEsercizio.residuo | number : '1.2-2'}}</td>
               </tr>
               <tr>
@@ -157,6 +161,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td *ngIf="origin === 'o'"></td>
+                <td *ngIf="origin === 'o'"></td>
                 <td></td>
               </tr>
               <tr>
@@ -167,6 +173,8 @@
                 <td>{{cat.somma.vendite.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{cat.somma.vendite.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.vendite.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.vendite.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td></td>
               </tr>
               <tr>
@@ -177,6 +185,8 @@
                 <td>{{cat.somma.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{cat.somma.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.ammortamentiDeducibili.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.ammortamentiDeducibili.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td>{{cat.somma.ammortamentiDeducibili.residuo | number : '1.2-2'}}</td>
               </tr>
               <tr>
@@ -187,6 +197,8 @@
                 <td>{{cat.somma.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{cat.somma.fineEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.fineEsercizio.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{cat.somma.fineEsercizio.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td>{{cat.somma.fineEsercizio.residuo | number : '1.2-2'}}</td>
               </tr>
               </tbody>
@@ -226,6 +238,8 @@
               <th>Totale amm.ti</th>
               <th>Non amm.ti</th>
               <th>Fondo amm.ti</th>
+              <th *ngIf="origin === 'o'">Fondo amm.ti Riv.</th>
+              <th *ngIf="origin === 'o'">Fondo amm.ti Tot.</th>
               <th>Residuo amm.ti</th>
               </thead>
               <tbody class="">
@@ -237,6 +251,8 @@
                 <td></td>
                 <td></td>
                 <td>{{sommaAmm.inizioEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.inizioEsercizio.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.inizioEsercizio.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td>{{sommaAmm.inizioEsercizio.residuo | number : '1.2-2'}}</td>
               </tr>
               <tr>
@@ -247,6 +263,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td *ngIf="origin === 'o'"></td>
+                <td *ngIf="origin === 'o'"></td>
                 <td></td>
               </tr>
               <tr>
@@ -254,9 +272,11 @@
                 <td>{{sommaAmm.vendite.valoreAggiornato | number : '1.2-2'}}</td>
                 <td></td>
                 <td></td>
+                <td>{{sommaAmm.vendite.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <td>{{sommaAmm.vendite.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.vendite.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.vendite.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td></td>
               </tr>
               <tr>
@@ -267,6 +287,8 @@
                 <td>{{sommaAmm.ammortamentiDeducibili.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{sommaAmm.ammortamentiDeducibili.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.ammortamentiDeducibili.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.ammortamentiDeducibili.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td>{{sommaAmm.ammortamentiDeducibili.residuo | number : '1.2-2'}}</td>
               </tr>
               <tr>
@@ -277,6 +299,8 @@
                 <td>{{sommaAmm.fineEsercizio.totaleAmmortamento | number : '1.2-2'}}</td>
                 <td></td>
                 <td>{{sommaAmm.fineEsercizio.fondoAmmortamenti | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.fineEsercizio.fondoAmmortamentiRiv | number : '1.2-2'}}</td>
+                <td *ngIf="origin === 'o'">{{sommaAmm.fineEsercizio.fondoAmmortamentiTot | number : '1.2-2'}}</td>
                 <td>{{sommaAmm.fineEsercizio.residuo | number : '1.2-2'}}</td>
               </tr>
               </tbody>
