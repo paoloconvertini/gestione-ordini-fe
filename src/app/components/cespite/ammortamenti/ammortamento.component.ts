@@ -36,6 +36,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   quad:QuadraturaCespite = new QuadraturaCespite();
   ultimoGiornoAnno:boolean = false;
   cespiteView: any;
+  dataRegistro: any = new Date();
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
@@ -80,6 +81,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     }
     this.loader = true;
     this.filtroCespite.data = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
+    this.dataRegistro = this.dateForm.value.dataCalcolo;
     this.service.calcola(this.filtroCespite.data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
@@ -169,7 +171,11 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   contabilizzaAmm() {
     this.loader = true;
-    this.service.contabilizzaAmm(this.origin).pipe(takeUntil(this.ngUnsubscribe))
+    let data = new Date();
+    if(this.dataRegistro) {
+      data = this.dataRegistro;
+    }
+    this.service.contabilizzaAmm(data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           this.loader = false;
@@ -188,6 +194,11 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   scaricaRegistroCespite() {
     this.loader = true;
+    let data = new Date();
+    if(this.dataRegistro) {
+      data = this.dataRegistro;
+    }
+    this.cespiteView.data = data;
     this.service.scaricaRegistroCespite(this.cespiteView, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data) => {
@@ -199,7 +210,8 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
             let blob = new Blob([data], { type: 'application/pdf' });
             let url= window.URL.createObjectURL(blob);
             a.href = url;
-            a.download = data.filename;
+            let filename = 'Registro cespiti.pdf';
+            a.download = filename;
             a.click();
             window.URL.revokeObjectURL(url);
           } else {

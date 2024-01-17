@@ -48,13 +48,16 @@ export class CespiteService extends CommonService{
     return this.http.post(`${this.url}/salvaQuadratura`, quad);
   }
 
-  contabilizzaAmm( origin: string): Observable<any> {
+  contabilizzaAmm(data: any, origin: string): Observable<any> {
     this.selezionaServer(origin, environment.CESPITI);
-    return this.http.get(`${this.url}/contabilizzaAmm`);
+    return this.http.post(`${this.url}/contabilizzaAmm`, data);
   }
 
   scaricaRegistroCespite(filtroCespite: FiltroCespite, origin: string): Observable<any> {
     this.selezionaServer(origin, environment.CESPITI);
-    return this.http.post(`${this.url}/scaricaRegistroCespiti`, filtroCespite);
+    const httpOptions = {
+      responseType: 'blob' as 'json'
+    };
+    return this.http.post(`${this.url}/scaricaRegistroCespiti`, filtroCespite, httpOptions);
   }
 }

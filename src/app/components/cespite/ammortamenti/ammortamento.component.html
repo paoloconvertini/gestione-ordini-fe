@@ -5,6 +5,7 @@
       <span *ngIf="origin==='t'"> TRADING</span>
       <span *ngIf="origin==='c'"> CEGLIE</span>
       <span *ngIf="origin==='o'"> OSTUNI</span>
+      DEL {{dataRegistro | date: 'dd/MM/yyyy'}}
     </div>
   </div>
   <div class="row">
@@ -209,12 +210,13 @@
             <div>Plus/Minusvalenze annue:  {{cat.somma.plusMinus.totale  | number : '1.2-2'}}</div>
           </div>
           <!--Riepilogo Maggiorazione -->
-          <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3">
+          <div class="col-md-12" *ngIf="cat.somma.superAmm1 || cat.somma.superAmm2 || cat.somma.superAmm3 || cat.somma.superAmm4">
             <div class="riep-magg-grid">
               <div class="totale">Totale Maggiorazioni deducibili: {{
                 ((cat.somma.superAmm1 ? cat.somma.superAmm1.totale : 0) +
                   (cat.somma.superAmm2 ? cat.somma.superAmm2.totale : 0) +
-                  (cat.somma.superAmm3 ? cat.somma.superAmm3.totale : 0))  | number : '1.2-2'}}</div>
+                  (cat.somma.superAmm3 ? cat.somma.superAmm3.totale : 0) +
+                  (cat.somma.superAmm4 ? cat.somma.superAmm4.totale : 0))  | number : '1.2-2'}}</div>
               <div class="elenco-magg">
                 <div *ngIf="cat.somma.superAmm1">{{cat.somma.superAmm1.desc}}
                   : {{cat.somma.superAmm1.totale | number : '1.2-2'}}</div>
@@ -222,6 +224,8 @@
                   : {{cat.somma.superAmm2.totale | number : '1.2-2'}}</div>
                 <div *ngIf="cat.somma.superAmm3">{{cat.somma.superAmm3.desc}}
                   : {{cat.somma.superAmm3.totale | number : '1.2-2'}}</div>
+                <div *ngIf="origin === 'o' && cat.somma.superAmm4">{{cat.somma.superAmm4.desc}}
+                  : {{cat.somma.superAmm4.totale | number : '1.2-2'}}</div>
               </div>
             </div>
           </div>
@@ -311,12 +315,13 @@
             <div>Plus/Minusvalenze annue:  {{sommaAmm.plusMinus.totale  | number : '1.2-2'}}</div>
           </div>
           <!--Riepilogo Maggiorazione -->
-          <div class="col-md-12" *ngIf="sommaAmm.superAmm1 || sommaAmm.superAmm2 || sommaAmm.superAmm3">
+          <div class="col-md-12" *ngIf="sommaAmm.superAmm1 || sommaAmm.superAmm2 || sommaAmm.superAmm3 || sommaAmm.superAmm4">
             <div class="riep-magg-grid">
               <div class="totale">Totale Maggiorazioni deducibili: {{
                 ((sommaAmm.superAmm1 ? sommaAmm.superAmm1.totale : 0) +
                   (sommaAmm.superAmm2 ? sommaAmm.superAmm2.totale : 0) +
-                  (sommaAmm.superAmm3 ? sommaAmm.superAmm3.totale : 0))  | number : '1.2-2'}}</div>
+                  (sommaAmm.superAmm3 ? sommaAmm.superAmm3.totale : 0) +
+                  (sommaAmm.superAmm4 ? sommaAmm.superAmm4.totale : 0))  | number : '1.2-2'}}</div>
               <div class="elenco-magg">
                 <div *ngIf="sommaAmm.superAmm1">{{sommaAmm.superAmm1.desc}}
                   : {{sommaAmm.superAmm1.totale | number : '1.2-2'}}</div>
@@ -324,6 +329,8 @@
                   : {{sommaAmm.superAmm2.totale | number : '1.2-2'}}</div>
                 <div *ngIf="sommaAmm.superAmm3">{{sommaAmm.superAmm3.desc}}
                   : {{sommaAmm.superAmm3.totale | number : '1.2-2'}}</div>
+                <div *ngIf="origin === 'o' && sommaAmm.superAmm4">{{sommaAmm.superAmm4.desc}}
+                  : {{sommaAmm.superAmm4.totale | number : '1.2-2'}}</div>
               </div>
             </div>
           </div>
