@@ -50,7 +50,7 @@ export class CespiteService extends CommonService{
 
   contabilizzaAmm(data: any, origin: string): Observable<any> {
     this.selezionaServer(origin, environment.CESPITI);
-    return this.http.post(`${this.url}/contabilizzaAmm`, data);
+    return this.http.get(`${this.url}/contabilizzaAmm/${data}`);
   }
 
   scaricaRegistroCespite(filtroCespite: FiltroCespite, origin: string): Observable<any> {

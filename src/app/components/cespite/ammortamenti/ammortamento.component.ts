@@ -171,11 +171,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   contabilizzaAmm() {
     this.loader = true;
-    let data = new Date();
-    if(this.dataRegistro) {
-      data = this.dataRegistro;
-    }
-    this.service.contabilizzaAmm(data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.contabilizzaAmm(this.filtroCespite.data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
           this.loader = false;
