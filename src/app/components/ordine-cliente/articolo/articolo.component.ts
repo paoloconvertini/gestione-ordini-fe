@@ -22,9 +22,10 @@ import {Acconto} from "../../../models/Acconto";
 import {SelectionModel} from '@angular/cdk/collections';
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
-import {ListaComponent} from "../logistica/lista/lista.component";
 import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
 import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
+import {CollegaOAFDialogComponent} from "../../collega-oaf-dialog/collega-oaf-dialog.component";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 
 export interface Option {
   name: string,
@@ -139,7 +140,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   getBolle(articolo: any) {
-    if(this.expandedElement === articolo) {
+    if (this.expandedElement === articolo) {
       return;
     }
     this.loaderBolle = true;
@@ -244,15 +245,15 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   cercaAltriOrdini() {
-    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC' && row.flProntoConsegna && !row.flagConsegnato);
-    if(list.length == 0) {
+    let list = this.selection.selected.filter(row => row.tipoRigo !== 'C' && row.tipoRigo !== 'AC' && row.flProntoConsegna && !row.flagConsegnato);
+    if (list.length == 0) {
       this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna che non sia già stato consegnato!', 'Chiudi', {
         duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
       });
       return;
     }
     this.loader = true;
-    let  o = list[0];
+    let o = list[0];
     this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
@@ -282,7 +283,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   }
 
-  cercaAcconti(){
+  cercaAcconti() {
     this.loader = true;
     this.service.cercaAcconti(this.ordineDettaglio.sottoConto, this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -319,7 +320,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
         next: (res) => {
           this.loader = false;
           this.accontiDaUsare = [];
-          if(res && !res.error) {
+          if (res && !res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               horizontalPosition: 'center', verticalPosition: 'top'
             });
@@ -449,7 +450,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           }
           this.createPaginator(this.ordineDettaglio.articoli, 100);
           this.selection = new SelectionModel<any>(true, []);
-          if(this.filtro.searchText){
+          if (this.filtro.searchText) {
             this.applyFilter();
           }
           this.loader = false;
@@ -495,7 +496,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
 
   checkQtaProntoConsegna(articolo: any) {
     if (articolo.flProntoConsegna) {
-      if(articolo.qtaDaConsegnare) {
+      if (articolo.qtaDaConsegnare) {
         articolo.qtaProntoConsegna = articolo.qtaDaConsegnare;
       } else {
         articolo.qtaProntoConsegna = articolo.quantita;
@@ -604,21 +605,21 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     super.applyFilter(this.filtro.searchText);
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
-        data.tipoRigo !=='C' && data.tipoRigo !=='AC' &&
+        data.tipoRigo !== 'C' && data.tipoRigo !== 'AC' &&
         (data.farticolo.toLowerCase().includes(filter)
-        || data.fdescrArticolo.toLowerCase().includes(filter)
-        || data.codArtFornitore.toLowerCase().includes(filter)
-      ))
+          || data.fdescrArticolo.toLowerCase().includes(filter)
+          || data.codArtFornitore.toLowerCase().includes(filter)
+        ))
     }
   }
 
   cercaSchedeTecniche(): void {
-    const list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
-    if(list.length == 0){
+    const list = this.selection.selected.filter(row => row.tipoRigo !== 'C' && row.tipoRigo !== 'AC');
+    if (list.length == 0) {
       return;
     }
     for (const l of list) {
-      if(!l.codArtFornitore || l.codArtFornitore === ' ') {
+      if (!l.codArtFornitore || l.codArtFornitore === ' ') {
         this.snackbar.open('Articolo senza codice fornitore: ' + l.farticolo, 'Chiudi', {
           duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
         })
@@ -630,8 +631,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       .subscribe({
         next: (res) => {
           this.loader = false;
-          if(res){
-            if(res.codArtFornList && res.codArtFornList.length > 0) {
+          if (res) {
+            if (res.codArtFornList && res.codArtFornList.length > 0) {
               this.dialog.open(SchedeTecnicheComponent, {
                 width: '80%',
                 data: {
@@ -653,7 +654,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       });
   }
 
-  scaricaSchedeTecniche(list:any[]) {
+  scaricaSchedeTecniche(list: any[]) {
     this.loader = true;
     this.service.scaricaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -663,8 +664,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             let a: any = document.createElement("a");
             document.body.appendChild(a);
             a.style = "display: none";
-            let blob = new Blob([data], { type: 'application/zip' });
-            let url= window.URL.createObjectURL(blob);
+            let blob = new Blob([data], {type: 'application/zip'});
+            let url = window.URL.createObjectURL(blob);
             a.href = url;
             a.download = "schede_tecniche.zip";
             a.click();
@@ -675,7 +676,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
             });
           }
         },
-        error: (e:any) => {
+        error: (e: any) => {
           console.log(e);
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
@@ -683,5 +684,75 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
           this.loader = false;
         }
       })
+  }
+
+
+  verificaQtaOAF(articolo: any) {
+    const dialogRef = this.dialog.open(CollegaOAFDialogComponent, {
+      width: '90%',
+      data: articolo.fdescrArticolo
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loader = true;
+        let data: any = {};
+        data.anno = articolo.anno;
+        data.serie = articolo.serie;
+        data.progressivo = articolo.progressivo;
+        data.annoOAF = result.annoOAF;
+        data.serieOAF = result.serieOAF;
+        data.progressivoOAF = result.progressivoOAF;
+        data.descrArtSuppl = articolo.codArtFornitore;
+        data.qta = articolo.quantita;
+        data.progrGenerale = articolo.progrGenerale;
+        data.codice = articolo.farticolo;
+        data.rigo = articolo.rigo;
+        this.ordineFornitoreService.verificaOAF(data).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              this.loader = false;
+              if(res.error && res.code === "NO_CONTENT") {
+                this.snackbar.open(res.msg, 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                });
+                return;
+              }
+              if (res.error) {
+                let msg = '';
+                if (res.msg) {
+                  msg += res.msg;
+                }
+                msg += "Sei sicuro di voler collegare l'articolo comunque a questo Ordine a Fornitore?";
+                const dialogRef2 = this.dialog.open(ConfirmDialogComponent, {
+                  width: '30%',
+                  data: {msg: msg},
+                });
+                dialogRef2.afterClosed().subscribe(result => {
+                  if (result) {
+                    this.collegaOAF(data);
+                  }
+                });
+              } else {
+                this.collegaOAF(data);
+              }
+            }
+          });
+      }
+    });
+  }
+
+  collegaOAF(data: any) {
+    this.ordineFornitoreService.collegaOAF(data).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          this.snackbar.open(res.msg, 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          if (!res.error) {
+            this.getArticoliByOrdineId();
+          }
+        }
+      });
   }
 }

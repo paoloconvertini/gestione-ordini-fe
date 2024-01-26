@@ -368,6 +368,11 @@
                           aria-label="nota ordine fornitore"
                           color="primary">store</mat-icon>
               </button>
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.annoOAF" mat-icon-button matToolTip="Collega OAF" (click)="verificaQtaOAF(articolo)">
+                <mat-icon aria-hidden="false"
+                          aria-label="collega ordine fornitore"
+                          color="primary">add_link</mat-icon>
+              </button>
               <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.noteOrdCli && (isAdmin || isAmministrativo || isVenditore)" mat-icon-button
                       matTooltip="{{articolo.noteOrdCli}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false"
