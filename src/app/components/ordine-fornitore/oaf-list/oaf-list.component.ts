@@ -121,21 +121,9 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.loader = true;
     this.service.unisciOrdini(this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.loader = false;
-          if (res && !res.error) {
-            this.retrieveFornitoreList(null);
-          } else {
-            this.snackbar.open(res.msg, 'Chiudi', {
-              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-            });
-          }
-        },
-        error: () => {
-          this.snackbar.open('Errore!', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-          });
-          this.loader = false;
+          this.retrieveFornitoreList(this.status);
         }
       })
   }
