@@ -54,29 +54,32 @@
     </mat-menu>
     <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
     <button mat-button [routerLink]="['/riserve']">Riservato Magazzino</button>
-    <button *ngIf="isAdmin" mat-button [matMenuTriggerFor]="cespiti">Cespiti</button>
-    <mat-menu #cespiti="matMenu">
+    <button *ngIf="isAdmin" mat-button [matMenuTriggerFor]="contabilita">Contabilità</button>
+    <mat-menu #contabilita="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="trading">Trading</button>
       <button mat-menu-item [matMenuTriggerFor]="ostuni">Ostuni</button>
       <button mat-menu-item [matMenuTriggerFor]="ceglie">Ceglie</button>
     </mat-menu>
-    <mat-menu #ceglie="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/c/ammortamenti']">Registro cespiti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/c/cespiti']">Cespiti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/c/primanota']">Primanota</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/c/tipo-cespiti']">Tipo cespiti</button>
-    </mat-menu>
-    <mat-menu #ostuni="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/o/ammortamenti']">Registro cespiti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/o/cespiti']">Cespiti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/o/primanota']">Primanota</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/o/tipo-cespiti']">Tipo cespiti</button>
-    </mat-menu>
-    <mat-menu #trading="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/t/ammortamenti']">Registro cespiti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/t/cespiti']">Cespiti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/t/primanota']">Primanota</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/t/tipo-cespiti']">Tipo cespiti</button>
-    </mat-menu>
+      <mat-menu #ceglie="matMenu">
+        <button mat-menu-item class="pointer" [routerLink]="['/c/ammortamenti']">Registro cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/c/cespiti']">Cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/c/primanota']">Primanota</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/c/tipo-cespiti']">Tipo cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/c/bilancio']">Bilancio</button>
+      </mat-menu>
+      <mat-menu #ostuni="matMenu">
+        <button mat-menu-item class="pointer" [routerLink]="['/o/ammortamenti']">Registro cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/o/cespiti']">Cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/o/primanota']">Primanota</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/o/tipo-cespiti']">Tipo cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/o/bilancio']">Bilancio</button>
+      </mat-menu>
+      <mat-menu #trading="matMenu">
+        <button mat-menu-item class="pointer" [routerLink]="['/t/ammortamenti']">Registro cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/t/cespiti']">Cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/t/primanota']">Primanota</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/t/tipo-cespiti']">Tipo cespiti</button>
+        <button mat-menu-item class="pointer" [routerLink]="['/t/bilancio']">Bilancio</button>
+      </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>
