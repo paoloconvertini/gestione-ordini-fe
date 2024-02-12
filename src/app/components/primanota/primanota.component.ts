@@ -40,7 +40,6 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
 
   retrieveList(): void {
     this.loader = true;
-    setTimeout(() => {
       this.service.getAll(this.filtro, this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[]) => {
@@ -52,7 +51,6 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
             this.loader = false;
           }
         })
-    }, 2000);
   }
 
   reset() {
