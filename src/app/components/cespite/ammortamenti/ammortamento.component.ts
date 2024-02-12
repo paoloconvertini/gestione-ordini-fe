@@ -26,16 +26,16 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   isLogistica: boolean = false;
-  cespiteList: any;
+  cespiteList: any = [];
   dateForm: any = FormGroup;
-  sommaAmm: any;
+  sommaAmm: any = {};
   filtroCespite: FiltroCespite = new FiltroCespite();
-  myControl = new FormControl('');
+  myControl:any = new FormControl();
   tipoCespiti: any = [];
   filteredOptions: Observable<FiltroCespite[]> | undefined;
   quad:QuadraturaCespite = new QuadraturaCespite();
   ultimoGiornoAnno:boolean = false;
-  cespiteView: any;
+  cespiteView: any = {cespiteSommaDto:{}, cespiteList: []};
   dataRegistro: any = new Date();
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
@@ -67,11 +67,11 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       dataCalcolo: new FormControl('')
     })
     this.getTipoCespiti();
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    );
-    this.retrieveList();
+      this.filteredOptions = this.myControl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value || '')),
+      );
+      this.retrieveList();
   }
 
   calcola() : void {
@@ -88,10 +88,6 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
           if(!res.error) {
             this.retrieveList();
           }
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
         }
       })
   }
@@ -101,14 +97,10 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     this.service.getAll(this.filtroCespite, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any | undefined) => {
-          this.cespiteList = data.cespiteList;
-          this.sommaAmm = data.cespiteSommaDto;
+          this.loader = false;
           this.cespiteView = data;
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
+          this.sommaAmm = this.cespiteView.cespiteSommaDto;
+          this.cespiteList = this.cespiteView.cespiteList;
         }
       })
   }
@@ -118,10 +110,6 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       .subscribe({
         next: (data) => {
           this.tipoCespiti = data;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
         }
       })
   }
@@ -157,14 +145,12 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     this.service.salvaQuad(this.quad, this.origin).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
+          this.quad = new QuadraturaCespite();
           if(!res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               horizontalPosition: 'center', verticalPosition: 'top'
             });
           }
-        },
-        error: (e: any) => {
-          console.error(e);
         }
       })
   }
@@ -215,10 +201,6 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
           }
-        },
-        error: (e:any) => {
-          console.log(e);
-          this.loader = false;
         }
       })
   }
