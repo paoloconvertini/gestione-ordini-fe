@@ -39,7 +39,6 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
 
   retrieveList(): void {
     this.loader = true;
-    setTimeout(() => {
       this.service.getAll(this.origin).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any[]) => {
@@ -54,7 +53,6 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
             this.loader = false;
           }
         })
-    }, 2000);
   }
 
   salva(cespite: any) {
