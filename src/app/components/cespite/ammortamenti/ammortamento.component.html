@@ -5,7 +5,6 @@
       <span *ngIf="origin==='t'"> TRADING</span>
       <span *ngIf="origin==='c'"> CEGLIE</span>
       <span *ngIf="origin==='o'"> OSTUNI</span>
-      DEL {{dataRegistro | date: 'dd/MM/yyyy'}}
     </div>
   </div>
   <div class="row">
@@ -66,63 +65,70 @@
           <div class="col-md-12 cesp-progr" [hidden]="collapse"
                *ngFor="let cespiteProgressivo of cat.cespiteProgressivoDtoList; index as i">
             <div class="row" *ngFor="let cespite of cespiteProgressivo.cespiteDtoList; index as i">
-              <div class="col-lg-1 col-md-1 col-sm-6">
-                {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
+              <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-6">
+                  {{cespite.codice}}&nbsp;&nbsp;{{cespite.progressivo1}}.{{cespite.progressivo2}}
+                </div>
+                <div class="col-lg-11 col-md-11 col-sm-11">
+                  {{cespite.cespite}}&nbsp;&nbsp;-&nbsp;&nbsp;<b>{{cespite.fornitore}}</b>&nbsp;&nbsp;
+                  &nbsp;Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}<br>
+                  <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}
+                    /{{cespite.anno}}</span>
+                </div>
               </div>
-              <div class="col-lg-3 col-md-3 col-sm-6">
-                {{cespite.cespite}}&nbsp;&nbsp;Costo storico: {{cespite.importo | currency: 'EUR':'symbol'}}
+              <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1"></div>
+                <div class="col-lg-3 col-md-3 col-sm-6">
+                  Costo storico: {{cespite.importo | currency: 'EUR':'symbol'}}
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                  Costo rivalutato: {{cespite.importoRivalutazione | currency: 'EUR':'symbol'}}
+                </div>
               </div>
-              <div class="col-lg-3 col-md-3 col-sm-6">
-                Costo rivalutato: {{cespite.importoRivalutazione | currency: 'EUR':'symbol'}}
-              </div>
-              <div class="col-lg-5 col-md-5 col-sm-12">
-                <b>{{cespite.fornitore}}</b><br>
-                Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}<br>
-                <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}
-                  /{{cespite.anno}}</span>
-              </div>
-              <div class="col-lg-1 col-md-1 col-sm-1"></div>
-              <div class="col-lg-11 col-md-11 col-sm-11">
-                <table class="table" *ngIf="cespite.ammortamentoCespiteList.length > 0">
-                  <thead>
-                  <th>Data</th>
-                  <th>Descrizione</th>
-                  <th>% Amm</th>
-                  <th>Q.ta Amm Ord.</th>
-                  <th *ngIf="origin === 'o'">Q.ta Amm Riv.</th>
-                  <th>Q.ta Super {{cespite.superAmmDesc}}</th>
-                  <th>Fondo Ord.</th>
-                  <th *ngIf="origin === 'o'">Fondo Riv.</th>
-                  <th *ngIf="origin === 'o'">Fondo tot.</th>
-                  <th>V.N.C.</th>
-                  </thead>
-                  <tbody class="progr2">
-                  <tr *ngFor="let ammortamento of cespite.ammortamentoCespiteList; index as i">
-                    <td>{{ammortamento.dataAmm | date: 'dd/MM/yyyy'}}</td>
-                    <td>{{ammortamento.descrizione}}</td>
-                    <td>
-                      {{ammortamento.percAmm | number : '1.2-2'}}
-                      <div *ngIf="ammortamento.edit && ammortamento.percAmm"><input type="number" [(ngModel)]="quad.ammortamento"></div>
-                      <button *ngIf="!ammortamento.edit" (click)="ammortamento.edit = true" mat-icon-button matTooltip="Modifica" >
-                        <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
-                      </button>
-                      <button *ngIf="ammortamento.edit" (click)="salvaQuad(cespite, ammortamento)" mat-icon-button matTooltip="Salva" >
-                        <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
-                      </button>
-                      <button *ngIf="ammortamento.edit" (click)="ammortamento.edit = false" mat-icon-button matTooltip="Chiudi">
-                        <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
-                      </button>
-                    </td>
-                    <td>{{ammortamento.quota | number : '1.2-2'}}</td>
-                    <td *ngIf="origin === 'o'">{{ammortamento.quotaRivalutazione | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
-                    <td *ngIf="origin === 'o'">{{ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
-                    <td *ngIf="origin === 'o'">{{ammortamento.fondo + ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
-                    <td>{{ammortamento.residuo | number : '1.2-2'}}</td>
-                  </tr>
-                  </tbody>
-                </table>
+              <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1"></div>
+                <div class="col-lg-11 col-md-11 col-sm-11">
+                  <table class="table" *ngIf="cespite.ammortamentoCespiteList.length > 0">
+                    <thead>
+                    <th>Data</th>
+                    <th>Descrizione</th>
+                    <th>% Amm</th>
+                    <th>Q.ta Amm Ord.</th>
+                    <th *ngIf="origin === 'o'">Q.ta Amm Riv.</th>
+                    <th>Q.ta Super {{cespite.superAmmDesc}}</th>
+                    <th>Fondo Ord.</th>
+                    <th *ngIf="origin === 'o'">Fondo Riv.</th>
+                    <th *ngIf="origin === 'o'">Fondo tot.</th>
+                    <th>V.N.C.</th>
+                    </thead>
+                    <tbody class="progr2">
+                    <tr *ngFor="let ammortamento of cespite.ammortamentoCespiteList; index as i">
+                      <td>{{ammortamento.dataAmm | date: 'dd/MM/yyyy'}}</td>
+                      <td>{{ammortamento.descrizione}}</td>
+                      <td>
+                        {{ammortamento.percAmm | number : '1.2-2'}}
+                        <div *ngIf="ammortamento.edit && ammortamento.percAmm"><input type="number" [(ngModel)]="quad.ammortamento"></div>
+                        <button *ngIf="!ammortamento.edit" (click)="ammortamento.edit = true" mat-icon-button matTooltip="Modifica" >
+                          <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+                        </button>
+                        <button *ngIf="ammortamento.edit" (click)="salvaQuad(cespite, ammortamento)" mat-icon-button matTooltip="Salva" >
+                          <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+                        </button>
+                        <button *ngIf="ammortamento.edit" (click)="ammortamento.edit = false" mat-icon-button matTooltip="Chiudi">
+                          <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+                        </button>
+                      </td>
+                      <td>{{ammortamento.quota | number : '1.2-2'}}</td>
+                      <td *ngIf="origin === 'o'">{{ammortamento.quotaRivalutazione | number : '1.2-2'}}</td>
+                      <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
+                      <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
+                      <td *ngIf="origin === 'o'">{{ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
+                      <td *ngIf="origin === 'o'">{{ammortamento.fondo + ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
+                      <td>{{ammortamento.residuo | number : '1.2-2'}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -232,7 +238,7 @@
           </div>
         </div>
         <!--Riepilogo totale-->
-        <div class="row">
+        <div class="row"  *ngIf="cespiteList && cespiteList.length > 0">
           <div class="col-lg-12 col-md-12 col-sm-12">
             <table class="table">
               <thead>

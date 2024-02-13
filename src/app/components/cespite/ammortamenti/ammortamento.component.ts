@@ -30,7 +30,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   dateForm: any = FormGroup;
   sommaAmm: any = {};
   filtroCespite: FiltroCespite = new FiltroCespite();
-  myControl:any = new FormControl();
+  myControl = new FormControl('');
   tipoCespiti: any = [];
   filteredOptions: Observable<FiltroCespite[]> | undefined;
   quad:QuadraturaCespite = new QuadraturaCespite();
@@ -67,11 +67,13 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       dataCalcolo: new FormControl('')
     })
     this.getTipoCespiti();
-      this.filteredOptions = this.myControl.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value || '')),
-      );
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    );
+    if(this.origin !== 'o'){
       this.retrieveList();
+    }
   }
 
   calcola() : void {
@@ -81,12 +83,25 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     }
     this.loader = true;
     this.filtroCespite.data = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
-    this.dataRegistro = this.dateForm.value.dataCalcolo;
-    this.service.calcola(this.filtroCespite.data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+
+    let observable;
+    if(this.origin === 'o'){
+      observable = this.service.calcolaPost(this.filtroCespite, this.origin);
+    } else {
+      observable = this.service.calcola(this.filtroCespite.data, this.origin);
+    }
+    observable.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next:(res) => {
-          if(!res.error) {
-            this.retrieveList();
+          if(this.origin === 'o') {
+            this.loader = false;
+            this.cespiteView = res;
+            this.sommaAmm = this.cespiteView.cespiteSommaDto;
+            this.cespiteList = this.cespiteView.cespiteList;
+          } else {
+            if(!res.error) {
+              this.retrieveList();
+            }
           }
         }
       })
@@ -135,7 +150,9 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
   reset() {
     this.filtroCespite = new FiltroCespite();
     this.myControl.setValue('');
-    this.retrieveList();
+    if(this.origin !== 'o') {
+      this.retrieveList();
+    }
   }
 
   salvaQuad(cespite: any, ammortamento: any) {
