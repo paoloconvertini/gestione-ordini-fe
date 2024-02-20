@@ -3,7 +3,7 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 
-const url = environment.ROLE;
+const url = environment.baseAuthUrl + environment.ROLE;
 
 
 @Injectable({

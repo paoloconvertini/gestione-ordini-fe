@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {Observable} from "rxjs";
 
-const url = environment.USER;
+const url = environment.baseAuthUrl + environment.USER;
 
 @Injectable({
   providedIn: 'root'

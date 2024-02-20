@@ -60,4 +60,9 @@ export class CespiteService extends CommonService{
     };
     return this.http.post(`${this.url}/scaricaRegistroCespiti`, filtroCespite, httpOptions);
   }
+
+  aggiornaAmmortamenti(ammortamento: any, data: any, origin: string): Observable<any> {
+    this.selezionaServer(origin, environment.CESPITI);
+    return this.http.post(`${this.url}/aggiornaAmmortamenti/${data}`, ammortamento);
+  }
 }

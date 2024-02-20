@@ -172,6 +172,29 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       })
   }
 
+  aggiornaAmmortamenti(ammortamento: any, riv: boolean) {
+    if(riv){
+      ammortamento.editQuotaRiv = false;
+    } else {
+      ammortamento.editQuota = false;
+    }
+    let data = this.formatDate(new Date());
+    if(this.filtroCespite && this.filtroCespite.data) {
+      data = this.filtroCespite.data;
+    }
+    this.service.aggiornaAmmortamenti(ammortamento, data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next:(res) => {
+          if(!res.error) {
+            this.snackbar.open(res.msg, 'Chiudi', {
+              horizontalPosition: 'center', verticalPosition: 'top'
+            });
+            this.retrieveList();
+          }
+        }
+      })
+  }
+
   contabilizzaAmm() {
     this.loader = true;
     this.service.contabilizzaAmm(this.filtroCespite.data, this.origin).pipe(takeUntil(this.ngUnsubscribe))
@@ -222,4 +245,13 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
       })
   }
 
+  private static padTo2Digits(num: any): string {
+    return num.toString().padStart(2, '0');
+  }
+
+  private formatDate(date: any): string {
+    return AmmortamentoComponent.padTo2Digits(date.getDate()) +
+      AmmortamentoComponent.padTo2Digits(date.getMonth() + 1) +
+      date.getFullYear();
+  }
 }

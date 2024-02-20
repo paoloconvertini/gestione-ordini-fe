@@ -108,7 +108,7 @@
                       <td>
                         {{ammortamento.percAmm | number : '1.2-2'}}
                         <div *ngIf="ammortamento.edit && ammortamento.percAmm"><input type="number" [(ngModel)]="quad.ammortamento"></div>
-                        <button *ngIf="!ammortamento.edit" (click)="ammortamento.edit = true" mat-icon-button matTooltip="Modifica" >
+                        <button *ngIf="origin !== 'o' && !ammortamento.edit" (click)="ammortamento.edit = true" mat-icon-button matTooltip="Modifica" >
                           <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
                         </button>
                         <button *ngIf="ammortamento.edit" (click)="salvaQuad(cespite, ammortamento)" mat-icon-button matTooltip="Salva" >
@@ -118,8 +118,32 @@
                           <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
                         </button>
                       </td>
-                      <td>{{ammortamento.quota | number : '1.2-2'}}</td>
-                      <td *ngIf="origin === 'o'">{{ammortamento.quotaRivalutazione | number : '1.2-2'}}</td>
+                      <td>
+                        <span *ngIf="(!ammortamento.editQuota && origin === 'o') || origin !== 'o'">{{ammortamento.quota | number : '1.2-2'}}</span>
+                        <div *ngIf="ammortamento.editQuota && origin === 'o'"><input type="number" [(ngModel)]="ammortamento.quota"></div>
+                        <button *ngIf="!ammortamento.editQuota" (click)="ammortamento.editQuota = true" mat-icon-button matTooltip="Modifica" >
+                          <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+                        </button>
+                        <button *ngIf="ammortamento.editQuota && origin === 'o'" (click)="aggiornaAmmortamenti(ammortamento, false)" mat-icon-button matTooltip="Salva" >
+                          <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+                        </button>
+                        <button *ngIf="ammortamento.editQuota && origin === 'o'" (click)="ammortamento.editQuota = false" mat-icon-button matTooltip="Chiudi">
+                          <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+                        </button>
+                      </td>
+                      <td *ngIf="origin === 'o'">
+                        <span *ngIf="!ammortamento.editQuotaRiv">{{ammortamento.quotaRivalutazione | number : '1.2-2'}}</span>
+                        <div *ngIf="ammortamento.editQuotaRiv"><input type="number" [(ngModel)]="ammortamento.quotaRivalutazione"></div>
+                        <button *ngIf="!ammortamento.editQuotaRiv" (click)="ammortamento.editQuotaRiv = true" mat-icon-button matTooltip="Modifica" >
+                          <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+                        </button>
+                        <button *ngIf="ammortamento.editQuotaRiv" (click)="aggiornaAmmortamenti(ammortamento, true)" mat-icon-button matTooltip="Salva" >
+                          <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+                        </button>
+                        <button *ngIf="ammortamento.editQuotaRiv" (click)="ammortamento.editQuotaRiv = false" mat-icon-button matTooltip="Chiudi">
+                          <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+                        </button>
+                      </td>
                       <td>{{ammortamento.superQuota | number : '1.2-2'}}</td>
                       <td>{{ammortamento.fondo | number : '1.2-2'}}</td>
                       <td *ngIf="origin === 'o'">{{ammortamento.fondoRivalutazione | number : '1.2-2'}}</td>
