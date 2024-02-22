@@ -46,14 +46,19 @@
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'F']">Sospesi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'T']">Da approvare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore']">Approvati</button>
+      <button *ngIf="isAdmin" mat-menu-item class="pointer" [routerLink]="['/oaf-monitor']">Monitor OAF</button>
     </mat-menu>
     <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
     <mat-menu #logistica="matMenu">
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Pronto consegna</button>
       <button mat-menu-item class="pointer" [routerLink]="['/logistica-ordini']">Gestione consegne</button>
     </mat-menu>
+    <button mat-button  *ngIf="isAdmin || isVenditore || isLogistica"  [matMenuTriggerFor]="monitor">Analisi dati</button>
+    <mat-menu #monitor="matMenu">
+      <button mat-menu-item [routerLink]="['/riserve']">Riservato Magazzino</button>
+      <button *ngIf="isAdmin" mat-menu-item class="pointer" [routerLink]="['/oaf-monitor']">Situazione ordini</button>
+    </mat-menu>
     <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
-    <button mat-button [routerLink]="['/riserve']">Riservato Magazzino</button>
     <button *ngIf="isAdmin" mat-button [matMenuTriggerFor]="contabilita">Contabilità</button>
     <mat-menu #contabilita="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="trading">Trading</button>

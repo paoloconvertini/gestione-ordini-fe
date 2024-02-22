@@ -55,4 +55,8 @@ export class OrdineClienteService extends CommonService{
   cercaAltriOrdiniCliente(anno: any, serie: any, progressivo: any, sottoConto: string): Observable<any> {
     return this.http.get(`${this.url}/cercaAltriOrdiniCliente/${anno}/${serie}/${progressivo}/${sottoConto}`)
   }
+
+  getOrdiniClienteNonOrdinati(): Observable<any> {
+    return this.http.get(`${this.url}/getOrdiniClienteNonOrdinati`)
+  }
 }

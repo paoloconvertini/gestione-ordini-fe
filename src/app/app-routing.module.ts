@@ -18,6 +18,7 @@ import {CespiteComponent} from "./components/cespite/cespite/cespite.component";
 import {PrimanotaComponent} from "./components/primanota/primanota.component";
 import {TipoCespiteListComponent} from "./components/tipo-cespite/tipo-cespite-list/tipo-cespite-list.component";
 import {TipoCespiteDetailComponent} from "./components/tipo-cespite/tipo-cespite-detail/tipo-cespite-detail.component";
+import {OafMonitorComponent} from "./components/ordine-fornitore/oaf-monitor/oaf-monitor.component";
 
 const routes: Routes = [
   {
@@ -64,6 +65,11 @@ const routes: Routes = [
     path: 'ordini-fornitore',
     canActivate: [AuthGuard],
     component: OafListComponent,
+  },
+  {
+    path: 'oaf-monitor',
+    canActivate: [AuthGuard],
+    component: OafMonitorComponent,
   },
   {
     path: 'articoli/edit/:anno/:serie/:progressivo/:status',

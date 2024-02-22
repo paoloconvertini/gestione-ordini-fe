@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 ordine-title">
+      ORDINI A FORNITORE PER OPERATORE
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8 list-container">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container " *ngIf="!loader">
+          <thead>
+            <th>Operatore</th>
+            <th>Tot Ord.</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let el of monitorOafList; index as i">
+              <td>{{el.user}}</td>
+              <td>{{el.totale}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="no-result-list" *ngIf="!monitorOafList || monitorOafList.length === 0">
+          Nessun risultato
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 ordine-title">
+      SITUAZOINE ORDINI CLIENTI
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8 list-container">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container " *ngIf="!loader">
+          <thead>
+          <th>Tot. ordini mai processati</th>
+          <th>Tot. ordini da ordinare</th>
+          </thead>
+          <tbody>
+          <tr>
+            <td>{{monitor.totOrdNonProcessati}}</td>
+            <td>{{monitor.totOrdNonDisp}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

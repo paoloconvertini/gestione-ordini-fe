@@ -66,4 +66,9 @@ export class OrdineFornitoreService extends CommonService{
   collegaOAF(result: any): Observable<any> {
     return this.http.post(`${this.url}/collegaOAF`, result)
   }
+
+  getOafByOperatore(): Observable<any> {
+    return this.http.get<any>(`${this.url}/byOperatore`);
+  }
+
 }
