@@ -83,7 +83,7 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
     }
     this.loader = true;
     this.filtroCespite.data = this.dateForm.value.dataCalcolo.format('DDMMyyyy');
-
+    this.dataRegistro = this.dateForm.value.dataCalcolo;
     let observable;
     if(this.origin === 'o'){
       observable = this.service.calcolaPost(this.filtroCespite, this.origin);
