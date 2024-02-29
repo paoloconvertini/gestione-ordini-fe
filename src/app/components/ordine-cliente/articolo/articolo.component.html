@@ -138,7 +138,7 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
-    <div *ngIf="status !== 'ARCHIVIATO' && (!isAmministrativo && (status !== 'DA_PROCESSARE' || isLogistica))" class="col-lg-8 col-md-12 col-sm-12">
+    <div *ngIf="status !== 'ARCHIVIATO' && !isAmministrativo" class="col-lg-8 col-md-12 col-sm-12">
       <mat-radio-group (change)="getArticoliByOrdineId()"
                        aria-label="Select an option" [(ngModel)]="filtroArticoli.flConsegna">
         <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"
