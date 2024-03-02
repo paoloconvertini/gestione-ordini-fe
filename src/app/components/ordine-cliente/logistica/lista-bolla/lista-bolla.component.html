@@ -80,7 +80,7 @@
                       <thead>
                       <tr>
                         <th>
-                          <mat-checkbox color="primary" *ngIf="isLogistica "
+                          <mat-checkbox color="primary" *ngIf="(isAdmin || isLogistica) "
                                         (change)="$event ? toggleAllRows() : null"
                                         [checked]="selection.hasValue() && isAllSelected()"
                                         [indeterminate]="selection.hasValue() && !isAllSelected()">
@@ -99,7 +99,7 @@
                       <tbody>
                       <tr *ngFor="let articolo of articoli">
                         <td>
-                          <mat-checkbox color="primary" *ngIf="isLogistica &&
+                          <mat-checkbox color="primary" *ngIf="(isAdmin || isLogistica) &&
                             articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
                                         (click)="$event.stopPropagation();"
                                         (change)="$event ? selection.toggle(articolo) : null"

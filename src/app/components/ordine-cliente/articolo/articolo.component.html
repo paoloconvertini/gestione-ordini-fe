@@ -308,8 +308,7 @@
             <th mat-header-cell *matHeaderCellDef>Ord.</th>
             <td mat-cell *matCellDef="let articolo">
                 <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isAmministrativo || isAdmin)"><mat-checkbox (change)="checkFlags(articolo, 1)"
-                                                                     disabled="{{!isAdmin && !isAmministrativo ||
-                                                                       status !== 'DA_ORDINARE' || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
+                                                                     disabled="{{ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
                                                                      [(ngModel)]="articolo.flagOrdinato"
                                                                      color="primary"></mat-checkbox>
                 </span>
