@@ -7,7 +7,6 @@ import {OrdineCliente} from "../../../models/ordine-cliente";
 import {takeUntil} from "rxjs";
 import {MatDialog} from "@angular/material/dialog";
 import {SelectionModel} from "@angular/cdk/collections";
-import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";

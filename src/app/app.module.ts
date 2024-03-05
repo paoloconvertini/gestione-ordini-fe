@@ -68,6 +68,7 @@ import { TipoCespiteDetailComponent } from './components/tipo-cespite/tipo-cespi
 import { CespiteDialogComponent } from './components/cespite/cespite-dialog/cespite-dialog.component';
 import { CollegaOAFDialogComponent } from './components/collega-oaf-dialog/collega-oaf-dialog.component';
 import { OafMonitorComponent } from './components/ordine-fornitore/oaf-monitor/oaf-monitor.component';
+import { ArticoloClasseFornitoreComponent } from './components/ordine-cliente/articolo-classe-fornitore/articolo-classe-fornitore.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -110,7 +111,8 @@ export const DateFormats = {
     TipoCespiteDetailComponent,
     CespiteDialogComponent,
     CollegaOAFDialogComponent,
-    OafMonitorComponent
+    OafMonitorComponent,
+    ArticoloClasseFornitoreComponent
   ],
     imports: [
         BrowserModule,

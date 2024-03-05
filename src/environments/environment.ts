@@ -31,7 +31,8 @@ export const environment = {
   RISERVE: 'riserve',
   //DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
   PRIMANOTA: 'primanota',
-  TIPOCESPITE: 'tipocespite'
+  TIPOCESPITE: 'tipocespite',
+  ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore'
 };
 
 /*

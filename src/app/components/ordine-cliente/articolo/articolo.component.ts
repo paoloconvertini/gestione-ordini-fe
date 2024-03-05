@@ -26,6 +26,7 @@ import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog
 import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
 import {CollegaOAFDialogComponent} from "../../collega-oaf-dialog/collega-oaf-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
 
 export interface Option {
   name: string,
@@ -573,16 +574,24 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
       .subscribe({
         next: (res) => {
           this.loader = false;
-          if (res && res instanceof Array) {
+          let response = res;
+          if (response && response.errors && response.errors.length > 0) {
             const dialogRef = this.dialog.open(WarnDialogComponent, {
               width: '30%',
               data: {
-                data: res,
+                data: response.errors,
                 msg: "La codifica ha prodotti i seguenti errori:"
               }
             });
             dialogRef.afterClosed().subscribe(result => {
+              if(result && res.showTCA) {
+                const dialogRef2 = this.dialog.open(ArticoloClasseFornitoreComponent, {
+                  width: '85%'
+                });
+                dialogRef2.afterClosed().subscribe(res => {
 
+                });
+              }
             });
 
           } else if (res.error) {

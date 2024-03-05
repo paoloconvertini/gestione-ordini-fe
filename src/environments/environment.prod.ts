@@ -26,6 +26,7 @@ export const environment = {
   CESPITI: 'cespiti',
   RISERVE: 'riserve',
   PRIMANOTA: 'primanota',
-  TIPOCESPITE: 'tipocespite'
+  TIPOCESPITE: 'tipocespite',
+  ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore'
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };

@@ -17,7 +17,7 @@ export class WarnDialogComponent {
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 
 }

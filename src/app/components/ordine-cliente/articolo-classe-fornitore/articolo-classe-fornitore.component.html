@@ -1,0 +1,99 @@
+<h1 mat-dialog-title>Modifica TCA1</h1>
+<div mat-dialog-content>
+  <form class="example-form">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <input type="text"
+             placeholder="Cerca Fornitore in TCA1..."
+             aria-label="Number"
+             matInput
+             [formControl]="myControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="articoloClasseFornitore = $event.option.value" [displayWith]="getOption" >
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option.descrizione}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+  <form [formGroup]="articoloClasseFornitoreForm" autocomplete="off" class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-1 col-md-1 col-sm-6">
+          <mat-form-field>
+            <mat-label>
+              Codice
+            </mat-label>
+            <input
+              [ngModel]="articoloClasseFornitore.codice"
+              matInput
+              formControlName="codice"
+              [disabled]="true"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6">
+          <mat-form-field>
+            <mat-label>
+              Descrizione
+            </mat-label>
+            <input
+              [disabled]="true"
+              [ngModel]="articoloClasseFornitore.descrizione"
+              matInput
+              formControlName="descrizione"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12">
+          <mat-form-field>
+            <mat-label>
+              DescrUser
+            </mat-label>
+            <input
+              [(ngModel)]="articoloClasseFornitore.descrUser"
+              matInput
+              placeholder="COR"
+              formControlName="descrUser"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+          <mat-form-field>
+            <mat-label>
+              DescrUser2
+            </mat-label>
+            <input
+              class="input"
+              [(ngModel)]="articoloClasseFornitore.descrUser2"
+              matInput
+              placeholder="104012"
+              formControlName="descrUser2"
+            />
+            <button (click)="cercaConto()" mat-icon-button matTooltip="Cerca conto in Piano Conti" >
+              <mat-icon aria-hidden="false" aria-label="save" fontIcon="search" color="primary"></mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+          <mat-form-field>
+            <mat-label>
+              DescrUser3
+            </mat-label>
+            <input
+              [(ngModel)]="articoloClasseFornitore.descrUser3"
+              matInput
+              placeholder="918"
+              formControlName="descrUser3"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="float-end">
+        <button mat-button (click)="onNoClick()">Chiudi</button>
+        <button mat-button (click)="saveClasse()">Salva</button>
+      </div>
+    </div>
+  </form>
+</div>
