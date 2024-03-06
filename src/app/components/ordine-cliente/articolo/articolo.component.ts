@@ -51,9 +51,7 @@ export interface OptionCons {
     ]),
   ],
 })
-export class ArticoloComponent extends CommonListComponent implements OnInit
-//  , OnDestroy
-{
+export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   //subscription!: Subscription;
   @Input()
@@ -131,10 +129,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
     this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'tono', 'qtaRiservata', 'qtaProntoConsegna',
       'flRiservato', 'flDisponibile', 'flOrdinato', 'flProntoConsegna', 'flConsegnato', 'azioni']
   }
-
-  /*ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }*/
 
   salvaOrdine() {
     this.updateArticoli();
