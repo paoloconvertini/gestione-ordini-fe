@@ -53,7 +53,6 @@ export interface OptionCons {
 })
 export class ArticoloComponent extends CommonListComponent implements OnInit {
 
-  //subscription!: Subscription;
   @Input()
   user: any;
   loaderAcconti: boolean = false;
@@ -766,4 +765,5 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         }
       });
   }
+
 }
