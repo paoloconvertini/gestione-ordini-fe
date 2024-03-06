@@ -20,6 +20,7 @@ export class OafMonitorComponent extends CommonListComponent implements OnInit {
   isAdmin: boolean = false;
   monitor: MonitorDto = new MonitorDto();
   monitorOafList: MonitorOaf[] = [];
+  loader2: boolean = false
 
   constructor(private snackbar: MatSnackBar, private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private serviceCliente: OrdineClienteService) {
     super();
@@ -45,11 +46,11 @@ export class OafMonitorComponent extends CommonListComponent implements OnInit {
   }
 
   retrieveOrdiniList(): void {
-    this.loader = true;
+    this.loader2 = true;
     this.serviceCliente.getOrdiniClienteNonOrdinati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data:any) => {
         this.monitor = data;
-        this.loader = false;
+        this.loader2 = false;
       }
     })
   }
