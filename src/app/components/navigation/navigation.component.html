@@ -46,7 +46,6 @@
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'F']">Sospesi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'T']">Da approvare</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore']">Approvati</button>
-      <button *ngIf="isAdmin" mat-menu-item class="pointer" [routerLink]="['/oaf-monitor']">Monitor OAF</button>
     </mat-menu>
     <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
     <mat-menu #logistica="matMenu">

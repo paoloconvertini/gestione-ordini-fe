@@ -167,17 +167,25 @@ export class ArticoloComponent extends CommonListComponent implements OnInit
   }
 
   chiudiOrdine() {
-    this.service.chiudi(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (res) => {
-        if (!res.error) {
-          let url = '/ordini-clienti';
-          if (res.msg) {
-            url += '/' + res.msg;
+    let msg = "Sei sicuro di voler chiudere l'ordine? Questo potrebbe comportare il cambio di stato";
+    const dialogRef2 = this.dialog.open(ConfirmDialogComponent, {
+      width: '30%',
+      data: {msg: msg},
+    });
+    dialogRef2.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.chiudi(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+          next: (res) => {
+            if (!res.error) {
+              let url = '/ordini-clienti';
+              if (res.msg) {
+                url += '/' + res.msg;
+              }
+              this.route.navigate([url]);
+            }
           }
-          this.route.navigate([url]);
-        }
-      },
-      error: (e) => console.error(e)
+        });
+      }
     });
   }
 
