@@ -62,7 +62,7 @@ export interface VStatus {
 })
 export class ListaComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'veicolo', 'azioni'];
+  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'dataConsegna','veicolo', 'azioni'];
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
@@ -79,7 +79,6 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   showMappa: boolean = false;
   map: Map = new Map();
   selectStatusOptions: VStatus[] = [];
-
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
@@ -489,6 +488,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       });
   }
 
+  reset():void {
+    this.filtro.veicolo = undefined;
+    this.filtro.dataConsegna = undefined;
+    this.retrieveList();
+  }
 
   override applyFilter() {
     super.applyFilter(this.filtro.searchText);

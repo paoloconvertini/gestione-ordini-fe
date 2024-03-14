@@ -45,9 +45,9 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { UserListComponent } from './components/users/user-list/user-list.component';
 import { UserDetailComponent } from './components/users/user-detail/user-detail.component';
 import { RoleComponent } from './components/role/role.component';
-import {MatDatepickerModule} from "@angular/material/datepicker";
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule} from '@angular/material/core';
-import {MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-note-dialog/ordine-cliente-note-dialog.component';
 import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiungi-oafdialog/aggiungi-oafdialog.component';
 import {MatSortModule} from "@angular/material/sort";
@@ -115,6 +115,8 @@ export const DateFormats = {
     ArticoloClasseFornitoreComponent
   ],
     imports: [
+        MatDatepickerModule,
+        MatMomentDateModule,
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -156,8 +158,9 @@ export const DateFormats = {
     ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: DateFormats },
+    {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
+    { provide: MAT_DATE_FORMATS, useValue: DateFormats},
     { provide: MAT_DATE_LOCALE, useValue: 'it-IT'},
     { provide: HTTP_INTERCEPTORS, useClass: ForbiddenInterceptor, multi: true,
     }

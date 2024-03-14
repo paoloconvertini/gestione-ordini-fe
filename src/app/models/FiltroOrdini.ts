@@ -8,4 +8,8 @@ export class FiltroOrdini {
 
   searchText: string = '';
 
+  veicolo: any;
+
+  dataConsegna: any;
+
 }
