@@ -53,3 +53,20 @@ tr.example-detail-row {
   top: 8px;
   left: 10px;
 }
+
+.inline {
+  display: inline;
+}
+
+.search {
+  top:9px;
+  left: 9px;
+}
+
+.backspace {
+  margin-left: 5px;
+}
+
+.backspace-icon {
+  left:7px;
+}

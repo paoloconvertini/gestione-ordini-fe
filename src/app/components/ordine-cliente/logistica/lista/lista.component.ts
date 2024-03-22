@@ -506,7 +506,8 @@ export class ListaComponent extends CommonListComponent implements OnInit {
 
   reset():void {
     this.filtro.veicolo = undefined;
-    this.filtro.dataConsegna = undefined;
+    this.filtro.dataConsegnaStart = undefined;
+    this.filtro.dataConsegnaEnd = undefined;
     this.retrieveList();
   }
 

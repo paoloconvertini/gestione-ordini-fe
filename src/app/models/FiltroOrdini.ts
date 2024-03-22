@@ -10,6 +10,8 @@ export class FiltroOrdini {
 
   veicolo: any;
 
-  dataConsegna: any;
+  dataConsegnaStart: any;
+
+  dataConsegnaEnd: any;
 
 }
