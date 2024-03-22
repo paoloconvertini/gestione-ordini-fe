@@ -41,3 +41,15 @@ tr.example-detail-row {
 .mat-mdc-icon-button[disabled] {
   pointer-events: auto!important;
 }
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+}

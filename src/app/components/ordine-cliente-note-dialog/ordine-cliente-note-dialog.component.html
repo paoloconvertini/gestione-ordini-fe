@@ -1,6 +1,8 @@
 <h2 class="title">Aggiungi note</h2>
 <mat-dialog-content class="mat-typography">
   <textarea rows="5" class="form-control" [(ngModel)]="ordine.note" autofocus></textarea>
+  <div class="nota">Ultima modfica alle <b>{{(ordine.dataNoteLogistica?ordine.dataNoteLogistica:ordine.dataNote)
+    | date:'dd/MM/yyyy HH:mm'}}</b> da parte di <b>{{ordine.userNoteLogistica? ordine.userNoteLogistica: ordine.userNote}}</b></div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-raised-button mat-dialog-close>Chiudi</button>

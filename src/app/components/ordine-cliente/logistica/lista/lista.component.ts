@@ -33,6 +33,10 @@ import {Fill, Stroke, Text} from "ol/style";
 import {boundingExtent} from 'ol/extent.js';
 import CircleStyle from "ol/style/Circle";
 import {VeicoloService} from "../../../../services/ordine-cliente/veicolo/veicolo.service";
+import {Acconto} from "../../../../models/Acconto";
+import {
+  OrdiniClientiPregressiDialogComponent
+} from "../ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component";
 
 
 useGeographic();
@@ -70,8 +74,8 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   isLogistica: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
   radioPerVenditoreOptions: Option[] = [];
-  radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'}, {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'},
-    {codice: 'COMPLETO', descrizione: 'COMPLETO'}];
+  radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'},{codice: 'DA_PROCESSARE', descrizione: 'DA PROCESSARE'},
+    {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'}, {codice: 'COMPLETO', descrizione: 'COMPLETO'} ];
   stato: string = '';
   loaderDettaglio: boolean = false;
   expandedElement: any;
@@ -79,6 +83,10 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   showMappa: boolean = false;
   map: Map = new Map();
   selectStatusOptions: VStatus[] = [];
+  loaderAcconti: boolean = false;
+  acconti: Acconto[] = [];
+  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
+
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
@@ -166,11 +174,15 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     data.progressivo = ordine.progressivo;
     if(from === 0) {
       data.note = ordine.note;
+      data.userNote = ordine.userNote;
+      data.dataNote = ordine.dataNote;
     } else {
       if(!this.isLogistica && !this.isAdmin) {
         return;
       }
       data.note = ordine.noteLogistica;
+      data.userNoteLogistica = ordine.userNoteLogistica;
+      data.dataNoteLogistica = ordine.dataNoteLogistica;
     }
     {
       const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
@@ -179,11 +191,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.loader = true;
+          //this.loader = true;
           this.ordineClienteService.addNotes(result, from).pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
               next: (res) => {
-                this.loader = false;
+               // this.loader = false;
                 if (res && !res.error) {
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
@@ -235,7 +247,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       return;
     }
     this.loaderDettaglio = true;
-    this.articoloService.getArticoli("N", ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+    let bolla = 'N';
+    if(!ordine.status) {
+      bolla = '0';
+    }
+    this.articoloService.getArticoli(bolla, ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: ArticoloCliente[]) => {
           if (data) {
@@ -507,4 +523,37 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       )
     }
   }
+
+  mostraAcconti(ordine: any) {
+    ordine.showAcconti = !ordine.showAcconti;
+    if (ordine.showAcconti) {
+      this.loaderAcconti = true;
+      this.articoloService.getAcconti(ordine.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe({
+          next: (data: Acconto[]) => {
+            if (data) {
+              this.acconti = data;
+            }
+            this.loaderAcconti = false;
+          },
+          error: (e: any) => {
+            console.error(e);
+            this.loaderAcconti = false;
+          }
+        })
+    }
+
+  }
+
+  addOrder() {
+    const dialogRef = this.dialog.open(OrdiniClientiPregressiDialogComponent, {
+      width: '90%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.retrieveList();
+      }
+    });
+  }
+
 }

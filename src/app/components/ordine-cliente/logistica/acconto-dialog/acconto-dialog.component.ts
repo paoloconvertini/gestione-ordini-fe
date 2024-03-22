@@ -1,9 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {PianocontiService} from "../../../../services/pianoconti/pianoconti.service";
 import {CommonListComponent} from "../../../commonListComponent";
-import {map, startWith} from "rxjs";
-import {FiltroOrdini} from "../../../../models/FiltroOrdini";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Acconto} from "../../../../models/Acconto";
 import {environment} from "../../../../../environments/environment";

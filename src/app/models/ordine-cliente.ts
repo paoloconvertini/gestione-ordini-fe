@@ -10,4 +10,8 @@ export class OrdineCliente {
   note?: string
   noteLogistica?: string
   status?: string
+  userNote:any
+  dataNote:any
+  userNoteLogistica:any
+  dataNoteLogistica:any
 }

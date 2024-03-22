@@ -69,6 +69,7 @@ import { CespiteDialogComponent } from './components/cespite/cespite-dialog/cesp
 import { CollegaOAFDialogComponent } from './components/collega-oaf-dialog/collega-oaf-dialog.component';
 import { OafMonitorComponent } from './components/ordine-fornitore/oaf-monitor/oaf-monitor.component';
 import { ArticoloClasseFornitoreComponent } from './components/ordine-cliente/articolo-classe-fornitore/articolo-classe-fornitore.component';
+import { OrdiniClientiPregressiDialogComponent } from './components/ordine-cliente/logistica/ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -112,7 +113,8 @@ export const DateFormats = {
     CespiteDialogComponent,
     CollegaOAFDialogComponent,
     OafMonitorComponent,
-    ArticoloClasseFornitoreComponent
+    ArticoloClasseFornitoreComponent,
+    OrdiniClientiPregressiDialogComponent
   ],
     imports: [
         MatDatepickerModule,

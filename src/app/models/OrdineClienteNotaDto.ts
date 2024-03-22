@@ -4,4 +4,8 @@ export class OrdineClienteNotaDto {
   progressivo?: number
   note?: string
   rigo?:any
+  userNote:any
+  dataNote:any
+  userNoteLogistica:any
+  dataNoteLogistica:any
 }

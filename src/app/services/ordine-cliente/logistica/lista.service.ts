@@ -20,11 +20,19 @@ export class ListaService extends CommonService{
     return this.http.post<any>(`${this.url}/consegne`, filtro);
   }
 
-  updateVeicolo(articolo: any) {
+  updateVeicolo(articolo: any): Observable<any> {
     return this.http.put(`${this.url}/updateVeicolo`, articolo);
   }
 
-  getAllRiservati(filtro: FiltroOrdini) {
+  getAllRiservati(filtro: FiltroOrdini): Observable<any> {
     return this.http.post<any>(`${this.url}/riservati`, filtro);
+  }
+
+  getAllPregressi(filtro: FiltroOrdini): Observable<any> {
+    return this.http.post<any>(`${this.url}/pregressi`, filtro);
+  }
+
+  savePregressi(selected: any[]): Observable<any> {
+    return this.http.post<any>(`${this.url}/salvaPregressi`, selected);
   }
 }
