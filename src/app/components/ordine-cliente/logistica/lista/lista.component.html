@@ -132,7 +132,7 @@
           </ng-container>
           <ng-container matColumnDef="dataConsegna">
             <th mat-header-cell *matHeaderCellDef>Data Consegna</th>
-            <td class="pointer" style="max-width: 180px;" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+            <td style="max-width: 180px;" mat-cell *matCellDef="let ordine">
               <mat-form-field>
                 <input matInput [matDatepicker]="picker" [(ngModel)]="ordine.dataConsegna" >
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -145,6 +145,7 @@
             <td *matCellDef="let ordine">
               <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
                 <mat-select  [(value)]="ordine.veicolo" class="select" >
+                  <mat-option></mat-option>
                   <mat-option *ngFor="let option of selectStatusOptions" [value]="option.id" class="option">
                     {{option.descrizione}}
                   </mat-option>
