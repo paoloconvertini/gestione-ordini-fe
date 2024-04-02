@@ -75,6 +75,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   filtro: FiltroOrdini = new FiltroOrdini();
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'},{codice: 'DA_PROCESSARE', descrizione: 'DA PROCESSARE'},
+    {codice: 'DA_ORDINARE', descrizione: 'DA ORDINARE'},
     {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'}, {codice: 'COMPLETO', descrizione: 'COMPLETO'} ];
   stato: string = '';
   loaderDettaglio: boolean = false;
