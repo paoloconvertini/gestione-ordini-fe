@@ -76,7 +76,8 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'},{codice: 'DA_PROCESSARE', descrizione: 'DA PROCESSARE'},
     {codice: 'DA_ORDINARE', descrizione: 'DA ORDINARE'},
-    {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'}, {codice: 'COMPLETO', descrizione: 'COMPLETO'} ];
+    {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'}, {codice: 'COMPLETO', descrizione: 'COMPLETO'},
+    {codice: 'ARCHIVIATO', descrizione: 'ARCHIVIATO'} ];
   stato: string = '';
   loaderDettaglio: boolean = false;
   expandedElement: any;
