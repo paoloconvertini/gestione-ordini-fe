@@ -64,7 +64,7 @@
         <mat-label>Filtra per tipo di veicolo</mat-label>
         <mat-select  [(value)]="filtro.veicolo">
           <mat-option></mat-option>
-          <mat-option *ngFor="let option of selectStatusOptions" [value]="option.id" class="option">
+          <mat-option *ngFor="let option of selectVeicoloOptions" [value]="option.id" class="option">
             {{option.descrizione}}
           </mat-option>
         </mat-select>
@@ -109,7 +109,7 @@
           <ng-container matColumnDef="localita">
             <th mat-header-cell *matHeaderCellDef>Luogo</th>
             <td class="pointer" mat-cell *matCellDef="let ordine"  (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
-              {{ordine.localita}} ({{ordine.provincia}})
+              <span matTooltip="Consegnare in {{ordine.indirdiverse}} - {{ordine.locdiverse}} ({{ordine.provdiverse}})">{{ordine.localita}} ({{ordine.provincia}})</span>
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -122,17 +122,31 @@
           <!-- Name Column -->
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
-            <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
-              <div [ngSwitch]="ordine.status" >
+            <td class="pointer" mat-cell *matCellDef="let ordine"  (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
+              <div [ngSwitch]="ordine.status" *ngIf="!isAdmin">
                 <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
                 <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
                 <b *ngSwitchDefault>{{ordine.status}}</b>
               </div>
+              <mat-select *ngIf="isAdmin" [(value)]="ordine.status" class="select">
+                <mat-option *ngFor="let option of selectStatusOptions" [value]="option.codice" class="option">
+                  <div [ngSwitch]="option.descrizione">
+                    <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
+                    <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
+                    <span *ngSwitchDefault>{{option.descrizione}}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <button mat-button color="primary"
+                      *ngIf="isAdmin"
+                      (click)="update(ordine)" >
+                <mat-icon color="primary" fontIcon="save"></mat-icon>
+              </button>&nbsp;&nbsp;
             </td>
           </ng-container>
           <ng-container matColumnDef="dataConsegna">
             <th mat-header-cell *matHeaderCellDef>Data Consegna</th>
-            <td style="max-width: 180px;" mat-cell *matCellDef="let ordine">
+            <td style="max-width: 180px;" mat-cell *matCellDef="let ordine" [ngClass]="{'flVenditore': ordine.flVenditore}">
               <mat-form-field>
                 <input matInput [matDatepicker]="picker" [(ngModel)]="ordine.dataConsegna" >
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -142,18 +156,18 @@
           </ng-container>
           <ng-container matColumnDef="veicolo">
             <th mat-header-cell *matHeaderCellDef>Veicolo</th>
-            <td *matCellDef="let ordine">
+            <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
               <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
                 <mat-select  [(value)]="ordine.veicolo" class="select" >
                   <mat-option></mat-option>
-                  <mat-option *ngFor="let option of selectStatusOptions" [value]="option.id" class="option">
+                  <mat-option *ngFor="let option of selectVeicoloOptions" [value]="option.id" class="option">
                     {{option.descrizione}}
                   </mat-option>
                 </mat-select>
                 <button mat-button color="primary"
-                        *ngIf="isAdmin || isLogistica"
-                        (click)="update(ordine)" >
-                  <mat-icon color="primary" fontIcon="save"></mat-icon>
+                        *ngIf="isAdmin || isLogistica || isVenditore"
+                        (click)="updateVeicolo(ordine)" >
+                  <mat-icon color="primary" fontIcon="save" [ngClass]="{'flVenditoreIcon': ordine.flVenditore}"></mat-icon>
                 </button>&nbsp;&nbsp;
               </span>
             </td>

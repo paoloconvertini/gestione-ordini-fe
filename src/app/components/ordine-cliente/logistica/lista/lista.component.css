@@ -70,3 +70,23 @@ tr.example-detail-row {
 .backspace-icon {
   left:7px;
 }
+
+.flVenditore {
+  background: #607d8b;
+}
+
+.flVenditoreIcon {
+  color: #000!important;
+}
+
+.stato {
+  width: 200px;
+}
+
+.mat-column-status{
+  font-size: 13px;
+}
+
+.select {
+  width:100px;
+}

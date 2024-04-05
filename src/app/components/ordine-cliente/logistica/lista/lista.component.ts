@@ -15,7 +15,7 @@ import {OrdineClienteNotaDto} from "../../../../models/OrdineClienteNotaDto";
 import {
   OrdineClienteNoteDialogComponent
 } from "../../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
-import {Option, OptStatus} from "../../ordine-cliente-list/ordine-cliente.component";
+import {Option} from "../../ordine-cliente-list/ordine-cliente.component";
 import {ArticoloCliente} from "../../../../models/ArticoloCliente";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
@@ -52,6 +52,11 @@ export interface VStatus {
   descrizione: string
 }
 
+export interface OptStatus {
+  codice: any,
+  descrizione: string
+}
+
 @Component({
   selector: 'app-lista',
   templateUrl: './lista.component.html',
@@ -84,11 +89,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   articoli: ArticoloCliente[] = [];
   showMappa: boolean = false;
   map: Map = new Map();
-  selectStatusOptions: VStatus[] = [];
+  selectVeicoloOptions: VStatus[] = [];
   loaderAcconti: boolean = false;
   acconti: Acconto[] = [];
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
-
+  selectStatusOptions: OptStatus[] = [];
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
@@ -116,9 +121,25 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getStati();
     this.getVeicoli();
     this.getVenditori();
     this.retrieveList();
+  }
+
+  getStati(): void {
+    this.ordineClienteService.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data) => {
+        this.radioPerStatusOptions = data;
+        if(!this.filtro.status){
+          this.filtro.status = 'TUTTI';
+        }
+        this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
+      },
+      error: (e: any) => {
+        console.error(e);
+      }
+    })
   }
 
   retrieveList(): void {
@@ -475,7 +496,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            this.selectStatusOptions = data;
+            this.selectVeicoloOptions = data;
           }
          // this.loader = false;
         },
@@ -487,7 +508,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   }
 
 
-  update(articolo: any): void {
+  updateVeicolo(articolo: any): void {
     this.service.updateVeicolo(articolo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -502,6 +523,21 @@ export class ListaComponent extends CommonListComponent implements OnInit {
           this.snackbar.open('Errore veicolo non salvato', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           })
+        }
+      });
+  }
+
+  update(ordine: OrdineCliente): void {
+    this.loader = true;
+    this.service.update(ordine).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (!res.error) {
+            this.snackbar.open('Stato aggiornato', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
         }
       });
   }
