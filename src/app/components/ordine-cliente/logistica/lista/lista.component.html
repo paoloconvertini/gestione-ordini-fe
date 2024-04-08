@@ -50,12 +50,10 @@
       <mat-form-field appearance="fill">
         <mat-label>Filtra per data di consegna</mat-label>
         <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate placeholder="Start date" [(ngModel)]="filtro.dataConsegnaStart">
+          <input matStartDate placeholder="Start date" [(ngModel)]="filtro.dataConsegnaStart" (dateChange)="getNotaConsegna()">
           <input matEndDate placeholder="End date" [(ngModel)]="filtro.dataConsegnaEnd">
         </mat-date-range-input>
-<!--        <input matInput [matDatepicker]="picker"  (dateChange)="retrieveList()" [(ngModel)]="filtro.dataConsegna">-->
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-<!--        <mat-datepicker #picker></mat-datepicker>-->
         <mat-date-range-picker #picker></mat-date-range-picker>
       </mat-form-field>
     </div>
@@ -82,6 +80,23 @@
       <button class="float-end btn-container" mat-mini-fab color="primary" (click)="addOrder()" matTooltip="Cerca e aggiungi ordini pregressi">
         <span class="material-icons-outlined icon">playlist_add</span>
       </button>
+    </div>
+  </div>
+  <div class="row" *ngIf="checkdate()">
+    <div class="col-lg-6">
+      <form class="example-form">
+        <mat-form-field class="example-full-width">
+          <mat-label>Note consegna del giorno {{filtro.dataConsegnaStart | date:'dd/MM/yyyy'}}</mat-label>
+          <textarea name="nota" [(ngModel)]="notaConsegna.nota" matInput maxlength="2000" placeholder="aggiungi eventuali note alle consegne del giorno..." ></textarea>
+          <mat-hint align="end">{{notaConsegna.nota.length}} / 2000</mat-hint>
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="col-lg-1 col-md-1 ">
+      <button mat-button color="primary"
+              (click)="saveNotaConsegna()" matTooltip="Salva nota">
+        <mat-icon color="primary" fontIcon="save"></mat-icon>
+      </button>&nbsp;&nbsp;
     </div>
   </div>
   <div class="row">

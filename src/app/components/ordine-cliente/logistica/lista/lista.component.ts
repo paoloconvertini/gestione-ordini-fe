@@ -37,6 +37,8 @@ import {Acconto} from "../../../../models/Acconto";
 import {
   OrdiniClientiPregressiDialogComponent
 } from "../ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component";
+import {NotaConsegnaService} from "../../../../services/nota-consegna/nota-consegna.service";
+import {NotaConsegna} from "../../../../models/NotaConsegna";
 
 
 useGeographic();
@@ -94,10 +96,11 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   acconti: Acconto[] = [];
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
   selectStatusOptions: OptStatus[] = [];
+  notaConsegna: NotaConsegna = new NotaConsegna();
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
-              private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router,
+              private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private notaConsegnaService: NotaConsegnaService,
               private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
     super();
     if(localStorage.getItem(environment.LOGISTICA)){
@@ -135,9 +138,32 @@ export class ListaComponent extends CommonListComponent implements OnInit {
           this.filtro.status = 'TUTTI';
         }
         this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
-      },
-      error: (e: any) => {
-        console.error(e);
+      }
+    })
+  }
+
+  getNotaConsegna(): void {
+    let data = this.filtro.dataConsegnaStart.format('DDMMyyyy');
+    this.notaConsegnaService.getNota(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data: any) => {
+        if(data) {
+          this.notaConsegna = data;
+        } else {
+          this.notaConsegna = new NotaConsegna();
+        }
+      }
+    })
+  }
+
+  saveNotaConsegna(): void {
+    this.notaConsegna.dataNota = this.filtro.dataConsegnaStart;
+    this.notaConsegnaService.salvaNota(this.notaConsegna).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (res: any) => {
+        if (res && !res.error) {
+          this.snackbar.open(res.msg, 'Chiudi', {
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+        }
       }
     })
   }
@@ -595,4 +621,8 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     });
   }
 
+  checkdate() {
+    return this.filtro.dataConsegnaStart && this.filtro.dataConsegnaEnd && ((this.filtro.dataConsegnaStart.date() === this.filtro.dataConsegnaEnd.date())
+      && (this.filtro.dataConsegnaStart.month() === this.filtro.dataConsegnaEnd.month()) && (this.filtro.dataConsegnaStart.year() === this.filtro.dataConsegnaEnd.year()))
+  }
 }

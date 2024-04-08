@@ -32,7 +32,8 @@ export const environment = {
   //DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
   PRIMANOTA: 'primanota',
   TIPOCESPITE: 'tipocespite',
-  ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore'
+  ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore',
+  NOTA_CONSEGNA: 'nota-consegna'
 };
 
 /*
