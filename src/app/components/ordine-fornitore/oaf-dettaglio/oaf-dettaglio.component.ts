@@ -31,6 +31,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'sconto', 'prezzoTot', 'azioni'];
   ordineFornitoreDettaglio: OrdineFornitoreDettaglio = new OrdineFornitoreDettaglio();
   filtro: FiltroOrdini = new FiltroOrdini();
+  modificato: boolean = false;
 
   ngOnInit(): void {
     this.router.params.subscribe((params: any) => {
@@ -118,6 +119,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
                 this.applyFilter();
               }
             }
+            this.modificato = false;
             this.loader = false;
           },
           error: (e: any) => {
@@ -161,10 +163,17 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   }
 
   salva() {
+    this.modificato = false;
     this.updateOafArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
   }
 
   richiediApprovazione() {
+    if(this.modificato) {
+      this.snackbar.open('ATTENZIONE: articoli modificati senza salvare!!', 'Chiudi', {
+        duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+      })
+      return;
+    }
     let data:any = [];
     this.dataSource.filteredData.forEach(d => data.push(d));
     data.forEach((d:any) => delete d["prezzoTot"]);
@@ -174,12 +183,12 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
           if (!res.error) {
             this.route.navigate(['/ordini-fornitore', 'T']);
           }
-        },
-        error: (e) => console.error(e)
+        }
       });
   }
 
   calcolaTotale(articolo: any) {
+    this.modificato = true;
     articolo.prezzoTot = 0;
     let prezzo = articolo.oprezzo;
     if(articolo.fscontoArticolo) {

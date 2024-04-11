@@ -2,13 +2,18 @@
   font-size:12px!important;
 }
 
+
+.mdc-data-table__cell{
+  padding: 0 5px;
+}
+
 .example-container {
   max-width: 100%;
   font-size: 12px;
   margin: 0 auto;
   position: relative;
   overflow: auto;
-  height: 600px;
+  height: 400px;
 }
 
 .padding-right {
@@ -27,7 +32,7 @@
   display: inline;
   height: fit-content;
   font-size: 1rem;
-  width: 70px;
+  width: 90px;
 }
 
 .mat-column-azioni {
@@ -41,7 +46,7 @@
 }
 
 .mdc-data-table__header-cell{
-  padding: 0 8px;
+  padding: 0 5px;
   font-size: 12px;
 }
 
@@ -50,13 +55,13 @@
   font-size:1rem;
 }
 
-.mat-column-quantita {
-  min-width: 100px;
+.mat-column-quantita .mat-column-qtaProntoConsegna .mat-column-qtaRiservata{
+  min-width: 140px;
   font-size:1rem;
 }
 
 .mat-column-tono {
-  min-width: 100px;
+  max-width: 110px;
   font-size:1rem;
 }
 

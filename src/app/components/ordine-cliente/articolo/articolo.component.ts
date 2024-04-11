@@ -760,7 +760,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
           if (!res.error) {
-            this.getArticoliByOrdineId();
+            //this.getArticoliByOrdineId();
           }
         }
       });

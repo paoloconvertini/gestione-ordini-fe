@@ -41,7 +41,7 @@
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</button>
     </mat-menu>
-    <button *ngIf="!isLogistica" mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
+    <button *ngIf="!isLogistica && !isVenditore" mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
     <mat-menu #fornitori="matMenu">
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'F']">Sospesi</button>
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'T']">Da approvare</button>
