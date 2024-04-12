@@ -92,4 +92,20 @@ export class ArticoloService extends CommonService{
   }
 
 
+  getSaldoContabile(sottoConto: any): Observable<any> {
+    return  this.http.get(`${this.url}/saldoContabile/${sottoConto}`)
+  }
+
+  getOrdiniAperti(sottoConto: any): Observable<any> {
+    return  this.http.get(`${this.url}/ordiniAperti/${sottoConto}`)
+  }
+
+  getAccontiFatturati(sottoConto: any): Observable<any> {
+    return  this.http.get(`${this.url}/accontiFatturati/${sottoConto}`)
+  }
+
+  getBolleNonFatturate(sottoConto: any): Observable<any> {
+    return  this.http.get(`${this.url}/bolleNonFatturate/${sottoConto}`)
+  }
+
 }

@@ -1,0 +1,16 @@
+.table-fido{
+  margin-left:10px;
+}
+
+.negativo {
+  color: red;
+}
+
+.positivo {
+  color: green;
+}
+
+.loader-fido{
+  width:25px;
+  height:25px;
+}

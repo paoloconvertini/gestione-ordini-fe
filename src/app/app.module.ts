@@ -70,6 +70,7 @@ import { CollegaOAFDialogComponent } from './components/collega-oaf-dialog/colle
 import { OafMonitorComponent } from './components/ordine-fornitore/oaf-monitor/oaf-monitor.component';
 import { ArticoloClasseFornitoreComponent } from './components/ordine-cliente/articolo-classe-fornitore/articolo-classe-fornitore.component';
 import { OrdiniClientiPregressiDialogComponent } from './components/ordine-cliente/logistica/ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component';
+import { FidoClienteComponent } from './components/ordine-cliente/logistica/fido-cliente/fido-cliente.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -114,7 +115,8 @@ export const DateFormats = {
     CollegaOAFDialogComponent,
     OafMonitorComponent,
     ArticoloClasseFornitoreComponent,
-    OrdiniClientiPregressiDialogComponent
+    OrdiniClientiPregressiDialogComponent,
+    FidoClienteComponent
   ],
     imports: [
         MatDatepickerModule,

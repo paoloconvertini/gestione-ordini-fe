@@ -39,6 +39,7 @@ import {
 } from "../ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component";
 import {NotaConsegnaService} from "../../../../services/nota-consegna/nota-consegna.service";
 import {NotaConsegna} from "../../../../models/NotaConsegna";
+import {FidoClienteComponent} from "../fido-cliente/fido-cliente.component";
 
 
 useGeographic();
@@ -92,9 +93,6 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   showMappa: boolean = false;
   map: Map = new Map();
   selectVeicoloOptions: VStatus[] = [];
-  loaderAcconti: boolean = false;
-  acconti: Acconto[] = [];
-  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
   selectStatusOptions: OptStatus[] = [];
   notaConsegna: NotaConsegna = new NotaConsegna();
 
@@ -589,26 +587,14 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     }
   }
 
-  mostraAcconti(ordine: any) {
-    ordine.showAcconti = !ordine.showAcconti;
-    if (ordine.showAcconti) {
-      this.loaderAcconti = true;
-      this.articoloService.getAcconti(ordine.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: Acconto[]) => {
-            if (data) {
-              this.acconti = data;
-            }
-            this.loaderAcconti = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loaderAcconti = false;
-          }
-        })
-    }
-
+  apriFidoClienteModal(order: any) {
+      this.dialog.open(FidoClienteComponent, {
+        width: '60%',
+        data: order.sottoConto
+      });
   }
+
+
 
   addOrder() {
     const dialogRef = this.dialog.open(OrdiniClientiPregressiDialogComponent, {
