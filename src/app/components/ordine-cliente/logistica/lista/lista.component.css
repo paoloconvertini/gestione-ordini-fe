@@ -90,3 +90,8 @@ tr.example-detail-row {
 .select {
   width:100px;
 }
+
+.container-importo {
+  display: flex;
+  justify-content: space-between;
+}

@@ -19,7 +19,7 @@ import {Option} from "../../ordine-cliente-list/ordine-cliente.component";
 import {ArticoloCliente} from "../../../../models/ArticoloCliente";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import Map from 'ol/Map';
+import OlMap from 'ol/Map';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM';
 import {useGeographic} from "ol/proj";
@@ -33,13 +33,13 @@ import {Fill, Stroke, Text} from "ol/style";
 import {boundingExtent} from 'ol/extent.js';
 import CircleStyle from "ol/style/Circle";
 import {VeicoloService} from "../../../../services/ordine-cliente/veicolo/veicolo.service";
-import {Acconto} from "../../../../models/Acconto";
 import {
   OrdiniClientiPregressiDialogComponent
 } from "../ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component";
 import {NotaConsegnaService} from "../../../../services/nota-consegna/nota-consegna.service";
 import {NotaConsegna} from "../../../../models/NotaConsegna";
 import {FidoClienteComponent} from "../fido-cliente/fido-cliente.component";
+import {ImportoVenditore} from "../../../../models/ImportoVenditore";
 
 
 useGeographic();
@@ -91,10 +91,12 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   expandedElement: any;
   articoli: ArticoloCliente[] = [];
   showMappa: boolean = false;
-  map: Map = new Map();
+  map: OlMap = new OlMap();
   selectVeicoloOptions: VStatus[] = [];
   selectStatusOptions: OptStatus[] = [];
   notaConsegna: NotaConsegna = new NotaConsegna();
+  importiMap: any = new Map<string, number>();
+  importiList: ImportoVenditore[] = [];
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
@@ -126,6 +128,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     this.getVeicoli();
     this.getVenditori();
     this.retrieveList();
+    this.getAllRiservati();
   }
 
   getStati(): void {
@@ -184,12 +187,49 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       })
   }
 
+
+  getAllRiservati(): void {
+    this.loader = true;
+    this.service.getAllRiservati(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any | undefined) => {
+          this.importiMap = data.importoRiservatiMap;
+          this.createPaginator(data.ordineDTOList, 100);
+          if(this.filtro.searchText){
+            this.applyFilter();
+          }
+          this.loader = false;
+          if(!this.filtro.codVenditore) {
+            this.getVenditori();
+          }
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
+  }
+
   getVenditori(): void {
     let data = [];
     data.push('Venditore');
     this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
+        this.importiList = [];
         this.radioPerVenditoreOptions = data;
+        let totale = 0;
+        this.radioPerVenditoreOptions.forEach(opt => {
+          let i = new ImportoVenditore();
+          i.codice = opt.codVenditore;
+          i.fullname = opt.fullname;
+          if(opt.fullname === 'tutti') {
+            i.import = totale;
+          } else {
+            i.import = this.importiMap[opt.codVenditore]?this.importiMap[opt.codVenditore]:0;
+            totale += i.import;
+          }
+          this.importiList.push(i);
+        })
       },
       error: (e: any) => {
         console.error(e);
