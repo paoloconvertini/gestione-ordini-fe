@@ -36,7 +36,7 @@ export class TipoCespiteDetailComponent extends BaseComponent implements OnInit 
     this.tipoCespiteForm = this.fb.group({
       tipoCespite: new FormControl(this.categoriaCespite && this.categoriaCespite.tipoCespite?this.categoriaCespite.tipoCespite:'', Validators.required),
       descrizione: new FormControl('', Validators.required),
-      codice: new FormControl('', Validators.required),
+      codice: new FormControl(''),
       percAmmortamento: new FormControl('', Validators.required),
       ammGruppo: new FormControl('', Validators.required),
       ammConto: new FormControl('', Validators.required),
