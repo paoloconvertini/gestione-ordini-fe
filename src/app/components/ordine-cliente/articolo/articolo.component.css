@@ -61,7 +61,7 @@
 }
 
 .mat-column-tono {
-  max-width: 110px;
+  min-width: 110px;
   font-size:1rem;
 }
 

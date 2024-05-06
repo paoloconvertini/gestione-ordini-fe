@@ -41,6 +41,7 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
   cercaConto(cespite: any) {
     const dialogRef = this.dialog.open(TipocespiteDialogComponent, {
       width: '90%',
+      data: this.origin
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -75,7 +76,7 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
       this.service.update({
         id: cespite.id,
         tipoCespite: cespite.tipoCespite
-      }, this.origin).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      }, this.origin, environment.CESPITI).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: () => {
           this.retrieveList();
         },
