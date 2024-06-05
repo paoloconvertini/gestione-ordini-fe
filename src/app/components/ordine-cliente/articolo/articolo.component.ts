@@ -344,7 +344,22 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   creaOrdineForn() {
     this.loader = true;
-    const list = this.selection.selected.filter(a => a.farticolo !== '*PZ' && a.farticolo !== '*MQ' && a.farticolo !== '*ML');
+    let error = false;
+    this.selection.selected.forEach(a => {
+      if(a.annoOAF){
+        this.snackbar.open("ATTENZIONE, per l'articolo " + a.farticolo + " esiste già un ordine a fornitore!!", 'Chiudi', {
+          duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+        });
+        error = true;
+        return;
+      }
+    })
+    if(error){
+      this.loader = false;
+      return;
+    }
+    const list = this.selection.selected.filter(a => a.farticolo !== '*PZ' &&
+      a.farticolo !== '*MQ' && a.farticolo !== '*ML');
     this.ordineFornitoreService.creaOrdineFornitori(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
