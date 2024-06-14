@@ -497,8 +497,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   checkQta(articolo: any) {
-    articolo.qtaRiservata = articolo.quantita;
-    if (!articolo.flagRiservato) {
+    if (articolo.flagRiservato) {
+      if (articolo.qtaDaConsegnare) {
+        articolo.qtaRiservata = articolo.qtaDaConsegnare;
+      } else {
+        articolo.qtaRiservata = articolo.quantita;
+      }
+    } else {
       articolo.qtaRiservata = undefined;
     }
   }
@@ -781,4 +786,10 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       });
   }
 
+  resetQta(articolo: any) {
+    articolo.flagRiservato = false;
+    articolo.flProntoConsegna = false;
+    articolo.qtaRiservata = undefined;
+    articolo.qtaProntoConsegna = undefined;
+  }
 }
