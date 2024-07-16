@@ -33,7 +33,8 @@ export const environment = {
   PRIMANOTA: 'primanota',
   TIPOCESPITE: 'tipocespite',
   ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore',
-  NOTA_CONSEGNA: 'nota-consegna'
+  NOTA_CONSEGNA: 'nota-consegna',
+  LISTA_DI_CARICO: 'lista-carichi'
 };
 
 /*

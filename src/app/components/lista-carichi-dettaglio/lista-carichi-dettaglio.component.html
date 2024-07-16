@@ -1,0 +1,125 @@
+<form (ngSubmit)="submitForm()" [formGroup]="caricoForm" autocomplete="off" class="">
+  <div class="container">
+    <h3 class="title">
+      <span *ngIf="id">Modica</span>
+      <span *ngIf="!id">Crea</span>
+      lista di carico
+    </h3>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <input type="text"
+                 placeholder="azienda"
+                 aria-label="Azienda"
+                 matInput
+                 formControlName="azienda"
+                 [matAutocomplete]="auto"
+                 (keyup)="cercaAzienda()"
+                 [(ngModel)]="carico.azienda"
+                 required
+          >
+          <mat-autocomplete #auto="matAutocomplete" >
+            <mat-option *ngIf="loadingAz" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+            <ng-container *ngIf="!loadingAz">
+              <mat-option *ngFor="let azienda of aziende" [value]="azienda">
+                <span>{{ azienda }}</span>
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            DDS/Rif. Ordine
+          </mat-label>
+          <input
+            [(ngModel)]="carico.numeroOrdine"
+            matInput
+            placeholder="Ex. 86593457"
+            formControlName="numeroOrdine"
+            required
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <input type="text"
+                 matInput
+                 placeholder="cerca deposito: Ex. Fratelli Fascati"
+                 formControlName="deposito"
+                 [matAutocomplete]="autoD"
+                 (keyup)="cercaDeposito()"
+                 [ngClass]="{'error-msg': errorDeposito}"
+          >
+          <span *ngIf="errorDeposito" class="error-msg">Selezionare il deposito</span>
+          <span *ngIf="!caricoForm.value.deposito">{{carico.deposito}}</span>
+          <mat-autocomplete #autoD="matAutocomplete" [displayWith]="displayFnDe" (optionSelected)="settaDeposito($event.option.value)">
+            <mat-option *ngIf="loadingDe" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+            <ng-container *ngIf="!loadingDe">
+              <mat-option *ngFor="let deposito of depositi" [value]="deposito">
+                <span>{{deposito.nome}}</span>
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field appearance="fill">
+          <mat-label>Scegli una data</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="carico.dataDisponibile"
+                 formControlName="dataDisponibile">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Peso
+          </mat-label>
+          <input
+            [(ngModel)]="carico.peso"
+            matInput
+            placeholder="Ex. 40.5"
+            formControlName="peso"
+            type="number"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <input type="text"
+                 matInput
+                 placeholder="cerca trasportatore: Ex. Soleto"
+                 formControlName="trasportatore"
+                 [matAutocomplete]="autoT"
+                 (keyup)="cercaTrasportatore()"
+                 [ngClass]="{'error-msg': errorTrasportatore}"
+          >
+          <span *ngIf="errorTrasportatore" class="error-msg">Selezionare il trasportatore</span>
+          <span *ngIf="!caricoForm.value.trasportatore">{{carico.trasportatore}}</span>
+          <mat-autocomplete #autoT="matAutocomplete" [displayWith]="displayFnTr" (optionSelected)="settaTrasportatore($event.option.value)">
+            <mat-option *ngIf="loadingTr" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+            <ng-container *ngIf="!loadingTr">
+              <mat-option *ngFor="let trasportatore of trasportatori" [value]="trasportatore">
+                <span>{{trasportatore.nome}}</span>
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+        <label>N. Convalida</label>
+      <span>{{carico.numeroConvalida}}</span>
+    </div>
+    <div class="float-end">
+      <button mat-raised-button type="button" (click)="indietro()">Annulla</button>&nbsp;&nbsp;
+      <button mat-raised-button color="primary" type="submit" *ngIf="inviato == 0">Salva</button>
+    </div>
+  </div>
+</form>
+

@@ -19,6 +19,8 @@ import {PrimanotaComponent} from "./components/primanota/primanota.component";
 import {TipoCespiteListComponent} from "./components/tipo-cespite/tipo-cespite-list/tipo-cespite-list.component";
 import {TipoCespiteDetailComponent} from "./components/tipo-cespite/tipo-cespite-detail/tipo-cespite-detail.component";
 import {OafMonitorComponent} from "./components/ordine-fornitore/oaf-monitor/oaf-monitor.component";
+import {ListaCarichiComponent} from "./components/lista-carichi/lista-carichi.component";
+import {ListaCarichiDettaglioComponent} from "./components/lista-carichi-dettaglio/lista-carichi-dettaglio.component";
 
 const routes: Routes = [
   {
@@ -130,6 +132,21 @@ const routes: Routes = [
     path: 'riserve',
     canActivate: [AuthGuard],
     component: RiservatoMagazzinoComponent,
+  },
+  {
+    path: 'carico-detail/edit/:inviato/:id',
+    canActivate: [AuthGuard],
+    component: ListaCarichiDettaglioComponent,
+  },
+  {
+    path: 'lista-carichi/:inviato',
+    canActivate: [AuthGuard],
+    component: ListaCarichiComponent,
+  },
+  {
+    path: 'carico-detail/:inviato',
+    canActivate: [AuthGuard],
+    component: ListaCarichiDettaglioComponent,
   },
   {
     path: 'login',

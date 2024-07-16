@@ -21,7 +21,7 @@ body {
 }
 
 .error-msg {
-  color: red;
+  color: red!important;
 }
 
 

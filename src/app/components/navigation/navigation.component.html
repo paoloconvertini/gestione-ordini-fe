@@ -85,5 +85,10 @@
         <button mat-menu-item class="pointer" [routerLink]="['/t/tipo-cespiti']">Tipo cespiti</button>
         <button mat-menu-item class="pointer" [routerLink]="['/t/bilancio']">Bilancio</button>
       </mat-menu>
+    <button mat-button  [matMenuTriggerFor]="listaCarichi">Lista di Carico</button>
+    <mat-menu #listaCarichi="matMenu">
+      <button mat-menu-item [routerLink]="['lista-carichi/0']">Da inviare</button>
+      <button mat-menu-item [routerLink]="['lista-carichi/1']">Inviata</button>
+    </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>
