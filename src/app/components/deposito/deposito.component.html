@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12  ordine-title">
+      Ruoli
+    </div>
+  </div>
+  <div class="float-end">
+    <button mat-raised-button color="primary" (click)="creaNuovo()">Crea nuovo</button>
+  </div>
+  <div class="row">
+    <div class="col-lg-5 col-md-5 col-sm-5">
+      <mat-form-field>
+        <mat-label>Cerca...</mat-label>
+        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
+      </mat-form-field>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1">
+      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
+        Reset
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let deposito">
+              <div *ngIf="!deposito.edit">{{deposito.nome}}</div>
+              <div *ngIf="deposito.edit"><input type="text" class="form-control" [(ngModel)]="deposito.nome"></div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="azioni">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let deposito">
+              <button *ngIf="!deposito.edit" (click)="deposito.edit = true" mat-icon-button matTooltip="Modifica" >
+                <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="deposito.edit" (click)="salva(deposito)" mat-icon-button matTooltip="Salva" >
+                <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+              </button>
+              <button (click)="elimina(deposito.id)" mat-icon-button matTooltip="Elimina">
+                <mat-icon aria-hidden="false" aria-label="elimina" fontIcon="delete" color="primary"></mat-icon>
+              </button>
+              <button *ngIf="deposito.edit" (click)="deposito.edit = false; retrieveList()" mat-icon-button matTooltip="Chiudi">
+                <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-result-list" colspan="4">Nessun risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
+          </tr>
+        </table>
+        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

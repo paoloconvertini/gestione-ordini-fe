@@ -73,6 +73,7 @@ import { OrdiniClientiPregressiDialogComponent } from './components/ordine-clien
 import { FidoClienteComponent } from './components/ordine-cliente/logistica/fido-cliente/fido-cliente.component';
 import { ListaCarichiComponent } from './components/lista-carichi/lista-carichi.component';
 import { ListaCarichiDettaglioComponent } from './components/lista-carichi-dettaglio/lista-carichi-dettaglio.component';
+import { DepositoComponent } from './components/deposito/deposito.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -120,7 +121,8 @@ export const DateFormats = {
     OrdiniClientiPregressiDialogComponent,
     FidoClienteComponent,
     ListaCarichiComponent,
-    ListaCarichiDettaglioComponent
+    ListaCarichiDettaglioComponent,
+    DepositoComponent
   ],
     imports: [
         MatDatepickerModule,

@@ -5,6 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ListaCarichi} from "../../models/listaCarichi";
 import {FiltroCarichi} from "../../models/FiltroCarichi";
+import {Deposito} from "../../models/deposito";
 
 const url = environment.baseUrl + environment.LISTA_DI_CARICO;
 
@@ -49,6 +50,19 @@ export class ListaCarichiService extends CommonService{
 
   searchTrasportatore(search:string): Observable<any> {
     return this.http.get<any>(`${this.url}/cercaTrasportatore/${search}` );
+  }
+
+  getAllDepositi(): Observable<any> {
+    return this.http.get<any>(`${this.url}/depositi` );
+  }
+
+
+  elimina(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.url}/depositi/${id}` );
+  }
+
+  save(deposito: Deposito) : Observable<any> {
+    return this.http.post<any>(`${this.url}/depositi`, deposito );
   }
 
 }

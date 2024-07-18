@@ -21,6 +21,7 @@ import {TipoCespiteDetailComponent} from "./components/tipo-cespite/tipo-cespite
 import {OafMonitorComponent} from "./components/ordine-fornitore/oaf-monitor/oaf-monitor.component";
 import {ListaCarichiComponent} from "./components/lista-carichi/lista-carichi.component";
 import {ListaCarichiDettaglioComponent} from "./components/lista-carichi-dettaglio/lista-carichi-dettaglio.component";
+import {DepositoComponent} from "./components/deposito/deposito.component";
 
 const routes: Routes = [
   {
@@ -137,6 +138,11 @@ const routes: Routes = [
     path: 'carico-detail/edit/:inviato/:id',
     canActivate: [AuthGuard],
     component: ListaCarichiDettaglioComponent,
+  },
+  {
+    path: 'depositi',
+    canActivate: [AuthGuard],
+    component: DepositoComponent,
   },
   {
     path: 'lista-carichi/:inviato',

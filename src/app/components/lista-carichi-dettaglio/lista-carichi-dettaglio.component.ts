@@ -13,6 +13,8 @@ import {Trasportatore} from "../../models/trasportatore";
 import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
 import {Articolo} from "../../models/Articolo";
 import {FiltroOafArticoli} from "../../models/FiltroOafArticoli";
+import {WarnDialogComponent} from "../warn-dialog/warn-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-lista-carichi-dettaglio',
@@ -38,7 +40,7 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
   errorTrasportatore: boolean = false;
 
   constructor(private fb: FormBuilder, private service: ListaCarichiService,
-              private router: ActivatedRoute, private route: Router) {
+              private router: ActivatedRoute, private route: Router, private snackbar: MatSnackBar) {
     super();
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
       if (params && params.id) {
@@ -152,8 +154,14 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
       this.service.create(this.carico).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
-            if (res && !res.error) {
-              this.route.navigateByUrl('/lista-carichi/' + this.inviato);
+            if (res) {
+              if(!res.error) {
+                this.route.navigateByUrl('/lista-carichi/' + this.inviato);
+              } else {
+                this.snackbar.open(res.msg, 'Chiudi',{
+                  duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
+                });
+              }
             }
             this.loader = false;
           }
