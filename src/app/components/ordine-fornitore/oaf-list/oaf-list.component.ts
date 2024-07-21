@@ -51,8 +51,9 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
         if (params.status) {
           this.status = params.status;
+          this.filtro.status = params.status;
         }
-        this.retrieveFornitoreList(this.status);
+        this.retrieveFornitoreList();
       }
     );
 
@@ -68,7 +69,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
         next: (res) => {
           this.loader = false;
           if (!res.error) {
-            this.retrieveFornitoreList(this.status);
+            this.retrieveFornitoreList();
           }
         },
         error: (e) => {
@@ -122,16 +123,15 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       .subscribe({
         next: () => {
           this.loader = false;
-          this.retrieveFornitoreList(this.status);
+          this.retrieveFornitoreList();
         }
       })
   }
 
-  retrieveFornitoreList(status: any): void {
+  retrieveFornitoreList(): void {
     this.loader = true;
     this.updateList = [];
-      this.service.getAllOaf(status)
-        .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      this.service.getAllOaf(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (data: any[] | undefined) => {
           this.createPaginator(data, 15);
           if(this.filtro.searchText){
@@ -147,7 +147,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   refreshPage() {
-    this.retrieveFornitoreList(this.status);
+    this.retrieveFornitoreList();
   }
 
   apriDettaglio(ordine: OrdineCliente) {
@@ -195,7 +195,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
               }
-              this.retrieveFornitoreList(this.status);
+              this.retrieveFornitoreList();
             },
             error: (e) => {
               console.error(e);
@@ -263,6 +263,12 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       this.updateList.push(ordine);
     }
 
+  }
+
+  reset():void {
+    this.filtro.searchText = '';
+    this.filtro.flInviato = false;
+    this.retrieveFornitoreList();
   }
 
   override applyFilter() {

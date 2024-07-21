@@ -3,6 +3,7 @@ import {CommonService} from "../../CommonSerivce";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../../environments/environment";
 import {Observable} from "rxjs";
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
 
 const url = environment.baseUrl + environment.OAF;
 
@@ -19,12 +20,8 @@ export class OrdineFornitoreService extends CommonService{
     return this.http.post<any>(`${this.url}`, articoli);
   }
 
-  getAllOaf(status:any): Observable<any> {
-    let url = `${this.url}`;
-    if(status) {
-      url += `/${status}`;
-    }
-    return this.http.get<any>(url);
+  getAllOaf(filtro:FiltroOrdini): Observable<any> {
+    return this.http.post<any>(`${this.url}/getAll`, filtro);
   }
 
   richiediOafApprovazioneArticoli(anno: any, serie: any, progressivo: any, data: any): Observable<any> {

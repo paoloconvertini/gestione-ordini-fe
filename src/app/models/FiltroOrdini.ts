@@ -14,4 +14,6 @@ export class FiltroOrdini {
 
   dataConsegnaEnd: any;
 
+  flInviato:boolean = false;
+
 }
