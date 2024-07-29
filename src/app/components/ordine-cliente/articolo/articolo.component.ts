@@ -82,6 +82,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   expandedElement: any;
   filtro: FiltroOrdini = new FiltroOrdini();
   accontiDaUsare: Acconto[] = [];
+  disabilitaBolla: boolean = false;
 
   ngOnInit(): void {
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
@@ -247,6 +248,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   cercaAltriOrdini() {
+    this.disabilitaBolla = true;
+    this.loader = true;
     let list = this.selection.selected.filter(row => row.tipoRigo !== 'C' && row.tipoRigo !== 'AC' && row.flProntoConsegna && !row.flagConsegnato);
     if (list.length == 0) {
       this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna che non sia già stato consegnato!', 'Chiudi', {
@@ -254,7 +257,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       });
       return;
     }
-    this.loader = true;
     let o = list[0];
     this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -280,6 +282,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
           this.loader = false;
+          this.disabilitaBolla = false;
         }
       })
 
@@ -311,6 +314,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
           this.loader = false;
+          this.disabilitaBolla = false;
         }
       })
   }
@@ -323,14 +327,18 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           this.loader = false;
           this.accontiDaUsare = [];
           if (res && !res.error) {
-            this.snackbar.open(res.msg, 'Chiudi', {
+            let snackBarRef = this.snackbar.open(res.msg, 'Chiudi', {
               horizontalPosition: 'center', verticalPosition: 'top'
+            });
+            snackBarRef.afterDismissed().subscribe(() => {
+              this.disabilitaBolla = false;
             });
           } else {
             this.snackbar.open('Errore! Bolla non creata', 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
             this.loader = false;
+            this.disabilitaBolla = false;
           }
         },
         error: () => {
@@ -338,6 +346,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
           this.loader = false;
+          this.disabilitaBolla = false;
         }
       })
   }

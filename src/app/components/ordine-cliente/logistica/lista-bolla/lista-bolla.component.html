@@ -22,35 +22,35 @@
 
             <!-- Name Column -->
             <ng-container matColumnDef="numero">
-              <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
+              <th mat-header-cell *matHeaderCellDef>Numero Ordine</th>
               <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
                 {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
               </td>
             </ng-container>
             <!-- Name Column -->
             <ng-container matColumnDef="cliente">
-              <th mat-header-cell *matHeaderCellDef> Cliente</th>
+              <th mat-header-cell *matHeaderCellDef>Cliente</th>
               <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
                 {{ordine.intestazione}}<br><span style="font-size:11px">{{ordine.riferimento}}</span>
               </td>
             </ng-container>
             <!-- Name Column -->
             <ng-container matColumnDef="localita">
-              <th mat-header-cell *matHeaderCellDef> Luogo</th>
+              <th mat-header-cell *matHeaderCellDef>Luogo</th>
               <td class="pointer" mat-cell *matCellDef="let ordine"  (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
                 {{ordine.localita}} ({{ordine.provincia}})
               </td>
             </ng-container>
             <!-- Name Column -->
             <ng-container matColumnDef="data">
-              <th mat-header-cell *matHeaderCellDef> Data</th>
+              <th mat-header-cell *matHeaderCellDef>Data</th>
               <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
                 {{ordine.dataConferma | date:'dd/MM/yyyy'}}
               </td>
             </ng-container>
             <!-- Name Column -->
             <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
+              <th mat-header-cell *matHeaderCellDef>Stato Ord</th>
               <td class="pointer" mat-cell *matCellDef="let ordine" (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
                 <div [ngSwitch]="ordine.status" >
                   <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>

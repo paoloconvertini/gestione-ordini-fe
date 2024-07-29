@@ -159,7 +159,7 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
                 this.route.navigateByUrl('/lista-carichi/' + this.inviato);
               } else {
                 this.snackbar.open(res.msg, 'Chiudi',{
-                  duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 });
               }
             }

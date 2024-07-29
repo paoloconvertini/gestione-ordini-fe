@@ -113,7 +113,7 @@
       </button>
     </div>
     <div *ngIf="isLogistica || isAdmin" class="col-lg-2 col-md-4 col-sm-12 text-center">
-      <button [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="cercaAltriOrdini()" class="">
+      <button [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()" class="">
         Crea Bolla
       </button>
     </div>
