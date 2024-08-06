@@ -5,6 +5,10 @@
   color: #25be32 !important;
 }
 
+.input {
+  width: 65px;
+}
+
 .note {
   font-size:0.75em;
   min-width: 300px;

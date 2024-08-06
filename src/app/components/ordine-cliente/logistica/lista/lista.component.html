@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-xxl">
   <div class="row">
     <div class="col-md-12  ordine-title">
       ORDINI DA CONSEGNARE <span><mat-icon (click)="mostraMappa()" color="primary">location_on</mat-icon></span>
@@ -176,6 +176,25 @@
               </mat-form-field>
             </td>
           </ng-container>
+          <ng-container matColumnDef="oraConsegna">
+            <th mat-header-cell *matHeaderCellDef>Consegna</th>
+            <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
+              <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
+                <mat-select  [(value)]="ordine.oraConsegna" class="select" >
+                  <mat-option [value]="'M'" class="option">Mattina</mat-option>
+                  <mat-option [value]="'P'" class="option">Pomeriggio</mat-option>
+                </mat-select>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="ordinamento">
+            <th mat-header-cell *matHeaderCellDef>Ord. Cons.</th>
+            <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
+              <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
+                <input type="number" [(ngModel)]="ordine.ordine" min="0" class="form-control input">
+              </span>
+            </td>
+          </ng-container>
           <ng-container matColumnDef="veicolo">
             <th mat-header-cell *matHeaderCellDef>Veicolo</th>
             <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
@@ -186,7 +205,7 @@
                     {{option.descrizione}}
                   </mat-option>
                 </mat-select>
-                <button mat-button color="primary"
+                <button [disabled]="!ordine.ordine || !ordine.oraConsegna" mat-button color="primary"
                         *ngIf="isAdmin || isLogistica || isVenditore"
                         (click)="updateVeicolo(ordine)" >
                   <mat-icon color="primary" fontIcon="save" [ngClass]="{'flVenditoreIcon': ordine.flVenditore}"></mat-icon>

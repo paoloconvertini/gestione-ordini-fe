@@ -74,7 +74,7 @@ export interface OptStatus {
 })
 export class ListaComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'dataConsegna','veicolo', 'azioni'];
+  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'dataConsegna','oraConsegna', 'ordinamento', 'veicolo', 'azioni'];
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
