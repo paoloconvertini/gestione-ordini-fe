@@ -1,0 +1,91 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12  carico-title">
+      LISTA DI CARICO INVIATA
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-12">
+      <mat-form-field appearance="fill">
+        <mat-label>Filtra per data convalida</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataConvalida">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-1">
+      <button class="btn-container inline " mat-mini-fab color="primary" (click)="retrieveList()" matTooltip="Cerca">
+        <span class="material-icons-outlined icon search">search</span>
+      </button>
+      <button class="btn-container inline backspace" mat-mini-fab color="warn" (click)="reset()" matTooltip="Reset">
+        <span class="material-icons-outlined icon backspace-icon">backspace</span>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="mat-elevation-z8">
+        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="dataSource">
+          <!-- Name Column -->
+          <ng-container matColumnDef="numeroConvalida">
+            <th mat-header-cell *matHeaderCellDef>N. Convalida</th>
+            <td mat-cell *matCellDef="let convalida" (click)="retrieveCarichi(convalida); (expandedElement = expandedElement === convalida ? null : convalida); $event.stopPropagation()">
+              {{convalida.dataConvalida}}_{{convalida.numeroConvalida}}
+            </td>
+          </ng-container>
+
+          <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let convalida" [attr.colspan]="displayedColumns.length">
+              <div>
+                <div [@detailExpand]="convalida == expandedElement ? 'expanded' : 'collapsed'">
+                  <mat-spinner *ngIf="loaderDettaglio" class="loader"></mat-spinner>
+                  <table class="table" *ngIf="!loaderDettaglio">
+                    <thead>
+                    <tr>
+                      <th>Azienda</th>
+                      <th>DDS/Rif. Ordine</th>
+                      <th>Deposito</th>
+                      <th>Data Disp.</th>
+                      <th>Peso (Kg)</th>
+                      <th>Trasportarore</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let carico of carichi">
+                        <td>{{carico.azienda}}</td>
+                        <td>{{carico.numeroOrdine}}</td>
+                        <td>{{carico.deposito}}</td>
+                        <td>{{carico.dataDisponibile | date:'dd/MM/yyyy'}}</td>
+                        <td>{{carico.peso}}</td>
+                        <td>{{carico.trasportatore}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-result-list" colspan="4">Nessun risultato</td>
+          </tr>
+        </table>
+        <mat-paginator aria-label="Select page of lista carichi"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

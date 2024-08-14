@@ -74,6 +74,7 @@ import { FidoClienteComponent } from './components/ordine-cliente/logistica/fido
 import { ListaCarichiComponent } from './components/lista-carichi/lista-carichi.component';
 import { ListaCarichiDettaglioComponent } from './components/lista-carichi-dettaglio/lista-carichi-dettaglio.component';
 import { DepositoComponent } from './components/deposito/deposito.component';
+import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/lista-carichi-inviati.component";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -121,6 +122,7 @@ export const DateFormats = {
     OrdiniClientiPregressiDialogComponent,
     FidoClienteComponent,
     ListaCarichiComponent,
+    ListaCarichiInviatiComponent,
     ListaCarichiDettaglioComponent,
     DepositoComponent
   ],

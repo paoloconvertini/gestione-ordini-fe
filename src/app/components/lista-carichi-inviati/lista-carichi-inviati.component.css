@@ -1,0 +1,14 @@
+tr.example-detail-row {
+  height: 0;
+}
+
+.example-detail-row td {
+  border-top-width: 0;
+  background-color: #b9bdb9;
+  color: #050505;
+}
+
+.table{
+  font-size: 0.85em;
+
+}

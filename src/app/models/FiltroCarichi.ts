@@ -6,4 +6,8 @@ export class FiltroCarichi {
 
   dataDisponibile:  any;
 
+  dataConvalida:  any;
+
+  numeroConvalida:  any;
+
 }

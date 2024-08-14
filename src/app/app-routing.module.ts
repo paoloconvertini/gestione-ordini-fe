@@ -22,6 +22,7 @@ import {OafMonitorComponent} from "./components/ordine-fornitore/oaf-monitor/oaf
 import {ListaCarichiComponent} from "./components/lista-carichi/lista-carichi.component";
 import {ListaCarichiDettaglioComponent} from "./components/lista-carichi-dettaglio/lista-carichi-dettaglio.component";
 import {DepositoComponent} from "./components/deposito/deposito.component";
+import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/lista-carichi-inviati.component";
 
 const routes: Routes = [
   {
@@ -135,7 +136,7 @@ const routes: Routes = [
     component: RiservatoMagazzinoComponent,
   },
   {
-    path: 'carico-detail/edit/:inviato/:id',
+    path: 'carico-detail/edit/:id',
     canActivate: [AuthGuard],
     component: ListaCarichiDettaglioComponent,
   },
@@ -145,12 +146,17 @@ const routes: Routes = [
     component: DepositoComponent,
   },
   {
-    path: 'lista-carichi/:inviato',
+    path: 'lista-carichi',
     canActivate: [AuthGuard],
     component: ListaCarichiComponent,
   },
   {
-    path: 'carico-detail/:inviato',
+    path: 'lista-carichi-inviata',
+    canActivate: [AuthGuard],
+    component: ListaCarichiInviatiComponent,
+  },
+  {
+    path: 'carico-detail',
     canActivate: [AuthGuard],
     component: ListaCarichiDettaglioComponent,
   },

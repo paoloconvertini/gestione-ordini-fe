@@ -35,7 +35,6 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
   loadingAz = false;
   loadingDe = false;
   loadingTr = false;
-  inviato: any;
   errorDeposito: boolean = false;
   errorTrasportatore: boolean = false;
 
@@ -47,9 +46,6 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
         this.id = params.id;
         this.getCarico();
       }
-      this.inviato = params.inviato;
-
-
     });
   }
 
@@ -156,7 +152,7 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
           next: (res: any) => {
             if (res) {
               if(!res.error) {
-                this.route.navigateByUrl('/lista-carichi/' + this.inviato);
+                this.route.navigateByUrl('lista-carichi');
               } else {
                 this.snackbar.open(res.msg, 'Chiudi',{
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
@@ -170,7 +166,7 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
   }
 
   indietro() {
-    this.route.navigateByUrl('/lista-carichi/' + this.inviato);
+    this.route.navigateByUrl('lista-carichi');
   }
 
   settaTrasportatore(trasportatore: Trasportatore) {

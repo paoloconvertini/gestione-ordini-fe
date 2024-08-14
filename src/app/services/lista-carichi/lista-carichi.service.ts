@@ -65,4 +65,11 @@ export class ListaCarichiService extends CommonService{
     return this.http.post<any>(`${this.url}/depositi`, deposito );
   }
 
+  searchConvalide(filtro:any) {
+    return this.http.post<any>(`${this.url}/convalide`, filtro);
+  }
+
+  searchCarichiInviati(filtro:any) {
+    return this.http.post<any>(`${this.url}/inviati`, filtro);
+  }
 }

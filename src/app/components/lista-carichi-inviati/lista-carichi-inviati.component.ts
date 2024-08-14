@@ -14,22 +14,33 @@ import {Deposito} from "../../models/deposito";
 import {Trasportatore} from "../../models/trasportatore";
 import {SelectionModel} from "@angular/cdk/collections";
 import {FiltroCarichi} from "../../models/FiltroCarichi";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
-  selector: 'app-lista-carichi',
-  templateUrl: './lista-carichi.component.html',
-  styleUrls: ['./lista-carichi.component.css']
+  selector: 'app-lista-carichi-inviati',
+  templateUrl: './lista-carichi-inviati.component.html',
+  styleUrls: ['./lista-carichi-inviati.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
-export class ListaCarichiComponent extends CommonListComponent implements OnInit {
+export class ListaCarichiInviatiComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['select', 'azienda', 'numeroOrdine', 'deposito', 'dataDisponibilita', 'peso', 'trasportatore'];
+  displayedColumns: string[] = ['numeroConvalida'];
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
   isVenditore: boolean = false;
   isLogistica: boolean = false;
   filtro: FiltroCarichi = new FiltroCarichi();
+  loaderDettaglio: boolean = false;
   selection = new SelectionModel<any>(true, []);
+  expandedElement: any;
+  carichi: any[] = [];
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private service: ListaCarichiService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
@@ -58,7 +69,7 @@ export class ListaCarichiComponent extends CommonListComponent implements OnInit
 
   retrieveList(): void {
     this.loader = true;
-    this.service.searchAllCarichi(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.searchConvalide(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any[] | undefined) => {
           this.createPaginator(data, 100);
@@ -70,54 +81,30 @@ export class ListaCarichiComponent extends CommonListComponent implements OnInit
       })
   }
 
-  override applyFilter() {
-    super.applyFilter(this.filtro.searchText);
-    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-      return (
-        data.azienda.toLowerCase().includes(filter)
-        || data.numeroOrdine.toLowerCase().includes(filter)
-        || data.deposito.toLowerCase().includes(filter)
-        || data.trasportatore.toLowerCase().includes(filter)
-      )
+  retrieveCarichi(carico: any): void {
+    if(this.expandedElement === carico){
+      return;
     }
-  }
-
-  vediDettaglio(carico: any) {
-    let url = '/carico-detail/edit/' + carico.id;
-    this.route.navigateByUrl(url);
-  }
-
-
-  creaNuovo() {
-    let url = '/carico-detail' ;
-    this.route.navigateByUrl(url);
-  }
-
-  convalida() {
-    this.loader = true;
-    this.service.convalida(this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
+    this.loaderDettaglio = true;
+    this.filtro.dataConvalida = carico.dataConvalida;
+    this.filtro.numeroConvalida = carico.numeroConvalida;
+    this.service.searchCarichiInviati(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (data: any) => {
-          this.loader = false;
-          if(data && !data.error) {
-            this.generaPdf(data.msg);
-            this.retrieveList();
-          } else {
-            this.snackbar.open("Errore nella creazione della lista di carico", 'Chiudi', {
-              duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
-            });
+        next: (data: any[]) => {
+          this.loaderDettaglio = false;
+          if(data) {
+            this.carichi = data;
           }
         }
       })
   }
 
-  generaPdf(id:number) {
-    this.service.generaPdf(id);
+  override applyFilter() {
+    super.applyFilter(this.filtro.searchText);
   }
 
   reset():void {
-    this.filtro.searchText = '';
-    this.filtro.dataDisponibile = undefined;
+    this.filtro.dataConvalida = undefined;
     this.retrieveList();
   }
 }

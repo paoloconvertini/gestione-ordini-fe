@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12  carico-title">
-      LISTA DI CARICO <span *ngIf="filtro.inviato == 1">INVIATO</span>
+      LISTA DI CARICO
     </div>
   </div>
   <div class="row">
@@ -28,7 +28,7 @@
       </button>
     </div>
     <div class="col-lg-2  col-md-1 col-sm-1 float-end">
-      <button mat-mini-fab matTooltip="convalida" aria-label="convalida" color="primary" (click)="convalida()" *ngIf="selection.selected.length > 0 && filtro.inviato == 0" >
+      <button mat-mini-fab matTooltip="convalida" aria-label="convalida" color="primary" (click)="convalida()" *ngIf="selection.selected.length > 0" >
         <mat-icon>picture_as_pdf</mat-icon>
       </button>&nbsp;&nbsp;
       <button mat-mini-fab color="primary" (click)="creaNuovo()" matTooltip="nuovo carico">
@@ -45,7 +45,7 @@
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let carico">
-              <mat-checkbox *ngIf="filtro.inviato == 0" color="primary" (click)="$event.stopPropagation();"
+              <mat-checkbox color="primary" (click)="$event.stopPropagation();"
                             (change)="$event ? selection.toggle(carico) : null"
                             [checked]="selection.isSelected(carico)">
               </mat-checkbox>
@@ -90,13 +90,6 @@
             <th mat-header-cell *matHeaderCellDef>Trasportarore</th>
             <td mat-cell *matCellDef="let carico">
               {{carico.trasportatore}}
-            </td>
-          </ng-container>
-          <!-- Name Column -->
-          <ng-container matColumnDef="numeroConvalida">
-            <th mat-header-cell *matHeaderCellDef>N. Convalida</th>
-            <td mat-cell *matCellDef="let carico" (click)="vediDettaglio(carico)">
-              {{carico.dataConvalida}}_{{carico.numeroConvalida}}
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

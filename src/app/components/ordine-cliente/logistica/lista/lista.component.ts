@@ -634,8 +634,6 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       });
   }
 
-
-
   addOrder() {
     const dialogRef = this.dialog.open(OrdiniClientiPregressiDialogComponent, {
       width: '90%',
