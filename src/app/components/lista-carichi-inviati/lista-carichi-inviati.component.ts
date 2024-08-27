@@ -86,9 +86,10 @@ export class ListaCarichiInviatiComponent extends CommonListComponent implements
       return;
     }
     this.loaderDettaglio = true;
-    this.filtro.dataConvalida = carico.dataConvalida;
-    this.filtro.numeroConvalida = carico.numeroConvalida;
-    this.service.searchCarichiInviati(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+    let filtro: FiltroCarichi = new FiltroCarichi();
+    filtro.dataConvalida = carico.dataConvalida;
+    filtro.numeroConvalida = carico.numeroConvalida;
+    this.service.searchCarichiInviati(filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any[]) => {
           this.loaderDettaglio = false;
@@ -104,6 +105,8 @@ export class ListaCarichiInviatiComponent extends CommonListComponent implements
   }
 
   reset():void {
+    this.filtro.numeroOrdine = undefined;
+    this.filtro.fornitore = undefined;
     this.filtro.dataConvalida = undefined;
     this.retrieveList();
   }
