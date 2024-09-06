@@ -361,7 +361,10 @@
               </button>
               <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-icon-button
                       matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
-                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )) : ''}}
+                        {{articolo.qtyuser1?('. Settimana cons.: ' + articolo.qtyuser1): ''}}
+                        {{articolo.datauser1?('. Data cons.: ' + (articolo.datauser1 | date: 'dd/MM/yyyy')): ''}}
+                        " #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore"
                           color="primary">store</mat-icon>

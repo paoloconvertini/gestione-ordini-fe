@@ -111,6 +111,9 @@
               <button *ngIf="(isAmministrativo || isAdmin)" (click)="elimina(articolo)" mat-button matTooltip="Cancella articolo" color="primary">
                 <mat-icon aria-hidden="false" aria-label="firma" >clear</mat-icon>
               </button>
+              <button *ngIf="(isAmministrativo || isAdmin)" (click)="inerisciDataConsegna(articolo)" mat-button matTooltip="Inserisci data consegna articolo" color="primary" [ngClass]="{'color': (articolo.campouser1 === 'S')}">
+                <mat-icon aria-hidden="false" aria-label="firma" >insert_invitation</mat-icon>
+              </button>
             </td>
           </ng-container>
 

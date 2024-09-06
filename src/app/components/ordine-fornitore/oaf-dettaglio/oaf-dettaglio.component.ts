@@ -11,6 +11,9 @@ import {AggiungiOAFDialogComponent} from "../aggiungi-oafdialog/aggiungi-oafdial
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {
+  AggiornaDataConsegnaDialogComponent
+} from "../../aggiorna-data-consegna-dialog/aggiorna-data-consegna-dialog.component";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -265,4 +268,15 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     }
   }
 
+  inerisciDataConsegna(articolo: any) {
+    const dialog = this.dialog.open(AggiornaDataConsegnaDialogComponent, {
+      width: '70%',
+      data: {pid: articolo.pid},
+    });
+    dialog.afterClosed().subscribe(result => {
+      if(result) {
+        this.getOafArticoliByOrdineId(articolo.anno, articolo.serie, articolo.progressivo);
+      }
+    });
+  }
 }

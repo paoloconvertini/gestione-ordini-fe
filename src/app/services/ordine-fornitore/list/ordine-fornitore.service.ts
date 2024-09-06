@@ -68,4 +68,11 @@ export class OrdineFornitoreService extends CommonService{
     return this.http.get<any>(`${this.url}/byOperatore`);
   }
 
+  getDataConsegna(pid: any): Observable<any> {
+    return this.http.get<any>(`${this.url}/data-consegna/${pid}`);
+  }
+
+  inserisciDataConsegna(data: any):Observable<any> {
+    return  this.http.post<any>(`${this.url}/aggiorna-ordcli`, data);
+  }
 }
