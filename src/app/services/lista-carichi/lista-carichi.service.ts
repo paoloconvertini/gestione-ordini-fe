@@ -72,4 +72,8 @@ export class ListaCarichiService extends CommonService{
   searchCarichiInviati(filtro:any) {
     return this.http.post<any>(`${this.url}/inviati`, filtro);
   }
+
+  download(id: any) {
+    window.document.location.href = `${this.url}/download/${id}`;
+  }
 }

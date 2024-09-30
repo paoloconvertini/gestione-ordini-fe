@@ -119,6 +119,10 @@ tr.example-detail-row {
   height: 36px;
 }
 
+.logistica {
+  right: -6px;
+}
+
 .bolla-box {
   display:inline-flex;
   align-items: center;
@@ -140,4 +144,8 @@ mat-card-content {
 .hasCarico {
   padding: 5px;
   background-color: #fbf403;
+}
+
+.nota-logistica-presente {
+  color: #25be32 !important;
 }

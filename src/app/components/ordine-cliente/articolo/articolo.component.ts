@@ -27,6 +27,7 @@ import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.compon
 import {CollegaOAFDialogComponent} from "../../collega-oaf-dialog/collega-oaf-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
+import {OrdineCliente} from "../../../models/ordine-cliente";
 
 export interface Option {
   name: string,
@@ -537,6 +538,46 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     }
   }
 
+  aggiungiNoteLogistica(ordine: OrdineDettaglio) {
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
+    data.anno = ordine.anno;
+    data.serie = ordine.serie;
+    data.progressivo = ordine.progressivo;
+    data.note = ordine.noteLogistica;
+    data.userNoteLogistica = ordine.userNoteLogistica;
+    data.dataNoteLogistica = ordine.dataNoteLogistica;
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.ordineService.addNotes(result, 1).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  ordine.noteLogistica = result.note;
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
+              }
+            });
+        }
+      });
+    }
+  }
+
   aggiungiNote(articolo: any) {
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = articolo.anno;
@@ -544,6 +585,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     data.progressivo = articolo.progressivo;
     data.rigo = articolo.rigo;
     data.note = articolo.note;
+    data.userNote = articolo.userNote;
+    data.dataNote = articolo.dataNote;
     {
       const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
         width: '50%',
@@ -724,7 +767,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         }
       })
   }
-
 
   verificaQtaOAF(articolo: any) {
     const dialogRef = this.dialog.open(CollegaOAFDialogComponent, {

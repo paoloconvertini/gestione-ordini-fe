@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <div class="aggiorna-mail">
+  <div class="aggiorna-mail" *ngIf="showUpdate">
     <mat-label>Aggiorna mail</mat-label>
     <mat-checkbox [(ngModel)]="update" color="primary"></mat-checkbox>
   </div>

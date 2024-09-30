@@ -1,20 +1,14 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {BaseComponent} from "../baseComponent";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ListaCarichi} from "../../models/listaCarichi";
-import {RoleService} from "../../services/role/role.service";
-import {UserService} from "../../services/users/user.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {map, Observable, startWith, takeUntil} from "rxjs";
+import {takeUntil} from "rxjs";
 import {ListaCarichiService} from "../../services/lista-carichi/lista-carichi.service";
 import {Deposito} from "../../models/deposito";
 import {Trasportatore} from "../../models/trasportatore";
-import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
-import {Articolo} from "../../models/Articolo";
-import {FiltroOafArticoli} from "../../models/FiltroOafArticoli";
-import {WarnDialogComponent} from "../warn-dialog/warn-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import {MatExpansionPanel} from "@angular/material/expansion";
 
 @Component({
   selector: 'app-lista-carichi-dettaglio',
@@ -23,6 +17,7 @@ import {MatDialog} from "@angular/material/dialog";
 })
 export class ListaCarichiDettaglioComponent extends BaseComponent implements OnInit {
 
+  @ViewChild('first') first: any;
   loader = false;
   id: any = null;
   carico: ListaCarichi = new ListaCarichi();
@@ -37,6 +32,8 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
   loadingTr = false;
   errorDeposito: boolean = false;
   errorTrasportatore: boolean = false;
+  deposito: Deposito = new Deposito();
+
 
   constructor(private fb: FormBuilder, private service: ListaCarichiService,
               private router: ActivatedRoute, private route: Router, private snackbar: MatSnackBar) {
@@ -179,4 +176,21 @@ export class ListaCarichiDettaglioComponent extends BaseComponent implements OnI
     this.errorDeposito = false;
   }
 
+  salvaDeposito(deposito: Deposito) {
+    this.service.save(deposito).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (res) => {
+        if (!res.error) {
+          this.snackbar.open(res.msg, 'Chiudi',{
+            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+          });
+          this.cercaDeposito();
+          if(this.first.expanded){
+            this.first.close();
+          } else {
+            this.first.open();
+          }
+        }
+      }
+    })
+  }
 }

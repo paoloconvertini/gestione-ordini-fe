@@ -15,6 +15,8 @@ import {Trasportatore} from "../../models/trasportatore";
 import {SelectionModel} from "@angular/cdk/collections";
 import {FiltroCarichi} from "../../models/FiltroCarichi";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {InviaEmailComponent} from "../invia-email/invia-email.component";
+import {EmailDto} from "../../models/emailDto";
 
 @Component({
   selector: 'app-lista-carichi-inviati',
@@ -30,7 +32,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 })
 export class ListaCarichiInviatiComponent extends CommonListComponent implements OnInit {
 
-  displayedColumns: string[] = ['numeroConvalida'];
+  displayedColumns: string[] = ['numeroConvalida', 'azioni'];
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
   isAmministrativo: boolean = false;
@@ -42,7 +44,7 @@ export class ListaCarichiInviatiComponent extends CommonListComponent implements
   expandedElement: any;
   carichi: any[] = [];
 
-  constructor(private authService: AuthService, private router: ActivatedRoute, private service: ListaCarichiService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
+  constructor(private authService: AuthService, private emailService: EmailService, private router: ActivatedRoute, private service: ListaCarichiService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -109,5 +111,44 @@ export class ListaCarichiInviatiComponent extends CommonListComponent implements
     this.filtro.fornitore = undefined;
     this.filtro.dataConvalida = undefined;
     this.retrieveList();
+  }
+
+  downloadOrdine(convalida: any) {
+    this.service.download(convalida.dataConvalida + "_" + convalida.numeroConvalida);
+  }
+
+  inviaMail(convalida: any) {
+    {
+      const dialogRef = this.dialog.open(InviaEmailComponent, {
+        width: '30%',
+        data: {email: null, update: false}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          let dto = new EmailDto();
+          dto.to = result.to;
+          dto.id = convalida.dataConvalida + '_' + convalida.numeroConvalida;
+          this.loader = true;
+          this.emailService.inviaMailListaCarico(dto).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
+              }
+            });
+        }
+      });
+    }
   }
 }

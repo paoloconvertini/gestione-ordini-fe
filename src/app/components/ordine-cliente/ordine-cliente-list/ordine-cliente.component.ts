@@ -247,7 +247,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     {
       const dialogRef = this.dialog.open(InviaEmailComponent, {
         width: '30%',
-        data: {email: ordine.email}
+        data: {email: ordine.email, update: true}
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
@@ -321,11 +321,15 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     data.progressivo = ordine.progressivo;
     if(from === 0) {
       data.note = ordine.note;
+      data.userNote = ordine.userNote;
+      data.dataNote = ordine.dataNote;
     } else {
       if(!this.isLogistica && !this.isAdmin) {
         return;
       }
       data.note = ordine.noteLogistica;
+      data.userNoteLogistica = ordine.userNoteLogistica;
+      data.dataNoteLogistica = ordine.dataNoteLogistica;
     }
 
     {

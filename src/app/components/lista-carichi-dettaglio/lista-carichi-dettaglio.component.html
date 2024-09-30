@@ -1,3 +1,24 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-4">
+      <mat-accordion>
+        <mat-expansion-panel #first>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Non trovi il deposito che cerchi?</mat-panel-title>
+            <mat-panel-description>Aggiungilo</mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>
+            <input type="text" class="form-control input-deposito" [(ngModel)]="deposito.nome">
+            <button (click)="salvaDeposito(deposito)" mat-icon-button matTooltip="Salva">
+              <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+            </button>
+          </p>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>
 <form (ngSubmit)="submitForm()" [formGroup]="caricoForm" autocomplete="off" class="">
   <div class="container">
     <h3 class="title">
@@ -18,8 +39,10 @@
                  [(ngModel)]="carico.azienda"
                  required
           >
-          <mat-autocomplete #auto="matAutocomplete" >
-            <mat-option *ngIf="loadingAz" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngIf="loadingAz" class="is-loading">
+              <mat-spinner diameter="50"></mat-spinner>
+            </mat-option>
             <ng-container *ngIf="!loadingAz">
               <mat-option *ngFor="let azienda of aziende" [value]="azienda">
                 <span>{{ azienda }}</span>
@@ -54,8 +77,11 @@
           >
           <span *ngIf="errorDeposito" class="error-msg">Selezionare il deposito</span>
           <span *ngIf="!caricoForm.value.deposito">{{carico.deposito}}</span>
-          <mat-autocomplete #autoD="matAutocomplete" [displayWith]="displayFnDe" (optionSelected)="settaDeposito($event.option.value)">
-            <mat-option *ngIf="loadingDe" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+          <mat-autocomplete #autoD="matAutocomplete" [displayWith]="displayFnDe"
+                            (optionSelected)="settaDeposito($event.option.value)">
+            <mat-option *ngIf="loadingDe" class="is-loading">
+              <mat-spinner diameter="50"></mat-spinner>
+            </mat-option>
             <ng-container *ngIf="!loadingDe">
               <mat-option *ngFor="let deposito of depositi" [value]="deposito">
                 <span>{{deposito.nome}}</span>
@@ -101,8 +127,11 @@
           >
           <span *ngIf="errorTrasportatore" class="error-msg">Selezionare il trasportatore</span>
           <span *ngIf="!caricoForm.value.trasportatore">{{carico.trasportatore}}</span>
-          <mat-autocomplete #autoT="matAutocomplete" [displayWith]="displayFnTr" (optionSelected)="settaTrasportatore($event.option.value)">
-            <mat-option *ngIf="loadingTr" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+          <mat-autocomplete #autoT="matAutocomplete" [displayWith]="displayFnTr"
+                            (optionSelected)="settaTrasportatore($event.option.value)">
+            <mat-option *ngIf="loadingTr" class="is-loading">
+              <mat-spinner diameter="50"></mat-spinner>
+            </mat-option>
             <ng-container *ngIf="!loadingTr">
               <mat-option *ngFor="let trasportatore of trasportatori" [value]="trasportatore">
                 <span>{{trasportatore.nome}}</span>
@@ -113,7 +142,7 @@
       </div>
     </div>
     <div class="row">
-        <label>N. Convalida</label>
+      <label>N. Convalida</label>
       <span>{{carico.numeroConvalida}}</span>
     </div>
     <div class="float-end">

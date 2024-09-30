@@ -15,4 +15,8 @@ export class EmailService extends CommonService{
   inviaMail(data: any): Observable<any> {
     return this.http.post(`${this.url}/confermato`, data);
   }
+
+  inviaMailListaCarico(data: any): Observable<any> {
+    return this.http.post(`${this.url}/lista-carico`, data);
+  }
 }

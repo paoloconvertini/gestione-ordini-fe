@@ -46,6 +46,18 @@
               {{convalida.dataConvalida}}_{{convalida.numeroConvalida}}
             </td>
           </ng-container>
+          <ng-container matColumnDef="azioni">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let convalida">
+              <button (click)="downloadOrdine(convalida)" mat-icon-button matTooltip="Scarica lista di carico">
+                <mat-icon aria-hidden="false" aria-label="download" fontIcon="file_download" color="primary"></mat-icon>
+              </button>
+              <button (click)="inviaMail(convalida)" mat-icon-button
+                      matTooltip="Invia email lista di carico">
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
+              </button>
+            </td>
+          </ng-container>
 
           <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
           <ng-container matColumnDef="expandedDetail">

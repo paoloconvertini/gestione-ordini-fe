@@ -1,4 +1,7 @@
 export class OrdineDettaglio{
+  anno?: number
+  serie?: string
+  progressivo?: number
   articoli?: any[]
   sottoConto: string = ''
   intestazione:string = ''
@@ -10,4 +13,7 @@ export class OrdineDettaglio{
   locked: boolean = false
   userLock: string = ''
   totale: number = 0
+  noteLogistica: string = ''
+  userNoteLogistica: string = ''
+  dataNoteLogistica: any
 }

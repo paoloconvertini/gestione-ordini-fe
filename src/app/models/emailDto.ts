@@ -11,4 +11,6 @@ export class EmailDto {
 
   update: boolean = false;
 
+  id:  any;
+
 }

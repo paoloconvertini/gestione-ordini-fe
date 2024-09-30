@@ -76,6 +76,7 @@ import { ListaCarichiDettaglioComponent } from './components/lista-carichi-detta
 import { DepositoComponent } from './components/deposito/deposito.component';
 import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/lista-carichi-inviati.component";
 import { AggiornaDataConsegnaDialogComponent } from './components/aggiorna-data-consegna-dialog/aggiorna-data-consegna-dialog.component';
+import {MatExpansionModule} from "@angular/material/expansion";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -148,9 +149,9 @@ export const DateFormats = {
             config: {
                 tokenGetter: tokenGetter,
                 allowedDomains: ['localhost:8080', 'localhost:8081', 'localhost:8082', 'localhost:8083',
-                  '192.168.1.150:8080', '192.168.1.150:8181', '192.168.1.150:8082', '192.168.1.150:8083',
-                  '192.168.1.60:8080', '192.168.1.60:8081', '192.168.1.60:8082', '192.168.1.60:8083',
-                  '192.168.1.56:8080', '192.168.1.56:8081', '192.168.1.56:8082', '192.168.1.56:8083']
+                    '192.168.1.150:8080', '192.168.1.150:8181', '192.168.1.150:8082', '192.168.1.150:8083',
+                    '192.168.1.60:8080', '192.168.1.60:8081', '192.168.1.60:8082', '192.168.1.60:8083',
+                    '192.168.1.56:8080', '192.168.1.56:8081', '192.168.1.56:8082', '192.168.1.56:8083']
             }
         }),
         MatProgressSpinnerModule,
@@ -168,7 +169,8 @@ export const DateFormats = {
         MatNativeDateModule,
         MatMomentDateModule,
         MatSortModule,
-        MatSelectModule
+        MatSelectModule,
+        MatExpansionModule
     ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},

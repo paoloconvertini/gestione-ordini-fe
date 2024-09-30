@@ -15,6 +15,10 @@
       <span *ngIf="status==='ARCHIVIATO'"> ARCHIVIATO</span>
     </div>
     <div class="col-lg-4 col-md-4 col-sm-12">
+      <button (click)="aggiungiNoteLogistica(ordineDettaglio)" mat-raised-button [matTooltip]="ordineDettaglio.noteLogistica" matTooltipClass="note">
+        <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
+                  [ngClass]="{'nota-logistica-presente':ordineDettaglio.noteLogistica}" class="icon-detail logistica"></mat-icon>
+      </button>
     </div>
   </div>
   <div class="row" >

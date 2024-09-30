@@ -4,6 +4,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 export interface DialogData {
   email: string;
+  update: boolean;
 }
 
 @Component({
@@ -16,11 +17,15 @@ export class InviaEmailComponent {
     to: new FormControl(null, [Validators.required, Validators.email]),
   });
   update: boolean = false;
+  showUpdate: boolean = false;
 
   constructor(private dialogRef: MatDialogRef<InviaEmailComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData) {
     if (data.email) {
       this.to.setValue(data.email);
+    }
+    if(data.update) {
+      this.showUpdate = data.update;
     }
   }
 
