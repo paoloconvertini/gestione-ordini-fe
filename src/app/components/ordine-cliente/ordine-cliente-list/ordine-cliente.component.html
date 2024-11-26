@@ -12,15 +12,6 @@
   <div class="blink_text" *ngIf="countHasCarico > 0">ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati</div>
   <div class="row">
     <div class="col-lg-5 col-md-5 col-sm-5">
-      <mat-form-field>
-        <mat-label>Cerca...</mat-label>
-        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
-      </mat-form-field>
-    </div>
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
-        Reset
-      </button>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6">
       <button class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
@@ -31,30 +22,73 @@
       </button>
     </div>
     <div *ngIf="isVenditore || isAdmin" class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group (change)="retrieveList()"
-                       aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
+      <mat-radio-group (change)="retrieveList()" aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
         <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
-                          [value]="option.codVenditore">{{option.fullname}}
+                            [value]="option.codVenditore">{{option.fullname}}
         </mat-radio-button>
       </mat-radio-group>
     </div>
     <div *ngIf="isLogistica || isAdmin" class="col-lg-12 col-md-12 col-sm-12">
       <mat-checkbox color="primary" class="example-margin" (change)="retrieveList()"
-                    [(ngModel)]="filtro.prontoConsegna">Pronto consegna
+                      [(ngModel)]="filtro.prontoConsegna">Pronto consegna
       </mat-checkbox>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group (change)="retrieveList()"
-                       aria-label="Select an option" [(ngModel)]="filtro.status" >
-        <mat-radio-button *ngFor="let option of radioPerStatusOptions"
-                          [value]="option.codice">
-          <div [ngSwitch]="option.descrizione">
-            <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
-            <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
-            <span *ngSwitchDefault>{{option.descrizione}}</span>
-          </div>
-        </mat-radio-button>
-      </mat-radio-group>
+        <mat-radio-group (change)="retrieveList()"
+                         aria-label="Select an option" [(ngModel)]="filtro.status" >
+          <mat-radio-button *ngFor="let option of radioPerStatusOptions"
+                            [value]="option.codice">
+            <div [ngSwitch]="option.descrizione">
+              <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
+              <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
+              <span *ngSwitchDefault>{{option.descrizione}}</span>
+            </div>
+          </mat-radio-button>
+        </mat-radio-group>
+    </div>
+  </div>
+  <div class="row cerca">
+    <div class="col-md-1">
+      <mat-form-field>
+        <mat-label>Anno</mat-label>
+        <input matInput type="number" [(ngModel)]="filtro.anno">
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+      <mat-form-field>
+        <mat-label>Progr.</mat-label>
+        <input matInput type="number" [(ngModel)]="filtro.progressivo">
+      </mat-form-field>
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <mat-label>Cliente</mat-label>
+        <input matInput type="text" [(ngModel)]="filtro.cliente">
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+      <mat-form-field>
+        <mat-label>Luogo</mat-label>
+        <input matInput type="text" [(ngModel)]="filtro.luogo">
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+      <mat-form-field>
+        <mat-label>Data ordine</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataOrdine">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col-md-1 float-end">
+      <button mat-raised-button color="warn" (click)="reset()">
+        Reset
+      </button>
+    </div>
+    <div class="col-md-1 float-end">
+      <button mat-raised-button color="primary" (click)="retrieveList()">
+        Cerca
+      </button>
     </div>
   </div>
   <div class="row">
@@ -62,7 +96,6 @@
       <div class="mat-elevation-z8">
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
         <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
-
           <!-- Name Column -->
           <ng-container matColumnDef="numero">
             <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
@@ -194,7 +227,14 @@
           </tr>
         </table>
 
-        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+        <mat-paginator aria-label="Select page of ordini clienti"
+                       [length]="totalItems"
+                       [pageSize]="filtro.size"
+                       [pageSizeOptions]="[5, 10, 20, 30]"
+                       (page)="onPageChange($event)" [showFirstLastButtons]="true" [pageIndex]="filtro.page"
+        >
+
+        </mat-paginator>
       </div>
     </div>
   </div>

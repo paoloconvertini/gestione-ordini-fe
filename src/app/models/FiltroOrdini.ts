@@ -16,4 +16,13 @@ export class FiltroOrdini {
 
   flInviato:boolean = false;
 
+  page:number = 0;
+
+  size:number = 10;
+  anno: any;
+  progressivo: any;
+  cliente: any;
+  luogo: any;
+  dataOrdine: any;
+
 }

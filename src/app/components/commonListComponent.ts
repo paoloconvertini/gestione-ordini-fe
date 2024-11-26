@@ -14,7 +14,7 @@ export abstract class CommonListComponent extends BaseComponent{
     super();
   }
 
-  protected createPaginator(data: any[] | undefined, pageSize: number) {
+  public createPaginator(data: any[] | undefined, pageSize: number) {
     this.dataSource = new MatTableDataSource(data);
     if (this.paginator) {
       this.paginator._intl.itemsPerPageLabel = 'Elementi per pagina';
@@ -24,7 +24,6 @@ export abstract class CommonListComponent extends BaseComponent{
       this.paginator._intl.lastPageLabel = 'Ultima';
       this.paginator.pageSize = pageSize;
       this.paginator.showFirstLastButtons = true;
-      this.paginator.pageSizeOptions = [5, 10, 15, 25, 50, 100];
       this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
         if (length == 0 || pageSize == 0) {
           return `0 di ${length}`;

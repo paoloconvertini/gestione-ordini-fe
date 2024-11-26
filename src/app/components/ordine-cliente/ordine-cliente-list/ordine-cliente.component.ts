@@ -15,6 +15,9 @@ import {takeUntil} from "rxjs";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {MatPaginator, MatPaginatorIntl, PageEvent} from "@angular/material/paginator";
+import {BaseComponent} from "../../baseComponent";
+import {MatTableDataSource} from "@angular/material/table";
 
 
 export interface Option {
@@ -33,8 +36,12 @@ export interface OptStatus {
   templateUrl: './ordine-cliente.component.html',
   styleUrls: ['./ordine-cliente.component.css']
 })
-export class OrdineClienteComponent extends CommonListComponent implements OnInit {
+export class OrdineClienteComponent extends BaseComponent implements OnInit {
 
+  loader = false;
+  dataSource = new MatTableDataSource;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  _intl: MatPaginatorIntl = new MatPaginatorIntl ();
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
   signImage: any;
   isAdmin: boolean = false;
@@ -48,9 +55,15 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
   filtro: FiltroOrdini = new FiltroOrdini();
   user: any;
   countHasCarico: number = 0;
+  totalItems = 0;
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
+    this._intl.itemsPerPageLabel = 'Elementi per pagina';
+    this._intl.nextPageLabel = 'Prossima';
+    this._intl.previousPageLabel = 'Precedente';
+    this._intl.firstPageLabel = 'Prima';
+    this._intl.lastPageLabel = 'Ultima';
     this.router.params.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
           if (params.status) {
@@ -78,7 +91,6 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     }
     if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
-      //this.filtro.prontoConsegna = true;
     }
   }
 
@@ -140,22 +152,26 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
     })
   }
 
+  onPageChange(event: PageEvent) {
+    this.filtro.page = event.pageIndex;
+    this.filtro.size = event.pageSize;
+    this.retrieveList();
+  }
+
   retrieveList(): void {
     this.loader = true;
     this.countHasCarico = 0;
       this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
-          next: (data: any[] | undefined) => {
-            data?.forEach(d => {
+          next: (data: any | undefined) => {
+            this.totalItems = data.count;
+            data.list?.forEach((d: any) => {
               d.isLocked = d.locked && this.user !== d.userLock;
               if(d.hasCarico){
                 this.countHasCarico++;
               }
             })
-            this.createPaginator(data, 100);
-            if(this.filtro.searchText){
-              this.applyFilter();
-            }
+            this.dataSource = new MatTableDataSource(data.list);
             this.loader = false;
           },
           error: (e: any) => {
@@ -385,7 +401,7 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
             })
             this.filtro.status = '';
             this.getStati();
-            this.createPaginator(data, 100);
+            //super().createPaginator(data, this.filtro.size);
             this.loader = false;
           },
           error: (e: any) => {
@@ -395,17 +411,12 @@ export class OrdineClienteComponent extends CommonListComponent implements OnIni
         })
   }
 
-  override applyFilter() {
-    super.applyFilter(this.filtro.searchText);
-    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-      return (
-        data.intestazione.toLowerCase().includes(filter)
-        || data.serie.toLowerCase().includes(filter)
-        || data.dataConferma.includes(filter)
-        || data.localita.toLowerCase().includes(filter)
-        || data.anno.toString().toLowerCase().includes(filter)
-        || data.progressivo.toString().toLowerCase().includes(filter)
-      )
-    }
+  reset() {
+    this.filtro.cliente = '';
+    this.filtro.anno = undefined;
+    this.filtro.luogo = '';
+    this.filtro.progressivo = undefined;
+    this.filtro.dataOrdine = undefined;
+    this.retrieveList();
   }
 }
