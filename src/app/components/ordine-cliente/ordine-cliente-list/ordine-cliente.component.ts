@@ -395,13 +395,12 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
     this.loader = true;
       this.service.cercaBolle().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
-          next: (data: any[] | undefined) => {
-            data?.forEach(d => {
+          next: (data: any | undefined) => {
+            this.totalItems = data.count;
+            data.list?.forEach((d: any) => {
               d.isLocked = d.locked && this.user !== d.userLock;
             })
-            this.filtro.status = '';
-            this.getStati();
-            //super().createPaginator(data, this.filtro.size);
+            this.dataSource = new MatTableDataSource(data.list);
             this.loader = false;
           },
           error: (e: any) => {
