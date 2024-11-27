@@ -11,8 +11,8 @@
   </div>
   <div class="blink_text" *ngIf="countHasCarico > 0">ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati</div>
   <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-5">
-    </div>
+    <div class="col-lg-5 col-md-5 col-sm-5"></div>
+    <div class="col-lg-1 col-md-1 col-sm-1"></div>
     <div class="col-lg-6 col-md-6 col-sm-6">
       <button class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
         Bolle
@@ -51,31 +51,31 @@
     <div class="col-md-1">
       <mat-form-field>
         <mat-label>Anno</mat-label>
-        <input matInput type="number" [(ngModel)]="filtro.anno">
+        <input matInput type="number" [(ngModel)]="filtro.anno" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
     <div class="col-md-2">
       <mat-form-field>
         <mat-label>Progr.</mat-label>
-        <input matInput type="number" [(ngModel)]="filtro.progressivo">
+        <input matInput type="number" [(ngModel)]="filtro.progressivo" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
     <div class="col-md-3">
       <mat-form-field>
         <mat-label>Cliente</mat-label>
-        <input matInput type="text" [(ngModel)]="filtro.cliente">
+        <input matInput type="text" [(ngModel)]="filtro.cliente" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
     <div class="col-md-2">
       <mat-form-field>
         <mat-label>Luogo</mat-label>
-        <input matInput type="text" [(ngModel)]="filtro.luogo">
+        <input matInput type="text" [(ngModel)]="filtro.luogo" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
     <div class="col-md-2">
       <mat-form-field>
         <mat-label>Data ordine</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataOrdine">
+          <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataOrdine" (ngModelChange)="resetPage()">
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -222,8 +222,7 @@
 
           <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell no-result-list" colspan="4">Nessun
-              risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
+            <td class="mat-cell no-result-list" colspan="4">Nessun risultato</td>
           </tr>
         </table>
 

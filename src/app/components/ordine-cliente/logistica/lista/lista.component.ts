@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {CommonListComponent} from "../../../commonListComponent";
 import {AuthService} from "../../../../services/auth/auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -40,6 +40,9 @@ import {NotaConsegnaService} from "../../../../services/nota-consegna/nota-conse
 import {NotaConsegna} from "../../../../models/NotaConsegna";
 import {FidoClienteComponent} from "../fido-cliente/fido-cliente.component";
 import {ImportoVenditore} from "../../../../models/ImportoVenditore";
+import {BaseComponent} from "../../../baseComponent";
+import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator, MatPaginatorIntl, PageEvent} from "@angular/material/paginator";
 
 
 useGeographic();
@@ -72,8 +75,13 @@ export interface OptStatus {
     ]),
   ],
 })
-export class ListaComponent extends CommonListComponent implements OnInit {
+export class ListaComponent extends BaseComponent implements OnInit {
 
+  loader = false;
+  dataSource = new MatTableDataSource;
+  dataSourceRiservati = new MatTableDataSource;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  _intl: MatPaginatorIntl = new MatPaginatorIntl ();
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'dataConsegna','oraConsegna', 'ordinamento', 'veicolo', 'azioni'];
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
@@ -97,12 +105,18 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   notaConsegna: NotaConsegna = new NotaConsegna();
   importiMap: any = new Map<string, number>();
   importiList: ImportoVenditore[] = [];
+  totalItems = 0;
 
   constructor(private authService: AuthService, private router: ActivatedRoute,
               private emailService: EmailService, private service: ListaService,
               private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private notaConsegnaService: NotaConsegnaService,
               private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
     super();
+    this._intl.itemsPerPageLabel = 'Elementi per pagina';
+    this._intl.nextPageLabel = 'Prossima';
+    this._intl.previousPageLabel = 'Precedente';
+    this._intl.firstPageLabel = 'Prima';
+    this._intl.lastPageLabel = 'Ultima';
     if(localStorage.getItem(environment.LOGISTICA)){
       this.filtro.status = 'COMPLETO';
       this.isLogistica = true;
@@ -129,6 +143,12 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     this.getVenditori();
     this.retrieveList();
     this.getAllRiservati();
+  }
+
+  onPageChange(event: PageEvent) {
+    this.filtro.page = event.pageIndex;
+    this.filtro.size = event.pageSize;
+    this.retrieveList();
   }
 
   getStati(): void {
@@ -169,19 +189,17 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     })
   }
 
+  resetPage() {
+    this.filtro.page = 0;
+  }
+
   retrieveList(): void {
     this.loader = true;
     this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (data: any[] | undefined) => {
-          this.createPaginator(data, 100);
-          if(this.filtro.searchText){
-            this.applyFilter();
-          }
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
+        next: (data: any | undefined) => {
+          this.totalItems = data.count;
+          this.dataSource.data = data.list;
           this.loader = false;
         }
       })
@@ -194,10 +212,7 @@ export class ListaComponent extends CommonListComponent implements OnInit {
       .subscribe({
         next: (data: any | undefined) => {
           this.importiMap = data.importoRiservatiMap;
-          this.createPaginator(data.ordineDTOList, 100);
-          if(this.filtro.searchText){
-            this.applyFilter();
-          }
+          this.dataSourceRiservati.data = data.list;
           this.loader = false;
           if(!this.filtro.codVenditore) {
             this.getVenditori();
@@ -318,8 +333,9 @@ export class ListaComponent extends CommonListComponent implements OnInit {
     this.loader = true;
     this.ordineClienteService.cercaBolle().pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (data: any[] | undefined) => {
-          this.createPaginator(data, 100);
+        next: (data: any | undefined) => {
+          this.totalItems = data.count;
+          this.dataSource = new MatTableDataSource(data.list);
           this.loader = false;
         },
         error: (e: any) => {
@@ -607,24 +623,15 @@ export class ListaComponent extends CommonListComponent implements OnInit {
   }
 
   reset():void {
+    this.filtro.cliente = '';
+    this.filtro.anno = undefined;
+    this.filtro.luogo = '';
+    this.filtro.progressivo = undefined;
+    this.filtro.dataOrdine = undefined;
     this.filtro.veicolo = undefined;
     this.filtro.dataConsegnaStart = undefined;
     this.filtro.dataConsegnaEnd = undefined;
     this.retrieveList();
-  }
-
-  override applyFilter() {
-    super.applyFilter(this.filtro.searchText);
-    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-      return (
-        data.intestazione.toLowerCase().includes(filter)
-        || data.serie.toLowerCase().includes(filter)
-        || data.dataConferma.includes(filter)
-        || data.localita.toLowerCase().includes(filter)
-        || data.anno.toString().toLowerCase().includes(filter)
-        || data.progressivo.toString().toLowerCase().includes(filter)
-      )
-    }
   }
 
   apriFidoClienteModal(order: any) {

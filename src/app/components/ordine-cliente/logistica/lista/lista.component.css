@@ -99,3 +99,9 @@ tr.example-detail-row {
   display: flex;
   justify-content: space-between;
 }
+
+cerca {
+  border: 1px solid #e5e5e5;
+  margin-bottom:5px;
+  padding: 5px 0;
+}

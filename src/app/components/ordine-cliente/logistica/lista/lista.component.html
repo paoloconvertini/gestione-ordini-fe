@@ -10,17 +10,8 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-5">
-      <mat-form-field>
-        <mat-label>Cerca...</mat-label>
-        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
-      </mat-form-field>
-    </div>
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
-        Reset
-      </button>
-    </div>
+    <div class="col-lg-5 col-md-5 col-sm-5"></div>
+    <div class="col-lg-1 col-md-1 col-sm-1"></div>
     <div class="col-lg-6 col-md-6 col-sm-6">
       <button class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
         Bolle
@@ -75,17 +66,53 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="col-lg-2 col-md-2 col-sm-1">
-      <button class="btn-container inline " mat-mini-fab color="primary" (click)="retrieveList()" matTooltip="Cerca">
-        <span class="material-icons-outlined icon search">search</span>
-      </button>
-      <button class="btn-container inline backspace" mat-mini-fab color="warn" (click)="reset()" matTooltip="Reset">
-        <span class="material-icons-outlined icon backspace-icon">backspace</span>
-      </button>
+    <div class="col-lg-2 col-md-2">
+      <mat-form-field>
+        <mat-label>Data ordine</mat-label>
+        <input matInput [matDatepicker]="pickerDt" [(ngModel)]="filtro.dataOrdine" (ngModelChange)="resetPage()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerDt"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDt></mat-datepicker>
+      </mat-form-field>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-12">
       <button class="float-end btn-container" mat-mini-fab color="primary" (click)="addOrder()" matTooltip="Cerca e aggiungi ordini pregressi">
         <span class="material-icons-outlined icon">playlist_add</span>
+      </button>
+    </div>
+  </div>
+  <div class="row cerca">
+    <div class="col-md-1">
+      <mat-form-field>
+        <mat-label>Anno</mat-label>
+        <input matInput type="number" [(ngModel)]="filtro.anno" (ngModelChange)="resetPage()">
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+      <mat-form-field>
+        <mat-label>Progr.</mat-label>
+        <input matInput type="number" [(ngModel)]="filtro.progressivo" (ngModelChange)="resetPage()">
+      </mat-form-field>
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <mat-label>Cliente</mat-label>
+        <input matInput type="text" [(ngModel)]="filtro.cliente" (ngModelChange)="resetPage()">
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+      <mat-form-field>
+        <mat-label>Luogo</mat-label>
+        <input matInput type="text" [(ngModel)]="filtro.luogo" (ngModelChange)="resetPage()">
+      </mat-form-field>
+    </div>
+    <div class="col-md-1 float-end">
+      <button mat-raised-button color="warn" (click)="reset()">
+        Reset
+      </button>
+    </div>
+    <div class="col-md-1 float-end">
+      <button mat-raised-button color="primary" (click)="retrieveList()">
+        Cerca
       </button>
     </div>
   </div>
@@ -296,12 +323,16 @@
 
           <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell no-result-list" colspan="4">Nessun
-              risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
+            <td class="mat-cell no-result-list" colspan="4">Nessun risultato</td>
           </tr>
         </table>
 
-        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
+        <mat-paginator aria-label="Select page of ordini clienti"
+                       [length]="totalItems"
+                       [pageSize]="filtro.size"
+                       [pageSizeOptions]="[5, 10, 20, 30]"
+                       (page)="onPageChange($event)" [showFirstLastButtons]="true" [pageIndex]="filtro.page"
+        ></mat-paginator>
       </div>
     </div>
   </div>

@@ -171,11 +171,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
                 this.countHasCarico++;
               }
             })
-            this.dataSource = new MatTableDataSource(data.list);
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
+            this.dataSource.data = data.list;
             this.loader = false;
           }
         })
@@ -417,5 +413,9 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
     this.filtro.progressivo = undefined;
     this.filtro.dataOrdine = undefined;
     this.retrieveList();
+  }
+
+  resetPage() {
+    this.filtro.page = 0;
   }
 }
