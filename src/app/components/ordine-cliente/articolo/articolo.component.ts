@@ -85,12 +85,15 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   accontiDaUsare: Acconto[] = [];
   disabilitaBolla: boolean = false;
 
+
   ngOnInit(): void {
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
       this.filtroArticoli.anno = params.anno;
       this.filtroArticoli.serie = params.serie;
       this.filtroArticoli.progressivo = params.progressivo;
       this.status = params.status;
+      this.filtro.page = params.page;
+      this.filtro.size = params.size;
     });
     if (this.isAmministrativo && this.status === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
@@ -176,7 +179,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
               if (res.msg) {
                 url += '/' + res.msg;
               }
-              this.route.navigate([url]);
+              this.route.navigate([url, this.filtro.page, this.filtro.size]);
             }
           }
         });
@@ -453,7 +456,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.route.navigate(['/ordini-clienti', this.status]);
+              this.route.navigate(['/ordini-clienti', this.status, this.filtro.page, this.filtro.size]);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -461,7 +464,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         })
     } else {
-      this.route.navigate(['/ordini-clienti', this.status]);
+      this.route.navigate(['/ordini-clienti', this.status, this.filtro.page, this.filtro.size]);
     }
   }
 

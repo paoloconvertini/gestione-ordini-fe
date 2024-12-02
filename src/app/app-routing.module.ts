@@ -56,7 +56,7 @@ const routes: Routes = [
     component: ListaComponent,
   },
   {
-    path: 'ordini-clienti/:status',
+    path: 'ordini-clienti/:status/:page/:size',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
   },
@@ -76,12 +76,12 @@ const routes: Routes = [
     component: OafMonitorComponent,
   },
   {
-    path: 'articoli/edit/:anno/:serie/:progressivo/:status',
+    path: 'articoli/edit/:page/:size/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },
   {
-    path: 'articoli/view/:anno/:serie/:progressivo/:status',
+    path: 'articoli/view/:page/:size/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },

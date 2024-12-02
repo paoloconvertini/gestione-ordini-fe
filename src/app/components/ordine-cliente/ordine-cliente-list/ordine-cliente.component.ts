@@ -75,6 +75,12 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
               this.filtro.status = 'TUTTI';
             }
           }
+          if(params.page){
+            this.filtro.page = params.page;
+          }
+        if(params.size){
+          this.filtro.size = params.size;
+        }
         }
       );
     if (localStorage.getItem(environment.ADMIN)) {
@@ -295,7 +301,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
   }
 
   editDettaglio(ordine: OrdineCliente) {
-    let url = "/articoli/edit/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+    let url = "/articoli/edit/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
     if (ordine.status) {
       url += "/" + ordine.status;
     }
@@ -303,7 +309,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
   }
 
   vediDettaglio(ordine: OrdineCliente) {
-    let url = "/articoli/view/" + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+    let url = "/articoli/view/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
     if (ordine.status) {
       url += "/" + ordine.status;
     }
