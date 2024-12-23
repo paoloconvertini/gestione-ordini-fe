@@ -1,9 +1,9 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {CommonListComponent} from "../../commonListComponent";
 import {OrdineCliente} from "../../../models/ordine-cliente";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Router, Scroll} from "@angular/router";
 import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../../../environments/environment";
@@ -11,13 +11,16 @@ import {EmailDto} from "../../../models/emailDto";
 import {InviaEmailComponent} from "../../invia-email/invia-email.component";
 import {EmailService} from "../../../services/email/email.service";
 import {AuthService} from "../../../services/auth/auth.service";
-import {takeUntil} from "rxjs";
+import {filter, takeUntil} from "rxjs";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {MatPaginator, MatPaginatorIntl, PageEvent} from "@angular/material/paginator";
 import {BaseComponent} from "../../baseComponent";
 import {MatTableDataSource} from "@angular/material/table";
+import {CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
+import {ViewportScroller} from "@angular/common";
+import { ScrollPositionService } from '../../../services/scroll-position.service';
 
 
 export interface Option {
@@ -36,12 +39,12 @@ export interface OptStatus {
   templateUrl: './ordine-cliente.component.html',
   styleUrls: ['./ordine-cliente.component.css']
 })
-export class OrdineClienteComponent extends BaseComponent implements OnInit {
+export class OrdineClienteComponent extends BaseComponent implements OnInit, AfterViewInit {
 
   loader = false;
   dataSource = new MatTableDataSource;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  _intl: MatPaginatorIntl = new MatPaginatorIntl ();
+  _intl: MatPaginatorIntl = new MatPaginatorIntl();
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
   signImage: any;
   isAdmin: boolean = false;
@@ -57,30 +60,35 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
   countHasCarico: number = 0;
   totalItems = 0;
 
-  constructor(private authService: AuthService, private router: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
+  constructor(    private router: Router,
+                  private viewportScroller: ViewportScroller,
+                  private scrollPositionService: ScrollPositionService,
+    private authService: AuthService, private activatedRoute: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
     this._intl.itemsPerPageLabel = 'Elementi per pagina';
     this._intl.nextPageLabel = 'Prossima';
     this._intl.previousPageLabel = 'Precedente';
     this._intl.firstPageLabel = 'Prima';
     this._intl.lastPageLabel = 'Ultima';
-    this.router.params.pipe(takeUntil(this.ngUnsubscribe))
+    this.activatedRoute.params.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
+          if (params.page) {
+            this.filtro.page = params.page;
+          }
+          if (params.size) {
+            this.filtro.size = params.size;
+          }
           if (params.status) {
             this.filtro.status = params.status;
           } else {
-            if(localStorage.getItem(environment.LOGISTICA)){
+            if (localStorage.getItem(environment.LOGISTICA)) {
               this.filtro.status = 'COMPLETO';
+            } else if (localStorage.getItem(environment.AMMINISTRATIVO)){
+              this.filtro.status = 'DA_ORDINARE';
             } else {
               this.filtro.status = 'TUTTI';
             }
           }
-          if(params.page){
-            this.filtro.page = params.page;
-          }
-        if(params.size){
-          this.filtro.size = params.size;
-        }
         }
       );
     if (localStorage.getItem(environment.ADMIN)) {
@@ -110,6 +118,12 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
     this.user = localStorage.getItem(environment.USERNAME);
   }
 
+  ngAfterViewInit(): void {
+    const scrollPosition = this.scrollPositionService.getScrollPosition();
+    console.log("afterView: " + scrollPosition);
+    this.viewportScroller.scrollToPosition([0, scrollPosition]);
+  }
+
   update(ordine: OrdineCliente): void {
     this.loader = true;
     this.service.update(ordine).pipe(takeUntil(this.ngUnsubscribe))
@@ -133,10 +147,10 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
     this.service.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.radioPerStatusOptions = data;
-        if(!this.filtro.status){
+        if (!this.filtro.status) {
           this.filtro.status = 'TUTTI';
         }
-        this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
+        this.selectStatusOptions = data.filter((e: any) => e.descrizione !== 'TUTTI');
       },
       error: (e: any) => {
         console.error(e);
@@ -188,17 +202,17 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
       this.getVenditori();
     }
     this.loader = true;
-      this.service.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: () => {
-            this.retrieveList();
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
-          }
-        })
+    this.service.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: () => {
+          this.retrieveList();
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
   apri(ordine: OrdineCliente): void {
@@ -301,6 +315,8 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
   }
 
   editDettaglio(ordine: OrdineCliente) {
+    this.scrollPositionService.setScrollPosition(window.scrollY);
+    console.log("edit: " + this.scrollPositionService.getScrollPosition());
     let url = "/articoli/edit/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
     if (ordine.status) {
       url += "/" + ordine.status;
@@ -309,6 +325,8 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
   }
 
   vediDettaglio(ordine: OrdineCliente) {
+    this.scrollPositionService.setScrollPosition(window.scrollY);
+    console.log("view: " + this.scrollPositionService.getScrollPosition());
     let url = "/articoli/view/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
     if (ordine.status) {
       url += "/" + ordine.status;
@@ -337,12 +355,12 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
     data.anno = ordine.anno;
     data.serie = ordine.serie;
     data.progressivo = ordine.progressivo;
-    if(from === 0) {
+    if (from === 0) {
       data.note = ordine.note;
       data.userNote = ordine.userNote;
       data.dataNote = ordine.dataNote;
     } else {
-      if(!this.isLogistica && !this.isAdmin) {
+      if (!this.isLogistica && !this.isAdmin) {
         return;
       }
       data.note = ordine.noteLogistica;
@@ -366,7 +384,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
                   this.snackbar.open(res.msg, 'Chiudi', {
                     duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                   })
-                  if(from === 0) {
+                  if (from === 0) {
                     ordine.note = result.note;
                   } else {
                     ordine.noteLogistica = result.note;
@@ -395,21 +413,21 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit {
       this.getVenditori();
     }
     this.loader = true;
-      this.service.cercaBolle().pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: any | undefined) => {
-            this.totalItems = data.count;
-            data.list?.forEach((d: any) => {
-              d.isLocked = d.locked && this.user !== d.userLock;
-            })
-            this.dataSource = new MatTableDataSource(data.list);
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
-          }
-        })
+    this.service.cercaBolle().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any | undefined) => {
+          this.totalItems = data.count;
+          data.list?.forEach((d: any) => {
+            d.isLocked = d.locked && this.user !== d.userLock;
+          })
+          this.dataSource = new MatTableDataSource(data.list);
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
   reset() {

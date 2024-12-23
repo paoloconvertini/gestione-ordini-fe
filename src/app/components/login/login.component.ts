@@ -30,11 +30,7 @@ export class LoginComponent extends BaseComponent{
         password: this.password.value
       }).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
         next: (res) => {
-         if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-            this.router.navigate(['/ordini-clienti/DA_ORDINARE']);
-         } else {
            this.router.navigate(['/ordini-clienti']);
-         }
         },
         error: (e) => {
           if (e) {
