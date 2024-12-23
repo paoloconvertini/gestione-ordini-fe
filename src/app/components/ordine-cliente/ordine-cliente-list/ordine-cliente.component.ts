@@ -83,6 +83,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
           } else {
             if (localStorage.getItem(environment.LOGISTICA)) {
               this.filtro.status = 'COMPLETO';
+              this.filtro.size = 30;
             } else if (localStorage.getItem(environment.AMMINISTRATIVO)){
               this.filtro.status = 'DA_ORDINARE';
             } else {
