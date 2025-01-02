@@ -51,6 +51,7 @@
     <mat-menu #logistica="matMenu">
       <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Pronto consegna</button>
       <button mat-menu-item class="pointer" [routerLink]="['/logistica-ordini']">Gestione consegne</button>
+      <button mat-menu-item class="pointer" [routerLink]="['/consegne-settimanali']">Consegne settimanali</button>
     </mat-menu>
     <button mat-button  *ngIf="isAdmin || isVenditore || isLogistica"  [matMenuTriggerFor]="monitor">Analisi dati</button>
     <mat-menu #monitor="matMenu">

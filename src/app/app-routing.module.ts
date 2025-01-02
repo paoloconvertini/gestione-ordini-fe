@@ -23,6 +23,7 @@ import {ListaCarichiComponent} from "./components/lista-carichi/lista-carichi.co
 import {ListaCarichiDettaglioComponent} from "./components/lista-carichi-dettaglio/lista-carichi-dettaglio.component";
 import {DepositoComponent} from "./components/deposito/deposito.component";
 import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/lista-carichi-inviati.component";
+import {ConsegneSettimanaliComponent} from "./components/consegne-settimanali/consegne-settimanali.component";
 
 const routes: Routes = [
   {
@@ -56,7 +57,17 @@ const routes: Routes = [
     component: ListaComponent,
   },
   {
+    path: 'consegne-settimanali',
+    canActivate: [AuthGuard],
+    component: ConsegneSettimanaliComponent,
+  },
+  {
     path: 'ordini-clienti/:status/:page/:size',
+    canActivate: [AuthGuard],
+    component: OrdineClienteComponent,
+  },
+  {
+    path: 'ordini-clienti/:status',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
   },

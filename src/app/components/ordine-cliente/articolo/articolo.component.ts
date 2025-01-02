@@ -220,7 +220,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
               }
-              this.route.navigate(['/ordini-clienti']);
+              this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
             },
             error: (e) => {
               console.error(e);
@@ -388,7 +388,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             dialogRef.afterClosed().subscribe(result => {
 
             });
-            this.route.navigate(['/ordini-clienti', 'DA_ORDINARE']);
+            this.route.navigate(['/ordini-clienti', 'DA_ORDINARE', this.filtro.page, this.filtro.size]);
           } else if (res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
