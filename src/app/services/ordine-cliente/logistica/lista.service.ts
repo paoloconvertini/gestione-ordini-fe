@@ -20,6 +20,10 @@ export class ListaService extends CommonService{
     return this.http.post<any>(`${this.url}/consegne`, filtro);
   }
 
+  getConsegneSettimanali(filtro:any): Observable<any> {
+    return this.http.post<any>(`${this.url}/consegne-settimanali`, filtro);
+  }
+
   updateVeicolo(articolo: any): Observable<any> {
     return this.http.put(`${this.url}/updateVeicolo`, articolo);
   }
