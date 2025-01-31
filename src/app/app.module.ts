@@ -78,6 +78,7 @@ import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/l
 import { AggiornaDataConsegnaDialogComponent } from './components/aggiorna-data-consegna-dialog/aggiorna-data-consegna-dialog.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import { ConsegneSettimanaliComponent } from './components/consegne-settimanali/consegne-settimanali.component';
+import { ConsegneSettimanaliDettaglioDialogComponent } from './components/consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -129,7 +130,8 @@ export const DateFormats = {
     ListaCarichiDettaglioComponent,
     DepositoComponent,
     AggiornaDataConsegnaDialogComponent,
-    ConsegneSettimanaliComponent
+    ConsegneSettimanaliComponent,
+    ConsegneSettimanaliDettaglioDialogComponent
   ],
     imports: [
         MatDatepickerModule,

@@ -8,7 +8,6 @@ import {takeUntil} from "rxjs";
 import {ListaCarichiService} from "../../services/lista-carichi/lista-carichi.service";
 import {Deposito} from "../../models/deposito";
 import {Trasportatore} from "../../models/trasportatore";
-import {MatExpansionPanel} from "@angular/material/expansion";
 
 @Component({
   selector: 'app-lista-carichi-dettaglio',

@@ -204,13 +204,7 @@
 }
 
 .evento {
-  /*position: absolute;
-
-  margin-left: -1px;
-  margin-top: 1px;
-  top: 739px;
-  height: 38px;
-  */
+  cursor: pointer;
   border-radius: 6px;
   outline: none;
   left: calc(0% + 0px);
@@ -221,8 +215,8 @@
 }
 
 .pomeriggio {
-  background-color: #e1a45d;
-  border-color: #e1a45d;
+  background-color: #eb8309;
+  border-color: #eb8309;
 }
 
 .evento-title{

@@ -1,0 +1,48 @@
+<div mat-dialog-title>
+  N. ord: <b>{{data.anno}}/{{data.serie}}/{{data.progressivo}}</b> - {{data.intestazione}}
+</div>
+<div class="row">
+  <div class="col-lg-12 col-md-11 col-sm-12">
+    <section class="container mat-elevation-z8" tabindex="0">
+      <mat-spinner *ngIf="loaderDettaglio" class="loader"></mat-spinner>
+      <table class="table" *ngIf="!loaderDettaglio">
+        <thead>
+        <tr>
+          <th>Cod.:</th>
+          <th>Cod. forn.:</th>
+          <th>Descr.:</th>
+          <th>Qta da cons.:</th>
+          <th>Qta tot.:</th>
+          <th>U.M.:</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let articolo of articoli">
+          <td>{{articolo.farticolo}}</td>
+          <td>{{articolo.codArtFornitore}}</td>
+          <td>{{articolo.fdescrArticolo}}</td>
+          <td>
+            <span *ngIf="mostraNonDisponibile(articolo) === 0">{{articolo.qtaDaConsegnare | number : '1.2-2'}}</span>
+            <span *ngIf="mostraNonDisponibile(articolo) === 1">N.D.</span>
+            <span *ngIf="mostraNonDisponibile(articolo) === 2"></span>
+          </td>
+          <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.quantita | number : '1.2-2'}}</span></td>
+          <td>{{articolo.funitaMisura}}</td>
+          <td>
+            <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-button
+                     matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                                {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+              <mat-icon aria-hidden="false"
+                        aria-label="nota ordine fornitore">store</mat-icon>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div mat-dialog-actions>
+        <button mat-raised-button  (click)="chiudi()">Chiudi</button>
+      </div>
+    </section>
+  </div>
+</div>

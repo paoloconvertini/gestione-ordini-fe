@@ -14,6 +14,14 @@ import {environment} from "../../../environments/environment";
 import {FiltroOrdini} from "../../models/FiltroOrdini";
 import {ListaService} from "../../services/ordine-cliente/logistica/lista.service";
 import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
+import {OrdineCliente} from "../../models/ordine-cliente";
+import {ArticoloCliente} from "../../models/ArticoloCliente";
+import {ConsegneGiornaliere} from "../../models/ConsegneGiornaliere";
+import {ArticoloService} from "../../services/ordine-cliente/articolo/articolo.service";
+import {HistoryDialogComponent} from "../history-dialog/history-dialog.component";
+import {
+  ConsegneSettimanaliDettaglioDialogComponent
+} from "../consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component";
 
 @Component({
   selector: 'app-consegne-settimanali',
@@ -37,6 +45,7 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
                   private scrollPositionService: ScrollPositionService,
                   private authService: AuthService, private activatedRoute: ActivatedRoute,
                   private emailService: EmailService, private service: ListaService,
+                  private articoloService: ArticoloService,
                   private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
@@ -71,6 +80,16 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
           this.loader = false;
         }
       })
+  }
+
+  dettaglio(consegna: any) {
+    this.dialog.open(ConsegneSettimanaliDettaglioDialogComponent, {
+      width: '90%',
+      data: consegna,
+      autoFocus: false,
+      maxHeight: '90vh' //you can adjust the value as per your view
+    });
+
   }
 
 }

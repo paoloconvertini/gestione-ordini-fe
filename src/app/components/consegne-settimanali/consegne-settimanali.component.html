@@ -57,14 +57,21 @@
                     <div class="grid-cell">
                       <div *ngFor="let consegna of consegne.lunedi.consegne; index as i">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }">
+                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
                             <div class="evento-title">
-                              <div class="evento-indirizzo"><b>{{consegna.localita}}</b>,&nbsp;{{consegna.indirizzo}}</div>
+                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
+                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
                               <div class="evento-intestazione">
-                                {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}} - {{consegna.intestazione}}
+                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
                               </div>
                               <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}} - Cell.:{{consegna.cellulare}}
+                                {{consegna.intestazione}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Tel.: {{consegna.telefono}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Cell.:{{consegna.cellulare}}
                               </div>
                               <div class="evento-intestazione">
                                 {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
@@ -78,14 +85,21 @@
                     <div class="grid-cell">
                       <div *ngFor="let consegna of consegne.martedi.consegne; index as i">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }">
+                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
                             <div class="evento-title">
-                              <div class="evento-indirizzo"><b>{{consegna.localita}}</b>,&nbsp;{{consegna.indirizzo}}</div>
+                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
+                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
                               <div class="evento-intestazione">
-                                {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}} - {{consegna.intestazione}}
+                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
                               </div>
                               <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}} - Cell.:{{consegna.cellulare}}
+                                {{consegna.intestazione}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Tel.: {{consegna.telefono}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Cell.:{{consegna.cellulare}}
                               </div>
                               <div class="evento-intestazione">
                                 {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
@@ -99,14 +113,21 @@
                     <div class="grid-cell">
                       <div *ngFor="let consegna of consegne.mercoledi.consegne; index as i">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }">
+                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
                             <div class="evento-title">
-                              <div class="evento-indirizzo"><b>{{consegna.localita}}</b>,&nbsp;{{consegna.indirizzo}}</div>
+                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
+                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
                               <div class="evento-intestazione">
-                                {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}} - {{consegna.intestazione}}
+                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
                               </div>
                               <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}} - Cell.:{{consegna.cellulare}}
+                                {{consegna.intestazione}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Tel.: {{consegna.telefono}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Cell.:{{consegna.cellulare}}
                               </div>
                               <div class="evento-intestazione">
                                 {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
@@ -120,14 +141,21 @@
                     <div class="grid-cell">
                       <div *ngFor="let consegna of consegne.giovedi.consegne; index as i">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }">
+                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
                             <div class="evento-title">
-                              <div class="evento-indirizzo"><b>{{consegna.localita}}</b>,&nbsp;{{consegna.indirizzo}}</div>
+                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
+                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
                               <div class="evento-intestazione">
-                                {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}} - {{consegna.intestazione}}
+                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
                               </div>
                               <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}} - Cell.:{{consegna.cellulare}}
+                                {{consegna.intestazione}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Tel.: {{consegna.telefono}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Cell.:{{consegna.cellulare}}
                               </div>
                               <div class="evento-intestazione">
                                 {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
@@ -141,14 +169,21 @@
                     <div class="grid-cell">
                       <div *ngFor="let consegna of consegne.venerdi.consegne; index as i">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }">
+                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
                             <div class="evento-title">
-                              <div class="evento-indirizzo"><b>{{consegna.localita}}</b>,&nbsp;{{consegna.indirizzo}}</div>
+                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
+                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
                               <div class="evento-intestazione">
-                                {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}} - {{consegna.intestazione}}
+                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
                               </div>
                               <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}} - Cell.:{{consegna.cellulare}}
+                                {{consegna.intestazione}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Tel.: {{consegna.telefono}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Cell.:{{consegna.cellulare}}
                               </div>
                               <div class="evento-intestazione">
                                 {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
@@ -162,14 +197,21 @@
                     <div class="grid-cell">
                       <div *ngFor="let consegna of consegne.sabato.consegne; index as i">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }">
+                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
                             <div class="evento-title">
-                              <div class="evento-indirizzo"><b>{{consegna.localita}}</b>,&nbsp;{{consegna.indirizzo}}</div>
+                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
+                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
                               <div class="evento-intestazione">
-                                {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}} - {{consegna.intestazione}}
+                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
                               </div>
                               <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}} - Cell.:{{consegna.cellulare}}
+                                {{consegna.intestazione}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Tel.: {{consegna.telefono}}
+                              </div>
+                              <div class="evento-intestazione">
+                                Cell.:{{consegna.cellulare}}
                               </div>
                               <div class="evento-intestazione">
                                 {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
