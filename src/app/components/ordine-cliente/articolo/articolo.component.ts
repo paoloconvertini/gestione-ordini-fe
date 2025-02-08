@@ -27,7 +27,6 @@ import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.compon
 import {CollegaOAFDialogComponent} from "../../collega-oaf-dialog/collega-oaf-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
-import {OrdineCliente} from "../../../models/ordine-cliente";
 import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-magazzino.service";
 import {CaricoMagazzinoDialogComponent} from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
 
