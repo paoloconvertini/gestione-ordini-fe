@@ -28,6 +28,8 @@ import {CollegaOAFDialogComponent} from "../../collega-oaf-dialog/collega-oaf-di
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
 import {OrdineCliente} from "../../../models/ordine-cliente";
+import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-magazzino.service";
+import {CaricoMagazzinoDialogComponent} from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
 
 export interface Option {
   name: string,
@@ -112,7 +114,10 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     this.getArticoliByOrdineId();
   }
 
-  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService, private service: ArticoloService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private router: ActivatedRoute) {
+  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService,
+              private service: ArticoloService, private dialog: MatDialog,
+              private snackbar: MatSnackBar, private route: Router, private router: ActivatedRoute,
+              private saldiMagazzinoService: SaldiMagazzinoService) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -845,5 +850,38 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     articolo.flProntoConsegna = false;
     articolo.qtaRiservata = undefined;
     articolo.qtaProntoConsegna = undefined;
+  }
+
+  caricaMagazzino() {
+    const list = this.selection.selected.filter(a => a.farticolo !== '*PZ' &&
+      a.farticolo !== '*MQ' && a.farticolo !== '*ML');
+    const dialogRef = this.dialog.open(CaricoMagazzinoDialogComponent, {
+      width: '70%'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        this.loader = true;
+        result.articoli = list;
+        this.saldiMagazzinoService.caricaMagazzino(result).pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res) => {
+              this.loader = false;
+              if (res && !res.error) {
+                this.snackbar.open(res.msg, 'Chiudi', {
+                  horizontalPosition: 'center', verticalPosition: 'top'
+                });
+              } else {
+                this.snackbar.open('Errore! Carico di magazzino non creato', 'Chiudi', {
+                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                });
+                this.loader = false;
+              }
+            }, error: ()=> {
+              this.loader = false;
+        }
+          })
+      }
+    });
+
   }
 }

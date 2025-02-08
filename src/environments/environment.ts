@@ -22,6 +22,7 @@ export const environment = {
   REGISTRO: "registro",
   EMAIL: "mail",
   OAF: 'oaf',
+  SALDI_MAGAZINO: 'saldi-magazzino',
   OAF_ARTICOLI: '/articoli',
   PIANOCONTI: 'pianoconti',
   USER: 'users',

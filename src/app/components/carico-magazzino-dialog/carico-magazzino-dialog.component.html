@@ -1,0 +1,56 @@
+<form (ngSubmit)="submitForm()" [formGroup]="caricoMagForm" class="">
+  <div class="container">
+    <h5 class="title">Carico Magazzino</h5>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>
+            Numero Documento
+          </mat-label>
+          <input
+            [ngModel]="output.numDoc"
+            matInput
+            placeholder="Ex. 2023"
+            formControlName="numDoc"
+            required
+            type="number"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field appearance="fill">
+          <mat-label>Scegli una data</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="output.dataOperazione"
+                 formControlName="dataOperazione">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>Vettore</mat-label>
+          <mat-select formControlName="vettore" [(value)]="output.vettore">
+            <mat-option *ngFor="let option of vettori" [value]="option.id">
+              {{option.id}} - {{option.nome}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
+        <mat-form-field>
+          <mat-label>Causale</mat-label>
+          <mat-select formControlName="causale" [(value)]="output.causale">
+            <mat-option *ngFor="let option of causali" [value]="option.id">
+              {{option.id}} - {{option.nome}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="float-end">
+      <button mat-raised-button type="button" (click)="chiudi()">Annulla</button>&nbsp;&nbsp;
+      <button mat-raised-button color="primary" type="submit">Salva</button>
+    </div>
+  </div>
+</form>
+

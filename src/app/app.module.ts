@@ -79,6 +79,7 @@ import { AggiornaDataConsegnaDialogComponent } from './components/aggiorna-data-
 import {MatExpansionModule} from "@angular/material/expansion";
 import { ConsegneSettimanaliComponent } from './components/consegne-settimanali/consegne-settimanali.component';
 import { ConsegneSettimanaliDettaglioDialogComponent } from './components/consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component';
+import { CaricoMagazzinoDialogComponent } from './components/carico-magazzino-dialog/carico-magazzino-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -131,7 +132,8 @@ export const DateFormats = {
     DepositoComponent,
     AggiornaDataConsegnaDialogComponent,
     ConsegneSettimanaliComponent,
-    ConsegneSettimanaliDettaglioDialogComponent
+    ConsegneSettimanaliDettaglioDialogComponent,
+    CaricoMagazzinoDialogComponent
   ],
     imports: [
         MatDatepickerModule,
