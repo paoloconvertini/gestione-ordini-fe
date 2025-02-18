@@ -261,7 +261,7 @@
           *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !isMagazziniere && !isAdmin && !isAmministrativo) || status === 'ARCHIVIATO'">{{articolo.tono}}</span>
               <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && (isMagazziniere || isAdmin || isAmministrativo) && status !== 'ARCHIVIATO'" type="text"
                      class="form-control input"
-                     [(ngModel)]="articolo.tono"/>
+                     [(ngModel)]="articolo.tono" maxlength="10"/>
             </td>
           </ng-container>
           <!-- Name Column -->
