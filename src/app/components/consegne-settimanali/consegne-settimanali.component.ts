@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonListComponent} from "../commonListComponent";
 import {BaseComponent} from "../baseComponent";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ViewportScroller} from "@angular/common";
 import {ScrollPositionService} from "../../services/scroll-position.service";
 import {AuthService} from "../../services/auth/auth.service";
 import {EmailService} from "../../services/email/email.service";
-import {OrdineClienteService} from "../../services/ordine-cliente/list/ordine-cliente.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {takeUntil} from "rxjs";
@@ -14,14 +12,13 @@ import {environment} from "../../../environments/environment";
 import {FiltroOrdini} from "../../models/FiltroOrdini";
 import {ListaService} from "../../services/ordine-cliente/logistica/lista.service";
 import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
-import {OrdineCliente} from "../../models/ordine-cliente";
-import {ArticoloCliente} from "../../models/ArticoloCliente";
-import {ConsegneGiornaliere} from "../../models/ConsegneGiornaliere";
 import {ArticoloService} from "../../services/ordine-cliente/articolo/articolo.service";
-import {HistoryDialogComponent} from "../history-dialog/history-dialog.component";
 import {
   ConsegneSettimanaliDettaglioDialogComponent
 } from "../consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component";
+import {NotaConsegna} from "../../models/NotaConsegna";
+import {NotaConsegnaService} from "../../services/nota-consegna/nota-consegna.service";
+const moment = require('moment');
 
 @Component({
   selector: 'app-consegne-settimanali',
@@ -39,8 +36,14 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
   filtro: FiltroOrdini = new FiltroOrdini();
   user: any;
   consegne: ConsegneSettimanali = new ConsegneSettimanali();
+  notaConsegnaLun: NotaConsegna = new NotaConsegna();
+  notaConsegnaMar: NotaConsegna = new NotaConsegna();
+  notaConsegnaMer: NotaConsegna = new NotaConsegna();
+  notaConsegnaGiov: NotaConsegna = new NotaConsegna();
+  notaConsegnaVen: NotaConsegna = new NotaConsegna();
+  notaConsegnaSab: NotaConsegna = new NotaConsegna();
 
-  constructor(    private router: Router,
+  constructor(    private notaConsegnaService: NotaConsegnaService, private router: Router,
                   private viewportScroller: ViewportScroller,
                   private scrollPositionService: ScrollPositionService,
                   private authService: AuthService, private activatedRoute: ActivatedRoute,
@@ -76,10 +79,91 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
       .subscribe({
         next: (data: any | undefined) => {
           this.consegne = data;
-//          this.dataSource.data = data.list;
+          if(this.consegne.lunedi.consegne && this.consegne.lunedi.consegne.length > 0) {
+            this.getNotaConsegna( this.consegne.lunedi.consegne[0].dataConsegna, 1);
+          }
+          if(this.consegne.martedi.consegne && this.consegne.martedi.consegne.length > 0) {
+            this.getNotaConsegna( this.consegne.martedi.consegne[0].dataConsegna, 2);
+          }
+
+          if(this.consegne.mercoledi.consegne && this.consegne.mercoledi.consegne.length > 0) {
+            this.getNotaConsegna( this.consegne.mercoledi.consegne[0].dataConsegna, 3);
+          }
+
+          if(this.consegne.giovedi.consegne && this.consegne.giovedi.consegne.length > 0) {
+            this.getNotaConsegna( this.consegne.giovedi.consegne[0].dataConsegna, 4);
+          }
+
+          if(this.consegne.venerdi.consegne && this.consegne.venerdi.consegne.length > 0) {
+            this.getNotaConsegna( this.consegne.venerdi.consegne[0].dataConsegna, 5);
+          }
+          if(this.consegne.sabato.consegne && this.consegne.sabato.consegne.length > 0) {
+            this.getNotaConsegna( this.consegne.sabato.consegne[0].dataConsegna, 6);
+          }
           this.loader = false;
         }
       })
+  }
+
+
+  getNotaConsegna(date: any, giorno:number): void {
+    date = moment(date);
+    let data = date.format('DDMMyyyy');
+    this.notaConsegnaService.getNota(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data: any) => {
+        switch (giorno) {
+          case 1: {
+            if(data) {
+              this.notaConsegnaLun = data;
+            } else {
+              this.notaConsegnaLun = new NotaConsegna();
+            }
+            break;
+          }
+          case 2: {
+            if(data) {
+              this.notaConsegnaMar = data;
+            } else {
+              this.notaConsegnaMar = new NotaConsegna();
+            }
+            break;
+          }
+          case 3: {
+            if(data) {
+              this.notaConsegnaMer = data;
+            } else {
+              this.notaConsegnaMer = new NotaConsegna();
+            }
+            break;
+          }
+          case 4: {
+            if(data) {
+              this.notaConsegnaGiov = data;
+            } else {
+              this.notaConsegnaGiov = new NotaConsegna();
+            }
+            break;
+          }
+          case 5: {
+            if(data) {
+              this.notaConsegnaVen = data;
+            } else {
+              this.notaConsegnaVen = new NotaConsegna();
+            }
+            break;
+          }
+          case 6: {
+            if(data) {
+              this.notaConsegnaSab = data;
+            } else {
+              this.notaConsegnaSab = new NotaConsegna();
+            }
+            break;
+          }
+        }
+
+      }
+    })
   }
 
   dettaglio(consegna: any) {

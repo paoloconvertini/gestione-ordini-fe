@@ -33,6 +33,7 @@
   flex-direction: column;
   overflow: hidden;
   --column-view-ewl-rows: 0;
+  overflow-y: scroll;
 }
 
 .grid2 {

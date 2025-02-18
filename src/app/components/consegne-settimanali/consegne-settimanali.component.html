@@ -10,42 +10,89 @@
                 <div class="giorni-box">
                   <h2 class="titolo">
                     <div aria-hidden="true" class="giorno-sett">Lun</div>
-                    <div class="giorno-num"><span *ngIf="consegne.lunedi.consegne && consegne.lunedi.consegne.length > 0">{{consegne.lunedi.consegne[0].dataConsegna | date:'d'}}</span></div>
+                    <div class="giorno-num">
+                      <span *ngIf="consegne.lunedi.consegne && consegne.lunedi.consegne.length > 0">
+                        {{consegne.lunedi.consegne[0].dataConsegna | date:'d'}}
+                      </span>
+                      <button  *ngIf="notaConsegnaLun && notaConsegnaLun.id" mat-icon-button
+                               matTooltip="{{notaConsegnaLun.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        <mat-icon aria-hidden="false"
+                          aria-label="nota consegna"
+                          color="primary">announcement</mat-icon>
+                      </button>
+                    </div>
                   </h2>
                 </div>
                 <!--  MARTEDI-->
                 <div class="giorni-box">
                   <h2 class="titolo">
                     <div aria-hidden="true" class="giorno-sett">Mar</div>
-                    <div class="giorno-num"><span *ngIf="consegne.martedi.consegne && consegne.martedi.consegne.length > 0">{{consegne.martedi.consegne[0].dataConsegna | date:'d'}}</span></div>
+                    <div class="giorno-num"><span *ngIf="consegne.martedi.consegne && consegne.martedi.consegne.length > 0">{{consegne.martedi.consegne[0].dataConsegna | date:'d'}}</span>
+                      <button  *ngIf="notaConsegnaMar && notaConsegnaMar.id" mat-icon-button
+                               matTooltip="{{notaConsegnaMar.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        <mat-icon aria-hidden="false"
+                                  aria-label="nota consegna"
+                                  color="primary">announcement</mat-icon>
+                      </button>
+                    </div>
                   </h2>
                 </div>
                 <!--  MERCOLEDI-->
                 <div class="giorni-box">
                   <h2 class="titolo">
                     <div aria-hidden="true" class="giorno-sett">Mer</div>
-                    <div class="giorno-num"><span *ngIf="consegne.mercoledi.consegne && consegne.mercoledi.consegne.length > 0">{{consegne.mercoledi.consegne[0].dataConsegna | date:'d'}}</span></div>
+                    <div class="giorno-num">
+                      <span *ngIf="consegne.mercoledi.consegne && consegne.mercoledi.consegne.length > 0">{{consegne.mercoledi.consegne[0].dataConsegna | date:'d'}}
+                      </span>
+                      <button  *ngIf="notaConsegnaMer && notaConsegnaMer.id" mat-icon-button
+                               matTooltip="{{notaConsegnaMer.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        <mat-icon aria-hidden="false"
+                                  aria-label="nota consegna"
+                                  color="primary">announcement</mat-icon>
+                      </button>
+                    </div>
                   </h2>
                 </div>
                 <!--  GIOVEDI-->
                 <div class="giorni-box">
                   <h2 class="titolo">
                     <div aria-hidden="true" class="giorno-sett">Gio</div>
-                    <div class="giorno-num"><span *ngIf="consegne.giovedi.consegne && consegne.giovedi.consegne.length > 0">{{consegne.giovedi.consegne[0].dataConsegna | date:'d'}}</span></div>
+                    <div class="giorno-num"><span *ngIf="consegne.giovedi.consegne && consegne.giovedi.consegne.length > 0">{{consegne.giovedi.consegne[0].dataConsegna | date:'d'}}</span>
+                      <button  *ngIf="notaConsegnaGiov && notaConsegnaGiov.id" mat-icon-button
+                               matTooltip="{{notaConsegnaGiov.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        <mat-icon aria-hidden="false"
+                                  aria-label="nota consegna"
+                                  color="primary">announcement</mat-icon>
+                      </button>
+                    </div>
                   </h2>
                 </div>
                 <!--  VENERDI-->
                 <div class="giorni-box">
                   <h2 class="titolo">
                     <div aria-hidden="true" class="giorno-sett">Ven</div>
-                    <div class="giorno-num"><span *ngIf="consegne.venerdi.consegne && consegne.venerdi.consegne.length > 0">{{consegne.venerdi.consegne[0].dataConsegna | date:'d'}}</span></div>
+                    <div class="giorno-num"><span *ngIf="consegne.venerdi.consegne && consegne.venerdi.consegne.length > 0">{{consegne.venerdi.consegne[0].dataConsegna | date:'d'}}</span>
+                      <button  *ngIf="notaConsegnaVen && notaConsegnaVen.id" mat-icon-button
+                               matTooltip="{{notaConsegnaVen.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        <mat-icon aria-hidden="false"
+                                  aria-label="nota consegna"
+                                  color="primary">announcement</mat-icon>
+                      </button>
+                    </div>
                   </h2>
                 </div>
                 <!--  SABATO-->
                 <div class="giorni-box">
                   <h2 class="titolo">
                     <div aria-hidden="true" class="giorno-sett">Sab</div>
-                    <div class="giorno-num"><span *ngIf="consegne.sabato.consegne && consegne.sabato.consegne.length > 0">{{consegne.sabato.consegne[0].dataConsegna | date:'d'}}</span></div>
+                    <div class="giorno-num"><span *ngIf="consegne.sabato.consegne && consegne.sabato.consegne.length > 0">{{consegne.sabato.consegne[0].dataConsegna | date:'d'}}</span>
+                      <button  *ngIf="notaConsegnaSab && notaConsegnaSab.id" mat-icon-button
+                               matTooltip="{{notaConsegnaSab.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                        <mat-icon aria-hidden="false"
+                                  aria-label="nota consegna"
+                                  color="primary">announcement</mat-icon>
+                      </button>
+                    </div>
                   </h2>
                 </div>
               </div>
