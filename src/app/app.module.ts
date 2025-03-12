@@ -80,6 +80,11 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { ConsegneSettimanaliComponent } from './components/consegne-settimanali/consegne-settimanali.component';
 import { ConsegneSettimanaliDettaglioDialogComponent } from './components/consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component';
 import { CaricoMagazzinoDialogComponent } from './components/carico-magazzino-dialog/carico-magazzino-dialog.component';
+import { FatturaAccontoDialogComponent } from './components/fattura-acconto-dialog/fattura-acconto-dialog.component';
+import {MatStepperModule} from "@angular/material/stepper";
+import { FatturaAccontoStepComponent } from './components/fattura-acconto-step/fattura-acconto-step.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatSliderModule} from "@angular/material/slider";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -133,51 +138,56 @@ export const DateFormats = {
     AggiornaDataConsegnaDialogComponent,
     ConsegneSettimanaliComponent,
     ConsegneSettimanaliDettaglioDialogComponent,
-    CaricoMagazzinoDialogComponent
+    CaricoMagazzinoDialogComponent,
+    FatturaAccontoDialogComponent,
+    FatturaAccontoStepComponent
   ],
-    imports: [
-        MatDatepickerModule,
-        MatMomentDateModule,
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatCardModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        HttpClientModule,
-        JwtModule.forRoot({
-            config: {
-                tokenGetter: tokenGetter,
-                allowedDomains: ['localhost:8080', 'localhost:8081', 'localhost:8082', 'localhost:8083',
-                    '192.168.1.126:8080', '192.168.1.126:8181', '192.168.1.126:8082', '192.168.1.126:8083',
-                    '192.168.1.60:8080', '192.168.1.60:8081', '192.168.1.60:8082', '192.168.1.60:8083',
-                    '192.168.1.56:8080', '192.168.1.56:8081', '192.168.1.56:8082', '192.168.1.56:8083']
-            }
-        }),
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatCheckboxModule,
-        FormsModule,
-        MatTooltipModule,
-        MatGridListModule,
-        MatRadioModule,
-        MatSidenavModule,
-        MatMenuModule,
-        MatAutocompleteModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatMomentDateModule,
-        MatSortModule,
-        MatSelectModule,
-        MatExpansionModule
-    ],
+  imports: [
+    MatDatepickerModule,
+    MatMomentDateModule,
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:8080', 'localhost:8081', 'localhost:8082', 'localhost:8083',
+          '192.168.1.126:8080', '192.168.1.126:8181', '192.168.1.126:8082', '192.168.1.126:8083',
+          '192.168.1.60:8080', '192.168.1.60:8081', '192.168.1.60:8082', '192.168.1.60:8083',
+          '192.168.1.56:8080', '192.168.1.56:8081', '192.168.1.56:8082', '192.168.1.56:8083']
+      }
+    }),
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatTooltipModule,
+    MatGridListModule,
+    MatRadioModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatMomentDateModule,
+    MatSortModule,
+    MatSelectModule,
+    MatExpansionModule,
+    MatStepperModule,
+    MatTabsModule,
+    MatSliderModule
+  ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
     {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },

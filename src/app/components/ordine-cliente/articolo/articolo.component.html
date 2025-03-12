@@ -1,11 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-4 col-md-4 col-sm-12">
-      <button mat-raised-button (click)="annulla()" color="primary" matTooltip="Indietro">
-        <mat-icon>arrow_back</mat-icon>Indietro
-      </button>
-    </div>
-    <div class="col-lg-4 col-md-4 col-sm-12 ordine-title">
+    <div class="col-lg-12 col-md-12 col-sm-12 ordine-title">
       DETTAGLIO ORDINE
       <span *ngIf="status==='DA_PROCESSARE'"> DA PROCESSARE</span>
       <span *ngIf="status==='DA_ORDINARE'"> DA ORDINARE</span>
@@ -14,10 +9,32 @@
       <span *ngIf="status==='COMPLETO'"> COMPLETO</span>
       <span *ngIf="status==='ARCHIVIATO'"> ARCHIVIATO</span>
     </div>
-    <div class="col-lg-4 col-md-4 col-sm-12">
-      <button (click)="aggiungiNoteLogistica(ordineDettaglio)" mat-raised-button [matTooltip]="ordineDettaglio.noteLogistica" matTooltipClass="note">
+    <div class="col-lg-12 col-md-4 col-sm-12">
+      <button class="button-row" mat-raised-button (click)="annulla()" color="primary" matTooltip="Indietro">
+        <mat-icon>arrow_back</mat-icon>Indietro
+      </button>
+      <button class="button-row" *ngIf="(isAmministrativo || isAdmin) && status === 'DA_ORDINARE'" mat-raised-button color="primary" (click)="creaOrdineForn()">
+        Crea Ordine a forn.
+      </button>
+      <button class="button-row" *ngIf="(isAmministrativo || isAdmin)" [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="caricaMagazzino()">
+        Carica Mag.
+      </button>
+      <button class="button-row" *ngIf="(isAmministrativo || isAdmin)" mat-raised-button color="primary" (click)="codificaArticoli()">
+        Codifica art.
+      </button>
+      <button class="button-row" *ngIf="(isAmministrativo || isAdmin)" mat-raised-button color="primary" (click)="creaFatturaAcconto()">
+        Crea Fatt. Acconto
+      </button>
+      <button class="button-row" *ngIf="isLogistica || isAdmin" [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()">
+        Crea Bolla
+      </button>
+      <button class="button-row" [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="cercaSchedeTecniche()" >
+        Schede tecnica <mat-icon>download</mat-icon>
+      </button>
+      <button class="button-row" *ngIf="isLogistica || isAdmin"  (click)="aggiungiNoteLogistica(ordineDettaglio)" mat-raised-button
+              [matTooltip]="(ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL') ? ordineDettaglio.noteLogistica : ''" matTooltipClass="note">
         <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
-                  [ngClass]="{'nota-logistica-presente':ordineDettaglio.noteLogistica}" class="icon-detail logistica"></mat-icon>
+                  [ngClass]="{'nota-logistica-presente':ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL'}" class="icon-detail logistica"></mat-icon>
       </button>
     </div>
   </div>
@@ -111,34 +128,7 @@
         Reset
       </button>
     </div>
-    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-2 col-md-4 col-sm-12 text-center">
-      <button mat-raised-button color="primary" (click)="creaOrdineForn()" class="">
-        Crea Ordine a forn.
-      </button>
-    </div>
-    <div *ngIf="isAmministrativo || isAdmin" class="col-lg-2 col-md-4 col-sm-12 text-center">
-      <button [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="caricaMagazzino()" class="">
-        Carica Mag.
-      </button>
-    </div>
-    <div *ngIf="isLogistica || isAdmin" class="col-lg-2 col-md-4 col-sm-12 text-center">
-      <button [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()" class="">
-        Crea Bolla
-      </button>
-    </div>
-    <div class="col-lg-2 col-md-4 col-sm-12 text-center">
-      <button [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="cercaSchedeTecniche()" >
-        Schede tecnica <mat-icon>download</mat-icon>
-      </button>
-    </div>
-    <div *ngIf="isAmministrativo || isAdmin" class="col-lg-2 col-md-4 col-sm-12 text-center">
-      <button mat-raised-button color="primary" (click)="codificaArticoli()">
-        Codifica art.
-      </button>
-    </div>
-  </div>
-  <div class="row margin-bottom" >
-    <div *ngIf="isAmministrativo && status === 'DA_ORDINARE'" class="col-lg-3 col-md-6 col-sm-12">
+    <div *ngIf="(isAmministrativo || isAdmin) && status === 'DA_ORDINARE'" class="col-lg-3 col-md-6 col-sm-12">
       <mat-radio-group
         (change)="getArticoliByOrdineId()"
         aria-label="Select an option" [(ngModel)]="filtroArticoli.flNonDisponibile">
@@ -147,7 +137,7 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
-    <div *ngIf="status !== 'ARCHIVIATO' && !isAmministrativo" class="col-lg-8 col-md-12 col-sm-12">
+    <div *ngIf="status !== 'ARCHIVIATO' && !isAmministrativo" class="col-lg-5 col-md-12 col-sm-12">
       <mat-radio-group (change)="getArticoliByOrdineId()"
                        aria-label="Select an option" [(ngModel)]="filtroArticoli.flConsegna">
         <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"

@@ -59,4 +59,8 @@ export class OrdineClienteService extends CommonService{
   getOrdiniClienteNonOrdinati(): Observable<any> {
     return this.http.get(`${this.url}/getOrdiniClienteNonOrdinati`)
   }
+
+  getOrdineFatturaAcconto(anno: any, serie: any, progressivo: any, sottoConto: string) : Observable<any> {
+    return this.http.get(`${this.url}/ordine-fattura-acconto/${anno}/${serie}/${progressivo}/${sottoConto}`)
+  }
 }

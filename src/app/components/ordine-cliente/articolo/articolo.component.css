@@ -149,3 +149,7 @@ mat-card-content {
 .nota-logistica-presente {
   color: #25be32 !important;
 }
+
+.button-row {
+  margin: 0 8px;
+}

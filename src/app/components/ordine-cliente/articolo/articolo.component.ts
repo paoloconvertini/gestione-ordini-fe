@@ -29,6 +29,7 @@ import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.compon
 import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
 import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-magazzino.service";
 import {CaricoMagazzinoDialogComponent} from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
+import { FatturaAccontoDialogComponent } from '../../fattura-acconto-dialog/fattura-acconto-dialog.component';
 
 export interface Option {
   name: string,
@@ -882,5 +883,25 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       }
     });
 
+  }
+
+  creaFatturaAcconto() {
+    this.ordineService.getOrdineFatturaAcconto(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res) {
+            const dialogRef = this.dialog.open(FatturaAccontoDialogComponent, {
+              width: '90%',
+              data: {ordini: res}
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                this.selection.select(...result);
+              }
+            });
+          }
+        }
+      })
   }
 }

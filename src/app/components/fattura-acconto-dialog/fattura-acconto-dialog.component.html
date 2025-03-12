@@ -1,0 +1,47 @@
+<mat-tab-group mat-stretch-tabs class="box mat-elevation-z4">
+  <mat-tab *ngFor="let ordine of ordini; let i = index">
+    <form>
+      <ng-template mat-tab-label>{{ordine.progressivo}}</ng-template>
+      <div *ngIf="ordine.acconto22">
+        Acconto al 22%: {{ordine.acconto22}}
+      </div>
+      <div *ngIf="ordine.acconto10">
+        Acconto al 10%: {{ordine.acconto10}}
+      </div>
+      <div *ngIf="ordine.totale22">
+        Totale ordine al 22%: {{ordine.totale22}}
+      </div>
+      <div *ngIf="ordine.totale10">
+        Totale ordine al 10%: {{ordine.totale10}}
+      </div>
+      <mat-form-field class="input" appearance="fill">
+        <mat-label>Importo</mat-label>
+        <input name="importo" (change)="calcolaIva22();calcolaIva10()" matInput [(ngModel)]="output.importo"  placeholder="1000" required type="number"><br>
+      </mat-form-field>
+      <mat-checkbox name="aSaldo" [(ngModel)]="output.aSaldo" class="example-margin" color="primary">A saldo</mat-checkbox><br>
+      <div *ngIf="!output.aSaldo">
+        <mat-label>Acconto iva 22%</mat-label>
+        <mat-slider
+          class="example-margin"
+          [max]="maxIva22"
+          [min]="0">
+          <input name="iva22" (change)="calcolaIva10()" matSliderThumb [(ngModel)]="output.iva22" #slider>
+        </mat-slider>{{maxIva22}}
+        <mat-form-field class="input" appearance="fill">
+          <input name="iva22" (change)="calcolaIva10()"  matInput [(ngModel)]="output.iva22" placeholder="1000" required type="number"><br>
+        </mat-form-field>
+        <br>
+        <mat-label>Acconto iva 10%</mat-label>
+        <mat-slider
+          class="example-margin"
+          [max]="maxIva10"
+          [min]="0">
+          <input name="iva10" (change)="calcolaIva22()" matSliderThumb [(ngModel)]="output.iva10" #slider2>
+        </mat-slider>{{maxIva10}}
+        <mat-form-field class="input" appearance="fill">
+          <input name="iva10"  (change)="calcolaIva22()"  matInput [(ngModel)]="output.iva10" placeholder="1000" required type="number"><br>
+        </mat-form-field>
+      </div>
+    </form>
+ </mat-tab>
+</mat-tab-group>

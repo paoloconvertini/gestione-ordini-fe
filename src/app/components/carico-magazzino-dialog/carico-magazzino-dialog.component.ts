@@ -26,6 +26,7 @@ export class CaricoMagazzinoDialogComponent extends CommonListComponent implemen
     this.caricoMagForm = this.fb.group({
       numDoc: new FormControl('', Validators.required),
       dataOperazione: new FormControl('', Validators.required),
+      dataDocumento: new FormControl('', Validators.required),
       causale: new FormControl('', Validators.required),
       vettore: new FormControl('', Validators.required),
     });
