@@ -1,0 +1,178 @@
+<mat-stepper linear #stepper>
+  <mat-step [stepControl]="collegaOAFForm" label="Cerca OAF">
+    <form (ngSubmit)="submitForm()" [formGroup]="collegaOAFForm" autocomplete="off" class="">
+      <div class="container">
+        <h5 class="title">
+          Inserisci tutti i campi dell'ordine a fornitore per collegarlo all'articolo {{descr}}
+        </h5>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <mat-form-field>
+              <mat-label>
+                Anno
+              </mat-label>
+              <input
+                [ngModel]="output.annoOAF"
+                matInput
+                placeholder="Ex. 2023"
+                formControlName="annoOAF"
+                required
+                type="number"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <mat-form-field>
+              <mat-label>
+                Serie
+              </mat-label>
+              <input
+                [ngModel]="output.serieOAF"
+                matInput
+                placeholder="Ex. B"
+                formControlName="serieOAF"
+                required
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <mat-form-field>
+              <mat-label>
+                Progressivo
+              </mat-label>
+              <input
+                type="number"
+                [ngModel]="output.progressivoOAF"
+                matInput
+                placeholder="Ex. 13291"
+                formControlName="progressivoOAF"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div>
+          <button mat-button matStepperNext type="submit">Avanti</button>
+        </div>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="oafDetail" label="Seleziona articolo in OAF">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <mat-card class="float-end">
+              <mat-card-content>
+                Numero ordine: <b>{{annoOAF}}/{{serieOAF}}/{{progressivoOAF}}</b><br>
+                Intestazione: <b>{{ordineFornitoreDettaglio.intestazione}} - {{ordineFornitoreDettaglio.sottoConto}}</b><br>
+                Totale: <b>{{ordineFornitoreDettaglio.totale | currency: 'EUR':'symbol'}}</b>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+        <div class="row margin-top">
+          <div class="col-lg-3 col-md-3 col-sm-3">
+            <mat-form-field>
+              <mat-label>Cerca...</mat-label>
+              <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
+            </mat-form-field>
+          </div>
+          <div class="col-lg-1 col-md-1 col-sm-1">
+            <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
+              Reset
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="mat-elevation-z8">
+              <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+              <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let row">
+                    <mat-checkbox color="primary" *ngIf="row.tipoRigo !== 'AC'"
+                                  (click)="$event.stopPropagation();"
+                                  (change)="$event ? selection.toggle(row) : null"
+                                  [checked]="selection.isSelected(row)">
+                    </mat-checkbox>
+                  </td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="codice">
+                  <th mat-header-cell *matHeaderCellDef> Codice</th>
+                  <td mat-cell *matCellDef="let articolo">
+                    <span *ngIf="articolo.tipoRigo !=='C'">{{articolo.oarticolo}}</span>
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="descrizione">
+                  <th mat-header-cell *matHeaderCellDef> Descrizione</th>
+                  <td mat-cell *matCellDef="let articolo">
+                    {{articolo.odescrArticolo}}
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="quantita">
+                  <th mat-header-cell *matHeaderCellDef> Quantità</th>
+                  <td mat-cell *matCellDef="let articolo">
+                    {{articolo.oquantita}}
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="prezzo">
+                  <th mat-header-cell *matHeaderCellDef> Prezzo</th>
+                  <td mat-cell *matCellDef="let articolo">
+                    {{articolo.oprezzo | currency: 'EUR':'symbol'}}
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="sconto">
+                  <th mat-header-cell *matHeaderCellDef> Sconto</th>
+                  <td mat-cell *matCellDef="let articolo">
+                   {{articolo.fscontoArticolo}}&nbsp;{{articolo.scontoF1 }}&nbsp;{{articolo.scontoF2}}&nbsp;{{articolo.fscontoP}}
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="prezzoTot">
+                  <th mat-header-cell *matHeaderCellDef> Prezzo Tot</th>
+                  <td mat-cell *matCellDef="let articolo">
+              <span
+                *ngIf="articolo.tipoRigo !=='C'">{{ articolo.prezzoTot | currency: 'EUR':'symbol'}}</span>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell no-result-list" colspan="4">Nessun
+                    risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}
+                  </td>
+                </tr>
+              </table>
+              <mat-paginator aria-label="Select page of users"></mat-paginator>
+            </div>
+          </div>
+        </div>
+        <div class="row float-end">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <button mat-raised-button color="primary"
+                    (click)="salva()" class="margin-top">Salva
+            </button>&nbsp;&nbsp;
+          </div>
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Indietro</button>
+      </div>
+  </mat-step>
+
+</mat-stepper>
+
+
+
+
+

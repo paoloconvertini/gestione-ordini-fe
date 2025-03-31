@@ -24,7 +24,7 @@ import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
 import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
 import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
-import {CollegaOAFDialogComponent} from "../../collega-oaf-dialog/collega-oaf-dialog.component";
+import {CollegaOAFComponent} from "../../collega-oaf/collega-oaf.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
 import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-magazzino.service";
@@ -776,73 +776,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       })
   }
 
-  verificaQtaOAF(articolo: any) {
-    const dialogRef = this.dialog.open(CollegaOAFDialogComponent, {
-      width: '90%',
-      data: articolo.fdescrArticolo
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loader = true;
-        let data: any = {};
-        data.anno = articolo.anno;
-        data.serie = articolo.serie;
-        data.progressivo = articolo.progressivo;
-        data.annoOAF = result.annoOAF;
-        data.serieOAF = result.serieOAF;
-        data.progressivoOAF = result.progressivoOAF;
-        data.descrArtSuppl = articolo.codArtFornitore;
-        data.qta = articolo.quantita;
-        data.progrGenerale = articolo.progrGenerale;
-        data.codice = articolo.farticolo;
-        data.rigo = articolo.rigo;
-        this.ordineFornitoreService.verificaOAF(data).pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
-            next: (res) => {
-              this.loader = false;
-              if(res.error && res.code === "NO_CONTENT") {
-                this.snackbar.open(res.msg, 'Chiudi', {
-                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-                });
-                return;
-              }
-              if (res.error) {
-                let msg = '';
-                if (res.msg) {
-                  msg += res.msg;
-                }
-                msg += "Sei sicuro di voler collegare l'articolo comunque a questo Ordine a Fornitore?";
-                const dialogRef2 = this.dialog.open(ConfirmDialogComponent, {
-                  width: '30%',
-                  data: {msg: msg},
-                });
-                dialogRef2.afterClosed().subscribe(result => {
-                  if (result) {
-                    this.collegaOAF(data);
-                  }
-                });
-              } else {
-                this.collegaOAF(data);
-              }
-            }
-          });
-      }
-    });
-  }
-
-  collegaOAF(data: any) {
-    this.ordineFornitoreService.collegaOAF(data).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (res) => {
-          this.loader = false;
-          this.snackbar.open(res.msg, 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-          });
-          if (!res.error) {
-            //this.getArticoliByOrdineId();
-          }
-        }
-      });
+  collegaOAF(articolo: any) {
+    this.route.navigate(['/collega-oaf', articolo.progrGenerale, this.filtro.page, this.filtro.size, articolo.anno, articolo.serie, articolo.progressivo, this.status]);
   }
 
   resetQta(articolo: any) {

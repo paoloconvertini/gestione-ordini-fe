@@ -24,6 +24,7 @@ import {ListaCarichiDettaglioComponent} from "./components/lista-carichi-dettagl
 import {DepositoComponent} from "./components/deposito/deposito.component";
 import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/lista-carichi-inviati.component";
 import {ConsegneSettimanaliComponent} from "./components/consegne-settimanali/consegne-settimanali.component";
+import {CollegaOAFComponent} from "./components/collega-oaf/collega-oaf.component";
 
 const routes: Routes = [
   {
@@ -105,6 +106,11 @@ const routes: Routes = [
     path: 'oaf/articoli/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: OafDettaglioComponent,
+  },
+  {
+    path: 'collega-oaf/:progrGenerale/:page/:size/:anno/:serie/:progressivo/:status',
+    canActivate: [AuthGuard],
+    component: CollegaOAFComponent,
   },
   {
     path: 'box-doccia',

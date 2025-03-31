@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CollegaOAFDialogComponent } from './collega-oaf-dialog.component';
+import { CollegaOAFComponent } from './collega-oaf.component';
 
 describe('CollegaOAFDialogComponent', () => {
-  let component: CollegaOAFDialogComponent;
-  let fixture: ComponentFixture<CollegaOAFDialogComponent>;
+  let component: CollegaOAFComponent;
+  let fixture: ComponentFixture<CollegaOAFComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CollegaOAFDialogComponent ]
+      declarations: [ CollegaOAFComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CollegaOAFDialogComponent);
+    fixture = TestBed.createComponent(CollegaOAFComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

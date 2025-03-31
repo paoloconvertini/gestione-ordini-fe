@@ -39,4 +39,8 @@ export class OafArticoloService extends CommonService{
   search(data: any): Observable<any> {
     return this.http.post<any>(`${this.url}/cercaArticoli`, data);
   }
+
+  collegaOAF(progrGenerale: any, selected: any[]): Observable<any> {
+    return this.http.post<any>(`${this.url}/collega-oaf/${progrGenerale}`, selected);
+  }
 }

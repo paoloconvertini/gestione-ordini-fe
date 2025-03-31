@@ -56,10 +56,6 @@ export class OrdineFornitoreService extends CommonService{
     window.document.location.href = `${this.url}/scaricaOrdine/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
   }
 
-  verificaOAF(result: any): Observable<any> {
-    return this.http.post(`${this.url}/verificaOAF`, result)
-  }
-
   collegaOAF(result: any): Observable<any> {
     return this.http.post(`${this.url}/collegaOAF`, result)
   }
