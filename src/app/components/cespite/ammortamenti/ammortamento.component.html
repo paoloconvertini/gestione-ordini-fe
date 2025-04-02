@@ -71,7 +71,7 @@
                 </div>
                 <div class="col-lg-11 col-md-11 col-sm-11">
                   {{cespite.cespite}}&nbsp;&nbsp;-&nbsp;&nbsp;<b>{{cespite.fornitore}}</b>&nbsp;&nbsp;
-                  &nbsp;Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}<br>
+                  <span *ngIf="cespite.numDocAcq">&nbsp;Fatt n. {{cespite.numDocAcq}} del {{cespite.dataAcq | date:'dd/MM/yyyy'}}</span><br>
                   <span *ngIf="cespite.protocollo">Prot. {{cespite.protocollo}}/{{cespite.giornale}}
                     /{{cespite.anno}}</span>
                 </div>
