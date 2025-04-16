@@ -1,3 +1,16 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-1" mat-raised-button (click)="retrieveList(-1)" matTooltip="Settimana precedente">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===0" mat-raised-button (click)="retrieveList(0)" matTooltip="Settimana corrente">
+      <mat-icon>today</mat-icon>
+    </button>
+    <button [disabled]="filtro.deltaSettimana===1" mat-raised-button (click)="retrieveList(1)" matTooltip="Settimana prossima">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>
 <div class="main">
   <div class="main2">
     <div class="giorni-container">

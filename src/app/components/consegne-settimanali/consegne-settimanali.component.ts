@@ -69,12 +69,13 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
   }
 
   ngOnInit(): void {
-    this.retrieveList();
+    this.retrieveList(0);
     this.user = localStorage.getItem(environment.USERNAME);
   }
 
-  retrieveList(): void {
+  retrieveList(delta:number): void {
     this.loader = true;
+    this.filtro.deltaSettimana = delta;
     this.service.getConsegneSettimanali(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any | undefined) => {

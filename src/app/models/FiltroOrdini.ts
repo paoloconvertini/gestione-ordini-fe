@@ -24,5 +24,6 @@ export class FiltroOrdini {
   cliente: any;
   luogo: any;
   dataOrdine: any;
+  deltaSettimana:number =0;
 
 }
