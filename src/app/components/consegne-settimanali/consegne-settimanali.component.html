@@ -1,13 +1,25 @@
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 text-center">
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-1" mat-raised-button (click)="retrieveList(-1)" matTooltip="Settimana precedente">
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-3" mat-raised-button (click)="retrieveList(-3)" matTooltip="Settimana precedente">
+      <mat-icon>first_page</mat-icon>
+    </button>
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-2" mat-raised-button (click)="retrieveList(-2)" matTooltip="2° Settimana precedente">
+      <mat-icon>keyboard_double_arrow_left</mat-icon>
+    </button>
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-1" mat-raised-button (click)="retrieveList(-1)" matTooltip="3° Settimana precedente">
       <mat-icon>chevron_left</mat-icon>
     </button>
     <button class="calendar-btn" [disabled]="filtro.deltaSettimana===0" mat-raised-button (click)="retrieveList(0)" matTooltip="Settimana corrente">
       <mat-icon>today</mat-icon>
     </button>
-    <button [disabled]="filtro.deltaSettimana===1" mat-raised-button (click)="retrieveList(1)" matTooltip="Settimana prossima">
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===1" mat-raised-button (click)="retrieveList(1)" matTooltip="Settimana prossima">
       <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===2" mat-raised-button (click)="retrieveList(2)" matTooltip="2° Settimana prossima">
+      <mat-icon>keyboard_double_arrow_right</mat-icon>
+    </button>
+    <button [disabled]="filtro.deltaSettimana===3" mat-raised-button (click)="retrieveList(3)" matTooltip="3° Settimana prossima">
+      <mat-icon>last_page</mat-icon>
     </button>
   </div>
 </div>
