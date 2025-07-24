@@ -58,26 +58,27 @@
       </mat-card>
     </div>
   </div>
-  <div class="row margin-top" *ngIf="showAcconti">
+  <app-fido-cliente *ngIf="showAcconti" [contoCliente]="ordineDettaglio.sottoConto"></app-fido-cliente>
+  <!--<div class="row margin-top" *ngIf="showAcconti">
     <div class="col-lg-12 col-md-12 col-sm-12">
       <section class="acconti-container mat-elevation-z8" tabindex="0">
         <mat-spinner *ngIf="loaderAcconti" class="loader"></mat-spinner>
         <table class="table-container" *ngIf="!loaderAcconti" mat-table multiTemplateDataRows [dataSource]="acconti">
-          <!-- Name Column -->
+          &lt;!&ndash; Name Column &ndash;&gt;
           <ng-container matColumnDef="dataFattura">
             <th mat-header-cell *matHeaderCellDef>Data Fattura</th>
             <td mat-cell *matCellDef="let fattura">
               <span >{{fattura.dataFattura | date:'dd/MM/yyyy'}}</span>
             </td>
           </ng-container>
-          <!-- Name Column -->
+          &lt;!&ndash; Name Column &ndash;&gt;
           <ng-container matColumnDef="numeroFattura">
             <th mat-header-cell *matHeaderCellDef>Numero Fattura</th>
             <td mat-cell *matCellDef="let fattura">
               {{fattura.numeroFattura}}
             </td>
           </ng-container>
-          <!-- Name Column -->
+          &lt;!&ndash; Name Column &ndash;&gt;
           <ng-container matColumnDef="rifOrdCliente">
             <th mat-header-cell *matHeaderCellDef>Rif. Ord. Cliente</th>
             <td mat-cell *matCellDef="let fattura">
@@ -86,19 +87,19 @@
               </div>
             </td>
           </ng-container>
-          <!-- Name Column -->
+          &lt;!&ndash; Name Column &ndash;&gt;
           <ng-container matColumnDef="operazione">
             <th mat-header-cell *matHeaderCellDef>Movimento</th>
             <td mat-cell *matCellDef="let fattura">{{fattura.operazione}}</td>
           </ng-container>
-          <!-- Name Column -->
+          &lt;!&ndash; Name Column &ndash;&gt;
           <ng-container matColumnDef="prezzoAcconto">
             <th mat-header-cell *matHeaderCellDef> Prezzo</th>
             <td mat-cell *matCellDef="let fattura">
               {{fattura.prezzo | currency: 'EUR':'symbol'}}
             </td>
           </ng-container>
-          <!-- Name Column -->
+          &lt;!&ndash; Name Column &ndash;&gt;
           <ng-container matColumnDef="iva">
             <th mat-header-cell *matHeaderCellDef> Iva</th>
             <td mat-cell *matCellDef="let fattura">
@@ -108,14 +109,14 @@
 
           <tr mat-header-row *matHeaderRowDef="columnAcconti"></tr>
           <tr mat-row *matRowDef="let row; columns: columnAcconti;"></tr>
-          <!-- Row shown when there is no matching data. -->
+          &lt;!&ndash; Row shown when there is no matching data. &ndash;&gt;
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell no-result-list" colspan="4">Nessun acconto trovato per questo cliente</td>
           </tr>
         </table>
       </section>
     </div>
-  </div>
+  </div>-->
   <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-3">
       <mat-form-field>

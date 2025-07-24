@@ -14,3 +14,9 @@
   width:25px;
   height:25px;
 }
+
+.scrollable {
+  max-height: 300px; /* oppure height: 300px; */
+  overflow-y: auto;
+  padding-right: 8px; /* per spazio allo scroll */
+}

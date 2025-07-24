@@ -629,7 +629,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   mostraAcconti(sottoConto: string) {
     this.showAcconti = !this.showAcconti;
-    if (this.showAcconti) {
+    /*if (this.showAcconti) {
       this.loaderAcconti = true;
       this.service.getAcconti(sottoConto).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
@@ -644,7 +644,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             this.loaderAcconti = false;
           }
         })
-    }
+    }*/
 
   }
 

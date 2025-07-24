@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit, Optional} from '@angular/core';
 import {takeUntil} from "rxjs";
 import {Acconto} from "../../../../models/Acconto";
 import {CommonListComponent} from "../../../commonListComponent";
@@ -15,6 +15,7 @@ import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 })
 export class FidoClienteComponent extends CommonListComponent implements OnInit {
 
+  @Input() contoCliente: any;
   sottoConto: any;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
@@ -34,7 +35,7 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
 
   constructor(private authService: AuthService, private snackbar: MatSnackBar,  private articoloService: ArticoloService,
-              @Inject(MAT_DIALOG_DATA) public data: any) {
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
     super();
     if(localStorage.getItem(environment.LOGISTICA)){
       this.isLogistica = true;
@@ -54,7 +55,11 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
   }
 
   ngOnInit(): void {
-    this.sottoConto = this.data;
+    if(this.data) {
+      this.sottoConto = this.data;
+    } else {
+      this.sottoConto = this.contoCliente;
+    }
     this.mostraAcconti();
     this.getSaldoContabile();
     this.getOrdiniAperti();
@@ -71,7 +76,8 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
               this.acconti = data;
             }
             this.loaderAcconti = false;
-          }
+          },
+          error: () => {this.loaderAcconti = false; this.acconti = []}
         })
   }
 
@@ -84,7 +90,8 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
             this.saldoContabile = data;
           }
           this.loaderSaldoContabile = false;
-        }
+        },
+        error: () => {this.loaderSaldoContabile = false;}
       })
   }
 
@@ -97,7 +104,8 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
             this.ordiniAperti = data;
           }
           this.loaderOrdiniAperti = false;
-        }
+        },
+        error: () => {this.loaderOrdiniAperti = false;}
       })
   }
 
@@ -110,7 +118,8 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
             this.accontiFatturati = data;
           }
           this.loaderAccontiFatturati = false;
-        }
+        },
+        error: () => {this.loaderAccontiFatturati = false;}
       })
   }
 
@@ -123,7 +132,8 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
             this.bolleNonFatturate = data;
           }
           this.loaderBolleNonFatturate = false;
-        }
+        },
+        error: () => {this.loaderBolleNonFatturate = false;}
       })
   }
 }
