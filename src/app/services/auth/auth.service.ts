@@ -75,6 +75,7 @@ export class AuthService {
     localStorage.removeItem(environment.ADMIN);
     localStorage.removeItem(environment.AMMINISTRATIVO);
     localStorage.removeItem(environment.LOGISTICA);
+    localStorage.removeItem('filtro');
     this.router.navigate(['']);
   }
 }

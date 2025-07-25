@@ -60,7 +60,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   countHasCarico: number = 0;
   totalItems = 0;
 
-  constructor(    private router: Router,
+  constructor(    private router: Router, private cdRef: ChangeDetectorRef,
                   private viewportScroller: ViewportScroller,
                   private scrollPositionService: ScrollPositionService,
     private authService: AuthService, private activatedRoute: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
@@ -112,6 +112,16 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
 
   ngOnInit(): void {
     this.getStati();
+    if(localStorage.getItem('filtro')) {
+      let item = localStorage.getItem('filtro');
+      if(item != null){
+        this.filtro = JSON.parse(item);
+        // Forza tipo se necessario (es. se codVenditore è number)
+        if (this.filtro.codVenditore !== undefined && this.filtro.codVenditore !== null) {
+          this.filtro.codVenditore = this.filtro.codVenditore;
+        }
+      }
+    }
     if (this.isVenditore || this.isAdmin) {
       this.getVenditori();
     }
@@ -152,6 +162,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
           this.filtro.status = 'TUTTI';
         }
         this.selectStatusOptions = data.filter((e: any) => e.descrizione !== 'TUTTI');
+        this.cdRef.detectChanges(); // forza aggiornamento binding
       },
       error: (e: any) => {
         console.error(e);
@@ -165,6 +176,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.radioPerVenditoreOptions = data;
+        this.cdRef.detectChanges(); // forza aggiornamento binding
       },
       error: (e: any) => {
         console.error(e);
@@ -176,6 +188,11 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   onPageChange(event: PageEvent) {
     this.filtro.page = event.pageIndex;
     this.filtro.size = event.pageSize;
+    this.retrieveList();
+  }
+
+  cerca(): void {
+    localStorage.setItem('filtro', JSON.stringify(this.filtro));
     this.retrieveList();
   }
 
@@ -319,9 +336,6 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     this.scrollPositionService.setScrollPosition(window.scrollY);
     console.log("edit: " + this.scrollPositionService.getScrollPosition());
     let url = "/articoli/edit/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (ordine.status) {
-      url += "/" + ordine.status;
-    }
     this.route.navigateByUrl(url);
   }
 
@@ -329,9 +343,6 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     this.scrollPositionService.setScrollPosition(window.scrollY);
     console.log("view: " + this.scrollPositionService.getScrollPosition());
     let url = "/articoli/view/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (ordine.status) {
-      url += "/" + ordine.status;
-    }
     this.route.navigateByUrl(url);
   }
 
@@ -432,15 +443,21 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   reset() {
+    localStorage.removeItem('filtro');
     this.filtro.cliente = '';
     this.filtro.anno = undefined;
     this.filtro.luogo = '';
     this.filtro.progressivo = undefined;
     this.filtro.dataOrdine = undefined;
+    this.filtro.codVenditore = '';
+    this.filtro.status = 'TUTTI';
+    this.filtro.prontoConsegna = false;
     this.retrieveList();
   }
 
   resetPage() {
+    console.log("vend", this.radioPerVenditoreOptions);
+    console.log("stato", this.radioPerStatusOptions);
     this.filtro.page = 0;
   }
 }

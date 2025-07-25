@@ -461,7 +461,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.route.navigate(['/ordini-clienti', this.status, this.filtro.page, this.filtro.size]);
+              this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -469,7 +469,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         })
     } else {
-      this.route.navigate(['/ordini-clienti', this.status, this.filtro.page, this.filtro.size]);
+      this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
     }
   }
 
@@ -629,23 +629,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   mostraAcconti(sottoConto: string) {
     this.showAcconti = !this.showAcconti;
-    /*if (this.showAcconti) {
-      this.loaderAcconti = true;
-      this.service.getAcconti(sottoConto).pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: Acconto[]) => {
-            if (data) {
-              this.acconti = data;
-            }
-            this.loaderAcconti = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loaderAcconti = false;
-          }
-        })
-    }*/
-
   }
 
   codificaArticoli() {

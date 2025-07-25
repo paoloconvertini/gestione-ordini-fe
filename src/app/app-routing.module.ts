@@ -63,12 +63,12 @@ const routes: Routes = [
     component: ConsegneSettimanaliComponent,
   },
   {
-    path: 'ordini-clienti/:status/:page/:size',
+    path: 'ordini-clienti/:page/:size',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
   },
   {
-    path: 'ordini-clienti/:status',
+    path: 'ordini-clienti',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,
   },
@@ -88,12 +88,12 @@ const routes: Routes = [
     component: OafMonitorComponent,
   },
   {
-    path: 'articoli/edit/:page/:size/:anno/:serie/:progressivo/:status',
+    path: 'articoli/edit/:page/:size/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },
   {
-    path: 'articoli/view/:page/:size/:anno/:serie/:progressivo/:status',
+    path: 'articoli/view/:page/:size/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },
