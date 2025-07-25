@@ -15,10 +15,12 @@ export class FatturaAccontoDialogComponent {
   ordini: any = [];
   maxIva22: number = 0;
   maxIva10: number = 0;
-  output: any;
+  maxIva4: number = 0;
+  output: any = {};
 
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, private dialogRef: MatDialogRef<FatturaAccontoDialogComponent>) {
+    this.ordini = data.ordini;
   }
 
   getOrdine(){
@@ -31,6 +33,10 @@ export class FatturaAccontoDialogComponent {
 
   calcolaIva10 () {
     this.maxIva10 = this.output.importo - this.output.iva22;
+  }
+
+  calcolaIva4 () {
+    this.maxIva4 = this.output.importo - this.output.iva22;
   }
 
   submitForm() {

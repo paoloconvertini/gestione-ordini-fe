@@ -821,7 +821,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   creaFatturaAcconto() {
-    this.ordineService.getOrdineFatturaAcconto(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
+    this.ordineService.getOrdineFatturaAcconto(this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
