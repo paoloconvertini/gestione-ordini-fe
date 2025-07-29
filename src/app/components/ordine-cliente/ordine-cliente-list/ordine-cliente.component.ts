@@ -333,16 +333,24 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   editDettaglio(ordine: OrdineCliente) {
+    localStorage.setItem('filtro', JSON.stringify(this.filtro));
     this.scrollPositionService.setScrollPosition(window.scrollY);
     console.log("edit: " + this.scrollPositionService.getScrollPosition());
     let url = "/articoli/edit/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+    if (ordine.status) {
+      url += "/" + ordine.status;
+    }
     this.route.navigateByUrl(url);
   }
 
   vediDettaglio(ordine: OrdineCliente) {
+    localStorage.setItem('filtro', JSON.stringify(this.filtro));
     this.scrollPositionService.setScrollPosition(window.scrollY);
     console.log("view: " + this.scrollPositionService.getScrollPosition());
     let url = "/articoli/view/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
+    if (ordine.status) {
+      url += "/" + ordine.status;
+    }
     this.route.navigateByUrl(url);
   }
 

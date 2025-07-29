@@ -88,12 +88,12 @@ const routes: Routes = [
     component: OafMonitorComponent,
   },
   {
-    path: 'articoli/edit/:page/:size/:anno/:serie/:progressivo',
+    path: 'articoli/edit/:page/:size/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },
   {
-    path: 'articoli/view/:page/:size/:anno/:serie/:progressivo',
+    path: 'articoli/view/:page/:size/:anno/:serie/:progressivo/:status',
     canActivate: [AuthGuard],
     component: ArticoloComponent,
   },
