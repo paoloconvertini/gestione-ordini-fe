@@ -60,7 +60,7 @@ export class OrdineClienteService extends CommonService{
     return this.http.get(`${this.url}/getOrdiniClienteNonOrdinati`)
   }
 
-  getOrdineFatturaAcconto(sottoConto: string) : Observable<any> {
-    return this.http.get(`${this.url}/ordine-fattura-acconto/${sottoConto}`)
+  getOrdineFatturaAcconto(sottoConto: string, list: any[]) : Observable<any> {
+    return this.http.post(`${this.url}/ordine-fattura-acconto/${sottoConto}`, list)
   }
 }

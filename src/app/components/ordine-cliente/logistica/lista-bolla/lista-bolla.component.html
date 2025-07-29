@@ -73,18 +73,13 @@
             <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
             <ng-container matColumnDef="expandedDetail">
               <td mat-cell *matCellDef="let ordine" [attr.colspan]="displayedColumns.length">
-                <mat-spinner *ngIf="loaderDettaglio" class="loader"></mat-spinner>
-                <div *ngIf="!loaderDettaglio">
+                <div>
                   <div [@detailExpand]="ordine == expandedElement ? 'expanded' : 'collapsed'" style="background-color: #e5e5e5">
-                    <table class="table" *ngIf="articoli.length > 0">
+                    <mat-spinner *ngIf="loaderDettaglio" class="loader"></mat-spinner>
+                    <table class="table" *ngIf="!loaderDettaglio">
                       <thead>
                       <tr>
                         <th>
-                          <mat-checkbox color="primary" *ngIf="(isAdmin || isLogistica) "
-                                        (change)="$event ? toggleAllRows() : null"
-                                        [checked]="selection.hasValue() && isAllSelected()"
-                                        [indeterminate]="selection.hasValue() && !isAllSelected()">
-                          </mat-checkbox>
                         </th>
                         <th>Cod.:</th>
                         <th>Cod. forn.:</th>
@@ -97,34 +92,34 @@
                       </tr>
                       </thead>
                       <tbody>
-                      <tr *ngFor="let articolo of articoli">
-                        <td>
-                          <mat-checkbox color="primary" *ngIf="(isAdmin || isLogistica) &&
-                            articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
-                                        (click)="$event.stopPropagation();"
-                                        (change)="$event ? selection.toggle(articolo) : null"
-                                        [checked]="selection.isSelected(articolo)">
-                          </mat-checkbox>
-                        </td>
-                        <td>{{articolo.farticolo}}</td>
-                        <td>{{articolo.codArtFornitore}}</td>
-                        <td>{{articolo.fdescrArticolo}}</td>
-                        <td>
-                          <span *ngIf="mostraNonDisponibile(articolo) === 0">{{articolo.qtaDaConsegnare | number : '1.2-2'}}</span>
-                          <span *ngIf="mostraNonDisponibile(articolo) === 1">N.D.</span>
-                          <span *ngIf="mostraNonDisponibile(articolo) === 2"></span>
-                        </td>
-                        <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.qtaProntoConsegna | number : '1.2-2'}}</span></td>
-                        <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.quantita | number : '1.2-2'}}</span></td>
-                        <td>{{articolo.funitaMisura}}</td>
-                        <td><button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-button
-                                     matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
-                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                          <mat-icon aria-hidden="false"
-                                    aria-label="nota ordine fornitore">store</mat-icon>
-                        </button>
-                        </td>
-                      </tr>
+                        <tr *ngFor="let articolo of ordine.articoli">
+                          <td>
+                            <mat-checkbox color="primary" *ngIf="(isAdmin || isLogistica) &&
+                              articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
+                                          (click)="$event.stopPropagation();"
+                                          (change)="$event ? selection.toggle(articolo) : null"
+                                          [checked]="selection.isSelected(articolo)">
+                            </mat-checkbox>
+                          </td>
+                          <td>{{articolo.farticolo}}</td>
+                          <td>{{articolo.codArtFornitore}}</td>
+                          <td>{{articolo.fdescrArticolo}}</td>
+                          <td>
+                            <span *ngIf="mostraNonDisponibile(articolo) === 0">{{articolo.qtaDaConsegnare | number : '1.2-2'}}</span>
+                            <span *ngIf="mostraNonDisponibile(articolo) === 1">N.D.</span>
+                            <span *ngIf="mostraNonDisponibile(articolo) === 2"></span>
+                          </td>
+                          <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.qtaProntoConsegna | number : '1.2-2'}}</span></td>
+                          <td><span *ngIf="( articolo.tipoRigo === '' || articolo.tipoRigo === ' ')">{{articolo.quantita | number : '1.2-2'}}</span></td>
+                          <td>{{articolo.funitaMisura}}</td>
+                          <td><button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-button
+                                       matTooltip="Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                          {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )): ''}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                            <mat-icon aria-hidden="false"
+                                      aria-label="nota ordine fornitore">store</mat-icon>
+                          </button>
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -151,7 +146,8 @@
     </div>
   </div>
   <div mat-dialog-actions>
-    <button mat-raised-button  (click)="onNoClick()">Annulla</button>
+    <button mat-raised-button  (click)="onAnnullaClick()">Annulla</button>
+    <button mat-raised-button  (click)="onNoClick()">No</button>
     <button [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="aggiungi()" >Aggiungi</button>
   </div>
 </div>

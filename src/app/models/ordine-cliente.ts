@@ -1,3 +1,5 @@
+import {ArticoloCliente} from "./ArticoloCliente";
+
 export class OrdineCliente {
   anno?: number
   serie?: string
@@ -14,4 +16,5 @@ export class OrdineCliente {
   dataNote:any
   userNoteLogistica:any
   dataNoteLogistica:any
+  articoli: ArticoloCliente[] = [];
 }

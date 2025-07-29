@@ -68,7 +68,11 @@ export class AccontoDialogComponent extends CommonListComponent implements OnIni
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
+  }
+
+  onAnnullaClick(): void {
+    this.dialogRef.close(false);
   }
 
   aggiungi() {

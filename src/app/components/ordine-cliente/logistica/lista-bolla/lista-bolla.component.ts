@@ -14,6 +14,7 @@ import {takeUntil} from "rxjs";
 import {OrdineCliente} from "../../../../models/ordine-cliente";
 import {CommonListComponent} from "../../../commonListComponent";
 import {SelectionModel} from "@angular/cdk/collections";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 export interface DialogData {
   ordini: any;
@@ -22,7 +23,14 @@ export interface DialogData {
 @Component({
   selector: 'app-lista-bolla',
   templateUrl: './lista-bolla.component.html',
-  styleUrls: ['./lista-bolla.component.css']
+  styleUrls: ['./lista-bolla.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class ListaBollaComponent extends CommonListComponent implements OnInit {
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
@@ -64,7 +72,11 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
+  }
+
+  onAnnullaClick(): void {
+    this.dialogRef.close(false);
   }
 
   aggiungi() {
@@ -99,7 +111,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
       .subscribe({
         next: (data: ArticoloCliente[]) => {
           if (data) {
-            this.articoli = data;
+            ordine.articoli = data;
           }
           this.loaderDettaglio = false;
         },

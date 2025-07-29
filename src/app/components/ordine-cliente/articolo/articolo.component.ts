@@ -277,10 +277,16 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
               data: {ordini: res}
             });
             dialogRef.afterClosed().subscribe(result => {
-              if (result) {
+              if (result && result instanceof Array) {
                 this.selection.select(...result);
+                this.cercaAcconti();
+              } else if(result === true) {
+                this.cercaAcconti();
+              } else {
+                this.disabilitaBolla = false;
+                return;
               }
-              this.cercaAcconti();
+
             });
           } else {
             this.cercaAcconti();
@@ -309,10 +315,15 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
               data: {acconti: res}
             });
             dialogRef.afterClosed().subscribe(result => {
-              if (result) {
+              if (result && result instanceof Array) {
                 this.accontiDaUsare = result;
+                this.creaBolla();
+              } else if(result === true) {
+                this.creaBolla();
+              } else {
+                this.disabilitaBolla = false;
+                return;
               }
-              this.creaBolla();
             });
           } else {
             this.creaBolla();
@@ -804,7 +815,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   creaFatturaAcconto() {
-    this.ordineService.getOrdineFatturaAcconto(this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
+    this.ordineService.getOrdineFatturaAcconto(this.ordineDettaglio.sottoConto, this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
