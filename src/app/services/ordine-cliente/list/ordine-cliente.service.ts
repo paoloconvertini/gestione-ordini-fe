@@ -5,6 +5,7 @@ import {environment} from "../../../../environments/environment";
 import {Observable} from "rxjs";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {OrdineCliente} from "../../../models/ordine-cliente";
+import { AccontoLight } from 'src/app/components/ordine-cliente/articolo/articolo.component';
 
 const url = environment.baseUrl + environment.ORDINI_CLIENTI;
 @Injectable({
@@ -63,4 +64,19 @@ export class OrdineClienteService extends CommonService{
   getOrdineFatturaAcconto(sottoConto: string, list: any[]) : Observable<any> {
     return this.http.post(`${this.url}/ordine-fattura-acconto/${sottoConto}`, list)
   }
+
+  creaFattureAcconto(result: any[]) : Observable<any>{
+    return this.http.post(`${this.url}/crea-fattura-acconto`, result)
+  }
+
+// src/app/services/acconti.service.ts
+  getAccontiNonValidatiByOrdine(anno: number, serie: string, progressivo: number): Observable<any> {
+    return this.http.get<AccontoLight[]>(`${this.url}/accontiNonValidati/${anno}/${serie}/${progressivo}`);
+  }
+
+  getAccontiNonValidatiCount(anno: number, serie: string, progressivo: number): Observable<any>{
+    return this.http.get<number>(`${this.url}/accontiNonValidati/${anno}/${serie}/${progressivo}/count`);
+  }
+
+
 }

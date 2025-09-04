@@ -1,0 +1,39 @@
+.main-content {
+  display: flex;
+  gap: 10px;
+}
+
+.left-panel {
+  flex: 1;
+}
+
+.right-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.totale-row td {
+  border-top: 2px solid #444; /* separazione forte */
+  padding: 8px 10px;
+}
+
+.etichetta-totale {
+  text-align: right;
+  font-weight: bold;
+  background-color: #fafafa; /* leggero contrasto */
+}
+
+.totale-ivato {
+  font-weight: bold;
+  text-align: right;
+  background-color: #f0f0f0; /* più evidenziato */
+  color: #222;
+  font-size: 1.05em;
+}
+
+.importo {
+  text-align: right;
+  padding-right: 8px;
+}

@@ -382,3 +382,27 @@ table {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* blocco sticky in alto: titolo + bottone + tab */
+.pannello-acconti .dialog-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: white;
+  padding-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* bottone Acconti a destra */
+.pannello-acconti .actions-top {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 24px;
+}
+
+/* contenuto scrollabile */
+.pannello-acconti .mat-dialog-content.dialog-content {
+  max-height: calc(75vh);
+  overflow-y: auto;
+  padding: 0 24px 16px 24px;
+}
+

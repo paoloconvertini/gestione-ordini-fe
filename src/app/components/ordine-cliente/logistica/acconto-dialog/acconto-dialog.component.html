@@ -41,9 +41,7 @@
         <ng-container matColumnDef="rifOrdCliente">
           <th mat-header-cell *matHeaderCellDef>Rif. Ord. Cliente</th>
           <td mat-cell *matCellDef="let fattura">
-            <div *ngFor="let rif of fattura.rifOrdClienteList">
-              {{rif}}
-            </div>
+            {{fattura.rifOrdCliente}}
           </td>
         </ng-container>
         <!-- Name Column -->
@@ -55,7 +53,7 @@
         <ng-container matColumnDef="prezzoAcconto">
           <th mat-header-cell *matHeaderCellDef> Prezzo</th>
           <td mat-cell *matCellDef="let fattura">
-            {{fattura.prezzo | currency: 'EUR':'symbol'}}
+            {{fattura.importoResiduo | currency: 'EUR':'symbol'}}
           </td>
         </ng-container>
         <!-- Name Column -->

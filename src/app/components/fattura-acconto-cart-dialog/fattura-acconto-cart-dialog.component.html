@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>Riepilogo acconti di <b>{{intestazione}} - {{sottoConto}}</b> </h1>
+<div mat-dialog-content class="main-content">
+  <div class="left-panel">
+    <table class="table">
+      <thead>
+      <tr>
+        <td>Ordine n.</td>
+        <td>Iva</td>
+        <td>Imponibile</td>
+        <td>Importo</td>
+        <td></td>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let acconto of acconti; let i = index">
+        <td>{{acconto.anno}}/{{acconto.serie}}/{{acconto.progressivo}}</td>
+        <td>{{acconto.iva}}%</td>
+        <td class="importo">{{acconto.nuovoAcconto | currency: 'EUR':'symbol'}}</td>
+        <td class="importo">{{acconto.nuovoAccontoIvato  | currency: 'EUR':'symbol'}}</td>
+        <td>
+          <button mat-icon-button (click)="rimuovi(i)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </td>
+      </tr>
+      <tr class="totale-row">
+        <td colspan="3" class="etichetta-totale">Totale</td>
+        <td class="totale-ivato">{{totaleIvato | currency: 'EUR':'symbol'}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="right-panel">
+    <app-fido-cliente [contoCliente]="sottoConto" [mostraSituazioneCliente]="false"></app-fido-cliente>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Chiudi</button>
+  <button mat-button (click)="conferma()">Conferma</button>
+</div>

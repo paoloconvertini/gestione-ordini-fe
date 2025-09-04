@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Acconti non validati</h2>
+
+<mat-dialog-content class="mat-typography">
+  <p>
+    Sono presenti acconti senza <strong>numero</strong> e <strong>data</strong> fattura.
+    Non saranno mostrati nelle liste e non possono essere stornati.
+  </p>
+
+  <table mat-table [dataSource]="data" class="w-full" style="width:100%;">
+    <ng-container matColumnDef="anno">
+      <th mat-header-cell *matHeaderCellDef>Anno</th>
+      <td mat-cell *matCellDef="let r">{{ r.anno }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="serie">
+      <th mat-header-cell *matHeaderCellDef>Serie</th>
+      <td mat-cell *matCellDef="let r">{{ r.serie }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="progressivo">
+      <th mat-header-cell *matHeaderCellDef>Progressivo</th>
+      <td mat-cell *matCellDef="let r">{{ r.progressivo }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="cols"></tr>
+    <tr mat-row *matRowDef="let row; columns: cols;"></tr>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Chiudi</button>
+</mat-dialog-actions>
+

@@ -1,5 +1,5 @@
 <div class="row" style="font-size: 12px; height: 100%">
-  <div class="col-lg-4 col-md-6 col-sm-12">
+  <div class="col-lg-4 col-md-6 col-sm-12" *ngIf="mostraSituazioneCliente">
     <mat-label> <h2>  Situazione Cliente</h2></mat-label>
     <table class="table table-fido">
         <tbody>
@@ -46,57 +46,48 @@
   <div class="col-lg-12 col-md-12 col-sm-12">
     <section class="acconti-container mat-elevation-z8 scrollable" tabindex="0" >
       <mat-spinner *ngIf="loaderAcconti" class="loader"></mat-spinner>
-      <table class="table-container" *ngIf="!loaderAcconti" mat-table multiTemplateDataRows [dataSource]="acconti">
-        <!-- Name Column -->
-        <ng-container matColumnDef="dataFattura">
-          <th mat-header-cell *matHeaderCellDef>Data Fattura</th>
-          <td mat-cell *matCellDef="let fattura" style="background-color: white">
-            <span >{{fattura.dataFattura | date:'dd/MM/yyyy'}}</span>
-          </td>
-        </ng-container>
-        <!-- Name Column -->
-        <ng-container matColumnDef="numeroFattura">
-          <th mat-header-cell *matHeaderCellDef>Numero Fattura</th>
-          <td mat-cell *matCellDef="let fattura" style="background-color: white">
-            {{fattura.numeroFattura}}
-          </td>
-        </ng-container>
-        <!-- Name Column -->
-        <ng-container matColumnDef="rifOrdCliente">
-          <th mat-header-cell *matHeaderCellDef>Rif. Ord. Cliente</th>
-          <td mat-cell *matCellDef="let fattura" style="background-color: white">
-            <div *ngFor="let rif of fattura.rifOrdClienteList">
-              {{rif}}
-            </div>
-          </td>
-        </ng-container>
-        <!-- Name Column -->
-        <ng-container matColumnDef="operazione">
-          <th mat-header-cell *matHeaderCellDef>Movimento</th>
-          <td mat-cell *matCellDef="let fattura" style="background-color: white">{{fattura.operazione}}</td>
-        </ng-container>
-        <!-- Name Column -->
-        <ng-container matColumnDef="prezzoAcconto">
-          <th mat-header-cell *matHeaderCellDef> Prezzo</th>
-          <td mat-cell *matCellDef="let fattura" style="background-color: white">
-            {{fattura.prezzo | currency: 'EUR':'symbol'}}
-          </td>
-        </ng-container>
-        <!-- Name Column -->
-        <ng-container matColumnDef="iva">
-          <th mat-header-cell *matHeaderCellDef> Iva</th>
-          <td mat-cell *matCellDef="let fattura" style="background-color: white">
-            {{fattura.iva}}<span *ngIf="fattura.iva">%</span>
-          </td>
-        </ng-container>
+      <table class="table table-container" *ngIf="!loaderAcconti">
+        <thead>
+          <tr>
+            <th>Rif. Ord. Cliente</th>
+            <th>Data Fattura</th>
+            <th>Movimento</th>
+            <th>Importo</th>
+            <th>Iva</th>
+          </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let fattura of acconti">
+          <tr class="acconto-row" [class.has-storni]="(fattura.storni.length || 0) > 0">
+            <td class="connector-cell">{{ fattura.rifOrdCliente }}</td>
+            <td>{{ fattura.dataFattura | date:'dd/MM/yyyy' }}</td>
+            <td>{{ fattura.operazione }} {{ fattura.numeroFattura }}</td>
+            <td>{{ fattura.prezzo | currency: 'EUR':'symbol' }}</td>
+            <td>{{ fattura.iva }}<span *ngIf="fattura.iva">%</span></td>
+          </tr>
 
-        <tr mat-header-row *matHeaderRowDef="columnAcconti"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnAcconti;"></tr>
-        <!-- Row shown when there is no matching data. -->
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell no-result-list" colspan="4" style="background-color: white">Nessun acconto trovato per questo cliente</td>
-        </tr>
+          <!-- Righe degli storni -->
+          <tr class="storno-row" *ngFor="let storno of fattura.storni; let last = last">
+            <td class="connector-cell storno-cell" [class.last]="last">
+              <span class="connector-horizontal"></span>
+            </td>
+            <td>{{ storno.dataFattura  | date:'dd/MM/yyyy'}}</td>
+            <td>{{ storno.operazione }}</td>
+            <td>{{ storno.prezzo | currency: 'EUR':'symbol' }}</td>
+            <td>{{ storno.iva }}<span *ngIf="storno.iva">%</span></td>
+          </tr>
+          <tr *ngIf="(fattura.storni?.length || 0) > 0" class="importo-residuo-row">
+            <td colspan="2"></td>
+            <td class="residuo-td">Importo residuo</td>
+            <td colspan="2">
+              {{fattura.importoResiduo | currency: 'EUR':'symbol' }}
+              <span *ngIf="fattura.importoResiduo < 0" style="color:red"><mat-icon>warning_amber</mat-icon></span>
+            </td>
+          </tr>
+        </ng-container>
+        </tbody>
       </table>
+      <div *ngIf="!acconti || acconti.length === 0">Nessun acconto trovato per questo cliente</div>
     </section>
   </div>
 </div>

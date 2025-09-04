@@ -16,7 +16,72 @@
 }
 
 .scrollable {
-  max-height: 300px; /* oppure height: 300px; */
+  max-height: 400px; /* oppure height: 300px; */
   overflow-y: auto;
   padding-right: 8px; /* per spazio allo scroll */
+}
+
+.connector-cell {
+  position: relative;
+  padding-left: 20px;
+  width: 5%;
+}
+
+/* linea verticale SOLO per acconti con storni */
+.acconto-row.has-storni .connector-cell::before {
+  content: "";
+  position: absolute;
+  top: 70%;       /* parte dal centro dell'acconto */
+  bottom: 0;      /* arriva fino all'inizio del primo storno */
+  left: 50%;
+  width: 2px;
+  background: #607d8b;
+}
+
+/* linea verticale per storni */
+.storno-cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #607d8b;
+}
+
+/* tronca la verticale nell'ultimo storno */
+.storno-cell.last::before {
+  bottom: 50%;
+}
+
+/* parte orizzontale "_" */
+.connector-horizontal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: #607d8b;
+  transform: translateY(-50%);
+}
+
+/* stile visivo per distinguere */
+.storno-row {
+  background-color: #f9f9f9;
+  color: #a00;
+  font-style: italic;
+}
+
+.importo-residuo-row td {
+  font-weight: 700;
+  background-color: #e3f2fd;
+  border-top: 1px solid #90caf9;
+  padding: 8px 12px;
+}
+.importo-residuo-row td:first-child {
+  text-align: left;
+}
+
+.residuo-td {
+  text-align: right;
 }

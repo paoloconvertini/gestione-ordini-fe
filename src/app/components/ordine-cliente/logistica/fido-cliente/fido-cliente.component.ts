@@ -7,15 +7,17 @@ import {environment} from "../../../../../environments/environment";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
+import {BaseComponent} from "../../../baseComponent";
 
 @Component({
   selector: 'app-fido-cliente',
   templateUrl: './fido-cliente.component.html',
   styleUrls: ['./fido-cliente.component.css']
 })
-export class FidoClienteComponent extends CommonListComponent implements OnInit {
+export class FidoClienteComponent extends BaseComponent implements OnInit {
 
   @Input() contoCliente: any;
+  @Input() mostraSituazioneCliente: boolean = true;
   sottoConto: any;
   isAdmin: boolean = false;
   isMagazziniere: boolean = false;
@@ -32,7 +34,6 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
   saldoContabile: number = 0;
   accontiFatturati: number = 0;
   bolleNonFatturate: number = 0;
-  columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
 
   constructor(private authService: AuthService, private snackbar: MatSnackBar,  private articoloService: ArticoloService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -55,16 +56,17 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
   }
 
   ngOnInit(): void {
-    if(this.data) {
-      this.sottoConto = this.data;
-    } else {
-      this.sottoConto = this.contoCliente;
-    }
+    const raw = this.data?.sottoConto ?? this.contoCliente;
+    this.sottoConto = this.normalizeSottoConto(raw);
     this.mostraAcconti();
-    this.getSaldoContabile();
-    this.getOrdiniAperti();
-    this.getAccontiFatturati();
-    this.getBolleNonFatturate();
+  }
+
+  private normalizeSottoConto(v: any): string | number {
+    if (v == null) return '';              // o gestisci diversamente
+    if (typeof v === 'object') {
+      return v.sottoConto ?? v.codice ?? v.id ?? '';
+    }
+    return v; // string | number
   }
 
   mostraAcconti() {
@@ -76,6 +78,12 @@ export class FidoClienteComponent extends CommonListComponent implements OnInit 
               this.acconti = data;
             }
             this.loaderAcconti = false;
+            if (this.mostraSituazioneCliente) {
+              this.getSaldoContabile();
+              this.getOrdiniAperti();
+              this.getAccontiFatturati();
+              this.getBolleNonFatturate();
+            }
           },
           error: () => {this.loaderAcconti = false; this.acconti = []}
         })

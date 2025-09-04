@@ -821,16 +821,46 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           this.loader = false;
           if (res) {
             const dialogRef = this.dialog.open(FatturaAccontoDialogComponent, {
+              hasBackdrop: false,
               width: '90%',
-              data: {ordini: res}
+              maxHeight: '90vh',  // limita l’altezza totale
+              panelClass: 'pannello-acconti',
+              data: {
+                ordini: res,
+                intestazione: this.ordineDettaglio.intestazione,
+                sottoConto: this.ordineDettaglio.sottoConto
+              }
             });
             dialogRef.afterClosed().subscribe(result => {
               if (result) {
-                this.selection.select(...result);
+                this.loader = true;
+                this.ordineService.creaFattureAcconto(result).pipe(takeUntil(this.ngUnsubscribe))
+                  .subscribe({
+                    next: (res) => {
+                        this.loader = false;
+                        if (res && !res.error) {
+                          this.snackbar.open(res.msg, 'Chiudi', {
+                            horizontalPosition: 'center', verticalPosition: 'top'
+                          });
+                      }
+                    },
+                    error: () => {
+                      this.snackbar.open('Server non raggiungibile!', 'Chiudi', {
+                        duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                      });
+                      this.loader = false;
+                    }
+                  })
               }
             });
           }
         }
       })
   }
+}
+
+export interface AccontoLight {
+  anno: number;
+  serie: string;
+  progressivo: number;
 }
