@@ -90,8 +90,14 @@ import { FatturaAccontoCartDialogComponent } from './components/fattura-acconto-
 import { AccontiNonValidatiDialogComponent } from './components/acconti-non-validati-dialog/acconti-non-validati-dialog.component';
 
 export function tokenGetter() {
-  return localStorage.getItem("access_token");
+  return localStorage.getItem('access_token');
 }
+
+// Regex per la stessa origin (dominio:porta della pagina attuale)
+const SAME_ORIGIN = new RegExp(
+  '^' + (window.location.host || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'
+);
+
 
 export const DateFormats = {
   parse: {
@@ -163,13 +169,15 @@ export const DateFormats = {
         MatDialogModule,
         HttpClientModule,
         JwtModule.forRoot({
-            config: {
-                tokenGetter: tokenGetter,
-                allowedDomains: ['localhost:8080', 'localhost:8081', 'localhost:8082', 'localhost:8083',
-                    '192.168.1.126:8080', '192.168.1.126:8181', '192.168.1.126:8082', '192.168.1.126:8083',
-                    '192.168.1.60:8080', '192.168.1.60:8081', '192.168.1.60:8082', '192.168.1.60:8083',
-                    '192.168.1.56:8080', '192.168.1.56:8081', '192.168.1.56:8082', '192.168.1.56:8083']
-            }
+          config: {
+            tokenGetter,
+            // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
+            allowedDomains: [SAME_ORIGIN],
+            // Non allegare il token a login/refresh (adatta ai tuoi path reali)
+            disallowedRoutes: [/^\/auth\/login\b/, /^\/auth\/refresh\b/],
+            // opzionale:
+            // skipWhenExpired: true,
+          }
         }),
         MatProgressSpinnerModule,
         MatPaginatorModule,
