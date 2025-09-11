@@ -63,6 +63,11 @@ const routes: Routes = [
     component: ConsegneSettimanaliComponent,
   },
   {
+    path: 'ordini-clienti/:status/:page/:size',
+    canActivate: [AuthGuard],
+    component: OrdineClienteComponent,
+  },
+  {
     path: 'ordini-clienti/:page/:size',
     canActivate: [AuthGuard],
     component: OrdineClienteComponent,

@@ -181,9 +181,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           next: (res) => {
             if (!res.error) {
               let url = '/ordini-clienti';
-              if (res.msg) {
-                url += '/' + res.msg;
-              }
               this.route.navigate([url, this.filtro.page, this.filtro.size]);
             }
           }
