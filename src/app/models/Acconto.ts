@@ -1,4 +1,5 @@
 export class Acconto {
+  dataBolla: any
   dataFattura: any
   numeroFattura: any
   rifOrdCliente: any
