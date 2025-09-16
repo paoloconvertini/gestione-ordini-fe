@@ -1,3 +1,33 @@
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* la modale non supera l'80% della finestra */
+}
+
+.table-wrapper {
+  max-height: 60vh; /* tabella max 60% viewport */
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.table-container {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dialog-actions {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding-top: 0.5rem;
+}
+
 tr.example-detail-row {
   height: 0;
 }
+
+.expanded-container {
+  background-color: #e5e5e5;
+  padding: 0.5rem;
+}
+

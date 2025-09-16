@@ -1,5 +1,28 @@
-.box {
-  margin:5px;
-  padding:10px;
-  max-height: 60%;
+/* corpo della modale: occupa spazio massimo disponibile */
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* max 80% della finestra */
 }
+
+/* contenuto scrollabile */
+.table-wrapper {
+  max-height: 60vh; /* tabella max 60% finestra */
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+/* per far occupare tutta la larghezza */
+.table-container {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* fix bottoni sempre visibili */
+mat-dialog-actions {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding-top: 0.5rem;
+}
+

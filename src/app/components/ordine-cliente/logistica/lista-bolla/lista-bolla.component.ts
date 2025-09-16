@@ -45,12 +45,21 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   expandedElement: any;
   articoli: ArticoloCliente[] = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, private dialogRef: MatDialogRef<ListaBollaComponent>, private authService: AuthService, private router: ActivatedRoute,
-              private emailService: EmailService, private service: ListaService,
-              private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router,
-              private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private dialogRef: MatDialogRef<ListaBollaComponent>,
+    private authService: AuthService,
+    private router: ActivatedRoute,
+    private emailService: EmailService,
+    private service: ListaService,
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar,
+    private route: Router,
+    private ordineClienteService: OrdineClienteService,
+    private articoloService: ArticoloService
+  ) {
     super();
-    if(localStorage.getItem(environment.LOGISTICA)){
+    if (localStorage.getItem(environment.LOGISTICA)) {
       this.isLogistica = true;
     }
     if (localStorage.getItem(environment.ADMIN)) {
@@ -80,30 +89,27 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   }
 
   aggiungi() {
-    let list = this.selection.selected.filter(row => row.tipoRigo !=='C' && row.tipoRigo !=='AC');
+    let list = this.selection.selected.filter(row => row.tipoRigo !== 'C' && row.tipoRigo !== 'AC');
     this.dialogRef.close(list);
   }
 
-
-  /** Whether the number of selected elements matches the total number of rows. */
+  /** Controllo select all sugli articoli caricati */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.articoli.length;
-    return numSelected === numRows;
+    return numRows > 0 && numSelected === numRows;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   toggleAllRows() {
     if (this.isAllSelected()) {
       this.selection.clear();
-      return;
+    } else {
+      this.selection.select(...this.articoli);
     }
-
-    this.selection.select(...this.articoli);
   }
 
   getArticoli(ordine: OrdineCliente) {
-    if(this.expandedElement === ordine) {
+    if (this.expandedElement === ordine) {
       return;
     }
     this.loaderDettaglio = true;
@@ -112,6 +118,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
         next: (data: ArticoloCliente[]) => {
           if (data) {
             ordine.articoli = data;
+            this.articoli = data; // serve per il select all
           }
           this.loaderDettaglio = false;
         },
@@ -122,11 +129,10 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
       })
   }
 
-
-  mostraNonDisponibile(articolo:any):number {
-    if( articolo.tipoRigo !== '' && articolo.tipoRigo !== ' ') {
+  mostraNonDisponibile(articolo: any): number {
+    if (articolo.tipoRigo !== '' && articolo.tipoRigo !== ' ') {
       return 2;
-    } else if(articolo.flagNonDisponibile || (articolo.flagOrdinato && !articolo.flagRiservato)) {
+    } else if (articolo.flagNonDisponibile || (articolo.flagOrdinato && !articolo.flagRiservato)) {
       return 1;
     } else {
       return 0;
@@ -143,8 +149,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
         || data.localita.toLowerCase().includes(filter)
         || data.anno.toString().toLowerCase().includes(filter)
         || data.progressivo.toString().toLowerCase().includes(filter)
-      )
-    }
+      );
+    };
   }
-
 }
