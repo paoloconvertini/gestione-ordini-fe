@@ -51,7 +51,9 @@
           <tr>
             <th>Rif. Ord. Cliente</th>
             <th>Data Bolla</th>
+            <th>Nr. Bolla</th>
             <th>Data Fattura</th>
+            <th>Nr. Fattura</th>
             <th>Movimento</th>
             <th>Importo</th>
             <th>Iva</th>
@@ -62,8 +64,10 @@
           <tr class="acconto-row" [class.has-storni]="(fattura.storni.length || 0) > 0">
             <td class="connector-cell">{{ fattura.rifOrdCliente }}</td>
             <td>{{ fattura.dataBolla | date:'dd/MM/yyyy' }}</td>
+            <td>{{ fattura.numeroBolla }}</td>
             <td>{{ fattura.dataFattura | date:'dd/MM/yyyy' }}</td>
-            <td>{{ fattura.operazione }} {{ fattura.numeroFattura }}</td>
+            <td>{{ fattura.numeroFattura }}</td>
+            <td>{{ fattura.operazione }}</td>
             <td>{{ fattura.prezzo | currency: 'EUR':'symbol' }}</td>
             <td>{{ fattura.iva }}<span *ngIf="fattura.iva">%</span></td>
           </tr>
@@ -74,15 +78,17 @@
               <span class="connector-horizontal"></span>
             </td>
             <td>{{ storno.dataBolla  | date:'dd/MM/yyyy'}}</td>
+            <td>{{ storno.numeroBolla}}</td>
             <td>{{ storno.dataFattura  | date:'dd/MM/yyyy'}}</td>
+            <td>{{ storno.numeroFattura}}</td>
             <td>{{ storno.operazione }}</td>
             <td>{{ storno.prezzo | currency: 'EUR':'symbol' }}</td>
             <td>{{ storno.iva }}<span *ngIf="storno.iva">%</span></td>
           </tr>
           <tr *ngIf="(fattura.storni?.length || 0) > 0" class="importo-residuo-row">
-            <td colspan="3"></td>
+            <td colspan="5"></td>
             <td class="residuo-td">Importo residuo</td>
-            <td colspan="3">
+            <td colspan="5">
               {{fattura.importoResiduo | currency: 'EUR':'symbol' }}
               <span *ngIf="fattura.importoResiduo < 0" style="color:red"><mat-icon>warning_amber</mat-icon></span>
             </td>
