@@ -25,6 +25,8 @@ import {DepositoComponent} from "./components/deposito/deposito.component";
 import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/lista-carichi-inviati.component";
 import {ConsegneSettimanaliComponent} from "./components/consegne-settimanali/consegne-settimanali.component";
 import {CollegaOAFComponent} from "./components/collega-oaf/collega-oaf.component";
+import { RolePermissionsComponent } from './components/permissions/role-permissions/role-permissions.component';
+
 
 const routes: Routes = [
   {
@@ -46,6 +48,11 @@ const routes: Routes = [
     path: 'role',
     canActivate: [AuthGuard],
     component: RoleComponent
+  },
+  {
+    path: 'role/:id/permissions',
+    canActivate: [AuthGuard],
+    component: RolePermissionsComponent
   },
   {
     path: 'ordini-clienti',
