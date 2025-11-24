@@ -27,6 +27,7 @@ export const environment = {
   PIANOCONTI: 'pianoconti',
   USER: 'users',
   ROLE: 'roles',
+  PERMISSIONS: 'permissions',
   BOX_DOCCIA: 'box-doccia',
   CESPITI: 'cespiti',
   RISERVE: 'riserve',

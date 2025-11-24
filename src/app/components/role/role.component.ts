@@ -112,6 +112,10 @@ export class RoleComponent extends CommonListComponent implements OnInit {
     }
   }
 
+  gestisciPermessi(ruolo: any) {
+    this.route.navigate(['/roles', ruolo.id, 'permissions']);
+  }
+
   override applyFilter() {
     super.applyFilter(this.filtro.searchText);
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {

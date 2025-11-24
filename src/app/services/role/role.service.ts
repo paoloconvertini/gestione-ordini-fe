@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 
 const url = environment.baseAuthUrl + environment.ROLE;
-
+const permUrl = environment.baseAuthUrl + environment.PERMISSIONS;
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,12 @@ export class RoleService {
     return this.http.get<any>(url);
   }
 
+  getById(id: number): Observable<any> {
+    return this.http.get<any>(`${url}/${id}`);
+  }
+
   elimina(id: any): Observable<any>{
-    return this.http.delete(url + `/${id}`);
+    return this.http.delete(`${url}/${id}`);
   }
 
   save(data:any): Observable<any>{
@@ -26,6 +30,15 @@ export class RoleService {
   }
 
   update(data:any): Observable<any>{
-    return this.http.put(url + `/${data.id}`, data);
+    return this.http.put(`${url}/${data.id}`, data);
+  }
+
+  /** 🔥 Permessi usati dal nuovo componente role-permissions */
+  getRolePermissions(roleId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${permUrl}/role/${roleId}`);
+  }
+
+  saveRolePermissions(roleId: number, permissionIds: number[]): Observable<any> {
+    return this.http.post(`${permUrl}/role/${roleId}`, permissionIds);
   }
 }

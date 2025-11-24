@@ -37,20 +37,34 @@
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ruolo">
+
+              <button
+                mat-icon-button
+                matTooltip="Gestisci permessi"
+                (click)="gestisciPermessi(ruolo)"
+              >
+                <mat-icon fontIcon="admin_panel_settings" color="primary"></mat-icon>
+              </button>
+
               <button *ngIf="!ruolo.edit" (click)="ruolo.edit = true" mat-icon-button matTooltip="Modifica" >
-                <mat-icon aria-hidden="false" aria-label="modifica" fontIcon="edit" color="primary"></mat-icon>
+                <mat-icon fontIcon="edit" color="primary"></mat-icon>
               </button>
+
               <button *ngIf="ruolo.edit" (click)="salva(ruolo)" mat-icon-button matTooltip="Salva" >
-                <mat-icon aria-hidden="false" aria-label="save" fontIcon="save" color="primary"></mat-icon>
+                <mat-icon fontIcon="save" color="primary"></mat-icon>
               </button>
+
               <button (click)="elimina(ruolo.id)" mat-icon-button matTooltip="Elimina">
-                <mat-icon aria-hidden="false" aria-label="elimina" fontIcon="delete" color="primary"></mat-icon>
+                <mat-icon fontIcon="delete" color="primary"></mat-icon>
               </button>
+
               <button *ngIf="ruolo.edit" (click)="ruolo.edit = false; retrieveList()" mat-icon-button matTooltip="Chiudi">
-                <mat-icon aria-hidden="false" aria-label="close" fontIcon="close" class="warn"></mat-icon>
+                <mat-icon fontIcon="close" class="warn"></mat-icon>
               </button>
+
             </td>
           </ng-container>
+
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

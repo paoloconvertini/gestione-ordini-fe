@@ -1,0 +1,33 @@
+<div class="container mt-3">
+
+  <h2>Gestione Permessi Ruolo</h2>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Ruolo</mat-label>
+    <mat-select [(value)]="selectedRoleId" (selectionChange)="onRoleChange()">
+      <mat-option *ngFor="let r of roles" [value]="r.id">
+        {{ r.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="selectedRoleId">
+
+    <h3>Permessi</h3>
+
+    <div *ngFor="let p of permissions">
+      <mat-checkbox
+        color="primary"
+        [checked]="checked.has(p.id)"
+        (change)="togglePermission(p, $event)">
+        {{ p.name }} – <small>{{ p.description }}</small>
+      </mat-checkbox>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="save()">
+      Salva
+    </button>
+
+  </div>
+
+</div>

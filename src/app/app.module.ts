@@ -88,6 +88,8 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatBadgeModule} from "@angular/material/badge";
 import { FatturaAccontoCartDialogComponent } from './components/fattura-acconto-cart-dialog/fattura-acconto-cart-dialog.component';
 import { AccontiNonValidatiDialogComponent } from './components/acconti-non-validati-dialog/acconti-non-validati-dialog.component';
+import {RolePermissionsComponent} from "./components/permissions/role-permissions/role-permissions.component";
+import { HasPermDirective } from './directives/has-perm.directive';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -150,7 +152,9 @@ export const DateFormats = {
     CaricoMagazzinoDialogComponent,
     FatturaAccontoDialogComponent,
     FatturaAccontoCartDialogComponent,
-    AccontiNonValidatiDialogComponent
+    AccontiNonValidatiDialogComponent,
+    RolePermissionsComponent,
+    HasPermDirective
   ],
     imports: [
         MatDatepickerModule,
