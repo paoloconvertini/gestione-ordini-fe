@@ -9,7 +9,6 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {OrdineClienteService} from "../../../../services/ordine-cliente/list/ordine-cliente.service";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
-import {environment} from "../../../../../environments/environment";
 import {takeUntil} from "rxjs";
 import {OrdineCliente} from "../../../../models/ordine-cliente";
 import {CommonListComponent} from "../../../commonListComponent";
@@ -33,12 +32,8 @@ export interface DialogData {
   ]
 })
 export class ListaBollaComponent extends CommonListComponent implements OnInit {
+
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
   selection = new SelectionModel<any>(true, []);
   loaderDettaglio: boolean = false;
@@ -48,7 +43,7 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private dialogRef: MatDialogRef<ListaBollaComponent>,
-    private authService: AuthService,
+    private auth: AuthService,
     private router: ActivatedRoute,
     private emailService: EmailService,
     private service: ListaService,
@@ -59,26 +54,19 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
     private articoloService: ArticoloService
   ) {
     super();
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
   }
 
   ngOnInit(): void {
     this.createPaginator(this.data.ordini, 100);
   }
+
+  // ----------------------------
+  // GETTER PERMESSI
+  // ----------------------------
+  get canSelezionaBolla(): boolean {
+    return this.auth.hasPerm('ordine.bolla.seleziona');
+  }
+  // ----------------------------
 
   onNoClick(): void {
     this.dialogRef.close(true);

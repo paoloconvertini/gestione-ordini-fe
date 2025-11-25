@@ -1,0 +1,38 @@
+<div class="container" *ngIf="canManage; else noAccess">
+
+  <mat-card class="perm-card">
+
+    <mat-card-header>
+      <mat-card-title>Lista Permessi</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <!-- LOADING -->
+      <div class="loading" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <!-- LISTA PERMESSI -->
+      <div class="perm-list" *ngIf="!loading">
+
+        <div *ngFor="let p of permissions" class="perm-item">
+          <p class="perm-name">{{ p.name }}</p>
+          <p class="perm-desc" *ngIf="p.description">{{ p.description }}</p>
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>
+
+<!-- NO ACCESS -->
+<ng-template #noAccess>
+  <div class="no-access">
+    <mat-icon>block</mat-icon>
+    <p>Non hai i permessi per accedere a questa sezione.</p>
+  </div>
+</ng-template>

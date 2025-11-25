@@ -1,84 +1,82 @@
-<div class="container" *ngIf="isAdmin">
-  <div class="row">
-    <div class="col-md-12  ordine-title">
-      Ruoli
-    </div>
+<div class="container" *ngIf="canManageRoles">
+
+  <h2 class="page-title">Ruoli</h2>
+
+  <div class="actions-bar">
+    <button mat-raised-button color="primary" (click)="creaNuovo()">
+      Crea nuovo
+    </button>
   </div>
-  <div class="float-end">
-    <button mat-raised-button color="primary" (click)="creaNuovo()">Crea nuovo</button>
+
+  <div class="search-row">
+    <mat-form-field appearance="outline" class="w-50">
+      <mat-label>Cerca...</mat-label>
+      <input matInput [(ngModel)]="filtro.searchText" (keyup)="applyFilter()" />
+    </mat-form-field>
+
+    <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
+      Reset
+    </button>
   </div>
-  <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-5">
-      <mat-form-field>
-        <mat-label>Cerca...</mat-label>
-        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
-      </mat-form-field>
-    </div>
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
-        Reset
-      </button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12">
-      <div class="mat-elevation-z8">
-        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
-        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="nome">
-            <th mat-header-cell *matHeaderCellDef> Nome</th>
-            <td mat-cell *matCellDef="let ruolo">
-              <div *ngIf="!ruolo.edit">{{ruolo.name}}</div>
-              <div *ngIf="ruolo.edit"><input type="text" class="form-control" [(ngModel)]="ruolo.name"></div>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="azioni">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let ruolo">
+  <div class="mat-elevation-z8">
+    <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
 
-              <button
-                mat-icon-button
-                matTooltip="Gestisci permessi"
-                (click)="gestisciPermessi(ruolo)"
-              >
-                <mat-icon fontIcon="admin_panel_settings" color="primary"></mat-icon>
-              </button>
+    <table mat-table [dataSource]="dataSource" *ngIf="!loader">
 
-              <button *ngIf="!ruolo.edit" (click)="ruolo.edit = true" mat-icon-button matTooltip="Modifica" >
-                <mat-icon fontIcon="edit" color="primary"></mat-icon>
-              </button>
+      <!-- Nome -->
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let ruolo">
+          <div *ngIf="!ruolo.edit">{{ ruolo.name }}</div>
+          <input *ngIf="ruolo.edit" type="text" class="form-control" [(ngModel)]="ruolo.name" />
+        </td>
+      </ng-container>
 
-              <button *ngIf="ruolo.edit" (click)="salva(ruolo)" mat-icon-button matTooltip="Salva" >
-                <mat-icon fontIcon="save" color="primary"></mat-icon>
-              </button>
+      <!-- Azioni -->
+      <ng-container matColumnDef="azioni">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let ruolo">
 
-              <button (click)="elimina(ruolo.id)" mat-icon-button matTooltip="Elimina">
-                <mat-icon fontIcon="delete" color="primary"></mat-icon>
-              </button>
+          <!-- Gestisci permessi -->
+          <button mat-icon-button matTooltip="Gestisci permessi" (click)="gestisciPermessi(ruolo)">
+            <mat-icon fontIcon="admin_panel_settings" color="primary"></mat-icon>
+          </button>
 
-              <button *ngIf="ruolo.edit" (click)="ruolo.edit = false; retrieveList()" mat-icon-button matTooltip="Chiudi">
-                <mat-icon fontIcon="close" class="warn"></mat-icon>
-              </button>
+          <!-- Modifica -->
+          <button *ngIf="!ruolo.edit" mat-icon-button matTooltip="Modifica" (click)="ruolo.edit = true">
+            <mat-icon fontIcon="edit" color="primary"></mat-icon>
+          </button>
 
-            </td>
-          </ng-container>
+          <!-- Salva -->
+          <button *ngIf="ruolo.edit" mat-icon-button matTooltip="Salva" (click)="salva(ruolo)">
+            <mat-icon fontIcon="save" color="primary"></mat-icon>
+          </button>
 
+          <!-- Elimina -->
+          <button mat-icon-button matTooltip="Elimina" (click)="elimina(ruolo.id)">
+            <mat-icon fontIcon="delete" color="primary"></mat-icon>
+          </button>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <!-- Chiudi -->
+          <button *ngIf="ruolo.edit" mat-icon-button matTooltip="Chiudi" (click)="ruolo.edit = false; retrieveList()">
+            <mat-icon fontIcon="close" class="warn"></mat-icon>
+          </button>
 
-          <!-- Row shown when there is no matching data. -->
-          <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell no-result-list" colspan="4">Nessun risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
-          </tr>
-        </table>
-        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
-      </div>
-    </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-result-list" colspan="2">
+          Nessun risultato {{ filtro.searchText ? "per la ricerca " + filtro.searchText : "" }}
+        </td>
+      </tr>
+
+    </table>
+
+    <mat-paginator aria-label="Seleziona pagina ruoli"></mat-paginator>
   </div>
 </div>
-
-
-

@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { map } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private tokenKey = environment.TOKEN_KEY;
+  private tokenKey: string = environment.TOKEN_KEY;
 
   private _user$ = new BehaviorSubject<any>(null);
   user$ = this._user$.asObservable();
+
+  isLoggedIn$ = this.user$.pipe(
+    map(user => user !== null)
+  );
+
+  getCurrentUser() {
+    return this._user$.value;
+  }
 
   private logoutTimer: any = null;
 
@@ -26,25 +36,53 @@ export class AuthService {
   }
 
   // -----------------------------------------------------------
-  // LOGIN
+  // LOGIN (VERSIONE CORRETTA - RITORNA OBSERVABLE)
   // -----------------------------------------------------------
-  login(credentials: any) {
-    return this.http.post<any>(environment.baseAuthUrl + environment.LOGIN, credentials)
-      .subscribe(res => {
-        if (!res.idToken) return;
+  login(credentials: any): Observable<any> {
+    return new Observable((observer) => {
+      this.http.post<any>(environment.baseAuthUrl + environment.LOGIN, credentials)
+        .subscribe({
+          next: (res: any) => {
+            if (!res || !res.idToken) {
+              observer.error('Token non presente');
+              return;
+            }
 
-        localStorage.setItem(this.tokenKey, res.idToken);
-        this.decodeAndStore(res.idToken);
-        this.router.navigate(['/ordini-clienti']);
-      });
+            localStorage.setItem(this.tokenKey, res.idToken);
+            this.decodeAndStore(res.idToken);
+
+            observer.next(res);
+            observer.complete();
+          },
+          error: (err: any) => {
+            observer.error(err);
+          }
+        });
+    });
+  }
+
+  // -----------------------------------------------------------
+  // UPDATE PASSWORD
+  // -----------------------------------------------------------
+  updatePassword(username: string, payload: { password: string }): Observable<any> {
+    return this.http.put<any>(
+      environment.baseAuthUrl + 'users/password/' + username,
+      payload
+    );
+  }
+
+  // -----------------------------------------------------------
+  // GET VENDITORI (SERVE IN DIVERSE PAGINE)
+  // -----------------------------------------------------------
+  getVenditori(data: any): Observable<any> {
+    return this.http.post<any>(environment.baseAuthUrl + 'users/byRole', data);
   }
 
   // -----------------------------------------------------------
   // LOGOUT
   // -----------------------------------------------------------
-  logout() {
+  logout(): void {
     localStorage.removeItem(this.tokenKey);
-
     this._user$.next(null);
 
     if (this.logoutTimer) {
@@ -56,10 +94,10 @@ export class AuthService {
   }
 
   // -----------------------------------------------------------
-  // DECODE TOKEN + START AUTO-LOGOUT TIMER
+  // DECODE TOKEN + AUTO LOGOUT TIMER
   // -----------------------------------------------------------
-  private decodeAndStore(token: string) {
-    const decoded = this.helper.decodeToken(token);
+  private decodeAndStore(token: string): void {
+    const decoded: any = this.helper.decodeToken(token);
 
     const user = {
       username: decoded.upn,
@@ -73,10 +111,7 @@ export class AuthService {
     this.startAutoLogout(decoded.exp);
   }
 
-  // -----------------------------------------------------------
-  // AUTO-LOGOUT ALLA SCADENZA (CUORE DELLA FUNZIONALITÀ)
-  // -----------------------------------------------------------
-  private startAutoLogout(exp: number) {
+  private startAutoLogout(exp: number): void {
     if (this.logoutTimer) {
       clearTimeout(this.logoutTimer);
     }
@@ -90,15 +125,15 @@ export class AuthService {
     }
 
     this.logoutTimer = setTimeout(() => {
-      console.log("Token expired → Auto logout");
+      console.log('Token expired → Auto logout');
       this.logout();
     }, secondsToExpire * 1000);
   }
 
   // -----------------------------------------------------------
-  // RESTORE SESSION
+  // RESTORE SESSION (AL REFRESH)
   // -----------------------------------------------------------
-  private restoreSession() {
+  private restoreSession(): void {
     const token = localStorage.getItem(this.tokenKey);
     if (!token) return;
 
@@ -111,7 +146,7 @@ export class AuthService {
   }
 
   // -----------------------------------------------------------
-  // CHECK AUTORIZZAZIONI CENTRALI
+  // CHECK PERMESSI / RUOLI
   // -----------------------------------------------------------
   hasRole(role: string): boolean {
     const u = this._user$.value;

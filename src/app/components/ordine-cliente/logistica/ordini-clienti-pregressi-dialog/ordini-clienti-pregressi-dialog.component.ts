@@ -1,11 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../../commonListComponent";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {environment} from "../../../../../environments/environment";
 import {DialogData} from "../acconto-dialog/acconto-dialog.component";
-import {
-  OrdineClienteNoteDialogComponent
-} from "../../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {SelectionModel} from "@angular/cdk/collections";
 import {FiltroOrdini} from "../../../../models/FiltroOrdini";
 import {takeUntil} from "rxjs";
@@ -18,38 +14,30 @@ import {AuthService} from "../../../../services/auth/auth.service";
   templateUrl: './ordini-clienti-pregressi-dialog.component.html',
   styleUrls: ['./ordini-clienti-pregressi-dialog.component.css']
 })
-export class OrdiniClientiPregressiDialogComponent extends CommonListComponent implements OnInit{
+export class OrdiniClientiPregressiDialogComponent
+  extends CommonListComponent implements OnInit {
 
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   selection = new SelectionModel<any>(true, []);
   columnOrdini: string[] = ['select', 'numero', 'cliente', 'localita', 'data'];
   filtro: FiltroOrdini = new FiltroOrdini();
   radioPerVenditoreOptions: Option[] = [];
 
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, private authService: AuthService, private dialogRef: MatDialogRef<OrdineClienteNoteDialogComponent>,
-              private service: ListaService) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private dialogRef: MatDialogRef<OrdiniClientiPregressiDialogComponent>,
+    private service: ListaService,
+    private auth: AuthService
+  ) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
   }
+
+  // ----------------------------
+  // PERMESSI
+  // ----------------------------
+  get canSelezionaPregressi(): boolean {
+    return this.auth.hasPerm('ordine.pregressi.seleziona');
+  }
+  // ----------------------------
 
   ngOnInit(): void {
     this.retrieveList();
@@ -59,50 +47,43 @@ export class OrdiniClientiPregressiDialogComponent extends CommonListComponent i
   getVenditori(): void {
     let data = [];
     data.push('Venditore');
-    this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (data) => {
-        this.radioPerVenditoreOptions = data;
-      },
-      error: (e: any) => {
-        console.error(e);
-      }
-
-    })
+    this.auth.getVenditori(data)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data) => this.radioPerVenditoreOptions = data,
+        error: (e: any) => console.error(e)
+      });
   }
 
   retrieveList(): void {
     this.loader = true;
-    this.service.getAllPregressi(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.getAllPregressi(this.filtro)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any[] | undefined) => {
           this.createPaginator(data, 100);
-          if(this.filtro.searchText){
-            this.applyFilter();
-          }
+          if (this.filtro.searchText) this.applyFilter();
           this.loader = false;
         },
         error: (e: any) => {
           console.error(e);
           this.loader = false;
         }
-      })
+      });
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   toggleAllRows() {
     if (this.isAllSelected()) {
       this.selection.clear();
-      return;
+    } else {
+      this.selection.select(...this.dataSource.data);
     }
-
-    this.selection.select(...this.dataSource.data);
   }
 
   onNoClick(): void {
@@ -111,16 +92,14 @@ export class OrdiniClientiPregressiDialogComponent extends CommonListComponent i
 
   salva() {
     this.loader = true;
-    this.service.savePregressi(this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
+    this.service.savePregressi(this.selection.selected)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data) => {
-          if(data) {
-            this.dialogRef.close();
-          }
+          if (data) this.dialogRef.close();
           this.loader = false;
         }
-      })
-
+      });
   }
 
   override applyFilter() {
@@ -133,7 +112,7 @@ export class OrdiniClientiPregressiDialogComponent extends CommonListComponent i
         || data.localita.toLowerCase().includes(filter)
         || data.anno.toString().toLowerCase().includes(filter)
         || data.progressivo.toString().toLowerCase().includes(filter)
-      )
-    }
+      );
+    };
   }
 }

@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-12  ordine-title">
+    <div class="col-md-12 ordine-title">
       ORDINI
       <span *ngIf="filtro.status==='DA_PROCESSARE'"> DA PROCESSARE</span>
       <span *ngIf="filtro.status==='DA_ORDINARE'"> DA ORDINARE</span>
@@ -9,37 +9,45 @@
       <span *ngIf="filtro.status==='ARCHIVIATO'"> ARCHIVIATI</span>
     </div>
   </div>
-  <div class="blink_text" *ngIf="countHasCarico > 0">ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati</div>
+
+  <div class="blink_text" *ngIf="countHasCarico > 0">
+    ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati
+  </div>
+
   <div class="row">
     <div class="col-lg-5 col-md-5 col-sm-5"></div>
     <div class="col-lg-1 col-md-1 col-sm-1"></div>
     <div class="col-lg-6 col-md-6 col-sm-6">
-      <button *ngIf="false" class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
-        Bolle
-      </button>
-      <button class="float-end margin-right" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
+      <button class="float-end margin-right" (click)="refreshPage()" mat-raised-button color="primary">
         Aggiorna lista
       </button>
     </div>
   </div>
+
+  <!-- ===================== FILTRI ===================== -->
+
   <div class="row cerca">
-    <div *ngIf="isLogistica || isAdmin" class="col-lg-12 col-md-12 col-sm-12">
-      <mat-checkbox color="primary" class="example-margin" (change)="resetPage()"
-                    [(ngModel)]="filtro.prontoConsegna">Pronto consegna
+
+    <!-- PRONTO CONSEGNA (Admin, Logistica) -->
+    <div *ngIf="canFiltroProntoConsegna" class="col-lg-12 col-md-12 col-sm-12">
+      <mat-checkbox color="primary" (change)="resetPage()" [(ngModel)]="filtro.prontoConsegna">
+        Pronto consegna
       </mat-checkbox>
     </div>
-    <div *ngIf="isVenditore || isAdmin" class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group (change)="resetPage()" aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
-        <mat-radio-button *ngFor="let option of radioPerVenditoreOptions"
-                          [value]="option.codVenditore">{{option.fullname}}
+
+    <!-- VENDITORI (Admin, Venditore) -->
+    <div *ngIf="canFiltroVenditore" class="col-lg-12 col-md-12 col-sm-12">
+      <mat-radio-group (change)="resetPage()" [(ngModel)]="filtro.codVenditore">
+        <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [value]="option.codVenditore">
+          {{option.fullname}}
         </mat-radio-button>
       </mat-radio-group>
     </div>
+
+    <!-- STATUS (tutti possono filtrare) -->
     <div class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group (change)="resetPage()"
-                       aria-label="Select an option" [(ngModel)]="filtro.status" >
-        <mat-radio-button *ngFor="let option of radioPerStatusOptions"
-                          [value]="option.codice">
+      <mat-radio-group (change)="resetPage()" [(ngModel)]="filtro.status">
+        <mat-radio-button *ngFor="let option of radioPerStatusOptions" [value]="option.codice">
           <div [ngSwitch]="option.descrizione">
             <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
             <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
@@ -48,200 +56,260 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
+
+    <!-- ANNO -->
     <div class="col-md-1">
       <mat-form-field>
         <mat-label>Anno</mat-label>
         <input matInput type="number" [(ngModel)]="filtro.anno" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
+
+    <!-- PROGRESSIVO -->
     <div class="col-md-2">
       <mat-form-field>
         <mat-label>Progr.</mat-label>
         <input matInput type="number" [(ngModel)]="filtro.progressivo" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
+
+    <!-- CLIENTE -->
     <div class="col-md-3">
       <mat-form-field>
         <mat-label>Cliente</mat-label>
         <input matInput type="text" [(ngModel)]="filtro.cliente" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
+
+    <!-- LUOGO -->
     <div class="col-md-2">
       <mat-form-field>
         <mat-label>Luogo</mat-label>
         <input matInput type="text" [(ngModel)]="filtro.luogo" (ngModelChange)="resetPage()">
       </mat-form-field>
     </div>
+
+    <!-- DATA ORDINE -->
     <div class="col-md-2">
       <mat-form-field>
         <mat-label>Data ordine</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataOrdine" (ngModelChange)="resetPage()">
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataOrdine" (ngModelChange)="resetPage()">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
     </div>
+
+    <!-- BOTTONI -->
     <div class="col-md-1 float-end">
-      <button mat-raised-button color="warn" (click)="reset()">
-        Reset
-      </button>
+      <button mat-raised-button color="warn" (click)="reset()">Reset</button>
     </div>
     <div class="col-md-1 float-end">
-      <button mat-raised-button color="primary" (click)="cerca()">
-        Cerca
-      </button>
+      <button mat-raised-button color="primary" (click)="cerca()">Cerca</button>
     </div>
+
   </div>
+
+  <!-- ===================== LISTA ===================== -->
+
   <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12">
+    <div class="col-lg-12">
+
       <div class="mat-elevation-z8">
+
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+
         <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
-          <!-- Name Column -->
+
+          <!-- NUMERO ORDINE -->
           <ng-container matColumnDef="numero">
-            <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
+            <th mat-header-cell *matHeaderCellDef>Numero Ordine</th>
             <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
-              <span [ngClass]="{'hasCarico': ordine.hasCarico}">{{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}</span>
+              <span [ngClass]="{'hasCarico': ordine.hasCarico}">
+                {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
+              </span>
             </td>
           </ng-container>
-          <!-- Name Column -->
+
+          <!-- CLIENTE -->
           <ng-container matColumnDef="cliente">
-            <th mat-header-cell *matHeaderCellDef> Cliente</th>
-            <td [ngClass]="{'isModified': ordine.status === 'DA_ORDINARE' && (ordine.createDate !== ordine.updateDate)}" mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
-              <span matTooltip="{{ordine.telefono}} - {{ordine.cellulare}}">{{ordine.intestazione}}</span><br><span style="font-size:11px">{{ordine.riferimento}}</span>
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let ordine"
+                [ngClass]="{'isModified': ordine.status === 'DA_ORDINARE' && (ordine.createDate !== ordine.updateDate)}"
+                (click)="vediDettaglio(ordine)">
+              <span matTooltip="{{ordine.telefono}} - {{ordine.cellulare}}">
+                {{ordine.intestazione}}
+              </span>
+              <br>
+              <span style="font-size:11px">{{ordine.riferimento}}</span>
             </td>
           </ng-container>
-          <!-- Name Column -->
+
+          <!-- LUOGO -->
           <ng-container matColumnDef="localita">
-            <th mat-header-cell *matHeaderCellDef> Luogo</th>
+            <th mat-header-cell *matHeaderCellDef>Luogo</th>
             <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
               {{ordine.localita}} ({{ordine.provincia}})
             </td>
           </ng-container>
-          <!-- Name Column -->
+
+          <!-- DATA -->
           <ng-container matColumnDef="data">
-            <th mat-header-cell *matHeaderCellDef> Data</th>
+            <th mat-header-cell *matHeaderCellDef>Data</th>
             <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
               {{ordine.dataConferma | date:'dd/MM/yyyy'}}
             </td>
           </ng-container>
-          <!-- Name Column -->
+
+          <!-- STATO ORDINE -->
           <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
-            <td mat-cell *matCellDef="let ordine" [ngClass]="{'stato': isAdmin}">
-              <div [ngSwitch]="ordine.status" *ngIf="!isAdmin" (click)="vediDettaglio(ordine)">
+            <th mat-header-cell *matHeaderCellDef>Stato Ord</th>
+
+            <td mat-cell *matCellDef="let ordine" [ngClass]="{'stato': canEditStato}">
+
+              <!-- NON ADMIN: solo testo -->
+              <div *ngIf="!canEditStato" (click)="vediDettaglio(ordine)" [ngSwitch]="ordine.status">
                 <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
                 <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
                 <b *ngSwitchDefault>{{ordine.status}}</b>
               </div>
-              <mat-select *ngIf="isAdmin" [(value)]="ordine.status" class="select">
-                <mat-option *ngFor="let option of selectStatusOptions" [value]="option.codice" class="option">
-                  <div [ngSwitch]="option.descrizione">
-                    <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
-                    <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
-                    <span *ngSwitchDefault>{{option.descrizione}}</span>
-                  </div>
-                </mat-option>
-              </mat-select>
-              <button mat-button color="primary"
-                      *ngIf="isAdmin"
-                      (click)="update(ordine)" >
-                <mat-icon color="primary" fontIcon="save"></mat-icon>
-              </button>&nbsp;&nbsp;
+
+              <!-- ADMIN: può modificare -->
+              <ng-container *ngIf="canEditStato">
+                <mat-select [(value)]="ordine.status" class="select">
+                  <mat-option *ngFor="let option of selectStatusOptions" [value]="option.codice">
+                    <div [ngSwitch]="option.descrizione">
+                      <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
+                      <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
+                      <span *ngSwitchDefault>{{option.descrizione}}</span>
+                    </div>
+                  </mat-option>
+                </mat-select>
+
+                <button mat-button color="primary" (click)="update(ordine)">
+                  <mat-icon fontIcon="save"></mat-icon>
+                </button>
+              </ng-container>
+
             </td>
           </ng-container>
+
+          <!-- AZIONI -->
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let ordine">
-              <button (click)="sbloccaOrdine(ordine)" mat-icon-button matTooltip="Sblocca ordine"
-                      *ngIf="isAdmin && ordine.isLocked">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock_open" color="primary"></mat-icon>
+
+              <!-- SBLOCCA ORDINE -->
+              <button mat-icon-button *ngIf="canSbloccaOrdine && ordine.isLocked"
+                      matTooltip="Sblocca ordine"
+                      (click)="sbloccaOrdine(ordine)">
+                <mat-icon fontIcon="lock_open" color="primary"></mat-icon>
               </button>
-              <button mat-icon-button [matTooltip]="'Ordine in carico a ' + ordine.userLock" *ngIf="ordine.userLock"
-                      #tooltip="matTooltip" (click)="tooltip.toggle()">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="lock" color="primary"></mat-icon>
-              </button>
-              <!--<button *ngIf="ordine.isLocked || (isVenditore && !isAdmin)" (click)="vediDettaglio(ordine)"
-                      mat-icon-button matTooltip="Vai a dettaglio ordine">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="visibility" color="primary"></mat-icon>
-              </button>
-              <button *ngIf="!ordine.isLocked && (!isVenditore || (isVenditore && isAdmin))"
-                      (click)="editDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
-              </button>-->
-              <button (click)="aggiungiNote(ordine, 0)" mat-icon-button [matTooltip]="ordine.note">
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary"
-                          [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
-              </button>
-              <button (click)="aggiungiNote(ordine, 1)" mat-icon-button [matTooltip]="ordine.noteLogistica" matTooltipClass="note">
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
-                          [ngClass]="{'nota-logistica-presente':ordine.noteLogistica}"></mat-icon>
-              </button>
-              <button *ngIf="!isLogistica && !isMagazziniere" (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file">
-                <mat-icon aria-hidden="false" aria-label="download" fontIcon="file_download" color="primary"></mat-icon>
-              </button>
-              <button *ngIf="!ordine.hasFirma && (isVenditore || isAdmin)" (click)="apriFirma(ordine)" mat-icon-button
-                      matTooltip="Firma ordine cliente">
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="draw" color="primary"></mat-icon>
-              </button>
-              <button *ngIf="(isVenditore || isAdmin)" (click)="inviaEmail(ordine)" mat-icon-button
-                      matTooltip="Invia email ordine cliente">
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
-              </button>
-              <button
-                *ngIf="filtro.status !== 'DA_PROCESSARE' && (isAmministrativo || isAdmin || ( isMagazziniere && filtro.status !== 'ARCHIVIATO'))"
-                (click)="apri(ordine)" mat-icon-button
-                matTooltip="Apri ordine">
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
-              </button>
-              <button mat-icon-button matTooltip="Sono presenti articoli consegnati senza bolla"
-                      *ngIf="ordine.warnNoBolla" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                <mat-icon class="warnNoBolla" aria-hidden="false" aria-label="warning" fontIcon="report"
-                          color="warn"></mat-icon>
-              </button>
-              <button mat-icon-button matTooltip="Ordine non firmato dal cliente"
-                      *ngIf="(filtro.status === 'ARCHIVIATO' && (isAdmin || isVenditore)) && !ordine.hasFirma" #tooltip="matTooltip"
+
+              <!-- LOCK INFO -->
+              <button mat-icon-button *ngIf="ordine.userLock"
+                      [matTooltip]="'Ordine in carico a ' + ordine.userLock"
+                      #tooltip="matTooltip"
                       (click)="tooltip.toggle()">
-                <mat-icon class="warnNoBolla warnNoFirma" aria-hidden="false" aria-label="warning"
-                          fontIcon="report"></mat-icon>
+                <mat-icon fontIcon="lock" color="primary"></mat-icon>
               </button>
-              <button mat-icon-button [matTooltip]="'Articoli in pronta consegna'" *ngIf="ordine.hasProntoConsegna"
-                      #tooltip="matTooltip" (click)="tooltip.toggle()">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="rocket_launch"
-                          color="primary"></mat-icon>
+
+              <!-- NOTE CLIENTE -->
+              <button mat-icon-button (click)="aggiungiNote(ordine, 0)" [matTooltip]="ordine.note">
+                <mat-icon fontIcon="speaker_notes" color="primary"
+                          [ngClass]="{'nota-presente': ordine.note}">
+                </mat-icon>
               </button>
-              <a mat-icon-button [matTooltip]="'Vedi allegati e progetto'"
-                 [href]="'https://www.dropbox.com/home/Applicazioni/GO_doc_ordini_cliente/'+ordine.anno+'/'+ordine.serie+'/'+ordine.progressivo" target="_blank">
-                <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="perm_media"
-                          color="primary"></mat-icon>
+
+              <!-- NOTE LOGISTICA (solo Admin / Logistica) -->
+              <button mat-icon-button *ngIf="canNotaLogistica"
+                      (click)="aggiungiNote(ordine, 1)"
+                      [matTooltip]="ordine.noteLogistica"
+                      matTooltipClass="note">
+                <mat-icon fontIcon="contact_phone" color="primary"
+                          [ngClass]="{'nota-logistica-presente': ordine.noteLogistica}">
+                </mat-icon>
+              </button>
+
+              <!-- DOWNLOAD PDF -->
+              <button mat-icon-button *ngIf="canDownloadOrdine"
+                      matTooltip="Scarica file"
+                      (click)="downloadOrdine(ordine)">
+                <mat-icon fontIcon="file_download" color="primary"></mat-icon>
+              </button>
+
+              <!-- FIRMA -->
+              <button mat-icon-button *ngIf="canFirmareOrdine && !ordine.hasFirma"
+                      matTooltip="Firma ordine cliente"
+                      (click)="apriFirma(ordine)">
+                <mat-icon fontIcon="draw" color="primary"></mat-icon>
+              </button>
+
+              <!-- INVIA EMAIL -->
+              <button mat-icon-button *ngIf="canInviaEmail"
+                      matTooltip="Invia email ordine cliente"
+                      (click)="inviaEmail(ordine)">
+                <mat-icon fontIcon="send" color="primary"></mat-icon>
+              </button>
+
+              <!-- APRI ORDINE (Admin, Amm, Magazziniere) -->
+              <button mat-icon-button *ngIf="canApriOrdine && filtro.status !== 'DA_PROCESSARE'"
+                      matTooltip="Apri ordine"
+                      (click)="apri(ordine)">
+                <mat-icon fontIcon="restore" color="primary"></mat-icon>
+              </button>
+
+              <!-- WARNING ICONS (invariati) -->
+              <button mat-icon-button *ngIf="ordine.warnNoBolla"
+                      matTooltip="Sono presenti articoli consegnati senza bolla"
+                      #tooltip="matTooltip"
+                      (click)="tooltip.toggle()">
+                <mat-icon class="warnNoBolla" fontIcon="report" color="warn"></mat-icon>
+              </button>
+
+              <button mat-icon-button *ngIf="(filtro.status === 'ARCHIVIATO' && canFirmareOrdine) && !ordine.hasFirma"
+                      matTooltip="Ordine non firmato dal cliente"
+                      #tooltip="matTooltip"
+                      (click)="tooltip.toggle()">
+                <mat-icon class="warnNoBolla warnNoFirma" fontIcon="report"></mat-icon>
+              </button>
+
+              <button mat-icon-button *ngIf="ordine.hasProntoConsegna"
+                      matTooltip="Articoli in pronta consegna"
+                      #tooltip="matTooltip"
+                      (click)="tooltip.toggle()">
+                <mat-icon fontIcon="rocket_launch" color="primary"></mat-icon>
+              </button>
+
+              <a mat-icon-button
+                 [href]="'https://www.dropbox.com/home/Applicazioni/GO_doc_ordini_cliente/' + ordine.anno + '/' + ordine.serie + '/' + ordine.progressivo"
+                 target="_blank"
+                 matTooltip="Vedi allegati e progetto">
+                <mat-icon fontIcon="perm_media" color="primary"></mat-icon>
               </a>
+
             </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-          <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell no-result-list" colspan="4">Nessun risultato</td>
           </tr>
+
         </table>
 
         <mat-paginator aria-label="Select page of ordini clienti"
                        [length]="totalItems"
                        [pageSize]="filtro.size"
                        [pageSizeOptions]="[5, 10, 20, 30]"
-                       (page)="onPageChange($event)" [showFirstLastButtons]="true" [pageIndex]="filtro.page"
-        >
-
+                       (page)="onPageChange($event)"
+                       [showFirstLastButtons]="true"
+                       [pageIndex]="filtro.page">
         </mat-paginator>
+
       </div>
-    </div>
-  </div>
-  <div class="row float-end">
-    <div class="col-lg-12 col-md-12 col-sm-12">
 
     </div>
   </div>
 </div>
-
-

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {CommonListComponent} from "../../commonListComponent";
-import {environment} from "../../../../environments/environment";
-import {UserService} from "../../../services/users/user.service";
-import {takeUntil} from "rxjs";
-import {Router} from "@angular/router";
-import {Dipendente} from "../../../models/Dipendente";
-import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
-import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import { CommonListComponent } from "../../commonListComponent";
+import { UserService } from "../../../services/users/user.service";
+import { takeUntil } from "rxjs";
+import { Router } from "@angular/router";
+import { Dipendente } from "../../../models/Dipendente";
+import { ConfirmDialogComponent } from "../../confirm-dialog/confirm-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
+import { FiltroOrdini } from "../../../models/FiltroOrdini";
+import { AuthService } from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-user-list',
@@ -17,91 +17,107 @@ import {FiltroOrdini} from "../../../models/FiltroOrdini";
 export class UserListComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['username', 'nome', 'cognome', 'azioni'];
-  isAdmin: boolean = false;
+
   filtro: FiltroOrdini = new FiltroOrdini();
 
+  // Permessi
+  canView: boolean = false;
+  canManage: boolean = false;
 
-  constructor(private service: UserService, private route: Router, private dialog: MatDialog) {
+  constructor(
+    private service: UserService,
+    private route: Router,
+    private dialog: MatDialog,
+    private auth: AuthService
+  ) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
   }
 
   ngOnInit(): void {
-    this.retrieveList();
+    // 🔥 permessi centralizzati (non più localStorage)
+    this.canView = this.auth.hasPerm('users.view');
+    this.canManage = this.auth.hasPerm('users.manage');
+
+    if (this.canView) {
+      this.retrieveList();
+    }
   }
 
-  modifica(dipendente: Dipendente) {
+  modifica(dipendente: Dipendente): void {
+    if (!this.canManage) return;
     this.route.navigate(['/users-detail', dipendente.id]);
   }
 
-  retrieveList(): void {
-    this.loader = true;
-    setTimeout(() => {
-      this.service.getAll().pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: any[] | undefined) => {
-            this.createPaginator(data, 100);
-            if(this.filtro.searchText){
-              this.applyFilter();
-            }
-            this.loader = false;
-          },
-          error: (e: any) => {
-            console.error(e);
-            this.loader = false;
-          }
-        })
-    }, 2000);
-  }
-
-  creaNuovo() {
+  creaNuovo(): void {
+    if (!this.canManage) return;
     this.route.navigate(['/users-detail']);
   }
 
-  elimina(dipendente: Dipendente) {
+  retrieveList(): void {
+    if (!this.canView) return;
+
+    this.loader = true;
+
+    this.service.getAll()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: Dipendente[] | undefined) => {
+          this.createPaginator(data, 100);
+
+          if (this.filtro.searchText) {
+            this.applyFilter();
+          }
+
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      });
+  }
+
+  elimina(dipendente: Dipendente): void {
+    if (!this.canManage) return;
+
     this.openConfirmDialog(null, null, dipendente.id);
   }
 
-  openConfirmDialog(extraProp: any, preProp: any, data: any) {
+  openConfirmDialog(extraProp: any, preProp: any, data: any): void {
     let msg = '';
-    if (preProp) {
-      msg += preProp;
-    }
-    msg += 'Sei sicuro di voler eliminare questo dipendente. L\'azione è irreversibile.';
-    if (extraProp) {
-      msg += " ";
-      msg += extraProp;
-    }
-    msg += '?';
+    if (preProp) msg += preProp;
+
+    msg += `Sei sicuro di voler eliminare questo dipendente? L'azione è irreversibile.`;
+
+    if (extraProp) msg += " " + extraProp;
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '30%',
-      data: {msg: msg},
+      data: { msg }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.service.elimina(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-          next: (res) => {
-            if (!res.error) {
-              this.retrieveList();
-            }
-          },
-          error: (e) => console.error(e)
-        });
+        this.service.elimina(data)
+          .pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe({
+            next: (res: any) => {
+              if (!res.error) this.retrieveList();
+            },
+            error: (e: any) => console.error(e)
+          });
       }
     });
   }
 
-  override applyFilter() {
+  override applyFilter(): void {
     super.applyFilter(this.filtro.searchText);
-    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-      return (
-        data.username.toLowerCase().includes(filter)
-        || data.name.toLowerCase().includes(filter)
-        || data.lastname.includes(filter)
-      )
-    }
+
+    const filter = this.filtro.searchText.toLowerCase();
+
+    this.dataSource.filterPredicate = (data: any, f: string): boolean =>
+      data.username?.toLowerCase().includes(f) ||
+      data.name?.toLowerCase().includes(f) ||
+      data.lastname?.toLowerCase().includes(f);
   }
 }

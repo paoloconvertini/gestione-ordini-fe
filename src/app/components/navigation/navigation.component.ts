@@ -1,5 +1,4 @@
-import { Component, QueryList, ViewChildren, AfterViewInit } from '@angular/core';
-import { MatMenu } from '@angular/material/menu';
+import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
@@ -7,34 +6,42 @@ import { AuthService } from '../../services/auth/auth.service';
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.css']
 })
-export class NavigationComponent implements AfterViewInit {
+export class NavigationComponent {
 
-  @ViewChildren('menuRef') menus!: QueryList<MatMenu>;
-
-  menuRefs: MatMenu[] = [];
+  mobileOpen = false;
 
   constructor(public auth: AuthService) {}
 
-  ngAfterViewInit() {
-    // ❗ Ci permette di associare ogni <mat-menu> dinamico al suo trigger
-    this.menuRefs = this.menus.toArray();
-  }
-
-  // -----------------------------------------------------
-  // ACCESSO PERMESSI
-  // -----------------------------------------------------
+  // ---------------------------------------------------------
+  //  PERMESSI CENTRALIZZATI
+  // ---------------------------------------------------------
   hasPerm(item: any): boolean {
     if (!item.permission) return true;
     return this.auth.hasPerm(item.permission);
+  }
+
+  // Usato per mostrare i padri solo se almeno un figlio è accessibile
+  hasVisibleChildren(item: any): boolean {
+    if (!item.children) return false;
+    return item.children.some((c: any) => this.hasPerm(c));
   }
 
   logout() {
     this.auth.logout();
   }
 
-  // -----------------------------------------------------
-  // MENU DINAMICO (DA COMPLETARE CON PERMESSI)
-  // -----------------------------------------------------
+  toggleMobile() {
+    this.mobileOpen = !this.mobileOpen;
+  }
+
+  username(): string {
+    return this.auth.getCurrentUser()?.username || '';
+  }
+
+
+  // ---------------------------------------------------------
+  // MENU — invariato ma più tipizzato
+  // ---------------------------------------------------------
   menu = [
     {
       label: 'Ordini Clienti',
@@ -99,12 +106,12 @@ export class NavigationComponent implements AfterViewInit {
     },
     {
       label: 'Dipendenti',
-      permission: 'users.view',
+      permission: 'users.manage',
       route: ['/users']
     },
     {
       label: 'Ruoli',
-      permission: 'roles.view',
+      permission: 'roles.manage',
       route: ['/role']
     },
     {

@@ -1,0 +1,36 @@
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.actions-bar {
+  text-align: right;
+  margin-bottom: 12px;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.search-field {
+  width: 50%;
+}
+
+.loader {
+  margin: 24px auto;
+}
+
+.no-access {
+  margin-top: 60px;
+  text-align: center;
+  color: #666;
+}
+
+.no-access mat-icon {
+  font-size: 60px;
+  color: #d32f2f;
+}

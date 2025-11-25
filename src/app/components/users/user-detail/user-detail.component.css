@@ -1,0 +1,33 @@
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.full {
+  width: 100%;
+}
+
+.loader {
+  margin: 20px auto;
+}
+
+.no-access {
+  margin-top: 60px;
+  text-align: center;
+  color: #666;
+}
+
+.no-access mat-icon {
+  font-size: 60px;
+  color: #d32f2f;
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
+h4 {
+  margin-top: 20px;
+  font-weight: bold;
+}

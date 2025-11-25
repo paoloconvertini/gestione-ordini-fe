@@ -1,0 +1,257 @@
+src/app/components
+├── acconti-non-validati-dialog
+│   ├── acconti-non-validati-dialog.component.css
+│   ├── acconti-non-validati-dialog.component.html
+│   ├── acconti-non-validati-dialog.component.spec.ts
+│   └── acconti-non-validati-dialog.component.ts
+├── add-fornitore-dialog
+│   ├── add-fornitore-dialog.component.css
+│   ├── add-fornitore-dialog.component.html
+│   ├── add-fornitore-dialog.component.spec.ts
+│   └── add-fornitore-dialog.component.ts
+├── aggiorna-data-consegna-dialog
+│   ├── aggiorna-data-consegna-dialog.component.css
+│   ├── aggiorna-data-consegna-dialog.component.html
+│   ├── aggiorna-data-consegna-dialog.component.spec.ts
+│   └── aggiorna-data-consegna-dialog.component.ts
+├── baseComponent.ts
+├── box-doccia
+│   ├── box-doccia.component.css
+│   ├── box-doccia.component.html
+│   ├── box-doccia.component.spec.ts
+│   └── box-doccia.component.ts
+├── carico-magazzino-dialog
+│   ├── carico-magazzino-dialog.component.css
+│   ├── carico-magazzino-dialog.component.html
+│   ├── carico-magazzino-dialog.component.spec.ts
+│   └── carico-magazzino-dialog.component.ts
+├── cespite
+│   ├── ammortamenti
+│   │   ├── ammortamento.component.css
+│   │   ├── ammortamento.component.html
+│   │   ├── ammortamento.component.spec.ts
+│   │   └── ammortamento.component.ts
+│   ├── cespite
+│   │   ├── cespite.component.css
+│   │   ├── cespite.component.html
+│   │   ├── cespite.component.spec.ts
+│   │   └── cespite.component.ts
+│   └── cespite-dialog
+│       ├── cespite-dialog.component.css
+│       ├── cespite-dialog.component.html
+│       ├── cespite-dialog.component.spec.ts
+│       └── cespite-dialog.component.ts
+├── collega-oaf
+│   ├── collega-oaf.component.css
+│   ├── collega-oaf.component.html
+│   ├── collega-oaf.component.spec.ts
+│   └── collega-oaf.component.ts
+├── commonListComponent.ts
+├── confirm-dialog
+│   ├── confirm-dialog.component.css
+│   ├── confirm-dialog.component.html
+│   ├── confirm-dialog.component.spec.ts
+│   └── confirm-dialog.component.ts
+├── consegne-settimanali
+│   ├── consegne-settimanali.component.css
+│   ├── consegne-settimanali.component.html
+│   ├── consegne-settimanali.component.spec.ts
+│   └── consegne-settimanali.component.ts
+├── consegne-settimanali-dettaglio-dialog
+│   ├── consegne-settimanali-dettaglio-dialog.component.css
+│   ├── consegne-settimanali-dettaglio-dialog.component.html
+│   ├── consegne-settimanali-dettaglio-dialog.component.spec.ts
+│   └── consegne-settimanali-dettaglio-dialog.component.ts
+├── deposito
+│   ├── deposito.component.css
+│   ├── deposito.component.html
+│   ├── deposito.component.spec.ts
+│   └── deposito.component.ts
+├── fattura-acconto-cart-dialog
+│   ├── fattura-acconto-cart-dialog.component.css
+│   ├── fattura-acconto-cart-dialog.component.html
+│   ├── fattura-acconto-cart-dialog.component.spec.ts
+│   └── fattura-acconto-cart-dialog.component.ts
+├── fattura-acconto-dialog
+│   ├── fattura-acconto-dialog.component.css
+│   ├── fattura-acconto-dialog.component.html
+│   ├── fattura-acconto-dialog.component.spec.ts
+│   └── fattura-acconto-dialog.component.ts
+├── firma-dialog
+│   ├── firma-dialog.component.css
+│   ├── firma-dialog.component.html
+│   ├── firma-dialog.component.spec.ts
+│   └── firma-dialog.component.ts
+├── history-dialog
+│   ├── history-dialog.component.css
+│   ├── history-dialog.component.html
+│   ├── history-dialog.component.spec.ts
+│   └── history-dialog.component.ts
+├── invia-email
+│   ├── invia-email.component.css
+│   ├── invia-email.component.html
+│   ├── invia-email.component.spec.ts
+│   └── invia-email.component.ts
+├── lista-carichi
+│   ├── lista-carichi.component.css
+│   ├── lista-carichi.component.html
+│   ├── lista-carichi.component.spec.ts
+│   └── lista-carichi.component.ts
+├── lista-carichi-dettaglio
+│   ├── lista-carichi-dettaglio.component.css
+│   ├── lista-carichi-dettaglio.component.html
+│   ├── lista-carichi-dettaglio.component.spec.ts
+│   └── lista-carichi-dettaglio.component.ts
+├── lista-carichi-inviati
+│   ├── lista-carichi-inviati.component.css
+│   ├── lista-carichi-inviati.component.html
+│   ├── lista-carichi-inviati.component.spec.ts
+│   └── lista-carichi-inviati.component.ts
+├── login
+│   ├── login.component.css
+│   ├── login.component.html
+│   ├── login.component.spec.ts
+│   └── login.component.ts
+├── navigation
+│   ├── navigation.component.css
+│   ├── navigation.component.html
+│   ├── navigation.component.spec.ts
+│   └── navigation.component.ts
+├── ordine-cliente
+│   ├── articolo
+│   │   ├── articolo.component.css
+│   │   ├── articolo.component.html
+│   │   ├── articolo.component.spec.ts
+│   │   └── articolo.component.ts
+│   ├── articolo-classe-fornitore
+│   │   ├── articolo-classe-fornitore.component.css
+│   │   ├── articolo-classe-fornitore.component.html
+│   │   ├── articolo-classe-fornitore.component.spec.ts
+│   │   └── articolo-classe-fornitore.component.ts
+│   ├── logistica
+│   │   ├── acconto-dialog
+│   │   │   ├── acconto-dialog.component.css
+│   │   │   ├── acconto-dialog.component.html
+│   │   │   ├── acconto-dialog.component.spec.ts
+│   │   │   └── acconto-dialog.component.ts
+│   │   ├── fido-cliente
+│   │   │   ├── fido-cliente.component.css
+│   │   │   ├── fido-cliente.component.html
+│   │   │   ├── fido-cliente.component.spec.ts
+│   │   │   └── fido-cliente.component.ts
+│   │   ├── lista
+│   │   │   ├── lista.component.css
+│   │   │   ├── lista.component.html
+│   │   │   ├── lista.component.spec.ts
+│   │   │   └── lista.component.ts
+│   │   ├── lista-bolla
+│   │   │   ├── lista-bolla.component.css
+│   │   │   ├── lista-bolla.component.html
+│   │   │   ├── lista-bolla.component.spec.ts
+│   │   │   └── lista-bolla.component.ts
+│   │   └── ordini-clienti-pregressi-dialog
+│   │       ├── ordini-clienti-pregressi-dialog.component.css
+│   │       ├── ordini-clienti-pregressi-dialog.component.html
+│   │       ├── ordini-clienti-pregressi-dialog.component.spec.ts
+│   │       └── ordini-clienti-pregressi-dialog.component.ts
+│   ├── ordine-cliente-list
+│   │   ├── ordine-cliente.component.css
+│   │   ├── ordine-cliente.component.html
+│   │   ├── ordine-cliente.component.spec.ts
+│   │   └── ordine-cliente.component.ts
+│   └── schede-tecniche
+│       ├── schede-tecniche.component.css
+│       ├── schede-tecniche.component.html
+│       ├── schede-tecniche.component.spec.ts
+│       └── schede-tecniche.component.ts
+├── ordine-cliente-note-dialog
+│   ├── ordine-cliente-note-dialog.component.css
+│   ├── ordine-cliente-note-dialog.component.html
+│   ├── ordine-cliente-note-dialog.component.spec.ts
+│   └── ordine-cliente-note-dialog.component.ts
+├── ordine-fornitore
+│   ├── aggiungi-oafdialog
+│   │   ├── aggiungi-oafdialog.component.css
+│   │   ├── aggiungi-oafdialog.component.html
+│   │   ├── aggiungi-oafdialog.component.spec.ts
+│   │   └── aggiungi-oafdialog.component.ts
+│   ├── oaf-dettaglio
+│   │   ├── oaf-dettaglio.component.css
+│   │   ├── oaf-dettaglio.component.html
+│   │   ├── oaf-dettaglio.component.spec.ts
+│   │   └── oaf-dettaglio.component.ts
+│   ├── oaf-list
+│   │   ├── oaf-list.component.css
+│   │   ├── oaf-list.component.html
+│   │   ├── oaf-list.component.spec.ts
+│   │   └── oaf-list.component.ts
+│   └── oaf-monitor
+│       ├── oaf-monitor.component.css
+│       ├── oaf-monitor.component.html
+│       ├── oaf-monitor.component.spec.ts
+│       └── oaf-monitor.component.ts
+├── permissions
+│   └── role-permissions
+│       ├── role-permissions.component.css
+│       ├── role-permissions.component.html
+│       ├── role-permissions.component.spec.ts
+│       └── role-permissions.component.ts
+├── primanota
+│   ├── primanota.component.css
+│   ├── primanota.component.html
+│   ├── primanota.component.spec.ts
+│   └── primanota.component.ts
+├── reset-password
+│   ├── reset-password.component.css
+│   ├── reset-password.component.html
+│   ├── reset-password.component.spec.ts
+│   └── reset-password.component.ts
+├── riservato-magazzino
+│   ├── riservato-magazzino.component.css
+│   ├── riservato-magazzino.component.html
+│   ├── riservato-magazzino.component.spec.ts
+│   └── riservato-magazzino.component.ts
+├── role
+│   ├── role.component.css
+│   ├── role.component.html
+│   ├── role.component.spec.ts
+│   └── role.component.ts
+├── snackbar
+│   ├── snackbar.component.css
+│   ├── snackbar.component.html
+│   ├── snackbar.component.spec.ts
+│   └── snackbar.component.ts
+├── tipo-cespite
+│   ├── tipo-cespite-detail
+│   │   ├── tipo-cespite-detail.component.css
+│   │   ├── tipo-cespite-detail.component.html
+│   │   ├── tipo-cespite-detail.component.spec.ts
+│   │   └── tipo-cespite-detail.component.ts
+│   ├── tipo-cespite-list
+│   │   ├── tipo-cespite-list.component.css
+│   │   ├── tipo-cespite-list.component.html
+│   │   ├── tipo-cespite-list.component.spec.ts
+│   │   └── tipo-cespite-list.component.ts
+│   └── tipocespite-dialog
+│       ├── tipocespite-dialog.component.css
+│       ├── tipocespite-dialog.component.html
+│       ├── tipocespite-dialog.component.spec.ts
+│       └── tipocespite-dialog.component.ts
+├── users
+│   ├── user-detail
+│   │   ├── user-detail.component.css
+│   │   ├── user-detail.component.html
+│   │   ├── user-detail.component.spec.ts
+│   │   └── user-detail.component.ts
+│   └── user-list
+│       ├── user-list.component.css
+│       ├── user-list.component.html
+│       ├── user-list.component.spec.ts
+│       └── user-list.component.ts
+└── warn-dialog
+    ├── warn-dialog.component.css
+    ├── warn-dialog.component.html
+    ├── warn-dialog.component.spec.ts
+    └── warn-dialog.component.ts
+
+57 directories, 198 files

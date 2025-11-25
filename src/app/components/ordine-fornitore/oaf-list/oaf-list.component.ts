@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {ActivatedRoute, Router} from "@angular/router";
-import {environment} from "../../../../environments/environment";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {takeUntil} from "rxjs";
@@ -12,6 +11,7 @@ import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-oaf-list',
@@ -22,30 +22,46 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['select', 'numero', 'fornitore', 'data', 'dataModifica', 'flInviato', 'azioni'];
   status?: string;
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
   selection = new SelectionModel<any>(true, []);
   updateList: any = [];
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(private snackbar: MatSnackBar, private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
+  constructor(
+    private snackbar: MatSnackBar,
+    private router: ActivatedRoute,
+    private dialog: MatDialog,
+    private service: OrdineFornitoreService,
+    private route: Router,
+    private auth: AuthService              // <── AGGIUNTO
+  ) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
   }
 
+  // ─────────────────────────────────────────────
+  // GETTER PERMESSI (unici punti che conoscono auth)
+  // ─────────────────────────────────────────────
+
+  get canUnisciOrdini(): boolean {
+    return this.auth.hasPerm('ordineFornitore.unisci');
+  }
+
+  get canModificaInviato(): boolean {
+    return this.auth.hasPerm('ordineFornitore.modificaInviato');
+  }
+
+  get canApriOrdine(): boolean {
+    return this.auth.hasPerm('ordineFornitore.apri');
+  }
+
+  get canEliminaOrdine(): boolean {
+    return this.auth.hasPerm('ordineFornitore.elimina');
+  }
+
+  get canSalva(): boolean {
+    return this.auth.hasPerm('ordineFornitore.salva');
+  }
+
+  // ─────────────────────────────────────────────
 
   ngOnInit(): void {
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
@@ -56,7 +72,6 @@ export class OafListComponent extends CommonListComponent implements OnInit {
         this.retrieveFornitoreList();
       }
     );
-
   }
 
   updateOaf(): void {
@@ -131,19 +146,19 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   retrieveFornitoreList(): void {
     this.loader = true;
     this.updateList = [];
-      this.service.getAllOaf(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-        next: (data: any[] | undefined) => {
-          this.createPaginator(data, 15);
-          if(this.filtro.searchText){
-            this.applyFilter();
-          }
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
+    this.service.getAllOaf(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data: any[] | undefined) => {
+        this.createPaginator(data, 15);
+        if(this.filtro.searchText){
+          this.applyFilter();
         }
-      })
+        this.loader = false;
+      },
+      error: (e: any) => {
+        console.error(e);
+        this.loader = false;
+      }
+    })
   }
 
   refreshPage() {

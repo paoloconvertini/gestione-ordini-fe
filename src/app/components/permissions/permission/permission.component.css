@@ -4,7 +4,7 @@
   padding: 20px;
 }
 
-.rp-card {
+.perm-card {
   width: 50%;
   border-top: 3px solid var(--mdc-theme-primary, #3f51b5);
   margin-top: 30px;
@@ -25,18 +25,28 @@
   color: var(--mdc-theme-primary, #3f51b5);
 }
 
-.full-width {
-  width: 100%;
-}
-
-.perm-title {
+.perm-list {
   margin-top: 20px;
-  margin-bottom: 10px;
-  font-weight: 600;
 }
 
 .perm-item {
-  padding: 5px 0;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.perm-name {
+  font-weight: 600;
+}
+
+.perm-desc {
+  font-size: 13px;
+  color: #555;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
 }
 
 .no-access {
@@ -50,9 +60,9 @@
   color: #d32f2f;
 }
 
-/* Responsive */
+/* responsive */
 @media screen and (max-width: 900px) {
-  .rp-card {
+  .perm-card {
     width: 90%;
   }
 }

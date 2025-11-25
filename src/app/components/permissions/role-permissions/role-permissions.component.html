@@ -1,33 +1,60 @@
-<div class="container mt-3">
+<div class="container" *ngIf="canManage; else noAccess">
 
-  <h2>Gestione Permessi Ruolo</h2>
+  <mat-card class="rp-card">
 
-  <mat-form-field appearance="outline">
-    <mat-label>Ruolo</mat-label>
-    <mat-select [(value)]="selectedRoleId" (selectionChange)="onRoleChange()">
-      <mat-option *ngFor="let r of roles" [value]="r.id">
-        {{ r.name }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-card-header>
+      <mat-card-title>Gestione Permessi Ruolo</mat-card-title>
+    </mat-card-header>
 
-  <div *ngIf="selectedRoleId">
+    <mat-card-content>
 
-    <h3>Permessi</h3>
+      <!-- Select Ruolo -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ruolo</mat-label>
+        <mat-select [(value)]="selectedRoleId" (selectionChange)="onRoleChange()">
+          <mat-option *ngFor="let r of roles" [value]="r.id">
+            {{ r.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <div *ngFor="let p of permissions">
-      <mat-checkbox
-        color="primary"
-        [checked]="checked.has(p.id)"
-        (change)="togglePermission(p, $event)">
-        {{ p.name }} – <small>{{ p.description }}</small>
-      </mat-checkbox>
-    </div>
+      <!-- Permessi -->
+      <div *ngIf="selectedRoleId">
 
-    <button mat-raised-button color="primary" (click)="save()">
-      Salva
-    </button>
+        <h3 class="perm-title">Permessi</h3>
 
-  </div>
+        <div *ngFor="let p of permissions" class="perm-item">
+          <mat-checkbox
+            color="primary"
+            [checked]="checked.has(p.id)"
+            (change)="togglePermission(p, $event)"
+          >
+            {{ p.name }}
+            <small *ngIf="p.description">– {{ p.description }}</small>
+          </mat-checkbox>
+        </div>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width mt-3"
+          (click)="save()"
+        >
+          Salva
+        </button>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
 
 </div>
+
+<!-- NO PERMISSION VIEW -->
+<ng-template #noAccess>
+  <div class="no-access">
+    <mat-icon>block</mat-icon>
+    <p>Non hai i permessi per accedere a questa sezione.</p>
+  </div>
+</ng-template>

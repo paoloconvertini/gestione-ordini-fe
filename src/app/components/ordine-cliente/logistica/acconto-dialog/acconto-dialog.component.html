@@ -7,20 +7,21 @@
     <section class="box acconti-container mat-elevation-z8" tabindex="0">
       <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
 
-      <!-- wrapper scrollabile solo per la tabella -->
       <div class="table-wrapper" *ngIf="!loader">
         <table class="table-container" mat-table multiTemplateDataRows [dataSource]="acconti">
           <!-- Checkbox Column -->
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox color="primary" *ngIf="isLogistica || isAdmin"
+              <mat-checkbox color="primary"
+                            *ngIf="canSelezionaAcconti"
                             (change)="$event ? toggleAllRows() : null"
                             [checked]="selection.hasValue() && isAllSelected()"
                             [indeterminate]="selection.hasValue() && !isAllSelected()">
               </mat-checkbox>
             </th>
             <td mat-cell *matCellDef="let row">
-              <mat-checkbox color="primary" *ngIf="isLogistica || isAdmin"
+              <mat-checkbox color="primary"
+                            *ngIf="canSelezionaAcconti"
                             (click)="$event.stopPropagation();"
                             (change)="$event ? selection.toggle(row) : null"
                             [checked]="selection.isSelected(row)">
@@ -74,11 +75,9 @@
             </td>
           </ng-container>
 
-          <!-- Header + Righe -->
           <tr mat-header-row *matHeaderRowDef="columnAcconti"></tr>
           <tr mat-row *matRowDef="let row; columns: columnAcconti;"></tr>
 
-          <!-- Nessun dato -->
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell no-result-list" colspan="4">
               Nessun acconto trovato per questo cliente
@@ -91,7 +90,12 @@
     <div mat-dialog-actions align="end">
       <button mat-raised-button (click)="onAnnullaClick()">Annulla</button>
       <button mat-raised-button (click)="onNoClick()">No</button>
-      <button [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="aggiungi()">Aggiungi</button>
+      <button [disabled]="selection.isEmpty()"
+              mat-raised-button
+              color="primary"
+              (click)="aggiungi()">
+        Aggiungi
+      </button>
     </div>
   </div>
 </div>

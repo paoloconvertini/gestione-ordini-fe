@@ -1,50 +1,102 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="toolbar">
 
-  <!-- RIGA SUPERIORE -->
-  <mat-toolbar-row>
-    <span>Gestione Ordini</span>
-    <span class="spacer"></span>
+  <!-- LOGO/TITOLO -->
+  <span class="title">Gestione Ordini</span>
 
-    <mat-icon class="pointer" matTooltip="Logout" (click)="logout()">
-      logout
-    </mat-icon>
-  </mat-toolbar-row>
+  <span class="spacer"></span>
 
-  <!-- RIGA MENU -->
-  <mat-toolbar-row>
+  <!-- MENU DESKTOP -->
+  <div class="menu-desktop">
 
-    <ng-container *ngFor="let item of menu; let i = index">
+    <ng-container *ngFor="let item of menu">
 
-      <!-- 🔹 VOCE SINGOLA -->
-      <button
-        mat-button
-        *ngIf="!item.children && hasPerm(item)"
-        [routerLink]="item.route">
-        {{ item.label }}
-      </button>
+      <!-- Se non ho permesso → skip -->
+      <ng-container *ngIf="hasPerm(item)">
 
-      <!-- 🔹 VOCE CON SOTTO MENU -->
-      <button
-        mat-button
-        *ngIf="item.children && hasPerm(item)"
-        [matMenuTriggerFor]="menuRefs[i]">
-        {{ item.label }}
-      </button>
+        <!-- 🔸 Item con figli -->
+        <ng-container *ngIf="item.children && hasVisibleChildren(item); else noChildren">
 
-      <!-- 🔹 MENU (ASSOCIATO CON ViewChildren) -->
-      <mat-menu #menuRef="matMenu">
-        <ng-container *ngFor="let child of item.children">
-          <button
-            mat-menu-item
-            *ngIf="hasPerm(child)"
-            [routerLink]="child.route">
-            {{ child.label }}
+          <mat-menu #childMenu="matMenu">
+            <ng-container *ngFor="let child of item.children">
+              <button mat-menu-item *ngIf="hasPerm(child)" [routerLink]="child.route">
+                {{ child.label }}
+              </button>
+            </ng-container>
+          </mat-menu>
+
+          <button mat-button [matMenuTriggerFor]="childMenu">
+            {{ item.label }}
           </button>
+
         </ng-container>
-      </mat-menu>
+
+        <!-- 🔸 Item senza figli -->
+        <ng-template #noChildren>
+          <button mat-button *ngIf="!item.children" [routerLink]="item.route">
+            {{ item.label }}
+          </button>
+        </ng-template>
+
+      </ng-container>
 
     </ng-container>
 
-  </mat-toolbar-row>
+    <!-- Avatar + dropdown -->
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item [disabled]="true">
+        <mat-icon>account_circle</mat-icon>&nbsp; {{ username() }}
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </mat-menu>
+
+  </div>
+
+  <!-- MENU MOBILE BUTTON -->
+  <button class="menu-mobile-btn" mat-icon-button (click)="toggleMobile()">
+    <mat-icon>menu</mat-icon>
+  </button>
 
 </mat-toolbar>
+
+<!-- SIDEBAR MOBILE -->
+<div class="mobile-menu" *ngIf="mobileOpen">
+
+  <ng-container *ngFor="let item of menu">
+
+    <div *ngIf="hasPerm(item)">
+      <!-- Padre -->
+      <div class="mobile-menu-item" (click)="item.children ? null : toggleMobile()"
+           [routerLink]="item.children ? null : item.route">
+        {{ item.label }}
+      </div>
+
+      <!-- Figli -->
+      <ng-container *ngFor="let child of item.children">
+        <div *ngIf="hasPerm(child)"
+             class="mobile-submenu-item"
+             [routerLink]="child.route"
+             (click)="toggleMobile()">
+          {{ child.label }}
+        </div>
+      </ng-container>
+
+    </div>
+
+  </ng-container>
+
+  <div class="mobile-divider"></div>
+
+  <!-- Utente -->
+  <div class="mobile-user">
+    <div class="username">{{ username() }}</div>
+    <button mat-button color="warn" (click)="logout()">Logout</button>
+  </div>
+
+</div>

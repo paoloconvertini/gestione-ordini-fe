@@ -23,9 +23,6 @@ export class PrimanotaComponent extends CommonListComponent implements OnInit {
 
   constructor(private service: PrimanotaService, private route: Router, private dialog: MatDialog, private snackbar: MatSnackBar, private router: ActivatedRoute) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
     this.router.params.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
           if (params.param) {

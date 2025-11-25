@@ -96,7 +96,8 @@
                   <tr>
                     <th>
                       <!-- Select All articoli -->
-                      <mat-checkbox color="primary" *ngIf="isAdmin || isLogistica"
+                      <mat-checkbox color="primary"
+                                    *ngIf="canSelezionaBolla"
                                     (change)="$event ? toggleAllRows() : null"
                                     [checked]="selection.hasValue() && isAllSelected()"
                                     [indeterminate]="selection.hasValue() && !isAllSelected()">
@@ -115,8 +116,8 @@
                   <tbody>
                   <tr *ngFor="let articolo of ordine.articoli">
                     <td>
-                      <mat-checkbox color="primary" *ngIf="(isAdmin || isLogistica) &&
-                          articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
+                      <mat-checkbox color="primary"
+                                    *ngIf="canSelezionaBolla && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
                                     (click)="$event.stopPropagation();"
                                     (change)="$event ? selection.toggle(articolo) : null"
                                     [checked]="selection.isSelected(articolo)">

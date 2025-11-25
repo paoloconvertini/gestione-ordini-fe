@@ -1,18 +1,72 @@
-mat-toolbar {
-  margin-bottom: 50px;
+.toolbar {
+  padding: 0 16px;
 }
 
-.example-icon {
-  padding: 0 23px;
-}
-.example-spacer {
-  flex: 1 1 auto;
+.title {
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .spacer {
   flex: 1 1 auto;
 }
 
-.pointer {
-  cursor: pointer;
+/* -------- DESKTOP MENU -------- */
+.menu-desktop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* -------- MOBILE MENU BUTTON -------- */
+.menu-mobile-btn {
+  display: none;
+}
+
+/* -------- MOBILE SIDEBAR -------- */
+.mobile-menu {
+  background: #fff;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.mobile-menu-item {
+  font-weight: 600;
+  padding: 10px 0;
+}
+
+.mobile-submenu {
+  padding-left: 14px;
+}
+
+.mobile-submenu-item {
+  padding: 6px 0;
+  color: #333;
+}
+
+.mobile-divider {
+  margin: 16px 0;
+  border-top: 1px solid #ccc;
+}
+
+.mobile-user {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.username {
+  font-weight: bold;
+}
+
+/* -------- RESPONSIVE -------- */
+@media screen and (max-width: 900px) {
+
+  .menu-desktop {
+    display: none;
+  }
+
+  .menu-mobile-btn {
+    display: inline-flex;
+  }
 }

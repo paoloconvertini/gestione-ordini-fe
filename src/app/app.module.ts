@@ -90,6 +90,7 @@ import { FatturaAccontoCartDialogComponent } from './components/fattura-acconto-
 import { AccontiNonValidatiDialogComponent } from './components/acconti-non-validati-dialog/acconti-non-validati-dialog.component';
 import {RolePermissionsComponent} from "./components/permissions/role-permissions/role-permissions.component";
 import { HasPermDirective } from './directives/has-perm.directive';
+import {PermissionComponent} from "./components/permissions/permission/permission.component";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -154,7 +155,8 @@ export const DateFormats = {
     FatturaAccontoCartDialogComponent,
     AccontiNonValidatiDialogComponent,
     RolePermissionsComponent,
-    HasPermDirective
+    HasPermDirective,
+    PermissionComponent
   ],
     imports: [
         MatDatepickerModule,
