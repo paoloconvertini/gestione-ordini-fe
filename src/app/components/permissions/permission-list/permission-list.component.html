@@ -1,0 +1,91 @@
+<div class="container">
+
+  <h2>Gestione Permessi</h2>
+
+  <!-- CREAZIONE -->
+  <div class="create-box">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput [(ngModel)]="newPermission.name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descrizione</mat-label>
+      <input matInput [(ngModel)]="newPermission.description">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="createPermission()">
+      Aggiungi
+    </button>
+  </div>
+
+  <!-- LAYOUT CON DRAWER -->
+  <mat-drawer-container class="drawer-container">
+
+    <mat-drawer #drawer mode="side" position="end" class="drawer">
+      <app-permission-role-drawer
+        [permission]="selectedPermission"
+        (saved)="drawer.close(); loadPermissions()">
+      </app-permission-role-drawer>
+    </mat-drawer>
+
+    <mat-drawer-content>
+
+      <table mat-table [dataSource]="permissions" class="mat-elevation-z2">
+
+        <!-- NOME -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let p">
+            <input matInput [(ngModel)]="p.name" (blur)="updatePermission(p)">
+          </td>
+        </ng-container>
+
+        <!-- DESCRIZIONE -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Descrizione</th>
+          <td mat-cell *matCellDef="let p">
+            <input matInput [(ngModel)]="p.description" (blur)="updatePermission(p)">
+          </td>
+        </ng-container>
+
+        <!-- RUOLI BADGE -->
+        <ng-container matColumnDef="roles">
+          <th mat-header-cell *matHeaderCellDef>Ruoli</th>
+          <td mat-cell *matCellDef="let p">
+            <ng-container *ngIf="p.roles?.length">
+              <span class="role-badge" *ngFor="let r of p.roles">{{r.name}}</span>
+            </ng-container>
+            <span *ngIf="!p.roles?.length">-</span>
+          </td>
+        </ng-container>
+
+        <!-- AZIONI -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Azioni</th>
+          <td mat-cell *matCellDef="let p">
+
+            <!-- GESTISCI RUOLI -->
+            <button mat-icon-button (click)="openRoleDrawer(p)" matTooltip="Gestisci ruoli">
+              <mat-icon>playlist_add_check</mat-icon>
+            </button>
+
+            <!-- ELIMINA -->
+            <button mat-icon-button color="warn" matTooltip="Elimina"
+                    (click)="deletePermission(p)">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+
+    </mat-drawer-content>
+
+  </mat-drawer-container>
+
+</div>

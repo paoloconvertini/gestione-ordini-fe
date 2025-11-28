@@ -1,96 +1,120 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <span>Gestione ordini</span>
-    <span class="example-spacer"></span>
-    <mat-icon *ngIf="isAdmin" [matMenuTriggerFor]="menu" class="pointer example-icon" aria-hidden="false" aria-label="Example user verified icon"
-              matTooltip="{{username}}">admin_panel_settings
-    </mat-icon>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/users']">
-        <mat-icon>person</mat-icon>
-        <span>Gestisci dipendenti</span>
-      </button>
-      <button mat-menu-item class="pointer" [routerLink]="['/role']">
-        <mat-icon>manage_accounts</mat-icon>
-        <span>Gestisci ruoli</span>
-      </button>
-    </mat-menu>
-    <mat-icon *ngIf="isMagazziniere" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
-              matTooltip="{{username}}">warehouse
-    </mat-icon>
-    <mat-icon *ngIf="isVenditore" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
-              matTooltip="{{username}}">monetization_on
-    </mat-icon>
-    <mat-icon *ngIf="isAmministrativo" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
-              matTooltip="{{username}}">fax
-    </mat-icon>
-    <mat-icon *ngIf="isLogistica" class="example-icon" aria-hidden="false" aria-label="Example user verified icon"
-              matTooltip="{{username}}">local_shipping
-    </mat-icon>
-    <mat-icon class="example-icon pointer" aria-hidden="false" aria-label="Example user verified icon" matTooltip="Esci"
-              (click)="logout()">logout
-    </mat-icon>
-  </mat-toolbar-row>
-  <mat-toolbar-row>
-    <button *ngIf="!isLogistica" mat-button [matMenuTriggerFor]="clienti">Ordine Clienti</button>
-    <mat-menu #clienti="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Tutti</button>
-      <button mat-menu-item *ngIf="!isAmministrativo && !isLogistica" class="pointer" [routerLink]="['/ordini-clienti', 'DA_PROCESSARE']">Da processare</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'DA_ORDINARE']">Da ordinare</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'INCOMPLETO']">Incompleti</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'COMPLETO']">Completi</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti', 'ARCHIVIATO']">Archiviato</button>
-    </mat-menu>
-    <button *ngIf="!isLogistica" mat-button [matMenuTriggerFor]="fornitori">Ordine Fornitori</button>
-    <mat-menu #fornitori="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'F']">Sospesi</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore', 'T']">Da approvare</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-fornitore']">Approvati</button>
-    </mat-menu>
-    <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
-    <mat-menu #logistica="matMenu">
-      <button mat-menu-item class="pointer" [routerLink]="['/ordini-clienti']">Pronto consegna</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/logistica-ordini']">Gestione consegne</button>
-      <button mat-menu-item class="pointer" [routerLink]="['/consegne-settimanali']">Consegne settimanali</button>
-    </mat-menu>
-    <button mat-button  *ngIf="isAdmin || isVenditore || isLogistica"  [matMenuTriggerFor]="monitor">Analisi dati</button>
-    <mat-menu #monitor="matMenu">
-      <button mat-menu-item [routerLink]="['/riserve']">Riservato Magazzino</button>
-      <button *ngIf="isAdmin" mat-menu-item class="pointer" [routerLink]="['/oaf-monitor']">Situazione ordini</button>
-    </mat-menu>
-    <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
-    <button *ngIf="isAdmin" mat-button [matMenuTriggerFor]="contabilita">Contabilità</button>
-    <mat-menu #contabilita="matMenu">
-      <button mat-menu-item [matMenuTriggerFor]="trading">Trading</button>
-      <button mat-menu-item [matMenuTriggerFor]="ostuni">Ostuni</button>
-      <button mat-menu-item [matMenuTriggerFor]="ceglie">Ceglie</button>
-    </mat-menu>
-      <mat-menu #ceglie="matMenu">
-        <button mat-menu-item class="pointer" [routerLink]="['/c/ammortamenti']">Registro cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/c/cespiti']">Cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/c/primanota']">Primanota</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/c/tipo-cespiti']">Tipo cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/c/bilancio']">Bilancio</button>
-      </mat-menu>
-      <mat-menu #ostuni="matMenu">
-        <button mat-menu-item class="pointer" [routerLink]="['/o/ammortamenti']">Registro cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/o/cespiti']">Cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/o/primanota']">Primanota</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/o/tipo-cespiti']">Tipo cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/o/bilancio']">Bilancio</button>
-      </mat-menu>
-      <mat-menu #trading="matMenu">
-        <button mat-menu-item class="pointer" [routerLink]="['/t/ammortamenti']">Registro cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/t/cespiti']">Cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/t/primanota']">Primanota</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/t/tipo-cespiti']">Tipo cespiti</button>
-        <button mat-menu-item class="pointer" [routerLink]="['/t/bilancio']">Bilancio</button>
-      </mat-menu>
-    <button mat-button  [matMenuTriggerFor]="listaCarichi">Lista di Carico</button>
-    <mat-menu #listaCarichi="matMenu">
-      <button mat-menu-item [routerLink]="['lista-carichi']">Da inviare</button>
-      <button mat-menu-item [routerLink]="['lista-carichi-inviata']">Inviata</button>
-      <button mat-menu-item [routerLink]="['depositi']">Depositi</button>
-    </mat-menu>
-  </mat-toolbar-row>
+<mat-toolbar color="primary" class="app-toolbar">
+
+  <!-- Titolo -->
+  <span class="toolbar-title">Gestione ordini</span>
+
+  <span class="spacer"></span>
+
+  <!-- MENU PRINCIPALE (SOTTOMENU) -->
+  <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
+
+  <button *ngIf="perm.canViewOrdiniFornitori"
+          mat-button
+          [matMenuTriggerFor]="fornitori">
+    Ordine Fornitori
+  </button>
+  <mat-menu #fornitori="matMenu">
+    <button mat-menu-item [routerLink]="['/ordini-fornitore','F']">Sospesi</button>
+    <button mat-menu-item [routerLink]="['/ordini-fornitore','T']">Da approvare</button>
+    <button mat-menu-item [routerLink]="['/ordini-fornitore']">Approvati</button>
+  </mat-menu>
+
+  <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
+  <mat-menu #logistica="matMenu">
+    <button mat-menu-item [routerLink]="['/ordini-clienti']">Pronto consegna</button>
+    <button mat-menu-item [routerLink]="['/logistica-ordini']">Gestione consegne</button>
+    <button mat-menu-item [routerLink]="['/consegne-settimanali']">Consegne settimanali</button>
+  </mat-menu>
+
+  <button *ngIf="perm.canViewAnalisi"
+          mat-button
+          [matMenuTriggerFor]="analisi">
+    Analisi dati
+  </button>
+  <mat-menu #analisi="matMenu">
+    <button mat-menu-item [routerLink]="['/riserve']">Riservato Magazzino</button>
+    <button *ngIf="perm.canViewSituazioneOrdini"
+            mat-menu-item
+            [routerLink]="['/oaf-monitor']">
+      Situazione ordini
+    </button>
+  </mat-menu>
+
+  <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
+
+  <!-- Contabilità -->
+  <button *ngIf="perm.canViewContabilita"
+          mat-button
+          [matMenuTriggerFor]="contabilita">
+    Contabilità
+  </button>
+
+  <mat-menu #contabilita="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="trading">Trading</button>
+    <button mat-menu-item [matMenuTriggerFor]="ostuni">Ostuni</button>
+    <button mat-menu-item [matMenuTriggerFor]="ceglie">Ceglie</button>
+  </mat-menu>
+
+  <mat-menu #trading="matMenu">
+    <button mat-menu-item [routerLink]="['/t/ammortamenti']">Registro cespiti</button>
+    <button mat-menu-item [routerLink]="['/t/cespiti']">Cespiti</button>
+    <button mat-menu-item [routerLink]="['/t/primanota']">Primanota</button>
+    <button mat-menu-item [routerLink]="['/t/tipo-cespiti']">Tipo cespiti</button>
+<!--    <button mat-menu-item [routerLink]="['/t/bilancio']">Bilancio</button>-->
+  </mat-menu>
+
+  <mat-menu #ostuni="matMenu">
+    <button mat-menu-item [routerLink]="['/o/ammortamenti']">Registro cespiti</button>
+    <button mat-menu-item [routerLink]="['/o/cespiti']">Cespiti</button>
+    <button mat-menu-item [routerLink]="['/o/primanota']">Primanota</button>
+    <button mat-menu-item [routerLink]="['/o/tipo-cespiti']">Tipo cespiti</button>
+<!--    <button mat-menu-item [routerLink]="['/o/bilancio']">Bilancio</button>-->
+  </mat-menu>
+
+  <mat-menu #ceglie="matMenu">
+    <button mat-menu-item [routerLink]="['/c/ammortamenti']">Registro cespiti</button>
+    <button mat-menu-item [routerLink]="['/c/cespiti']">Cespiti</button>
+    <button mat-menu-item [routerLink]="['/c/primanota']">Primanota</button>
+    <button mat-menu-item [routerLink]="['/c/tipo-cespiti']">Tipo cespiti</button>
+<!--    <button mat-menu-item [routerLink]="['/c/bilancio']">Bilancio</button>-->
+  </mat-menu>
+
+
+  <!-- MENU UTENTE A DESTRA -->
+  <button mat-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
+    <div class="avatar">{{ avatarLetter }}</div>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <div class="user-header">
+      <div class="username">{{ username }}</div>
+      <div class="role">{{ mainRole }}</div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <button *ngIf="perm.canViewUsers" mat-menu-item [routerLink]="['/users']">
+      <mat-icon>person</mat-icon>
+      <span>Gestisci dipendenti</span>
+    </button>
+
+    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/role']">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Gestisci ruoli</span>
+    </button>
+
+    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/permissions']">
+      <mat-icon>lock</mat-icon>
+      <span>Gestisci permessi</span>
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+
+  </mat-menu>
+
 </mat-toolbar>

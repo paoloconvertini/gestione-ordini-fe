@@ -89,14 +89,23 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-      this.filtroArticoli.anno = params.anno;
-      this.filtroArticoli.serie = params.serie;
-      this.filtroArticoli.progressivo = params.progressivo;
-      this.status = params.status;
-      this.filtro.page = params.page;
-      this.filtro.size = params.size;
-    });
+    this.route.params
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params: any) => {
+
+        this.filtroArticoli.anno = params.anno;
+        this.filtroArticoli.serie = params.serie;
+        this.filtroArticoli.progressivo = params.progressivo;
+
+        // lo stato non arriva più dalla route
+        this.status = null;
+
+        const saved = localStorage.getItem('filtro');
+        if (saved) {
+          this.filtro = JSON.parse(saved);
+        }
+      });
+
     if (this.isAmministrativo && this.status === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
     }
@@ -116,7 +125,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService,
               private service: ArticoloService, private dialog: MatDialog,
-              private snackbar: MatSnackBar, private route: Router, private router: ActivatedRoute,
+              private snackbar: MatSnackBar, private router: Router, private route: ActivatedRoute,
               private saldiMagazzinoService: SaldiMagazzinoService) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
@@ -181,7 +190,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           next: (res) => {
             if (!res.error) {
               let url = '/ordini-clienti';
-              this.route.navigate([url, this.filtro.page, this.filtro.size]);
+              this.router.navigate([url]);
             }
           }
         });
@@ -222,7 +231,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
               }
-              this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
+              this.router.navigate(['/ordini-clienti']);
             },
             error: (e) => {
               console.error(e);
@@ -401,7 +410,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             dialogRef.afterClosed().subscribe(result => {
 
             });
-            this.route.navigate(['/ordini-clienti', 'DA_ORDINARE', this.filtro.page, this.filtro.size]);
+            this.router.navigate(['/ordini-clienti']);
           } else if (res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
@@ -469,7 +478,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
+              this.router.navigate(['/ordini-clienti']);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -477,7 +486,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         })
     } else {
-      this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
+      this.router.navigate(['/ordini-clienti']);
     }
   }
 
@@ -640,7 +649,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   codificaArticoli() {
-    const list = this.ordineDettaglio.articoli?.filter(a => (a.farticolo === '*PZ' || a.farticolo === '*MQ' || a.farticolo === '*ML'));
+    const list = this.ordineDettaglio.articoli?.filter((a:any) => (a.farticolo === '*PZ' || a.farticolo === '*MQ' || a.farticolo === '*ML'));
     this.loader = true;
     this.service.codificaArticoli(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -768,7 +777,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   collegaOAF(articolo: any) {
-    this.route.navigate(['/collega-oaf', articolo.progrGenerale, this.filtro.page, this.filtro.size, articolo.anno, articolo.serie, articolo.progressivo, this.status]);
+    this.router.navigate(['/collega-oaf', articolo.progrGenerale, this.filtro.page, this.filtro.size, articolo.anno, articolo.serie, articolo.progressivo, this.status]);
   }
 
   resetQta(articolo: any) {

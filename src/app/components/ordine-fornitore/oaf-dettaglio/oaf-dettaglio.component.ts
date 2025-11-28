@@ -114,7 +114,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
             if(data) {
               this.ordineFornitoreDettaglio = data;
               if(this.ordineFornitoreDettaglio.articoli && this.ordineFornitoreDettaglio.articoli.length > 0) {
-                this.ordineFornitoreDettaglio.articoli.forEach(a => this.calcolaTotale(a));
+                this.ordineFornitoreDettaglio.articoli.forEach((a: any) => this.calcolaTotale(a));
                this.rigo = this.ordineFornitoreDettaglio.articoli[this.ordineFornitoreDettaglio.articoli.length -1].rigo;
               }
               this.createPaginator(this.ordineFornitoreDettaglio.articoli, 100);
@@ -208,7 +208,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     }
     articolo.prezzoTot = prezzo * articolo.oquantita;
     this.ordineFornitoreDettaglio.totale = 0;
-    this.ordineFornitoreDettaglio.articoli?.forEach(a => this.ordineFornitoreDettaglio.totale += a.prezzoTot);
+    this.ordineFornitoreDettaglio.articoli?.forEach((a: any) => this.ordineFornitoreDettaglio.totale += a.prezzoTot);
   }
 
   elimina(articolo:any) {

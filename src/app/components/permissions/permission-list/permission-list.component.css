@@ -1,0 +1,27 @@
+.container {
+  padding: 20px;
+}
+
+.create-box {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.drawer-container {
+  height: calc(100vh - 180px);
+}
+
+.role-badge {
+  background: #ececec;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+.drawer {
+  width: 350px;
+  padding: 20px;
+}

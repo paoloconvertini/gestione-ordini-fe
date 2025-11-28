@@ -63,7 +63,7 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
       .subscribe({
         next: (data: Dipendente) => {
           this.dipendente = data;
-          this.dipendente.roles.forEach(r => {
+          this.dipendente.roles.forEach((r:any) => {
             this.dipendenteRuoli().push(this.newRuolo(r.id, r.name));
             this.optionRoles.forEach(o => {
               if(o.id === r.id){

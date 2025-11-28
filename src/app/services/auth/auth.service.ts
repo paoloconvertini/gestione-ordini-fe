@@ -1,81 +1,165 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, tap} from "rxjs";
-import {HttpClient} from "@angular/common/http";
-import {JwtHelperService} from "@auth0/angular-jwt";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {environment} from "../../../environments/environment";
-import {User} from "../../models/user";
-import {LoginResponseI} from "../../models/login-response.interface";
-import {Router} from "@angular/router";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { map } from 'rxjs/operators';
+import {OrdiniClientiStateService} from "../state/ordini-clienti-state.service";
 
-const url = environment.baseAuthUrl;
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  isLoggedIn$ = this._isLoggedIn$.asObservable();
 
-  constructor(private http: HttpClient, private snackbar: MatSnackBar, private helper: JwtHelperService, private router: Router) {
-    const token = localStorage.getItem(environment.TOKEN_KEY);
-    this._isLoggedIn$.next(!!token);
+  private tokenKey: string = environment.TOKEN_KEY;
+
+  private _user$ = new BehaviorSubject<any>(null);
+  user$ = this._user$.asObservable();
+
+  isLoggedIn$ = this.user$.pipe(
+    map(user => user !== null)
+  );
+
+  getCurrentUser() {
+    return this._user$.value;
   }
 
-  getVenditori(data:any): Observable<any> {
-    return this.http.post<any>(url + 'users/byRole', data);
+  private logoutTimer: any = null;
+
+  constructor(
+    private http: HttpClient,
+    private helper: JwtHelperService,
+    private router: Router,
+    private ordineState: OrdiniClientiStateService
+  ) {
+    this.restoreSession();
   }
 
-  updatePassword(username: string, data: any) : Observable<any> {
-    return this.http.put<any>(url + `users/${username}`, data);
+  login(credentials: any): Observable<any> {
+    return new Observable((observer) => {
+      this.http.post<any>(environment.baseAuthUrl + environment.LOGIN, credentials)
+        .subscribe({
+          next: (res: any) => {
+            if (!res || !res.idToken) {
+              observer.error('Token non presente');
+              return;
+            }
+
+            localStorage.setItem(this.tokenKey, res.idToken);
+            this.decodeAndStore(res.idToken);
+
+            observer.next(res);
+            observer.complete();
+          },
+          error: (err: any) => {
+            observer.error(err);
+          }
+        });
+    });
   }
 
-  login(user: User): Observable<LoginResponseI> {
-    return this.http.post<LoginResponseI>(url + environment.LOGIN, user).pipe(
-      tap((res: LoginResponseI) => {
-        if(!res.idToken) {
-          console.log("ERRORE");
-        }
-        this._isLoggedIn$.next(true);
-        localStorage.setItem(environment.TOKEN_KEY, res.idToken);
-        if (user.username) {
-          localStorage.setItem(environment.USERNAME, user.username);
-        }
-        let tokenObj = this.helper.decodeToken(res.idToken);
-        user.ruolo = tokenObj.groups;
-
-        if (user.ruolo!.includes('Magazziniere')) {
-          localStorage.setItem(environment.MAGAZZINIERE, 'Y');
-        }
-        if (user.ruolo!.includes('Amministrativo')) {
-          localStorage.setItem(environment.AMMINISTRATIVO, 'Y');
-        }
-        if (user.ruolo!.includes('Venditore')) {
-          localStorage.setItem(environment.VENDITORE, 'Y');
-        }
-        if (user.ruolo!.includes('Admin')) {
-          localStorage.setItem(environment.ADMIN, 'Y');
-        }
-        if (user.ruolo!.includes('Logistica')) {
-          localStorage.setItem(environment.LOGISTICA, 'Y');
-        }
-      }),
-      tap(() => this.snackbar.open('Login successfull', 'Chiudi', {
-        duration: 2000, horizontalPosition: 'right', verticalPosition: 'top'
-      }))
-    )
+  // -----------------------------------------------------------
+  // UPDATE PASSWORD
+  // -----------------------------------------------------------
+  updatePassword(username: string, payload: { password: string }): Observable<any> {
+    return this.http.put<any>(
+      environment.baseAuthUrl + 'users/password/' + username,
+      payload
+    );
   }
 
-  logout() {
-    this._isLoggedIn$.next(false);
-    localStorage.removeItem(environment.TOKEN_KEY);
-    localStorage.removeItem(environment.USERNAME);
-    localStorage.removeItem(environment.MAGAZZINIERE);
-    localStorage.removeItem(environment.VENDITORE);
-    localStorage.removeItem(environment.ADMIN);
-    localStorage.removeItem(environment.AMMINISTRATIVO);
-    localStorage.removeItem(environment.LOGISTICA);
-    localStorage.removeItem('filtro');
-    this.router.navigate(['']);
+  // -----------------------------------------------------------
+  // GET VENDITORI (SERVE IN DIVERSE PAGINE)
+  // -----------------------------------------------------------
+  getVenditori(data: any): Observable<any> {
+    return this.http.post<any>(environment.baseAuthUrl + 'users/byRole', data);
+  }
+
+  // -----------------------------------------------------------
+  // LOGOUT
+  // -----------------------------------------------------------
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+    this._user$.next(null);
+
+    if (this.logoutTimer) {
+      clearTimeout(this.logoutTimer);
+      this.logoutTimer = null;
+    }
+
+    this.ordineState.clearOnLogout();
+    this.router.navigate(['/login']);
+  }
+
+  // -----------------------------------------------------------
+  // DECODE TOKEN + AUTO LOGOUT TIMER
+  // -----------------------------------------------------------
+  private decodeAndStore(token: string): void {
+    const decoded: any = this.helper.decodeToken(token);
+
+    const user = {
+      username: decoded.upn,
+      roles: decoded.groups || [],
+      permissions: decoded.permissions || [],
+      exp: decoded.exp
+    };
+
+    this._user$.next(user);
+
+    this.startAutoLogout(decoded.exp);
+  }
+
+  private startAutoLogout(exp: number): void {
+    if (this.logoutTimer) {
+      clearTimeout(this.logoutTimer);
+    }
+
+    const now = Date.now() / 1000;
+    const secondsToExpire = exp - now;
+
+    if (secondsToExpire <= 0) {
+      this.logout();
+      return;
+    }
+
+    this.logoutTimer = setTimeout(() => {
+      console.log('Token expired → Auto logout');
+      this.logout();
+    }, secondsToExpire * 1000);
+  }
+
+  // -----------------------------------------------------------
+  // RESTORE SESSION (AL REFRESH)
+  // -----------------------------------------------------------
+  private restoreSession(): void {
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token) return;
+
+    if (this.helper.isTokenExpired(token)) {
+      this.logout();
+      return;
+    }
+
+    this.decodeAndStore(token);
+  }
+
+  // -----------------------------------------------------------
+  // CHECK PERMESSI / RUOLI
+  // -----------------------------------------------------------
+  hasRole(role: string): boolean {
+    const u = this._user$.value;
+    return u?.roles?.includes(role);
+  }
+
+  hasPerm(perm: string): boolean {
+    const u = this._user$.value;
+    return u?.permissions?.includes(perm);
+  }
+
+  isLogged(): boolean {
+    const token = localStorage.getItem(this.tokenKey);
+    return token != null && !this.helper.isTokenExpired(token);
   }
 }

@@ -13,8 +13,8 @@ export class RoleService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<any> {
-    return this.http.get<any>(url);
+  getAll(): Observable<any[]> {
+    return this.http.get<any[]>(url);
   }
 
   elimina(id: any): Observable<any>{
@@ -28,4 +28,9 @@ export class RoleService {
   update(data:any): Observable<any>{
     return this.http.put(url + `/${data.id}`, data);
   }
+
+  updatePermissions(roleId: number, payload: any): Observable<any> {
+    return this.http.put(`${url}/${roleId}/permissions`, payload);
+  }
+
 }

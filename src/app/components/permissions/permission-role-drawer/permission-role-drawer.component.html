@@ -1,0 +1,11 @@
+<h3>Permesso: {{permission?.name}}</h3>
+
+<mat-selection-list>
+  <mat-list-option *ngFor="let r of roles" [(selected)]="r.assigned">
+    {{r.name}}
+  </mat-list-option>
+</mat-selection-list>
+
+<button mat-raised-button color="primary" (click)="save()">
+  Salva
+</button>

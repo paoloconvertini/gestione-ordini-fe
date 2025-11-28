@@ -53,6 +53,16 @@ const routes: Routes = [
     component: OrdineClienteComponent,
   },
   {
+    path: 'articoli/edit/:anno/:serie/:progressivo',
+    canActivate: [AuthGuard],
+    component: ArticoloComponent,
+  },
+  {
+    path: 'articoli/view/:anno/:serie/:progressivo',
+    canActivate: [AuthGuard],
+    component: ArticoloComponent,
+  },
+  {
     path: 'logistica-ordini',
     canActivate: [AuthGuard],
     component: ListaComponent,
@@ -61,21 +71,6 @@ const routes: Routes = [
     path: 'consegne-settimanali',
     canActivate: [AuthGuard],
     component: ConsegneSettimanaliComponent,
-  },
-  {
-    path: 'ordini-clienti/:status/:page/:size',
-    canActivate: [AuthGuard],
-    component: OrdineClienteComponent,
-  },
-  {
-    path: 'ordini-clienti/:page/:size',
-    canActivate: [AuthGuard],
-    component: OrdineClienteComponent,
-  },
-  {
-    path: 'ordini-clienti',
-    canActivate: [AuthGuard],
-    component: OrdineClienteComponent,
   },
   {
     path: 'ordini-fornitore/:status',
@@ -91,16 +86,6 @@ const routes: Routes = [
     path: 'oaf-monitor',
     canActivate: [AuthGuard],
     component: OafMonitorComponent,
-  },
-  {
-    path: 'articoli/edit/:page/:size/:anno/:serie/:progressivo/:status',
-    canActivate: [AuthGuard],
-    component: ArticoloComponent,
-  },
-  {
-    path: 'articoli/view/:page/:size/:anno/:serie/:progressivo/:status',
-    canActivate: [AuthGuard],
-    component: ArticoloComponent,
   },
   {
     path: 'oaf/articoli/:anno/:serie/:progressivo/:status',

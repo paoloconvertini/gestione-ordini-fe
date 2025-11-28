@@ -88,6 +88,9 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatBadgeModule} from "@angular/material/badge";
 import { FatturaAccontoCartDialogComponent } from './components/fattura-acconto-cart-dialog/fattura-acconto-cart-dialog.component';
 import { AccontiNonValidatiDialogComponent } from './components/acconti-non-validati-dialog/acconti-non-validati-dialog.component';
+import { PermissionRoleDrawerComponent } from './components/permissions/permission-role-drawer/permission-role-drawer.component';
+import {PermissionListComponent} from "./components/permissions/permission-list/permission-list.component";
+import {MatListModule} from "@angular/material/list";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -150,58 +153,61 @@ export const DateFormats = {
     CaricoMagazzinoDialogComponent,
     FatturaAccontoDialogComponent,
     FatturaAccontoCartDialogComponent,
-    AccontiNonValidatiDialogComponent
+    AccontiNonValidatiDialogComponent,
+    PermissionListComponent,
+    PermissionRoleDrawerComponent
   ],
-    imports: [
-        MatDatepickerModule,
-        MatMomentDateModule,
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatCardModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        HttpClientModule,
-        JwtModule.forRoot({
-          config: {
-            tokenGetter,
-            // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
-            allowedDomains: [SAME_ORIGIN],
-            // Non allegare il token a login/refresh (adatta ai tuoi path reali)
-            disallowedRoutes: [/^\/auth\/login\b/, /^\/auth\/refresh\b/],
-            // opzionale:
-            // skipWhenExpired: true,
-          }
-        }),
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatCheckboxModule,
-        FormsModule,
-        MatTooltipModule,
-        MatGridListModule,
-        MatRadioModule,
-        MatSidenavModule,
-        MatMenuModule,
-        MatAutocompleteModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatMomentDateModule,
-        MatSortModule,
-        MatSelectModule,
-        MatExpansionModule,
-        MatStepperModule,
-        MatTabsModule,
-        MatSliderModule,
-        MatDividerModule,
-        MatBadgeModule
-    ],
+  imports: [
+    MatDatepickerModule,
+    MatMomentDateModule,
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+        // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
+        allowedDomains: [SAME_ORIGIN],
+        // Non allegare il token a login/refresh (adatta ai tuoi path reali)
+        disallowedRoutes: [/^\/auth\/login\b/, /^\/auth\/refresh\b/],
+        // opzionale:
+        // skipWhenExpired: true,
+      }
+    }),
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatTooltipModule,
+    MatGridListModule,
+    MatRadioModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatMomentDateModule,
+    MatSortModule,
+    MatSelectModule,
+    MatExpansionModule,
+    MatStepperModule,
+    MatTabsModule,
+    MatSliderModule,
+    MatDividerModule,
+    MatBadgeModule,
+    MatListModule
+  ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
     {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },

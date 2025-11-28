@@ -1,45 +1,32 @@
 import { Component } from '@angular/core';
-import {AuthService} from "../../services/auth/auth.service";
-import {environment} from "../../../environments/environment";
+import { AuthService } from '../../services/auth/auth.service';
+import { Router } from '@angular/router';
+import {PermissionService} from "../../services/auth/permission.service";
+import {OrdiniClientiStateService} from "../../services/state/ordini-clienti-state.service";
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.css']
 })
-export class NavigationComponent{
+export class NavigationComponent {
 
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
+  username = '';
+  mainRole = '';
+  avatarLetter = '';
 
-  constructor(private authService: AuthService) {
-    this.username = localStorage.getItem(environment.USERNAME);
-    if(localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if(localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if(localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if(localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if(localStorage.getItem(environment.LOGISTICA)){
-      this.isLogistica = true;
-    }
+  constructor(
+    private auth: AuthService,
+    public perm: PermissionService
+  ) {
+    const user = this.auth.getCurrentUser();
+    this.username = user?.username || '';
+    this.mainRole = user?.roles?.[0] || '';
+    this.avatarLetter = this.username.charAt(0).toUpperCase();
   }
 
-  username:string | null;
-
-  logout(){
-    this.authService.logout();
+  logout() {
+    this.auth.logout();
   }
-
-
 
 }
