@@ -1,0 +1,60 @@
+.container {
+  padding-top: 20px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-bar {
+  max-width: 300px;
+  margin-bottom: 15px;
+}
+
+.table-wrapper {
+  position: relative;
+  min-height: 200px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.loader {
+  display: block;
+  margin: 40px auto;
+}
+
+.edit-input {
+  width: 250px;
+}
+
+.expanded-container {
+  background: #fafafa;
+  padding: 15px;
+  border-left: 3px solid #1976d2;
+  margin-top: 10px;
+}
+
+.permission-chips {
+  margin-bottom: 15px;
+}
+
+.add-permission-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.perm-select {
+  width: 280px;
+}
+
+.save-bar {
+  margin-top: 10px;
+}

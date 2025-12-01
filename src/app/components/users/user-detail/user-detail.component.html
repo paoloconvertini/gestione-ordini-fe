@@ -1,102 +1,83 @@
-<form (ngSubmit)="submitForm()" [formGroup]="userForm" autocomplete="off" class="">
-  <div class="container">
-    <h3 class="title">
-      <span *ngIf="id">Modica</span>
-      <span *ngIf="!id">Crea</span>
-      dipendente
-    </h3>
-    <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field>
-          <mat-label>
-            Nome
-          </mat-label>
-          <input
-            [ngModel]="dipendente.name"
-            matInput
-            placeholder="Ex. mario"
-            formControlName="name"
-            required
-          />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field>
-          <mat-label>
-            Cognome
-          </mat-label>
-          <input
-            [ngModel]="dipendente.lastname"
-            matInput
-            placeholder="Ex. rossi"
-            formControlName="lastname"
-            required
-          />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field>
-          <mat-label>
-            Email
-          </mat-label>
-          <input
-            [ngModel]="dipendente.email"
-            matInput
-            placeholder="Ex. mario.rossi@testmail.it"
-            formControlName="email"
-          />
-        </mat-form-field>
-      </div>
+<form (ngSubmit)="submitForm()" [formGroup]="userForm" autocomplete="off">
+
+  <div class="page-container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <h2>
+        {{ id ? 'Modifica dipendente' : 'Crea dipendente' }}
+      </h2>
     </div>
-    <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field>
-          <mat-label>
-            Password
-          </mat-label>
-          <input
-            [ngModel]="dipendente.password"
-            matInput
-            placeholder="Ex. S3cr3t"
-            formControlName="password"
-          />
+
+    <!-- FORM SEZIONE DATI PERSONALI -->
+    <div class="form-section">
+      <div class="form-row">
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="mrossi">
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Mario">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Cognome</mat-label>
+          <input matInput formControlName="lastname" placeholder="Rossi">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="mario.rossi@mail.it">
+        </mat-form-field>
+
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field appearance="fill">
-          <mat-label>Scegli una data</mat-label>
-          <input matInput [matDatepicker]="picker" [ngModel]="dipendente.dataNascita" formControlName="dataNascita">
+      <div class="form-row">
+
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" placeholder="(lascia vuoto per non modificare)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Data di nascita</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dataNascita">
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field>
-          <mat-label>
-            Codice venditore
-          </mat-label>
-          <input
-            [ngModel]="dipendente.codVenditore"
-            matInput
-            placeholder="Ex. S3cr3t"
-            formControlName="codVenditore"
-          />
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Codice venditore</mat-label>
+          <input matInput formControlName="codVenditore" placeholder="123ABC">
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Ruoli</mat-label>
+
+          <mat-select formControlName="roles" multiple>
+            <mat-option *ngFor="let role of optionRoles" [value]="role">
+              {{ role.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
       </div>
+
     </div>
-    <div class="row">
-      <h4>Ruoli</h4>
-      <div formArrayName="roles">
-        <div class="example-section" *ngFor="let role of optionRoles">
-          <mat-checkbox color="primary" (change)="onCheckboxChange(role, $event)" [checked]="role.checked">
-            {{ role.name }}
-          </mat-checkbox>
-        </div>
-      </div>
+
+
+
+    <!-- FOOTER BUTTONS -->
+    <div class="footer-buttons">
+      <button mat-stroked-button type="button" (click)="indietro()">Annulla</button>
+
+      <button mat-raised-button color="primary" type="submit">
+        Salva
+      </button>
     </div>
-    <div class="float-end">
-      <button mat-raised-button type="button" (click)="indietro()">Annulla</button>&nbsp;&nbsp;
-      <button mat-raised-button color="primary" type="submit">Salva</button>
-    </div>
+
   </div>
 </form>

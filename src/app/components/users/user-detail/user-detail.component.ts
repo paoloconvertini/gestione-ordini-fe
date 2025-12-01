@@ -34,17 +34,63 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.userForm = this.fb.group({
-      name: new FormControl(this.dipendente.name, Validators.required),
+      username: new FormControl('', Validators.required),
+      name: new FormControl('', Validators.required),
       lastname: new FormControl('', Validators.required),
       email: new FormControl('', Validators.email),
       dataNascita: new FormControl(''),
-      password: new FormControl('', this.id ? null : Validators.required),
+      password: new FormControl(''),      // required solo in create
       codVenditore: new FormControl(''),
-      roles: new FormArray([])
+      roles: new FormControl([])   // array semplice
     });
+
     this.getAllRole();
+
+    // se edit → password NON required
+    if (this.id) {
+      this.userForm.get('password')?.clearValidators();
+      this.userForm.get('password')?.updateValueAndValidity();
+    }
   }
+
+  getUser() {
+    this.loader = true;
+
+    this.service.getUser(this.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: Dipendente) => {
+
+          this.dipendente = data;
+
+          // 1️⃣ Preparo i ruoli selezionati per il mat-select
+          const selectedRoles = data.roles.map((r: any) =>
+            this.optionRoles.find(o => o.id === r.id)
+          );
+
+          // 2️⃣ Patch del form
+          this.userForm.patchValue({
+            username: data.username,
+            name: data.name,
+            lastname: data.lastname,
+            email: data.email,
+            dataNascita: data.dataNascita,
+            codVenditore: data.codVenditore,
+            password: '',
+            roles: selectedRoles     // ECCO IL CAMBIO IMPORTANTE
+          });
+
+          this.loader = false;
+        },
+        error: (e) => {
+          console.error(e);
+          this.loader = false;
+        }
+      });
+  }
+
 
   dipendenteRuoli(): FormArray {
     return this.userForm.get('roles') as FormArray;
@@ -55,30 +101,6 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
       id: id,
       name: name
     });
-  }
-
-  getUser() {
-    this.loader = true;
-    this.service.getUser(this.id).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (data: Dipendente) => {
-          this.dipendente = data;
-          this.dipendente.roles.forEach((r:any) => {
-            this.dipendenteRuoli().push(this.newRuolo(r.id, r.name));
-            this.optionRoles.forEach(o => {
-              if(o.id === r.id){
-                o.checked = true;
-                return;
-              }
-            })
-          });
-          this.loader = false;
-        },
-        error: (e: any) => {
-          console.error(e);
-          this.loader = false;
-        }
-      })
   }
 
   getAllRole() {
@@ -101,7 +123,12 @@ export class UserDetailComponent extends BaseComponent implements OnInit {
   submitForm() {
     this.loader = true;
     if (this.userForm.valid) {
-      this.service.create(this.id, this.userForm.value).pipe(takeUntil(this.ngUnsubscribe))
+      const formValue = this.userForm.value;
+      const payload = {
+        ...formValue,
+        roles: formValue.roles.map((r: Ruolo) => ({ id: r.id, name: r.name }))
+      };
+      this.service.create(this.id, payload).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (res: any) => {
             if (res && !res.error) {

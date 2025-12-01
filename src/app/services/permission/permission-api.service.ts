@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { CommonService } from "../CommonSerivce";
 import { Observable } from "rxjs";
 
-const url = environment.baseUrl + environment.PERMISSIONS;
+const url = environment.baseAuthUrl + environment.PERMISSIONS;
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +18,10 @@ export class PermissionApiService extends CommonService {
   // GET all permissions (now includes roles)
   getAll(): Observable<any> {
     return this.http.get(url);
+  }
+
+  getWithRoles(): Observable<any> {
+    return this.http.get(`${url}/with-roles`);
   }
 
   // GET roles associated to a specific permission

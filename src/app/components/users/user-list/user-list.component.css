@@ -1,0 +1,54 @@
+.page-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* HEADER */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* FILTRI */
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 500px;
+}
+
+/* TABELLA */
+.table-wrapper {
+  position: relative;
+  padding: 8px;
+}
+
+.loader {
+  margin: auto;
+}
+
+.no-result {
+  text-align: center;
+  font-style: italic;
+  padding: 24px;
+}
+
+.search-field {
+  width: 260px;
+}
+
+mat-icon-button:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}
+
+.delete-btn mat-icon {
+  color: #d32f2f; /* leggero rosso Material */
+}
+
+.delete-btn:hover mat-icon {
+  color: #b71c1c; /* più intenso a hover */
+}

@@ -3,6 +3,7 @@ import { PermissionApiService } from '../../../services/permission/permission-ap
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { MatDrawer } from '@angular/material/sidenav';
+import {PermissionEditDialogComponent} from "../permission-edit-dialog/permission-edit-dialog.component";
 
 @Component({
   selector: 'app-permission-list',
@@ -30,7 +31,7 @@ export class PermissionListComponent implements OnInit {
   }
 
   loadPermissions() {
-    this.permApi.getAll().subscribe((data: any) => {
+    this.permApi.getWithRoles().subscribe((data: any) => {
       this.permissions = data;
     });
   }
@@ -43,6 +44,18 @@ export class PermissionListComponent implements OnInit {
       this.loadPermissions();
     });
   }
+
+  editPermission(p: any) {
+    const dialogRef = this.dialog.open(PermissionEditDialogComponent, {
+      width: '450px',
+      data: p
+    });
+
+    dialogRef.afterClosed().subscribe(ok => {
+      if (ok) this.loadPermissions();
+    });
+  }
+
 
   updatePermission(p: any) {
     this.permApi.updatePermesso(p.id, { name: p.name, description: p.description })

@@ -1,43 +1,68 @@
-<div class="container">
+<div class="page-wrapper">
 
-  <h2>Gestione Permessi</h2>
-
-  <!-- CREAZIONE -->
-  <div class="create-box">
-    <mat-form-field appearance="outline">
-      <mat-label>Nome</mat-label>
-      <input matInput [(ngModel)]="newPermission.name">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Descrizione</mat-label>
-      <input matInput [(ngModel)]="newPermission.description">
-    </mat-form-field>
+  <!-- HEADER -->
+  <div class="page-header">
+    <h2>Gestione Permessi</h2>
 
     <button mat-raised-button color="primary" (click)="createPermission()">
-      Aggiungi
+      <mat-icon>add</mat-icon>
+      Nuovo
     </button>
   </div>
 
-  <!-- LAYOUT CON DRAWER -->
+  <!-- FORM CREAZIONE -->
+  <mat-card class="create-card">
+    <div class="create-fields">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nome permesso</mat-label>
+        <input matInput [(ngModel)]="newPermission.name">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descrizione</mat-label>
+        <input matInput [(ngModel)]="newPermission.description">
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" (click)="createPermission()">
+        Salva
+      </button>
+
+    </div>
+  </mat-card>
+
+  <!-- DRAWER + TABELLA -->
   <mat-drawer-container class="drawer-container">
 
+    <!-- DRAWER -->
     <mat-drawer #drawer mode="side" position="end" class="drawer">
+
+      <!-- Header Drawer -->
+      <div class="drawer-header">
+        <h3>Ruoli per: {{selectedPermission?.name}}</h3>
+
+        <button mat-icon-button (click)="drawer.close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
       <app-permission-role-drawer
         [permission]="selectedPermission"
         (saved)="drawer.close(); loadPermissions()">
       </app-permission-role-drawer>
+
     </mat-drawer>
 
+    <!-- CONTENT -->
     <mat-drawer-content>
 
-      <table mat-table [dataSource]="permissions" class="mat-elevation-z2">
+      <table mat-table [dataSource]="permissions" class="modern-table mat-elevation-z2">
 
         <!-- NOME -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Nome</th>
           <td mat-cell *matCellDef="let p">
-            <input matInput [(ngModel)]="p.name" (blur)="updatePermission(p)">
+            <span>{{ p.name }}</span>
           </td>
         </ng-container>
 
@@ -45,11 +70,11 @@
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef>Descrizione</th>
           <td mat-cell *matCellDef="let p">
-            <input matInput [(ngModel)]="p.description" (blur)="updatePermission(p)">
+            <span class="desc-text">{{ p.description }}</span>
           </td>
         </ng-container>
 
-        <!-- RUOLI BADGE -->
+        <!-- RUOLI -->
         <ng-container matColumnDef="roles">
           <th mat-header-cell *matHeaderCellDef>Ruoli</th>
           <td mat-cell *matCellDef="let p">
@@ -62,11 +87,18 @@
 
         <!-- AZIONI -->
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Azioni</th>
+          <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let p">
 
+            <!-- MODIFICA -->
+            <button mat-icon-button matTooltip="Modifica"
+                    (click)="editPermission(p)">
+              <mat-icon>edit</mat-icon>
+            </button>
+
             <!-- GESTISCI RUOLI -->
-            <button mat-icon-button (click)="openRoleDrawer(p)" matTooltip="Gestisci ruoli">
+            <button mat-icon-button matTooltip="Ruoli assegnati"
+                    (click)="openRoleDrawer(p)">
               <mat-icon>playlist_add_check</mat-icon>
             </button>
 

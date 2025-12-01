@@ -17,19 +17,20 @@ import {FiltroOrdini} from "../../../models/FiltroOrdini";
 export class UserListComponent extends CommonListComponent implements OnInit {
 
   displayedColumns: string[] = ['username', 'nome', 'cognome', 'azioni'];
-  isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
 
 
   constructor(private service: UserService, private route: Router, private dialog: MatDialog) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
   }
 
   ngOnInit(): void {
     this.retrieveList();
+  }
+
+  clearSearch() {
+    this.filtro.searchText = '';
+    this.applyFilter();
   }
 
   modifica(dipendente: Dipendente) {

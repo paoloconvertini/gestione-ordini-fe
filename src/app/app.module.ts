@@ -91,6 +91,8 @@ import { AccontiNonValidatiDialogComponent } from './components/acconti-non-vali
 import { PermissionRoleDrawerComponent } from './components/permissions/permission-role-drawer/permission-role-drawer.component';
 import {PermissionListComponent} from "./components/permissions/permission-list/permission-list.component";
 import {MatListModule} from "@angular/material/list";
+import {MatChipsModule} from "@angular/material/chips";
+import { PermissionEditDialogComponent } from './components/permissions/permission-edit-dialog/permission-edit-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -155,7 +157,8 @@ export const DateFormats = {
     FatturaAccontoCartDialogComponent,
     AccontiNonValidatiDialogComponent,
     PermissionListComponent,
-    PermissionRoleDrawerComponent
+    PermissionRoleDrawerComponent,
+    PermissionEditDialogComponent
   ],
   imports: [
     MatDatepickerModule,
@@ -206,7 +209,8 @@ export const DateFormats = {
     MatSliderModule,
     MatDividerModule,
     MatBadgeModule,
-    MatListModule
+    MatListModule,
+    MatChipsModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
