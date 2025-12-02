@@ -22,6 +22,8 @@ import {CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
 import {ViewportScroller} from "@angular/common";
 import { ScrollPositionService } from '../../../services/scroll-position.service';
 import {OrdiniClientiStateService} from "../../../services/state/ordini-clienti-state.service";
+import {PermissionService} from "../../../services/auth/permission.service";
+import {DownloadUtil} from "../../../utils/download-util";
 
 
 export interface Option {
@@ -48,11 +50,6 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   _intl: MatPaginatorIntl = new MatPaginatorIntl();
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
   signImage: any;
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [];
   selectStatusOptions: OptStatus[] = [];
@@ -72,18 +69,10 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     private service: OrdineClienteService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-
-    // ➜ NUOVO STATE SERVICE
-    private state: OrdiniClientiStateService
-  ) {
+    public perm: PermissionService,
+    private downloadUtil: DownloadUtil,
+    private state: OrdiniClientiStateService) {
     super();
-
-    // Manteniamo la logica ruoli così com'è (NON tocchiamo questa parte)
-    this.isAdmin = !!localStorage.getItem(environment.ADMIN);
-    this.isMagazziniere = !!localStorage.getItem(environment.MAGAZZINIERE);
-    this.isAmministrativo = !!localStorage.getItem(environment.AMMINISTRATIVO);
-    this.isVenditore = !!localStorage.getItem(environment.VENDITORE);
-    this.isLogistica = !!localStorage.getItem(environment.LOGISTICA);
   }
 
 
@@ -92,7 +81,8 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     this.filtro = this.state.getState();
 
     // 2️⃣ Ruoli: logica invariata → carica venditori se serve
-    if (this.isVenditore || this.isAdmin) {
+
+    if (this.perm.canFiltroVenditore) {
       this.getVenditori();
     }
 
@@ -226,7 +216,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   refreshPage() {
-    if (this.isVenditore || this.isAdmin) {
+    if (this.perm.canFiltroVenditore) {
       this.getVenditori();
     }
     this.loader = true;
@@ -390,9 +380,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
       data.userNote = ordine.userNote;
       data.dataNote = ordine.dataNote;
     } else {
-      if (!this.isLogistica && !this.isAdmin) {
-        return;
-      }
+      if (!this.perm.canNoteLogistica) return;
       data.note = ordine.noteLogistica;
       data.userNoteLogistica = ordine.userNoteLogistica;
       data.dataNoteLogistica = ordine.dataNoteLogistica;
@@ -435,11 +423,11 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   downloadOrdine(ordine: OrdineCliente) {
-    this.service.download(ordine);
+    this.downloadUtil.handleDownload(this.service.download(ordine));
   }
 
   cercaBolle() {
-    if (this.isVenditore || this.isAdmin) {
+    if (this.perm.canFiltroVenditore) {
       this.getVenditori();
     }
     this.loader = true;

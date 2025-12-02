@@ -40,4 +40,28 @@ export class PermissionService {
   get canViewContabilita() {
     return this.auth.hasPerm('contabilita.view');
   }
+
+  get canProntoConsegna() { return this.auth.hasPerm('ordini_clienti.pronto_consegna'); }
+  get canFiltroVenditore() { return this.auth.hasPerm('ordini_clienti.filtro_venditore'); }
+  get canEditStato() { return this.auth.hasPerm('ordini_clienti.edit_stato'); }
+  get canSblocca() { return this.auth.hasPerm('ordini_clienti.sblocca'); }
+  get canDownloadOrdine() { return this.auth.hasPerm('ordini_clienti.download'); }
+  get canFirmaCliente() { return this.auth.hasPerm('ordini_clienti.firma_cliente'); }
+  get canInviaEmail() { return this.auth.hasPerm('ordini_clienti.invia_email'); }
+  get canRiapriOrdine() { return this.auth.hasPerm('ordini_clienti.riapri'); }
+  get canWarnNonFirmato() { return this.auth.hasPerm('ordini_clienti.warn_non_firmato'); }
+  get canNoteLogistica() { return this.auth.hasPerm('ordini_clienti.note_logistica'); }
+
+  get canRedirectAmministrativo() {
+    return this.auth.hasPerm('login.redirect.amministrativo');
+  }
+
+  get canRedirectLogistica() {
+    return this.auth.hasPerm('login.redirect.logistica');
+  }
+
+  get canRedirectDefault() {
+    return this.auth.hasPerm('login.redirect.default');
+  }
+
 }

@@ -5,6 +5,8 @@ import { AuthService } from '../../services/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntil } from 'rxjs';
 import { BaseComponent } from '../baseComponent';
+import {OrdiniClientiStateService} from "../../services/state/ordini-clienti-state.service";
+import {PermissionService} from "../../services/auth/permission.service";
 
 @Component({
   selector: 'app-login',
@@ -23,7 +25,9 @@ export class LoginComponent extends BaseComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private state: OrdiniClientiStateService,
+    private perm: PermissionService
   ) {
     super();
   }
@@ -38,6 +42,27 @@ export class LoginComponent extends BaseComponent {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
+
+          // 1️⃣ AMMINISTRATIVO → ordini-clienti con filtro preimpostato DA_ORDINARE
+          if (this.perm.canRedirectAmministrativo) {
+            this.state.setState({ status: 'DA_ORDINARE', page: 0 });
+            this.router.navigate(['/ordini-clienti']);
+            return;
+          }
+
+          // 2️⃣ LOGISTICA → pagina logistica
+          if (this.perm.canRedirectLogistica) {
+            this.router.navigate(['/logistica-ordini']);
+            return;
+          }
+
+          // 3️⃣ DEFAULT → ordini-clienti (status rimane quello salvato o default “TUTTI”)
+          if (this.perm.canRedirectDefault) {
+            this.router.navigate(['/ordini-clienti']);
+            return;
+          }
+
+          // Fallback (non succede mai)
           this.router.navigate(['/ordini-clienti']);
         },
         error: () => {

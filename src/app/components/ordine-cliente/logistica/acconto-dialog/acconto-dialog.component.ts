@@ -15,12 +15,6 @@ export interface DialogData {
   styleUrls: ['./acconto-dialog.component.css']
 })
 export class AccontoDialogComponent extends CommonListComponent implements OnInit{
-
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   selection = new SelectionModel<any>(true, []);
   acconti: Acconto[] = [];
   columnAcconti: string[] = ['select', 'dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
@@ -28,21 +22,6 @@ export class AccontoDialogComponent extends CommonListComponent implements OnIni
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, private dialogRef: MatDialogRef<AccontoDialogComponent>) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
   }
 
   ngOnInit(): void {
