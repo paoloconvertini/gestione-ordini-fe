@@ -64,4 +64,25 @@ export class PermissionService {
     return this.auth.hasPerm('login.redirect.default');
   }
 
+  get canUnisciOrdini() {
+    return this.auth.hasPerm('ordini_fornitori.unisci');
+  }
+
+  get canEditFlInviato() {
+    return this.auth.hasPerm('ordini_fornitori.flInviato.edit');
+  }
+
+  get canRiapriOrdineFornitore() {
+    return this.auth.hasPerm('ordini_fornitori.riapri');
+  }
+
+  get canEliminaOrdineFornitore() {
+    return this.auth.hasPerm('ordini_fornitori.elimina');
+  }
+
+  get canSalvaOrdiniFornitore() {
+    return this.auth.hasPerm('ordini_fornitori.salva');
+  }
+
+
 }
