@@ -7,17 +7,7 @@
 
   <!-- MENU PRINCIPALE (SOTTOMENU) -->
   <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
-
-  <button *ngIf="perm.canViewOrdiniFornitori"
-          mat-button
-          [matMenuTriggerFor]="fornitori">
-    Ordine Fornitori
-  </button>
-  <mat-menu #fornitori="matMenu">
-    <button mat-menu-item [routerLink]="['/ordini-fornitore','F']">Sospesi</button>
-    <button mat-menu-item [routerLink]="['/ordini-fornitore','T']">Da approvare</button>
-    <button mat-menu-item [routerLink]="['/ordini-fornitore']">Approvati</button>
-  </mat-menu>
+  <button *ngIf="perm.canViewOrdiniFornitori" mat-button [routerLink]="['/ordini-fornitore']">Ordine Fornitori</button>
 
   <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
   <mat-menu #logistica="matMenu">

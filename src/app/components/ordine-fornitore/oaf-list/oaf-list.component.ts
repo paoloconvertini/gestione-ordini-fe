@@ -12,6 +12,8 @@ import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {OrdiniFornitoreStateService} from "../../../services/ordine-fornitore/state/ordini-fornitore-state.service";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-oaf-list',
@@ -30,7 +32,12 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   updateList: any = [];
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(private snackbar: MatSnackBar, private router: ActivatedRoute, private dialog: MatDialog, private service: OrdineFornitoreService, private route: Router) {
+  constructor(private snackbar: MatSnackBar,
+              private router: ActivatedRoute,
+              private dialog: MatDialog,
+              private service: OrdineFornitoreService,
+              private route: Router,
+              public state: OrdiniFornitoreStateService) {
     super();
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;
@@ -48,15 +55,24 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-        if (params.status) {
-          this.status = params.status;
-          this.filtro.status = params.status;
-        }
-        this.retrieveFornitoreList();
-      }
-    );
+    // recupera stato persistito
+    this.filtro = this.state.getState();
 
+    // se è la prima volta: default = Sospesi
+    if (!this.filtro.status) {
+      this.filtro.status = 'F';
+      this.state.setState({ status: 'F' });
+    }
+    this.retrieveFornitoreList();
+  }
+
+  onStatusChange() {
+    this.state.setState({
+      status: this.filtro.status,
+      page: 0
+    });
+
+    this.retrieveFornitoreList();
   }
 
   updateOaf(): void {
@@ -265,13 +281,47 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   }
 
-  reset():void {
+  clearSearch() {
     this.filtro.searchText = '';
-    this.filtro.flInviato = false;
+    this.state.setState({ searchText: '' });
+    this.applyFilter();
+  }
+
+  reset(): void {
+    this.state.resetState();
+    this.filtro = this.state.getState();   // ricarica default (status = F)
     this.retrieveFornitoreList();
   }
 
+  pageEvent(event: PageEvent) {
+    // aggiorna filtro
+    this.filtro.page = event.pageIndex;
+    this.filtro.size = event.pageSize;
+
+    // salva nello state
+    this.state.setState({
+      page: event.pageIndex,
+      size: event.pageSize
+    });
+  }
+
+
+  override createPaginator(data: any[] | undefined, pageSize: number) {
+    // usa la logica originale
+    super.createPaginator(data, pageSize);
+
+    // imposta la pagina salvata nello state
+    if (this.paginator && this.filtro.page !== undefined) {
+      this.paginator.pageIndex = this.filtro.page;
+    }
+
+    // riassegna paginator alla datasource
+    this.dataSource.paginator = this.paginator;
+  }
+
   override applyFilter() {
+    this.state.setState({ searchText: this.filtro.searchText });
+
     super.applyFilter(this.filtro.searchText);
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
