@@ -116,5 +116,107 @@ export class PermissionService {
     return this.auth.hasPerm('ordine.bolla.seleziona');
   }
 
+// === Articoli: Azioni Generali ===
+  get canCreaOrdineForn() {
+    return this.auth.hasPerm('articoli.crea_ordine_fornitore');
+  }
+
+  get canCaricaMagazzino() {
+    return this.auth.hasPerm('articoli.carica_magazzino');
+  }
+
+  get canCodificaArticoli() {
+    return this.auth.hasPerm('articoli.codifica_articoli');
+  }
+
+  get canCreaFatturaAcconto() {
+    return this.auth.hasPerm('articoli.crea_fattura_acconto');
+  }
+
+// canSelectBolla → già esiste (ordine.bolla.seleziona)
+
+// note logistica → già esiste: canNoteLogistica
+
+// === Articoli: Filtri ===
+  get canFiltroNonDisponibile() {
+    return this.auth.hasPerm('articoli.filtro_non_disponibile');
+  }
+
+  get canFiltroConsegnaAdmin() {
+    return this.auth.hasPerm('articoli.filtro_consegna_admin');
+  }
+
+  get canDefaultFiltroNonDisponibile() {
+    return this.auth.hasPerm('articoli.default_filtro_non_disponibile');
+  }
+
+// === Articoli: Campi Rigo ===
+  get canEditDescrizione() {
+    return this.auth.hasPerm('articoli.edit_descrizione');
+  }
+
+  get canEditCodiceFornitore() {
+    return this.auth.hasPerm('articoli.edit_codice_fornitore');
+  }
+
+  get canEditQuantita() {
+    return this.auth.hasPerm('articoli.edit_quantita');
+  }
+
+  get canEditTono() {
+    return this.auth.hasPerm('articoli.edit_tono');
+  }
+
+  get canEditQtaRiservata() {
+    return this.auth.hasPerm('articoli.edit_qta_riservata');
+  }
+
+  get canEditQtaProntoConsegna() {
+    return this.auth.hasPerm('articoli.edit_qta_pronto_consegna');
+  }
+
+  get canEditNonDisponibile() {
+    return this.auth.hasPerm('articoli.edit_non_disponibile');
+  }
+
+// === Articoli: Flag Ordinato / Pronto Cons. / Consegnato ===
+  get canEditOrdinato() {
+    return this.auth.hasPerm('articoli.edit_flag_ordinato');
+  }
+
+  get canEditOrdinato943() {
+    return this.auth.hasPerm('articoli.edit_flag_ordinato_943');
+  }
+
+  get canEditProntoConsegna() {
+    return this.auth.hasPerm('articoli.edit_flag_pronto_consegna');
+  }
+
+  get canEditConsegnato() {
+    return this.auth.hasPerm('articoli.edit_flag_consegnato');
+  }
+
+// === Articoli: Qta Senza Bolla ===
+  get canEditQtaConsegnatoSenzaBolla() {
+    return this.auth.hasPerm('articoli.edit_qta_senza_bolla');
+  }
+
+// === Articoli: Azioni Rigo ===
+  get canAssociaFornitore() {
+    return this.auth.hasPerm('articoli.associa_fornitore');
+  }
+
+  get canViewNoteOAF() {
+    return this.auth.hasPerm('articoli.view_note_oaf');
+  }
+
+// === Articoli: Salvataggio e Chiusura ===
+  get canSalvaArticoli() {
+    return this.auth.hasPerm('articoli.salva');
+  }
+
+  get canChiudiArticoli() {
+    return this.auth.hasPerm('articoli.chiudi');
+  }
 
 }

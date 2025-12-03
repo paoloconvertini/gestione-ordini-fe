@@ -24,12 +24,12 @@ import {FiltroOrdini} from "../../../models/FiltroOrdini";
 import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
 import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
 import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
-import {CollegaOAFComponent} from "../../collega-oaf/collega-oaf.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
 import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-magazzino.service";
 import {CaricoMagazzinoDialogComponent} from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
 import { FatturaAccontoDialogComponent } from '../../fattura-acconto-dialog/fattura-acconto-dialog.component';
+import {PermissionService} from "../../../services/auth/permission.service";
 
 export interface Option {
   name: string,
@@ -60,11 +60,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   user: any;
   loaderAcconti: boolean = false;
   loaderBolle: boolean = false;
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   showAcconti: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
@@ -106,7 +101,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         }
       });
 
-    if (this.isAmministrativo && this.status === 'DA_ORDINARE') {
+    if (this.perm.canDefaultFiltroNonDisponibile && this.status === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
     }
     if ((this.status === 'COMPLETO' || this.status === 'INCOMPLETO')) {
@@ -126,23 +121,11 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService,
               private service: ArticoloService, private dialog: MatDialog,
               private snackbar: MatSnackBar, private router: Router, private route: ActivatedRoute,
+              public perm: PermissionService,
               private saldiMagazzinoService: SaldiMagazzinoService) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
+    if (this.perm.canEditQtaConsegnatoSenzaBolla) {   // nuovo permesso
       this.displayedColumns = [...this.displayedColumns, 'qtaConsegnatoSenzaBolla'];
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
     }
     this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'tono', 'qtaRiservata', 'qtaProntoConsegna',
       'flRiservato', 'flDisponibile', 'flOrdinato', 'flProntoConsegna', 'flConsegnato', 'azioni']
@@ -512,23 +495,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           this.loader = false;
         }
       })
-  }
-
-  checkRiservati() {
-    if (this.isAmministrativo) {
-      return false;
-    }
-    let found = false;
-    for (const filterDatum of this.dataSource.filteredData) {
-      // @ts-ignore
-      if (filterDatum.tipoRigo !== 'C' && filterDatum.flagOrdinato && !filterDatum.flagRiservato) {
-        found = true;
-        break;
-      }
-    }
-    return found;
-
-
   }
 
   checkQta(articolo: any) {
