@@ -43,6 +43,7 @@ import {ImportoVenditore} from "../../../../models/ImportoVenditore";
 import {BaseComponent} from "../../../baseComponent";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator, MatPaginatorIntl, PageEvent} from "@angular/material/paginator";
+import {PermissionService} from "../../../../services/auth/permission.service";
 
 
 useGeographic();
@@ -83,11 +84,6 @@ export class ListaComponent extends BaseComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   _intl: MatPaginatorIntl = new MatPaginatorIntl ();
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'dataConsegna','oraConsegna', 'ordinamento', 'veicolo', 'azioni'];
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'},{codice: 'DA_PROCESSARE', descrizione: 'DA PROCESSARE'},
@@ -107,34 +103,23 @@ export class ListaComponent extends BaseComponent implements OnInit {
   importiList: ImportoVenditore[] = [];
   totalItems = 0;
 
-  constructor(private authService: AuthService, private router: ActivatedRoute,
-              private emailService: EmailService, private service: ListaService,
+  constructor(private authService: AuthService, private service: ListaService,
               private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private notaConsegnaService: NotaConsegnaService,
-              private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
+              private ordineClienteService: OrdineClienteService,
+              public perm: PermissionService,
+              private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
     super();
     this._intl.itemsPerPageLabel = 'Elementi per pagina';
     this._intl.nextPageLabel = 'Prossima';
     this._intl.previousPageLabel = 'Precedente';
     this._intl.firstPageLabel = 'Prima';
     this._intl.lastPageLabel = 'Ultima';
-    if(localStorage.getItem(environment.LOGISTICA)){
+    if (this.perm.canDefaultLogisticaCompleto) {
       this.filtro.status = 'COMPLETO';
-      this.isLogistica = true;
     } else {
       this.filtro.status = 'TUTTI';
     }
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
+
   }
 
   ngOnInit(): void {
@@ -279,9 +264,7 @@ export class ListaComponent extends BaseComponent implements OnInit {
       data.userNote = ordine.userNote;
       data.dataNote = ordine.dataNote;
     } else {
-      if(!this.isLogistica && !this.isAdmin) {
-        return;
-      }
+      if (!this.perm.canNoteLogistica) return;
       data.note = ordine.noteLogistica;
       data.userNoteLogistica = ordine.userNoteLogistica;
       data.dataNoteLogistica = ordine.dataNoteLogistica;
@@ -327,7 +310,7 @@ export class ListaComponent extends BaseComponent implements OnInit {
   }
 
   cercaBolle() {
-    if (this.isVenditore || this.isAdmin) {
+    if (this.perm.canCercaBolle) {
       this.getVenditori();
     }
     this.loader = true;

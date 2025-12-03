@@ -172,12 +172,12 @@
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
             <td class="pointer" mat-cell *matCellDef="let ordine"  (click)="getArticoli(ordine); (expandedElement = expandedElement === ordine ? null : ordine); $event.stopPropagation()">
-              <div [ngSwitch]="ordine.status" *ngIf="!isAdmin">
+              <div [ngSwitch]="ordine.status" *ngIf="!perm.canUpdateStatoLogistica">
                 <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
                 <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
                 <b *ngSwitchDefault>{{ordine.status}}</b>
               </div>
-              <mat-select *ngIf="isAdmin" [(value)]="ordine.status" class="select">
+              <mat-select *ngIf="perm.canUpdateStatoLogistica" [(value)]="ordine.status" class="select">
                 <mat-option *ngFor="let option of selectStatusOptions" [value]="option.codice" class="option">
                   <div [ngSwitch]="option.descrizione">
                     <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
@@ -187,7 +187,7 @@
                 </mat-option>
               </mat-select>
               <button mat-button color="primary"
-                      *ngIf="isAdmin"
+                      *ngIf="perm.canUpdateStatoLogistica"
                       (click)="update(ordine)" >
                 <mat-icon color="primary" fontIcon="save"></mat-icon>
               </button>&nbsp;&nbsp;
@@ -205,7 +205,7 @@
           </ng-container>
           <ng-container matColumnDef="oraConsegna">
             <th mat-header-cell *matHeaderCellDef>Consegna</th>
-            <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
+            <td *matCellDef="let ordine" [ngClass]="{'stato': perm.canUpdateStatoLogistica, 'flVenditore': ordine.flVenditore}">
               <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
                 <mat-select  [(value)]="ordine.oraConsegna" class="select" >
                   <mat-option [value]="'M'" class="option">Mattina</mat-option>
@@ -216,7 +216,7 @@
           </ng-container>
           <ng-container matColumnDef="ordinamento">
             <th mat-header-cell *matHeaderCellDef>Ord. Cons.</th>
-            <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
+            <td *matCellDef="let ordine" [ngClass]="{'stato': perm.canUpdateStatoLogistica, 'flVenditore': ordine.flVenditore}">
               <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
                 <input type="number" [(ngModel)]="ordine.ordine" min="0" class="form-control input">
               </span>
@@ -224,7 +224,7 @@
           </ng-container>
           <ng-container matColumnDef="veicolo">
             <th mat-header-cell *matHeaderCellDef>Veicolo</th>
-            <td *matCellDef="let ordine" [ngClass]="{'stato': isAdmin, 'flVenditore': ordine.flVenditore}">
+            <td *matCellDef="let ordine" [ngClass]="{'stato': perm.canUpdateStatoLogistica, 'flVenditore': ordine.flVenditore}">
               <span *ngIf="( ordine.tipoRigo !=='C' && ordine.tipoRigo !=='AC')">
                 <mat-select  [(value)]="ordine.veicolo" class="select" >
                   <mat-option></mat-option>
@@ -233,7 +233,7 @@
                   </mat-option>
                 </mat-select>
                 <button [disabled]="!ordine.ordine || !ordine.oraConsegna" mat-button color="primary"
-                        *ngIf="isAdmin || isLogistica || isVenditore"
+                        *ngIf="perm.canUpdateVeicolo"
                         (click)="updateVeicolo(ordine)" >
                   <mat-icon color="primary" fontIcon="save" [ngClass]="{'flVenditoreIcon': ordine.flVenditore}"></mat-icon>
                 </button>&nbsp;&nbsp;

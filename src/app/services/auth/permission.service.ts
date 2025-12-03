@@ -96,5 +96,20 @@ export class PermissionService {
     return this.auth.hasPerm('oaf.override_status');
   }
 
+  get canUpdateStatoLogistica() {
+    return this.auth.hasPerm('logistica.update_stato');
+  }
+
+  get canUpdateVeicolo() {
+    return this.auth.hasPerm('logistica.update_veicolo');
+  }
+
+  get canCercaBolle() {
+    return this.auth.hasPerm('logistica.cerca_bolle');
+  }
+
+  get canDefaultLogisticaCompleto() {
+    return this.auth.hasPerm('logistica.default_completo');
+  }
 
 }
