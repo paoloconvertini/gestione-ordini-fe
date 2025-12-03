@@ -1,35 +1,71 @@
-<div class="container" *ngIf="canManageRoles">
+<div class="container">
 
-  <h2 class="page-title">Ruoli</h2>
-
-  <div class="actions-bar">
-    <button mat-raised-button color="primary" (click)="creaNuovo()">
+  <div class="page-title">
+    Ruoli
+    <button mat-raised-button color="primary" class="btn-new" (click)="creaNuovo()">
       Crea nuovo
     </button>
   </div>
 
-  <div class="search-row">
-    <mat-form-field appearance="outline" class="w-50">
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Cerca...</mat-label>
       <input matInput [(ngModel)]="filtro.searchText" (keyup)="applyFilter()" />
+      <button *ngIf="filtro.searchText" mat-icon-button matSuffix (click)="filtro.searchText=''; applyFilter()">
+        <mat-icon>close</mat-icon>
+      </button>
     </mat-form-field>
-
-    <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
-      Reset
-    </button>
   </div>
 
-  <div class="mat-elevation-z8">
+  <div class="mat-elevation-z8 table-wrapper">
     <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
 
-    <table mat-table [dataSource]="dataSource" *ngIf="!loader">
+    <table mat-table [dataSource]="dataSource" class="full-width">
 
       <!-- Nome -->
       <ng-container matColumnDef="nome">
         <th mat-header-cell *matHeaderCellDef>Nome</th>
         <td mat-cell *matCellDef="let ruolo">
-          <div *ngIf="!ruolo.edit">{{ ruolo.name }}</div>
-          <input *ngIf="ruolo.edit" type="text" class="form-control" [(ngModel)]="ruolo.name" />
+
+          <span *ngIf="!ruolo.edit">{{ ruolo.name }}</span>
+
+          <mat-form-field *ngIf="ruolo.edit" class="edit-input" appearance="outline">
+            <input matInput [(ngModel)]="ruolo.name" />
+          </mat-form-field>
+
+          <!-- ESPANSIONE -->
+          <div *ngIf="expanded === ruolo" class="expanded-container">
+
+            <h4>Permessi assegnati</h4>
+
+            <mat-chip-listbox class="permission-chips">
+              <mat-chip *ngFor="let p of ruolo.permissions" removable="true"
+                        (removed)="removePermission(ruolo, p)">
+                {{ p.name }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-listbox>
+
+            <div class="add-permission-container">
+              <mat-form-field appearance="outline" class="perm-select">
+                <mat-label>Aggiungi permesso</mat-label>
+                <mat-select [(ngModel)]="selectedPermission[ruolo.id]">
+                  <mat-option *ngFor="let p of allPermissions" [value]="p">
+                    {{ p.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-raised-button color="primary" (click)="addPermission(ruolo)">Aggiungi</button>
+            </div>
+
+            <div class="save-bar">
+              <button mat-raised-button color="accent" (click)="savePermissions(ruolo)">
+                Salva permessi
+              </button>
+            </div>
+
+          </div>
+
         </td>
       </ng-container>
 
@@ -38,29 +74,24 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let ruolo">
 
-          <!-- Gestisci permessi -->
-          <button mat-icon-button matTooltip="Gestisci permessi" (click)="gestisciPermessi(ruolo)">
-            <mat-icon fontIcon="admin_panel_settings" color="primary"></mat-icon>
+          <button *ngIf="!ruolo.edit" mat-icon-button (click)="startEdit(ruolo)">
+            <mat-icon color="primary">edit</mat-icon>
           </button>
 
-          <!-- Modifica -->
-          <button *ngIf="!ruolo.edit" mat-icon-button matTooltip="Modifica" (click)="ruolo.edit = true">
-            <mat-icon fontIcon="edit" color="primary"></mat-icon>
+          <button *ngIf="ruolo.edit" mat-icon-button (click)="saveRole(ruolo)">
+            <mat-icon color="primary">check</mat-icon>
           </button>
 
-          <!-- Salva -->
-          <button *ngIf="ruolo.edit" mat-icon-button matTooltip="Salva" (click)="salva(ruolo)">
-            <mat-icon fontIcon="save" color="primary"></mat-icon>
+          <button *ngIf="ruolo.edit" mat-icon-button (click)="cancelEdit(ruolo)">
+            <mat-icon color="warn">close</mat-icon>
           </button>
 
-          <!-- Elimina -->
-          <button mat-icon-button matTooltip="Elimina" (click)="elimina(ruolo.id)">
-            <mat-icon fontIcon="delete" color="primary"></mat-icon>
+          <button *ngIf="!ruolo.edit" mat-icon-button (click)="elimina(ruolo.id)">
+            <mat-icon color="warn">delete</mat-icon>
           </button>
 
-          <!-- Chiudi -->
-          <button *ngIf="ruolo.edit" mat-icon-button matTooltip="Chiudi" (click)="ruolo.edit = false; retrieveList()">
-            <mat-icon fontIcon="close" class="warn"></mat-icon>
+          <button *ngIf="!ruolo.edit" mat-icon-button (click)="toggleExpand(ruolo)">
+            <mat-icon>{{ expanded === ruolo ? 'expand_less' : 'expand_more' }}</mat-icon>
           </button>
 
         </td>
@@ -69,14 +100,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell no-result-list" colspan="2">
-          Nessun risultato {{ filtro.searchText ? "per la ricerca " + filtro.searchText : "" }}
-        </td>
-      </tr>
-
     </table>
 
-    <mat-paginator aria-label="Seleziona pagina ruoli"></mat-paginator>
+    <mat-paginator></mat-paginator>
+
   </div>
+
 </div>

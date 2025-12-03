@@ -1,33 +1,66 @@
-.title {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
+.page-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.full {
-  width: 100%;
+/* HEADER */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.loader {
-  margin: 20px auto;
+/* SEZIONI FORM */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.no-access {
-  margin-top: 60px;
-  text-align: center;
-  color: #666;
+.section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-.no-access mat-icon {
-  font-size: 60px;
-  color: #d32f2f;
+/* RIGHE INPUT */
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.row {
-  margin-bottom: 15px;
+.form-field {
+  flex: 1;
+  min-width: 260px;
 }
 
-h4 {
-  margin-top: 20px;
-  font-weight: bold;
+/* RUOLI */
+.roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* FOOTER */
+.footer-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 240px;
 }

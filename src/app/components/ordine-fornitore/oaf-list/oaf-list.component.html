@@ -1,192 +1,184 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12 ordine-title">
-      ORDINI A FORNITORE
-      <span *ngIf="!status"> APPROVATI</span>
-      <span *ngIf="status==='F'">SOSPESI </span>
-      <span *ngIf="status==='T'"> DA APPROVARE</span>
-    </div>
-  </div>
+<div class="page-container">
+  <mat-card class="page-card">
+    <mat-card-content>
+      <div class="page-title">
+          ORDINI A FORNITORE
+          <span *ngIf="filtro.status === 'F'"> — Sospesi</span>
+          <span *ngIf="filtro.status === 'T'"> — Da approvare</span>
+          <span *ngIf="filtro.status === ''"> — Approvati</span>
+        </div>
+      <!-- FILTRO STATO -->
+      <!-- FILTRI DI STATO (RADIO + DA INVIARE) -->
+      <div class="status-block">
 
-  <!-- FILTRI -->
-  <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-5">
-      <mat-form-field>
-        <mat-label>Cerca...</mat-label>
-        <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
-      </mat-form-field>
-    </div>
+        <div class="status-radio-wrapper">
+          <mat-radio-group [(ngModel)]="filtro.status"
+                           (change)="onStatusChange()"
+                           class="status-radio">
 
-    <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
-        Reset
-      </button>
-    </div>
+            <mat-radio-button value="F">Sospesi</mat-radio-button>
+            <mat-radio-button value="T">Da approvare</mat-radio-button>
+            <mat-radio-button value="">Approvati</mat-radio-button>
 
-    <div class="col-lg-6 col-md-6 col-sm-6">
-      <button class="float-end" (click)="refreshPage()" mat-raised-button color="primary">
-        Aggiorna lista
-      </button>&nbsp;&nbsp;
-    </div>
-  </div>
+          </mat-radio-group>
+        </div>
 
-  <!-- UNISCI ORDINI -->
-  <div class="row margin-bottom">
-    <div class="col-lg-6 col-md-6 col-sm-6"></div>
-
-    <div class="col-lg-6 col-md-6 col-sm-6" *ngIf="canUnisciOrdini && status==='F'">
-      <button class="float-end" (click)="unisciOrdini()" mat-raised-button color="primary">
-        Unisci ordini
-      </button>&nbsp;&nbsp;
-    </div>
-  </div>
-
-  <!-- CHECKBOX "DA INVIARE" -->
-  <div class="col-lg-12 col-md-12 col-sm-12">
-    <mat-checkbox color="primary" class="example-margin"
-                  (change)="retrieveFornitoreList()"
-                  [(ngModel)]="filtro.flInviato">
-      Da inviare
-    </mat-checkbox>
-  </div>
-
-  <!-- TABELLA -->
-  <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12">
-      <div class="mat-elevation-z8">
-        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
-
-        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>
-
-        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
-
-          <!-- SELECT -->
-          <ng-container matColumnDef="select">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let row">
-              <mat-checkbox color="primary"
-                            *ngIf="canUnisciOrdini && status==='F'"
-                            (click)="$event.stopPropagation();"
-                            (change)="$event ? selection.toggle(row) : null"
-                            [checked]="selection.isSelected(row)">
-              </mat-checkbox>
-            </td>
-          </ng-container>
-
-          <!-- NUMERO ORDINE -->
-          <ng-container matColumnDef="numero">
-            <th mat-header-cell *matHeaderCellDef>Numero Ordine</th>
-            <td mat-cell *matCellDef="let ordine">
-              {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
-            </td>
-          </ng-container>
-
-          <!-- FORNITORE -->
-          <ng-container matColumnDef="fornitore">
-            <th mat-header-cell *matHeaderCellDef>Fornitore</th>
-            <td mat-cell *matCellDef="let ordine">
-              {{ordine.intestazione}}
-            </td>
-          </ng-container>
-
-          <!-- DATA -->
-          <ng-container matColumnDef="data">
-            <th mat-header-cell *matHeaderCellDef>Data</th>
-            <td mat-cell *matCellDef="let ordine">
-              {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
-            </td>
-          </ng-container>
-
-          <!-- DATA MODIFICA -->
-          <ng-container matColumnDef="dataModifica">
-            <th mat-header-cell *matHeaderCellDef>Dt modifica</th>
-            <td mat-cell *matCellDef="let ordine">
-              {{ordine.updateDate | date:'dd/MM/yyyy'}}
-            </td>
-          </ng-container>
-
-          <!-- INVIATO -->
-          <ng-container matColumnDef="flInviato">
-            <th mat-header-cell *matHeaderCellDef>Inviato</th>
-            <td mat-cell *matCellDef="let ordine">
-              <span *ngIf="!status">
-                <mat-checkbox
-                  [disabled]="!canModificaInviato"
-                  [(ngModel)]="ordine.flInviato"
-                  color="primary"
-                  (change)="aggiungiLista(ordine)">
-                </mat-checkbox>
-              </span>
-            </td>
-          </ng-container>
-
-          <!-- AZIONI -->
-          <ng-container matColumnDef="azioni">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let ordine">
-
-              <!-- DETTAGLIO -->
-              <button (click)="apriDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
-                <mat-icon fontIcon="build" color="primary"></mat-icon>
-              </button>
-
-              <!-- APRI ORDINE -->
-              <button *ngIf="canApriOrdine && status!=='F'"
-                      (click)="apri(ordine)"
-                      mat-icon-button
-                      matTooltip="Apri ordine">
-                <mat-icon fontIcon="restore" color="primary"></mat-icon>
-              </button>
-
-              <!-- ELIMINA ORDINE -->
-              <button *ngIf="canEliminaOrdine"
-                      (click)="elimina(ordine)"
-                      mat-icon-button
-                      matTooltip="Cancella ordine">
-                <mat-icon fontIcon="clear" color="primary"></mat-icon>
-              </button>
-
-              <!-- NOTE -->
-              <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
-                <mat-icon fontIcon="speaker_notes" color="primary"
-                          [ngClass]="{'nota-presente': ordine.note}">
-                </mat-icon>
-              </button>
-
-              <!-- DOWNLOAD -->
-              <button (click)="downloadOrdine(ordine)"
-                      mat-icon-button
-                      matTooltip="Scarica file"
-                      *ngIf="status!=='F'">
-                <mat-icon fontIcon="file_download" color="primary"></mat-icon>
-              </button>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
-
-          <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell no-result-list" colspan="4">
-              Nessun risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}
-            </td>
-          </tr>
-
-        </table>
+        <mat-checkbox color="primary"
+                      [(ngModel)]="filtro.flInviato"
+                      (change)="state.setState({ flInviato: filtro.flInviato }); retrieveFornitoreList();">
+          Da inviare
+        </mat-checkbox>
 
       </div>
-    </div>
-  </div>
 
-  <!-- SALVA -->
-  <div class="row float-end">
-    <div class="col-lg-12 col-md-12 col-sm-12">
-      <button mat-raised-button color="primary"
-              *ngIf="canSalva && !status"
-              (click)="updateOaf()"
-              class="margin-top">
-        Salva
-      </button>&nbsp;&nbsp;
-    </div>
-  </div>
+      <!-- FILTRI PRINCIPALI -->
+      <div class="filters-container">
+
+        <mat-form-field appearance="outline" class="filter-input">
+          <mat-label>Cerca...</mat-label>
+
+          <input matInput
+                 [(ngModel)]="filtro.searchText"
+                 (keyup)="applyFilter()">
+
+          <button *ngIf="filtro.searchText"
+                  matSuffix
+                  mat-icon-button
+                  aria-label="Clear"
+                  (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+
+        </mat-form-field>
+
+
+        <button mat-raised-button color="primary" (click)="refreshPage()">
+          Aggiorna lista
+        </button>
+
+        <div class="filters-spacer"></div>
+
+        <button mat-raised-button color="primary"
+                *ngIf="perm.canUnisciOrdini && filtro.status === 'F'"
+                (click)="unisciOrdini()">
+          Unisci ordini
+        </button>
+
+      </div>
+      <div class="mat-elevation-z8">
+            <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <mat-paginator
+          aria-label="Select page of ordini fornitori"
+          [pageSize]="filtro.size"
+          [pageIndex]="filtro.page"
+          (page)="pageEvent($event)">
+        </mat-paginator>
+
+
+        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox color="primary" *ngIf="perm.canUnisciOrdini && filtro.status==='F'"
+                                (click)="$event.stopPropagation();"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+              <!-- Name Column -->
+              <ng-container matColumnDef="numero">
+                <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
+                <td mat-cell *matCellDef="let ordine">
+                  {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
+                </td>
+              </ng-container>
+              <!-- Name Column -->
+              <ng-container matColumnDef="fornitore">
+                <th mat-header-cell *matHeaderCellDef> Fornitore</th>
+                <td mat-cell *matCellDef="let ordine">
+                  {{ordine.intestazione}}
+                </td>
+              </ng-container>
+              <!-- Name Column -->
+              <ng-container matColumnDef="data">
+                <th mat-header-cell *matHeaderCellDef> Data</th>
+                <td mat-cell *matCellDef="let ordine">
+                  {{ordine.dataOrdine | date:'dd/MM/yyyy'}}
+                </td>
+              </ng-container>
+              <!-- Name Column -->
+              <ng-container matColumnDef="dataModifica">
+                <th mat-header-cell *matHeaderCellDef> Dt modifica</th>
+                <td mat-cell *matCellDef="let ordine">
+                  {{ordine.updateDate | date:'dd/MM/yyyy'}}
+                </td>
+              </ng-container>
+              <!-- Name Column -->
+              <ng-container matColumnDef="flInviato">
+                <th mat-header-cell *matHeaderCellDef>Inviato</th>
+                <td mat-cell *matCellDef="let ordine">
+                  <span *ngIf="filtro.status">
+                    <span class="material-icons-outlined">
+                      cancel_schedule_send
+                    </span>
+                  </span>
+                  <span *ngIf="!filtro.status">
+                    <mat-checkbox [disabled]="!perm.canEditFlInviato"
+                                  [(ngModel)]="ordine.flInviato" color="primary" (change)="aggiungiLista(ordine)">
+                    </mat-checkbox>
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="azioni">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let ordine">
+                  <button *ngIf="perm.canViewOaf" (click)="vediDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
+                    <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="visibility" color="primary"></mat-icon>
+                  </button>
+                  <button *ngIf="perm.canEditOaf" (click)="editDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
+                    <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
+                  </button>
+                  <button *ngIf="perm.canRiapriOrdineFornitore && filtro.status !== 'F'" (click)="apri(ordine)" mat-icon-button
+                          matTooltip="Apri ordine">
+                    <mat-icon aria-hidden="false" aria-label="firma" fontIcon="restore" color="primary"></mat-icon>
+                  </button>
+                  <button *ngIf="perm.canEliminaOrdineFornitore" (click)="elimina(ordine)" mat-icon-button
+                          matTooltip="Cancella ordine">
+                    <mat-icon aria-hidden="false" aria-label="firma" fontIcon="clear" color="primary"></mat-icon>
+                  </button>
+                  <button (click)="aggiungiNote(ordine)" mat-icon-button matTooltip="Aggiungi note">
+                    <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':ordine.note}"></mat-icon>
+                  </button>
+                  <button (click)="downloadOrdine(ordine)" mat-icon-button matTooltip="Scarica file" *ngIf="filtro.status!=='F'">
+                    <mat-icon aria-hidden="false" aria-label="download" fontIcon="file_download" color="primary"></mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
+
+              <!-- Row shown when there is no matching data. -->
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-result-list" colspan="4">Nessun risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
+              </tr>
+            </table>
+
+    <!--        <mat-paginator aria-label="Select page of ordini clienti"></mat-paginator>-->
+          </div>
+      <!-- BOTTONI FINALI -->
+      <div class="actions-container">
+        <button mat-raised-button color="primary"
+                *ngIf="perm.canSalvaOrdiniFornitore"
+                (click)="updateOaf()">
+          Salva
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
+
+
+

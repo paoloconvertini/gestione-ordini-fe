@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
+import {OrdiniClientiStateService} from "../state/ordini-clienti-state.service";
 
 
 @Injectable({
@@ -30,14 +31,12 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private helper: JwtHelperService,
-    private router: Router
+    private router: Router,
+    private ordineState: OrdiniClientiStateService
   ) {
     this.restoreSession();
   }
 
-  // -----------------------------------------------------------
-  // LOGIN (VERSIONE CORRETTA - RITORNA OBSERVABLE)
-  // -----------------------------------------------------------
   login(credentials: any): Observable<any> {
     return new Observable((observer) => {
       this.http.post<any>(environment.baseAuthUrl + environment.LOGIN, credentials)
@@ -90,6 +89,7 @@ export class AuthService {
       this.logoutTimer = null;
     }
 
+    this.ordineState.clearOnLogout();
     this.router.navigate(['/login']);
   }
 

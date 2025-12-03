@@ -9,11 +9,13 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {OrdineClienteService} from "../../../../services/ordine-cliente/list/ordine-cliente.service";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
+import {environment} from "../../../../../environments/environment";
 import {takeUntil} from "rxjs";
 import {OrdineCliente} from "../../../../models/ordine-cliente";
 import {CommonListComponent} from "../../../commonListComponent";
 import {SelectionModel} from "@angular/cdk/collections";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {PermissionService} from "../../../../services/auth/permission.service";
 
 export interface DialogData {
   ordini: any;
@@ -32,7 +34,6 @@ export interface DialogData {
   ]
 })
 export class ListaBollaComponent extends CommonListComponent implements OnInit {
-
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
   filtro: FiltroOrdini = new FiltroOrdini();
   selection = new SelectionModel<any>(true, []);
@@ -43,15 +44,8 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private dialogRef: MatDialogRef<ListaBollaComponent>,
-    private auth: AuthService,
-    private router: ActivatedRoute,
-    private emailService: EmailService,
-    private service: ListaService,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private route: Router,
-    private ordineClienteService: OrdineClienteService,
-    private articoloService: ArticoloService
+    private articoloService: ArticoloService,
+    public perm: PermissionService
   ) {
     super();
   }
@@ -59,14 +53,6 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   ngOnInit(): void {
     this.createPaginator(this.data.ordini, 100);
   }
-
-  // ----------------------------
-  // GETTER PERMESSI
-  // ----------------------------
-  get canSelezionaBolla(): boolean {
-    return this.auth.hasPerm('ordine.bolla.seleziona');
-  }
-  // ----------------------------
 
   onNoClick(): void {
     this.dialogRef.close(true);

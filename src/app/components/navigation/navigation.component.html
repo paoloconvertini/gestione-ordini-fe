@@ -1,102 +1,110 @@
-<mat-toolbar color="primary" class="toolbar">
+<mat-toolbar color="primary" class="app-toolbar">
 
-  <!-- LOGO/TITOLO -->
-  <span class="title">Gestione Ordini</span>
+  <!-- Titolo -->
+  <span class="toolbar-title">Gestione ordini</span>
 
   <span class="spacer"></span>
 
-  <!-- MENU DESKTOP -->
-  <div class="menu-desktop">
+  <!-- MENU PRINCIPALE (SOTTOMENU) -->
+  <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
+  <button *ngIf="perm.canViewOrdiniFornitori" mat-button [routerLink]="['/ordini-fornitore']">Ordine Fornitori</button>
 
-    <ng-container *ngFor="let item of menu">
+  <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
+  <mat-menu #logistica="matMenu">
+    <button mat-menu-item [routerLink]="['/ordini-clienti']">Pronto consegna</button>
+    <button mat-menu-item [routerLink]="['/logistica-ordini']">Gestione consegne</button>
+    <button mat-menu-item [routerLink]="['/consegne-settimanali']">Consegne settimanali</button>
+  </mat-menu>
 
-      <!-- Se non ho permesso → skip -->
-      <ng-container *ngIf="hasPerm(item)">
-
-        <!-- 🔸 Item con figli -->
-        <ng-container *ngIf="item.children && hasVisibleChildren(item); else noChildren">
-
-          <mat-menu #childMenu="matMenu">
-            <ng-container *ngFor="let child of item.children">
-              <button mat-menu-item *ngIf="hasPerm(child)" [routerLink]="child.route">
-                {{ child.label }}
-              </button>
-            </ng-container>
-          </mat-menu>
-
-          <button mat-button [matMenuTriggerFor]="childMenu">
-            {{ item.label }}
-          </button>
-
-        </ng-container>
-
-        <!-- 🔸 Item senza figli -->
-        <ng-template #noChildren>
-          <button mat-button *ngIf="!item.children" [routerLink]="item.route">
-            {{ item.label }}
-          </button>
-        </ng-template>
-
-      </ng-container>
-
-    </ng-container>
-
-    <!-- Avatar + dropdown -->
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-      <mat-icon>account_circle</mat-icon>
+  <button *ngIf="perm.canViewAnalisi"
+          mat-button
+          [matMenuTriggerFor]="analisi">
+    Analisi dati
+  </button>
+  <mat-menu #analisi="matMenu">
+    <button mat-menu-item [routerLink]="['/riserve']">Riservato Magazzino</button>
+    <button *ngIf="perm.canViewSituazioneOrdini"
+            mat-menu-item
+            [routerLink]="['/oaf-monitor']">
+      Situazione ordini
     </button>
+  </mat-menu>
 
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item [disabled]="true">
-        <mat-icon>account_circle</mat-icon>&nbsp; {{ username() }}
-      </button>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        Logout
-      </button>
-    </mat-menu>
+  <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
 
-  </div>
-
-  <!-- MENU MOBILE BUTTON -->
-  <button class="menu-mobile-btn" mat-icon-button (click)="toggleMobile()">
-    <mat-icon>menu</mat-icon>
+  <!-- Contabilità -->
+  <button *ngIf="perm.canViewContabilita"
+          mat-button
+          [matMenuTriggerFor]="contabilita">
+    Contabilità
   </button>
 
-</mat-toolbar>
+  <mat-menu #contabilita="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="trading">Trading</button>
+    <button mat-menu-item [matMenuTriggerFor]="ostuni">Ostuni</button>
+    <button mat-menu-item [matMenuTriggerFor]="ceglie">Ceglie</button>
+  </mat-menu>
 
-<!-- SIDEBAR MOBILE -->
-<div class="mobile-menu" *ngIf="mobileOpen">
+  <mat-menu #trading="matMenu">
+    <button mat-menu-item [routerLink]="['/t/ammortamenti']">Registro cespiti</button>
+    <button mat-menu-item [routerLink]="['/t/cespiti']">Cespiti</button>
+    <button mat-menu-item [routerLink]="['/t/primanota']">Primanota</button>
+    <button mat-menu-item [routerLink]="['/t/tipo-cespiti']">Tipo cespiti</button>
+<!--    <button mat-menu-item [routerLink]="['/t/bilancio']">Bilancio</button>-->
+  </mat-menu>
 
-  <ng-container *ngFor="let item of menu">
+  <mat-menu #ostuni="matMenu">
+    <button mat-menu-item [routerLink]="['/o/ammortamenti']">Registro cespiti</button>
+    <button mat-menu-item [routerLink]="['/o/cespiti']">Cespiti</button>
+    <button mat-menu-item [routerLink]="['/o/primanota']">Primanota</button>
+    <button mat-menu-item [routerLink]="['/o/tipo-cespiti']">Tipo cespiti</button>
+<!--    <button mat-menu-item [routerLink]="['/o/bilancio']">Bilancio</button>-->
+  </mat-menu>
 
-    <div *ngIf="hasPerm(item)">
-      <!-- Padre -->
-      <div class="mobile-menu-item" (click)="item.children ? null : toggleMobile()"
-           [routerLink]="item.children ? null : item.route">
-        {{ item.label }}
-      </div>
+  <mat-menu #ceglie="matMenu">
+    <button mat-menu-item [routerLink]="['/c/ammortamenti']">Registro cespiti</button>
+    <button mat-menu-item [routerLink]="['/c/cespiti']">Cespiti</button>
+    <button mat-menu-item [routerLink]="['/c/primanota']">Primanota</button>
+    <button mat-menu-item [routerLink]="['/c/tipo-cespiti']">Tipo cespiti</button>
+<!--    <button mat-menu-item [routerLink]="['/c/bilancio']">Bilancio</button>-->
+  </mat-menu>
 
-      <!-- Figli -->
-      <ng-container *ngFor="let child of item.children">
-        <div *ngIf="hasPerm(child)"
-             class="mobile-submenu-item"
-             [routerLink]="child.route"
-             (click)="toggleMobile()">
-          {{ child.label }}
-        </div>
-      </ng-container>
 
+  <!-- MENU UTENTE A DESTRA -->
+  <button mat-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
+    <div class="avatar">{{ avatarLetter }}</div>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <div class="user-header">
+      <div class="username">{{ username }}</div>
+      <div class="role">{{ mainRole }}</div>
     </div>
 
-  </ng-container>
+    <mat-divider></mat-divider>
 
-  <div class="mobile-divider"></div>
+    <button *ngIf="perm.canViewUsers" mat-menu-item [routerLink]="['/users']">
+      <mat-icon>person</mat-icon>
+      <span>Gestisci dipendenti</span>
+    </button>
 
-  <!-- Utente -->
-  <div class="mobile-user">
-    <div class="username">{{ username() }}</div>
-    <button mat-button color="warn" (click)="logout()">Logout</button>
-  </div>
+    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/role']">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Gestisci ruoli</span>
+    </button>
 
-</div>
+    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/permissions']">
+      <mat-icon>lock</mat-icon>
+      <span>Gestisci permessi</span>
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+
+  </mat-menu>
+
+</mat-toolbar>

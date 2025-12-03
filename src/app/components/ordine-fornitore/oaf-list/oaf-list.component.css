@@ -1,3 +1,81 @@
+.page-container {
+  padding: 20px;
+}
+
+.mat-elevation-z8 {
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.filter-input {
+  width: 260px;
+}
+
+.status-block {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 20px;
+}
+
+.status-radio-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.status-radio {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
 .nota-presente {
   color:#d11f0c!important;
 }
+
+.status-filter {
+  margin-bottom: 15px;
+}
+
+.status-radio {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.filters-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-input {
+  width: 250px;
+}
+
+.filters-spacer {
+  flex: 1 1 auto;
+}
+
+.checkbox-filter {
+  margin-bottom: 15px;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.filter-input {
+  min-width: 400px;
+  flex: 0 1 400px;
+}
+.filters-container {
+  align-items: flex-start;
+}
+

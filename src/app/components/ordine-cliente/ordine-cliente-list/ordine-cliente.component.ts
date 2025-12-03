@@ -21,6 +21,9 @@ import {MatTableDataSource} from "@angular/material/table";
 import {CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
 import {ViewportScroller} from "@angular/common";
 import { ScrollPositionService } from '../../../services/scroll-position.service';
+import {OrdiniClientiStateService} from "../../../services/state/ordini-clienti-state.service";
+import {PermissionService} from "../../../services/auth/permission.service";
+import {DownloadUtil} from "../../../utils/download-util";
 
 
 export interface Option {
@@ -47,11 +50,6 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   _intl: MatPaginatorIntl = new MatPaginatorIntl();
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
   signImage: any;
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   radioPerVenditoreOptions: Option[] = [];
   radioPerStatusOptions: OptStatus[] = [];
   selectStatusOptions: OptStatus[] = [];
@@ -60,53 +58,21 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   countHasCarico: number = 0;
   totalItems = 0;
 
-  constructor(    private router: Router, private cdRef: ChangeDetectorRef,
-                  private viewportScroller: ViewportScroller,
-                  private scrollPositionService: ScrollPositionService,
-    private authService: AuthService, private activatedRoute: ActivatedRoute, private emailService: EmailService, private service: OrdineClienteService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
+  constructor(
+    private router: Router,
+    private cdRef: ChangeDetectorRef,
+    private viewportScroller: ViewportScroller,
+    private scrollPositionService: ScrollPositionService,
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
+    private emailService: EmailService,
+    private service: OrdineClienteService,
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar,
+    public perm: PermissionService,
+    private downloadUtil: DownloadUtil,
+    private state: OrdiniClientiStateService) {
     super();
-    this._intl.itemsPerPageLabel = 'Elementi per pagina';
-    this._intl.nextPageLabel = 'Prossima';
-    this._intl.previousPageLabel = 'Precedente';
-    this._intl.firstPageLabel = 'Prima';
-    this._intl.lastPageLabel = 'Ultima';
-    this.activatedRoute.params.pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params: any) => {
-          if (params.page) {
-            this.filtro.page = params.page;
-          }
-          if (params.size) {
-            this.filtro.size = params.size;
-          }
-          if (params.status) {
-            this.filtro.status = params.status;
-          } else {
-            if (localStorage.getItem(environment.LOGISTICA)) {
-              this.filtro.status = 'COMPLETO';
-              this.filtro.size = 30;
-            } else if (localStorage.getItem(environment.AMMINISTRATIVO)){
-              this.filtro.status = 'DA_ORDINARE';
-            } else {
-              this.filtro.status = 'TUTTI';
-            }
-          }
-        }
-      );
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
   }
 
   // ---------------------------------------------------------
@@ -174,29 +140,93 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   ngOnInit(): void {
-    this.getStati();
-    if(localStorage.getItem('filtro')) {
-      let item = localStorage.getItem('filtro');
-      if(item != null){
-        this.filtro = JSON.parse(item);
-        // Forza tipo se necessario (es. se codVenditore è number)
-        if (this.filtro.codVenditore !== undefined && this.filtro.codVenditore !== null) {
-          this.filtro.codVenditore = this.filtro.codVenditore;
-        }
-      }
-    }
-    if (this.isVenditore || this.isAdmin) {
+    // 1️⃣ Carichiamo lo stato salvato (filtri + pagina + status)
+    this.filtro = this.state.getState();
+
+    // 2️⃣ Ruoli: logica invariata → carica venditori se serve
+
+    if (this.perm.canFiltroVenditore) {
       this.getVenditori();
     }
+
+    // 3️⃣ Carica elenco stati ordine (TUTTI, DA_PROCESSARE, ...)
+    this.getStati();
+
+    // 4️⃣ Utente loggato
+    this.user = this.authService.getCurrentUser()?.username;
+
+    // 5️⃣ Carichiamo la lista iniziale con i filtri già ripristinati
     this.retrieveList();
-    this.user = localStorage.getItem(environment.USERNAME);
   }
+
 
   ngAfterViewInit(): void {
     const scrollPosition = this.scrollPositionService.getScrollPosition();
     console.log("afterView: " + scrollPosition);
     this.viewportScroller.scrollToPosition([0, scrollPosition]);
   }
+
+  onPageChange(event: PageEvent) {
+    this.filtro.page = event.pageIndex;
+    this.filtro.size = event.pageSize;
+    this.state.setState(this.filtro);
+    this.retrieveList();
+  }
+
+  cerca(): void {
+    this.filtro.page = 0;
+    this.state.setState(this.filtro);
+    this.retrieveList();
+  }
+
+  reset(): void {
+    this.state.resetState();
+    this.filtro = this.state.getState(); // default
+    this.retrieveList();
+  }
+
+// -----------------------------------------------
+// RESET SOLO PAGINA (quando cambi un filtro)
+// -----------------------------------------------
+  resetPage() {
+    this.filtro.page = 0;
+
+    // Aggiorna stato ma NON richiama retrieveList (lo farà chi invoca)
+    this.state.setState(this.filtro);
+  }
+
+
+// -----------------------------------------------
+// CARICA LISTA DAL BACKEND (USANDO FILTRI DEL SERVICE)
+// -----------------------------------------------
+  retrieveList(): void {
+    this.loader = true;
+    this.countHasCarico = 0;
+
+    // Stato sempre allineato
+    this.state.setState(this.filtro);
+
+    this.service.getAll(this.filtro)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any | undefined) => {
+          this.totalItems = data.count;
+
+          data.list?.forEach((d: any) => {
+            d.isLocked = d.locked && this.user !== d.userLock;
+            if (d.hasCarico) this.countHasCarico++;
+          });
+
+          this.dataSource.data = data.list;
+          this.loader = false;
+        },
+        error: (err) => {
+          console.error(err);
+          this.loader = false;
+        }
+      });
+  }
+
 
   update(ordine: OrdineCliente): void {
     this.loader = true;
@@ -248,38 +278,8 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     })
   }
 
-  onPageChange(event: PageEvent) {
-    this.filtro.page = event.pageIndex;
-    this.filtro.size = event.pageSize;
-    this.retrieveList();
-  }
-
-  cerca(): void {
-    localStorage.setItem('filtro', JSON.stringify(this.filtro));
-    this.retrieveList();
-  }
-
-  retrieveList(): void {
-    this.loader = true;
-    this.countHasCarico = 0;
-      this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe({
-          next: (data: any | undefined) => {
-            this.totalItems = data.count;
-            data.list?.forEach((d: any) => {
-              d.isLocked = d.locked && this.user !== d.userLock;
-              if(d.hasCarico){
-                this.countHasCarico++;
-              }
-            })
-            this.dataSource.data = data.list;
-            this.loader = false;
-          }
-        })
-  }
-
   refreshPage() {
-    if (this.isVenditore || this.isAdmin) {
+    if (this.perm.canFiltroVenditore) {
       this.getVenditori();
     }
     this.loader = true;
@@ -395,27 +395,45 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     }
   }
 
-  editDettaglio(ordine: OrdineCliente) {
-    localStorage.setItem('filtro', JSON.stringify(this.filtro));
-    this.scrollPositionService.setScrollPosition(window.scrollY);
-    console.log("edit: " + this.scrollPositionService.getScrollPosition());
-    let url = "/articoli/edit/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (ordine.status) {
-      url += "/" + ordine.status;
+
+  openDettaglio(ordine: any) {
+    // locked = sempre sola lettura
+    if (ordine.isLocked) {
+      this.vediDettaglio(ordine);
+      return;
     }
-    this.route.navigateByUrl(url);
+
+    // archiviato = sempre sola lettura
+    if (ordine.status === 'ARCHIVIATO') {
+      this.vediDettaglio(ordine);
+      return;
+    }
+
+    // altrimenti edit
+    this.editDettaglio(ordine);
+  }
+
+  editDettaglio(ordine: OrdineCliente) {
+    this.apriDettaglio('edit', ordine);
   }
 
   vediDettaglio(ordine: OrdineCliente) {
-    localStorage.setItem('filtro', JSON.stringify(this.filtro));
-    this.scrollPositionService.setScrollPosition(window.scrollY);
-    console.log("view: " + this.scrollPositionService.getScrollPosition());
-    let url = "/articoli/view/" + this.filtro.page + "/" + this.filtro.size + "/"  + ordine.anno + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (ordine.status) {
-      url += "/" + ordine.status;
-    }
-    this.route.navigateByUrl(url);
+    this.apriDettaglio('view', ordine);
   }
+
+  private apriDettaglio(mode: 'edit' | 'view', ordine: OrdineCliente) {
+    // salva filtri
+    this.state.setState(this.filtro);
+
+    // salva posizione scroll
+    this.scrollPositionService.setScrollPosition(window.scrollY);
+
+    // costruisci URL minimale
+    const url = `/articoli/${mode}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
+
+    this.router.navigateByUrl(url);
+  }
+
 
   sbloccaOrdine(ordine: OrdineCliente) {
     this.loader = true;
@@ -443,9 +461,7 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
       data.userNote = ordine.userNote;
       data.dataNote = ordine.dataNote;
     } else {
-      if (!this.isLogistica && !this.isAdmin) {
-        return;
-      }
+      if (!this.perm.canNoteLogistica) return;
       data.note = ordine.noteLogistica;
       data.userNoteLogistica = ordine.userNoteLogistica;
       data.dataNoteLogistica = ordine.dataNoteLogistica;
@@ -488,11 +504,11 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   downloadOrdine(ordine: OrdineCliente) {
-    this.service.download(ordine);
+    this.downloadUtil.handleDownload(this.service.download(ordine));
   }
 
   cercaBolle() {
-    if (this.isVenditore || this.isAdmin) {
+    if (this.perm.canFiltroVenditore) {
       this.getVenditori();
     }
     this.loader = true;
@@ -513,22 +529,5 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
       })
   }
 
-  reset() {
-    localStorage.removeItem('filtro');
-    this.filtro.cliente = '';
-    this.filtro.anno = undefined;
-    this.filtro.luogo = '';
-    this.filtro.progressivo = undefined;
-    this.filtro.dataOrdine = undefined;
-    this.filtro.codVenditore = '';
-    this.filtro.status = 'TUTTI';
-    this.filtro.prontoConsegna = false;
-    this.retrieveList();
-  }
 
-  resetPage() {
-    console.log("vend", this.radioPerVenditoreOptions);
-    console.log("stato", this.radioPerStatusOptions);
-    this.filtro.page = 0;
-  }
 }

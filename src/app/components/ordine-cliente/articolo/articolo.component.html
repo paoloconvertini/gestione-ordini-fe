@@ -1,6 +1,4 @@
 <div class="container-fluid">
-
-  <!-- ======================== TITOLO ======================== -->
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 ordine-title">
       DETTAGLIO ORDINE
@@ -11,660 +9,371 @@
       <span *ngIf="status==='COMPLETO'"> COMPLETO</span>
       <span *ngIf="status==='ARCHIVIATO'"> ARCHIVIATO</span>
     </div>
-
-    <!-- ======================== PULSANTI AZIONI TOP ======================== -->
     <div class="col-lg-12 col-md-4 col-sm-12">
-
-      <!-- INDIETRO -->
-      <button class="button-row" mat-raised-button (click)="annulla()" color="primary">
-        <mat-icon>arrow_back</mat-icon> Indietro
+      <button class="button-row" mat-raised-button (click)="annulla()" color="primary" matTooltip="Indietro">
+        <mat-icon>arrow_back</mat-icon>Indietro
       </button>
-
-      <!-- CREA ORDINE FORNITORE -->
-      <button
-        class="button-row"
-        *ngIf="canCreateOrdiniFornitori && status==='DA_ORDINARE'"
-        mat-raised-button color="primary"
-        (click)="creaOrdineForn()">
+      <button class="button-row" *ngIf="perm.canCreaOrdineForn && status === 'DA_ORDINARE'" mat-raised-button color="primary" (click)="creaOrdineForn()">
         Crea Ordine a forn.
       </button>
-
-      <!-- CARICA MAGAZZINO -->
-      <button
-        class="button-row"
-        *ngIf="canCaricoMagazzino"
-        [disabled]="selection.isEmpty()"
-        mat-raised-button color="primary"
-        (click)="caricaMagazzino()">
+      <button class="button-row" *ngIf="perm.canCaricaMagazzino" [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="caricaMagazzino()">
         Carica Mag.
       </button>
-
-      <!-- CODIFICA ARTICOLI -->
-      <button
-        class="button-row"
-        *ngIf="canCodificaArticoli"
-        mat-raised-button color="primary"
-        (click)="codificaArticoli()">
+      <button class="button-row" *ngIf="perm.canCodificaArticoli" mat-raised-button color="primary" (click)="codificaArticoli()">
         Codifica art.
       </button>
-
-      <!-- CREA FATTURA ACCONTO -->
-      <button
-        class="button-row"
-        *ngIf="canCreaFatturaAcconto"
-        mat-raised-button color="primary"
-        (click)="creaFatturaAcconto()">
+      <button class="button-row" *ngIf="perm.canCreaFatturaAcconto" mat-raised-button color="primary" (click)="creaFatturaAcconto()">
         Crea Fatt. Acconto
       </button>
-
-      <!-- CREA BOLLA -->
-      <button
-        class="button-row"
-        *ngIf="canCreateBolla"
-        [disabled]="selection.isEmpty() || disabilitaBolla"
-        mat-raised-button color="primary"
-        (click)="cercaAltriOrdini()">
+      <button class="button-row" *ngIf="perm.canSelectBolla" [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()">
         Crea Bolla
       </button>
-
-      <!-- SCHEDE TECNICHE -->
-      <button
-        class="button-row"
-        *ngIf="canViewSchedeTecniche"
-        [disabled]="selection.isEmpty()"
-        mat-raised-button color="primary"
-        (click)="cercaSchedeTecniche()">
-        Schede tecniche
-        <mat-icon>download</mat-icon>
+      <button class="button-row" [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="cercaSchedeTecniche()" >
+        Schede tecnica <mat-icon>download</mat-icon>
       </button>
-
-      <!-- NOTE LOGISTICA -->
-      <button class="button-row"
-              *ngIf="canAddNoteLogistica"
-              (click)="aggiungiNoteLogistica(ordineDettaglio)"
-              mat-raised-button
-              [matTooltip]="(ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL')
-                      ? ordineDettaglio.noteLogistica : ''"
-              matTooltipClass="note">
-        <mat-icon fontIcon="contact_phone" color="primary"
-                  [ngClass]="{'nota-logistica-presente': ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica!=='NULL'}"
-                  class="icon-detail logistica">
-        </mat-icon>
+      <button class="button-row" *ngIf="perm.canNoteLogistica"  (click)="aggiungiNoteLogistica(ordineDettaglio)" mat-raised-button
+              [matTooltip]="(ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL') ? ordineDettaglio.noteLogistica : ''" matTooltipClass="note">
+        <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
+                  [ngClass]="{'nota-logistica-presente':ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL'}" class="icon-detail logistica"></mat-icon>
       </button>
-
     </div>
   </div>
-
-
-  <!-- ======================== TESTATA ORDINE ======================== -->
-  <div class="row">
+  <div class="row" >
     <div class="col-lg-12">
       <mat-card class="margin-bottom testata-margin-top">
         <mat-card-content>
-
-          <span class="padding-right">
-            Numero ordine:
-            <b>{{filtroArticoli.anno}}/{{filtroArticoli.serie}}/{{filtroArticoli.progressivo}}</b>
-            del
-            <b>{{ordineDettaglio.dataOrdine | date:'dd/MM/yyyy'}}</b>
+          <span class="padding-right">Numero ordine: <b>{{filtroArticoli.anno}}/{{filtroArticoli.serie}}/{{filtroArticoli.progressivo}}</b> del <b>{{ordineDettaglio.dataOrdine | date: 'dd/MM/yyyy'}}</b></span>
+          <span class="padding-right">intestato a
+            <b>{{ordineDettaglio.intestazione}} - {{ordineDettaglio.sottoConto}}</b>&nbsp;
+            <span style="font-size: 0.75em" *ngIf="ordineDettaglio.riferimento && ordineDettaglio.riferimento !== ' '">({{ordineDettaglio.riferimento}})</span>
           </span>
-
-          <span class="padding-right">
-            intestato a
-            <b>{{ordineDettaglio.intestazione}} - {{ordineDettaglio.sottoConto}}</b>
-            <span style="font-size:0.75em"
-                  *ngIf="ordineDettaglio.riferimento && ordineDettaglio.riferimento !== ' '">
-              ({{ordineDettaglio.riferimento}})
-            </span>
-          </span>
-
-          <span class="padding-right">
-            Totale:
-            <b>{{ordineDettaglio.totale | currency:'EUR':'symbol'}}</b>
-          </span>
-
-          <span class="padding-right">
-            Pagam: <b>{{ordineDettaglio.modalitaPagamento}}</b>
-          </span>
-
-          <span class="padding-right">
-            Tel: <b>{{ordineDettaglio.telefono}} - {{ordineDettaglio.cellulare}}</b>
-          </span>
-
-          <button class="float-end"
-                  (click)="mostraAcconti()"
-                  mat-button
+          <span class="padding-right">Totale: <b>{{ordineDettaglio.totale | currency: 'EUR':'symbol'}}</b></span>
+          <span class="padding-right">Pagam: <b>{{ordineDettaglio.modalitaPagamento}}</b></span>
+          <span class="padding-right">Tel: <b>{{ordineDettaglio.telefono}} - {{ordineDettaglio.cellulare}}</b></span>
+          <button class="float-end" (click)="mostraAcconti(ordineDettaglio.sottoConto)" mat-button
                   matTooltip="Mostra acconti">
-            <mat-icon color="primary">receipt_long</mat-icon>
+            <mat-icon aria-hidden="false" aria-label="mostra acconti" color="primary">receipt_long</mat-icon>
           </button>
-
         </mat-card-content>
       </mat-card>
     </div>
   </div>
-
-
-  <!-- ======================== BOX ACCONTI ======================== -->
-  <app-fido-cliente *ngIf="showAcconti"
-                    [contoCliente]="ordineDettaglio.sottoConto">
-  </app-fido-cliente>
-
-
-  <!-- ======================== FILTRI ======================== -->
+  <app-fido-cliente *ngIf="showAcconti" [contoCliente]="ordineDettaglio.sottoConto"></app-fido-cliente>
   <div class="row">
-
-    <!-- Ricerca -->
     <div class="col-lg-3 col-md-3 col-sm-3">
       <mat-form-field>
         <mat-label>Cerca...</mat-label>
         <input matInput (keyup)="applyFilter()" [(ngModel)]="filtro.searchText">
       </mat-form-field>
     </div>
-
     <div class="col-lg-1 col-md-1 col-sm-1">
-      <button mat-raised-button color="warn"
-              (click)="filtro.searchText=''; applyFilter()">
+      <button mat-raised-button color="warn" (click)="filtro.searchText = ''; applyFilter()">
         Reset
       </button>
     </div>
-
-    <!-- Radio Non Disponibile -->
-    <div *ngIf="canVisualizzaNonDisponibile && status==='DA_ORDINARE'"
-         class="col-lg-3 col-md-6 col-sm-12">
-
+    <div *ngIf="perm.canFiltroNonDisponibile && status === 'DA_ORDINARE'" class="col-lg-3 col-md-6 col-sm-12">
       <mat-radio-group
         (change)="getArticoliByOrdineId()"
-        [(ngModel)]="filtroArticoli.flNonDisponibile"
-        aria-label="Filtro disponibilità">
-
-        <mat-radio-button *ngFor="let option of radioOptions"
-                          [checked]="option.checked"
-                          [value]="option.checked"
-                          color="primary">
-          {{option.name}}
+        aria-label="Select an option" [(ngModel)]="filtroArticoli.flNonDisponibile">
+        <mat-radio-button *ngFor="let option of radioOptions" [checked]="option.checked"
+                          [value]="option.checked" color="primary">{{option.name}}
         </mat-radio-button>
-
       </mat-radio-group>
     </div>
-
-    <!-- Radio Consegnato -->
-    <div *ngIf="canViewConsegne && status!=='ARCHIVIATO'"
-         class="col-lg-5 col-md-12 col-sm-12">
-
-      <mat-radio-group
-        (change)="getArticoliByOrdineId()"
-        [(ngModel)]="filtroArticoli.flConsegna"
-        aria-label="Filtro consegne">
-
-        <mat-radio-button *ngFor="let option of radioConsegnatoOptions"
-                          [checked]="option.checked"
-                          [value]="option.value"
-                          color="primary">
-          {{option.name}}
+    <div *ngIf="status !== 'ARCHIVIATO' && !perm.canFiltroConsegnaAdmin" class="col-lg-5 col-md-12 col-sm-12">
+      <mat-radio-group (change)="getArticoliByOrdineId()"
+                       aria-label="Select an option" [(ngModel)]="filtroArticoli.flConsegna">
+        <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"
+                          [value]="option.value" color="primary">{{option.name}}
         </mat-radio-button>
-
       </mat-radio-group>
-
     </div>
-
   </div>
-
-
-  <!-- ======================== TABELLA ======================== -->
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-12 col-md-12 col-sm-12">
       <section class="example-container mat-elevation-z8" tabindex="0">
-
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
-
-        <table *ngIf="!loader"
-               class="table-container"
-               mat-table
-               multiTemplateDataRows
-               [dataSource]="dataSource">
-
-          <!-- SELECT COL -->
+        <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="dataSource">
+          <!-- Checkbox Column -->
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox
-                color="primary"
-                (change)="toggleAllRows()"
-                [checked]="selection.hasValue() && isAllSelected()"
-                [indeterminate]="selection.hasValue() && !isAllSelected()">
+              <mat-checkbox color="primary"
+                            (change)="$event ? toggleAllRows() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
               </mat-checkbox>
             </th>
-
             <td mat-cell *matCellDef="let row">
-              <mat-checkbox *ngIf="row.tipoRigo!=='C' && row.tipoRigo!=='AC'"
-                            color="primary"
-                            (change)="selection.toggle(row)"
+              <mat-checkbox color="primary" *ngIf="row.tipoRigo !== 'AC'"
+                            (click)="$event.stopPropagation();"
+                            (change)="$event ? selection.toggle(row) : null"
                             [checked]="selection.isSelected(row)">
               </mat-checkbox>
             </td>
           </ng-container>
-
-          <!-- CODICE -->
+          <!-- Name Column -->
           <ng-container matColumnDef="codice">
             <th mat-header-cell *matHeaderCellDef>Codice</th>
-            <td mat-cell *matCellDef="let a">
-              <span *ngIf="a.tipoRigo!=='C' && a.tipoRigo!=='AC'">
-                <span [ngClass]="{'hasCarico': a.numDoc && !a.flagRiservato && a.flagOrdinato}"
-                      [matTooltip]="'Art. caricato il ' + (a.dataCarico | date:'dd/MM/yyyy') +
-                                    ' con n.doc. ' + a.numDoc +
-                                    ' del ' + (a.dataDoc | date:'dd/MM/yyyy') +
-                                    '. Mov. mag: ' + a.annoMag + '/' + a.serieMag + '/' + a.progressivoMag">
-                  {{a.farticolo}}
-                </span>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <span [ngClass]="{'hasCarico': articolo.numDoc && !articolo.flagRiservato && articolo.flagOrdinato}" [matTooltip]="'Art. caricato il ' + (articolo.dataCarico  | date: 'dd/MM/yyyy' )+
+                 ' con n.doc. ' + articolo.numDoc + ' del ' + (articolo.dataDoc | date: 'dd/MM/yyyy' ) + '. Movimento mag. ' + articolo.annoMag + '/'
+                  + articolo.serieMag + '/' + articolo.progressivoMag">{{articolo.farticolo}}</span>
               </span>
             </td>
           </ng-container>
-
-          <!-- DESCRIZIONE -->
+          <!-- Name Column -->
           <ng-container matColumnDef="descrizione">
             <th mat-header-cell *matHeaderCellDef>Descrizione</th>
-            <td mat-cell *matCellDef="let a">
-
-              <!-- Righi particolari C / AC -->
-              <span *ngIf="a.tipoRigo==='C' || a.tipoRigo==='AC'">
-                {{a.fdescrArticolo}}
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="(articolo.tipoRigo ==='C' || articolo.tipoRigo ==='AC')">
+                {{articolo.fdescrArticolo}}
               </span>
-
-              <!-- SOLO LETTURA -->
-              <span *ngIf="a.tipoRigo!=='C'
-                           && a.tipoRigo!=='AC'
-                           && !(canEditDescrizione)
-                           || status==='ARCHIVIATO'">
-                {{a.fdescrArticolo}}
-                <br><b>{{a.codArtFornitore}}</b>
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditDescrizione) || status === 'ARCHIVIATO'">
+                {{articolo.fdescrArticolo}}<br><b>{{articolo.codArtFornitore}}</b>
               </span>
-
-              <!-- EDIT DESCRIZIONE -->
-              <ng-container *ngIf="canEditDescrizione && a.tipoRigo!=='C' && a.tipoRigo!=='AC' && status!=='ARCHIVIATO'">
-                <textarea class="form-control"
-                          [(ngModel)]="a.fdescrArticolo"></textarea>
-
-                <textarea class="form-control"
-                          [(ngModel)]="a.codArtFornitore"></textarea>
-              </ng-container>
-
+                <textarea *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditDescrizione && status !== 'ARCHIVIATO'" type="text" class="form-control"
+                     [(ngModel)]="articolo.fdescrArticolo" ></textarea>
+              <textarea *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditCodiceFornitore && status !== 'ARCHIVIATO'" type="text" class="form-control"
+                     [(ngModel)]="articolo.codArtFornitore"> </textarea>
             </td>
           </ng-container>
-
-          <!-- QUANTITÀ -->
+          <!-- Name Column -->
           <ng-container matColumnDef="quantita">
-            <th mat-header-cell *matHeaderCellDef>
-              Qtà<br>(da conseg.)
-            </th>
-
-            <td mat-cell *matCellDef="let a">
-
-              <!-- SOLO LETTURA -->
-              <span *ngIf="!(canEditQuantita) || status==='ARCHIVIATO'">
-                {{a.quantita}}
-              </span>
-
-              <!-- EDIT -->
-              <input *ngIf="canEditQuantita && status!=='ARCHIVIATO'"
-                     type="number" min="0"
-                     class="form-control input"
-                     (change)="resetQta(a)"
-                     [(ngModel)]="a.quantita"/>
-
-              &nbsp;{{a.funitaMisura}}
-              <span *ngIf="a.flBolla">
-                &nbsp;({{a.qtaDaConsegnare | number:'1.2-2'}})
-              </span>
-
+            <th mat-header-cell *matHeaderCellDef>Qtà<br>(da conseg.)</th>
+            <td mat-cell *matCellDef="let articolo">
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditQuantita) || status === 'ARCHIVIATO'">{{articolo.quantita}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQuantita && status !== 'ARCHIVIATO'" type="number"
+                     min="0" class="form-control input" (change)="resetQta(articolo)"
+                     [(ngModel)]="articolo.quantita"/>
+              &nbsp;{{articolo.funitaMisura}}
+              <span *ngIf="articolo.flBolla">&nbsp;({{articolo.qtaDaConsegnare | number : '1.2-2'}})</span>
             </td>
           </ng-container>
-
-          <!-- QTA SENZA BOLLA -->
+          <!-- Name Column -->
           <ng-container matColumnDef="qtaConsegnatoSenzaBolla">
-            <th mat-header-cell *matHeaderCellDef>Qtà senza bolla</th>
-            <td mat-cell *matCellDef="let a">
-
-              <input *ngIf="canEditQtaSenzaBolla && a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                     type="number" min="0"
-                     class="form-control input"
-                     [(ngModel)]="a.qtaConsegnatoSenzaBolla"/>
-
+            <th mat-header-cell *matHeaderCellDef> Qtà senza bolla</th>
+            <td mat-cell *matCellDef="let articolo">
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQtaConsegnatoSenzaBolla" type="number"
+                     min="0" class="form-control input"
+                     [(ngModel)]="articolo.qtaConsegnatoSenzaBolla"/>
             </td>
           </ng-container>
-
-          <!-- PREZZO -->
+          <!-- Name Column -->
           <ng-container matColumnDef="prezzo">
             <th mat-header-cell *matHeaderCellDef>Prezzo Unit</th>
-            <td mat-cell *matCellDef="let a">
-              <span *ngIf="a.tipoRigo!=='C' && a.tipoRigo!=='AC'">
-                {{a.prezzo | currency:'EUR':'symbol'}}
-                <span *ngIf="a.prezzoScontato">
-                  <b>({{a.prezzoScontato | currency:'EUR':'symbol'}})</b>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                {{articolo.prezzo | currency: 'EUR':'symbol'}}
+                <span *ngIf="articolo.prezzoScontato">
+                  <b>({{articolo.prezzoScontato | currency: 'EUR':'symbol'}})</b>
                 </span>
               </span>
             </td>
           </ng-container>
-
-          <!-- PREZZO TOT -->
+          <!-- Name Column -->
           <ng-container matColumnDef="prezzoTot">
             <th mat-header-cell *matHeaderCellDef>Prezzo Tot</th>
-            <td mat-cell *matCellDef="let a">
-              <span *ngIf="a.tipoRigo!=='C' && a.tipoRigo!=='AC'">
-                {{(a.prezzo * a.quantita) | currency:'EUR':'symbol'}}
-                <span *ngIf="a.prezzoScontato">
-                  <b>({{(a.prezzoScontato * a.quantita) | currency:'EUR':'symbol'}})</b>
+            <td mat-cell *matCellDef="let articolo">
+              <span
+                *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                {{ (articolo.prezzo * articolo.quantita) | currency: 'EUR':'symbol'}}
+                <span *ngIf="articolo.prezzoScontato">
+                  <b>({{(articolo.prezzoScontato * articolo.quantita) | currency: 'EUR':'symbol'}})</b>
                 </span>
               </span>
             </td>
           </ng-container>
-
-          <!-- TONO -->
+          <!-- Name Column -->
           <ng-container matColumnDef="tono">
             <th mat-header-cell *matHeaderCellDef>Tono</th>
-
-            <td mat-cell *matCellDef="let a">
-
-              <span *ngIf="!canEditTono || status==='ARCHIVIATO'">
-                {{a.tono}}
-              </span>
-
-              <input *ngIf="canEditTono && status!=='ARCHIVIATO'"
-                     type="text"
-                     maxlength="10"
+            <td mat-cell *matCellDef="let articolo">
+        <span
+          *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditTono) || status === 'ARCHIVIATO'">{{articolo.tono}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditTono && status !== 'ARCHIVIATO'" type="text"
                      class="form-control input"
-                     [(ngModel)]="a.tono"/>
-
+                     [(ngModel)]="articolo.tono" maxlength="10"/>
             </td>
           </ng-container>
-
-          <!-- QTA RISERVATA -->
+          <!-- Name Column -->
           <ng-container matColumnDef="qtaRiservata">
             <th mat-header-cell *matHeaderCellDef>Qtà Riserv.</th>
-
-            <td mat-cell *matCellDef="let a">
-
-              <span *ngIf="!canEditRiservato || status==='ARCHIVIATO'">
-                {{a.qtaRiservata}}
-              </span>
-
-              <input *ngIf="canEditRiservato && status!=='ARCHIVIATO'"
-                     type="number" min="0"
-                     class="form-control input"
-                     (keyup)="checkFlagRiservato(a)"
-                     (change)="checkFlagRiservato(a)"
-                     [(ngModel)]="a.qtaRiservata"/>
-
+            <td mat-cell *matCellDef="let articolo">
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditQtaRiservata) || status === 'ARCHIVIATO'">{{articolo.qtaRiservata}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQtaRiservata && status !== 'ARCHIVIATO'" type="number"
+                     min="0" class="form-control input"
+                     [(ngModel)]="articolo.qtaRiservata" (keyup)="checkFlagRiservato(articolo)"
+                     (change)="checkFlagRiservato(articolo)"/>
             </td>
           </ng-container>
-
-          <!-- QTA PRONTO CONS -->
+          <!-- Name Column -->
           <ng-container matColumnDef="qtaProntoConsegna">
             <th mat-header-cell *matHeaderCellDef>Qtà Pronto Cons.</th>
-
-            <td mat-cell *matCellDef="let a">
-
-              <span *ngIf="!canEditProntoConsegna || status==='ARCHIVIATO'">
-                {{a.qtaProntoConsegna}}
-              </span>
-
-              <input *ngIf="canEditProntoConsegna && status!=='ARCHIVIATO'"
-                     type="number" min="0"
-                     class="form-control input"
-                     (keyup)="checkFlagProntoConsegna(a)"
-                     (change)="checkFlagProntoConsegna(a)"
-                     [(ngModel)]="a.qtaProntoConsegna"/>
-
+            <td mat-cell *matCellDef="let articolo">
+              <span
+                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditQtaProntoConsegna) || status === 'ARCHIVIATO'">{{articolo.qtaProntoConsegna}}</span>
+              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQtaProntoConsegna && status !== 'ARCHIVIATO'" type="number"
+                     min="0" class="form-control input"
+                     [(ngModel)]="articolo.qtaProntoConsegna" (keyup)="checkFlagProntoConsegna(articolo)"
+                     (change)="checkFlagProntoConsegna(articolo)"/>
             </td>
           </ng-container>
-
-          <!-- FLAG RISERVATO -->
+          <!-- Name Column -->
           <ng-container matColumnDef="flRiservato">
             <th mat-header-cell *matHeaderCellDef>Ris.</th>
-
-            <td mat-cell *matCellDef="let a">
-              <mat-checkbox
-                *ngIf="a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                [(ngModel)]="a.flagRiservato"
-                (change)="checkFlags(a,1); checkQta(a)"
-                [disabled]="!canEditRiservato || ordineDettaglio.locked || status==='ARCHIVIATO'"
-                color="primary">
-              </mat-checkbox>
+            <td mat-cell *matCellDef="let articolo">
+        <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"><mat-checkbox (change)="checkFlags(articolo, 1);checkQta(articolo)"
+                                                             disabled="{{ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
+                                                             [(ngModel)]="articolo.flagRiservato"
+                                                             color="primary"></mat-checkbox></span>
             </td>
           </ng-container>
-
-          <!-- FLAG NON DISPONIBILE -->
-          <ng-container matColumnDef="flNonDisponibile">
-            <th mat-header-cell *matHeaderCellDef>Non Dis.</th>
-            <td mat-cell *matCellDef="let a">
-              <mat-checkbox *ngIf="a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                            [(ngModel)]="a.flagNonDisponibile"
-                            (change)="checkFlags(a,2)"
-                            [disabled]="!canEditNonDisponibile || ordineDettaglio.locked || status==='ARCHIVIATO'"
-                            color="primary">
-              </mat-checkbox>
-            </td>
+          <!-- Name Column -->
+          <ng-container matColumnDef="flDisponibile">
+              <th mat-header-cell *matHeaderCellDef>Non Dis.</th>
+              <td mat-cell *matCellDef="let articolo">
+                <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                  <mat-checkbox (change)="checkFlags(articolo, 2)"
+                                disabled="{{!perm.canEditNonDisponibile
+                                          || ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
+                                [(ngModel)]="articolo.flagNonDisponibile" color="primary">
+                  </mat-checkbox>
+                </span>
+              </td>
           </ng-container>
-
-          <!-- FLAG ORDINATO -->
+          <!-- Name Column -->
           <ng-container matColumnDef="flOrdinato">
             <th mat-header-cell *matHeaderCellDef>Ord.</th>
-
-            <td mat-cell *matCellDef="let a">
-
-              <!-- ADMIN / AMMINISTRATIVO -->
-              <mat-checkbox *ngIf="canEditOrdinato && a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                            [(ngModel)]="a.flagOrdinato"
-                            (change)="checkFlags(a,1)"
-                            [disabled]="ordineDettaglio.locked || status==='ARCHIVIATO'"
-                            color="primary">
-              </mat-checkbox>
-
-              <!-- LIMITATO (solo articoli 943...) -->
-              <mat-checkbox
-                *ngIf="!canEditOrdinato && canEditOrdinatoLimitato
-                       && a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                [(ngModel)]="a.flagOrdinato"
-                (change)="checkFlags(a,1)"
-                [disabled]="!a.farticolo?.startsWith('943')
-                            || ordineDettaglio.locked
-                            || status==='ARCHIVIATO'"
-                color="primary">
-              </mat-checkbox>
-
+            <td mat-cell *matCellDef="let articolo">
+                <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditOrdinato"><mat-checkbox (change)="checkFlags(articolo, 1)"
+                                                                     disabled="{{ordineDettaglio.locked || status === 'ARCHIVIATO'}}"
+                                                                     [(ngModel)]="articolo.flagOrdinato"
+                                                                     color="primary"></mat-checkbox>
+                </span>
             </td>
           </ng-container>
-
-          <!-- FLAG PRONTO CONSEGNA -->
+          <!-- Name Column -->
           <ng-container matColumnDef="flProntoConsegna">
             <th mat-header-cell *matHeaderCellDef>Pronto Cons.</th>
-
-            <td mat-cell *matCellDef="let a">
-              <mat-checkbox
-                *ngIf="a.tipoRigo!=='AC'"
-                [(ngModel)]="a.flProntoConsegna"
-                (change)="checkQtaProntoConsegna(a)"
-                [disabled]="!canEditProntoConsegna
-                            || ordineDettaglio.locked
-                            || status==='ARCHIVIATO'
-                            || (a.tipoRigo!=='C' && a.flagConsegnato)"
-                color="primary">
-              </mat-checkbox>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !=='AC'">
+                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{( !perm.canEditProntoConsegna || ordineDettaglio.locked || status === 'ARCHIVIATO' || (articolo.tipoRigo !=='C' && articolo.flagConsegnato) )}}"
+                              [(ngModel)]="articolo.flProntoConsegna" color="primary">
+                </mat-checkbox>
+              </span>
             </td>
           </ng-container>
 
-          <!-- FLAG CONSEGNATO -->
+          <!-- Name Column -->
           <ng-container matColumnDef="flConsegnato">
             <th mat-header-cell *matHeaderCellDef>Cons.</th>
-
-            <td mat-cell *matCellDef="let a">
-              <mat-checkbox *ngIf="a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                            [(ngModel)]="a.flagConsegnato"
-                            [disabled]="!canEditConsegnato"
-                            color="primary">
-              </mat-checkbox>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <mat-checkbox disabled="{{!perm.canEditConsegnato}}"
+                              [(ngModel)]="articolo.flagConsegnato" color="primary">
+                </mat-checkbox>
+              </span>
             </td>
           </ng-container>
 
-          <!-- AZIONI -->
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
-
-            <td mat-cell *matCellDef="let a">
-
-              <!-- STORIA ARTICOLO -->
-              <button mat-icon-button
-                      *ngIf="canViewHistory && a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                      matTooltip="Storia articolo"
-                      (click)="showHistory(a)">
-                <mat-icon color="primary">work_history</mat-icon>
+            <td mat-cell *matCellDef="let articolo">
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" (click)="showHistory(articolo)" mat-icon-button
+                      matTooltip="Storia articolo">
+                <mat-icon aria-hidden="false" aria-label="firma" color="primary">work_history</mat-icon>
               </button>
-
-              <!-- NOTE ARTICOLO -->
-              <button mat-icon-button
-                      *ngIf="canAddNoteArticolo && a.tipoRigo!=='C' && a.tipoRigo!=='AC'"
-                      matTooltip="Aggiungi note"
-                      (click)="aggiungiNote(a)">
-                <mat-icon fontIcon="speaker_notes" color="primary"
-                          [ngClass]="{'nota-presente': a.note}">
-                </mat-icon>
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" (click)="aggiungiNote(articolo)" mat-icon-button matTooltip="Aggiungi note" >
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':articolo.note}"></mat-icon>
               </button>
-
-              <!-- ASSOCIA FORNITORE -->
-              <button mat-icon-button
-                      *ngIf="canAssocFornitori
-                             && status==='DA_ORDINARE'
-                             && a.tipoRigo!=='C'
-                             && a.tipoRigo!=='AC'
-                             && !a.articolo
-                             && !['*PZ','*MQ','*ML'].includes(a.farticolo)"
-                      matTooltip="Associa fornitore"
-                      (click)="addFornitore(a.farticolo)">
-                <mat-icon color="primary">warning_amber</mat-icon>
+              <button
+                *ngIf="perm.canAssociaFornitore && status === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ' && articolo.farticolo !== '*ML'"
+                (click)="addFornitore(articolo.farticolo)" mat-icon-button
+                matTooltip="Associa fornitore">
+                <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
               </button>
-
-              <!-- OAF INFO -->
-              <button mat-icon-button
-                      *ngIf="canViewOAF
-                             && a.tipoRigo!=='C'
-                             && a.tipoRigo!=='AC'
-                             && a.annoOAF"
-                      matTooltip="Fornitore: {{a.intestazione}}
-                                  - Ordine {{a.annoOAF}}/{{a.serieOAF}}/{{a.progressivoOAF}}
-                                  {{a.dataOrdineOAF ? ('del ' + (a.dataOrdineOAF | date:'dd/MM/yyyy')) : ''}}
-                                  {{a.qtyuser1 ? ('. Settimana cons.: ' + a.qtyuser1) : ''}}
-                                  {{a.datauser1 ? ('. Data cons.: ' + (a.datauser1 | date:'dd/MM/yyyy')) : ''}}">
-                <mat-icon color="primary">store</mat-icon>
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-icon-button
+                      matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )) : ''}}
+                        {{articolo.qtyuser1?('. Settimana cons.: ' + articolo.qtyuser1): ''}}
+                        {{articolo.datauser1?('. Data cons.: ' + (articolo.datauser1 | date: 'dd/MM/yyyy')): ''}}
+                        " #tooltip="matTooltip" (click)="tooltip.toggle()">
+                <mat-icon aria-hidden="false"
+                          aria-label="nota ordine fornitore"
+                          color="primary">store</mat-icon>
               </button>
-
-              <!-- COLLEGA OAF -->
-              <button mat-icon-button
-                      *ngIf="canCollegaOAF
-                             && a.tipoRigo!=='C'
-                             && a.tipoRigo!=='AC'
-                             && !a.annoOAF"
-                      matTooltip="Collega OAF"
-                      (click)="collegaOAF(a)">
-                <mat-icon color="primary">add_link</mat-icon>
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.annoOAF" mat-icon-button matToolTip="Collega OAF" (click)="collegaOAF(articolo)">
+                <mat-icon aria-hidden="false"
+                          aria-label="collega ordine fornitore"
+                          color="primary">add_link</mat-icon>
               </button>
-
-              <!-- NOTE ORDINE CLIENTE -->
-              <button mat-icon-button
-                      *ngIf="canViewNoteOrdCli
-                             && a.tipoRigo!=='C'
-                             && a.tipoRigo!=='AC'
-                             && a.noteOrdCli"
-                      [matTooltip]="a.noteOrdCli">
-                <mat-icon color="primary">info</mat-icon>
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.noteOrdCli && perm.canViewNoteOAF" mat-icon-button
+                      matTooltip="{{articolo.noteOrdCli}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+                <mat-icon aria-hidden="false"
+                          aria-label="nota ordine fornitore"
+                          color="primary">info</mat-icon>
               </button>
-
-              <!-- VISUALIZZA BOLLE -->
-              <button mat-icon-button
-                      *ngIf="a.tipoRigo!=='C'
-                             && a.tipoRigo!=='AC'
-                             && a.flBolla"
-                      (click)="getBolle(a); expandedElement = expandedElement === a ? null : a; $event.stopPropagation()"
-                      matTooltip="Mostra bolle">
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
                 <mat-icon color="primary">local_shipping</mat-icon>
               </button>
-
             </td>
           </ng-container>
 
-          <!-- DETTAGLIO BOLLE -->
+          <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
           <ng-container matColumnDef="expandedDetail">
-            <td mat-cell *matCellDef="let a" [attr.colspan]="displayedColumns.length">
-
-              <div *ngFor="let b of bolle">
-                <div [@detailExpand]="a==expandedElement ? 'expanded':'collapsed'">
-
-                  <mat-spinner *ngIf="loaderBolle" class="loader"></mat-spinner>
-
-                  <div *ngIf="!loaderBolle" class="bolla-box">
-                    <mat-icon fontIcon="local_shipping" class="icon-detail"></mat-icon>
-                    <b>Numero bolla:</b> {{b.numeroBolla}}
-                    <b>Data:</b> {{b.dataBolla | date:'dd/MM/yyyy'}}
-                    <b>Quantità consegnata:</b> {{b.qta | number:'1.2-2'}}
+            <td mat-cell *matCellDef="let articolo" [attr.colspan]="displayedColumns.length">
+                <div  *ngFor="let bolla of bolle">
+                  <div [@detailExpand]="articolo == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-spinner *ngIf="loaderBolle" class="loader"></mat-spinner>
+                      <div class="bolla-box"  *ngIf="!loaderBolle">
+                        <div class="d-inline"><mat-icon class="icon-detail" fontIcon="local_shipping"></mat-icon></div>
+                        <div class="d-inline"><b>Numero bolla:</b> {{bolla.numeroBolla}}</div>
+                        <div class="d-inline"><b>Data:</b> {{bolla.dataBolla | date: 'dd/MM/yyyy' }}</div>
+                        <div class="d-inline"><b>Quantità consegnata:</b> {{bolla.qta | number : '1.2-2'}}</div>
+                      </div>
                   </div>
-
                 </div>
-              </div>
-
             </td>
           </ng-container>
 
-          <!-- RIGHE TABELLA -->
-          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
 
-          <tr mat-row *matRowDef="let row; columns:['expandedDetail']"
-              class="example-detail-row">
-          </tr>
 
-          <!-- NESSUN RISULTATO -->
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+
+          <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell no-result-list" colspan="20">
-              Nessun risultato
-              {{filtro.searchText ? ("per la ricerca " + filtro.searchText) : ""}}
-            </td>
+            <td class="mat-cell no-result-list" colspan="4">Nessun
+              risultato {{filtro.searchText ? "per la ricerca " + filtro.searchText : ""}}</td>
           </tr>
-
         </table>
-
-        <mat-paginator aria-label="Seleziona pagina"></mat-paginator>
-
+        <mat-paginator aria-label="Select page of users"></mat-paginator>
       </section>
     </div>
   </div>
-
-
-  <!-- ======================== BOTTONI FINALI ======================== -->
   <div class="row float-end">
-    <div class="col-lg-12">
-
-      <!-- SALVA -->
-      <button mat-raised-button color="primary"
-              *ngIf="canSalvareOrdine && !ordineDettaglio.locked && status!=='ARCHIVIATO'"
-              (click)="salvaOrdine()"
-              class="margin-top">
-        Salva
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <button mat-raised-button color="primary" [disabled]="ordineDettaglio.locked"
+              *ngIf="status !== 'ARCHIVIATO' && perm.canSalvaArticoli"
+              (click)="salvaOrdine()" class="margin-top">Salva
+      </button>&nbsp;&nbsp;
+      <button mat-raised-button color="warn" [disabled]="ordineDettaglio.locked"
+              *ngIf="status !== 'ARCHIVIATO' && perm.canChiudiArticoli"
+              (click)="chiudiOrdine()" class="margin-top margin-left">Salva e Chiudi
       </button>
-
-      <!-- SALVA E CHIUDI -->
       <button mat-raised-button color="warn"
-              *ngIf="canChiudereOrdine && !ordineDettaglio.locked && status!=='ARCHIVIATO'"
-              (click)="chiudiOrdine()"
-              class="margin-top margin-left">
-        Salva e Chiudi
+              *ngIf="perm.canFirmaCliente"
+              (click)="apriFirma()" class="margin-top margin-left">Firma
       </button>
-
-      <!-- FIRMA -->
-      <button mat-raised-button color="warn"
-              *ngIf="canFirmareOrdine"
-              (click)="apriFirma()"
-              class="margin-top margin-left">
-        Firma
-      </button>
-
     </div>
   </div>
-
 </div>
+
+
+
+

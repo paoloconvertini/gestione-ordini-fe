@@ -1,104 +1,79 @@
-<!-- NO ACCESS -->
-<div class="no-access" *ngIf="!canManage">
-  <mat-icon>block</mat-icon>
-  <p>Non hai i permessi per gestire i dipendenti.</p>
-</div>
+<form (ngSubmit)="submitForm()" [formGroup]="userForm" autocomplete="off">
 
-<!-- FORM -->
-<form *ngIf="canManage"
-      (ngSubmit)="submitForm()"
-      [formGroup]="userForm"
-      autocomplete="off">
+  <div class="page-container">
 
-  <div class="container">
-
-    <h3 class="title">
-      <span *ngIf="id">Modifica</span>
-      <span *ngIf="!id">Crea</span>
-      dipendente
-    </h3>
-
-    <!-- LOADER -->
-    <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
-
-    <div class="row" *ngIf="!loader">
-
-      <!-- Nome -->
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Nome</mat-label>
-          <input matInput formControlName="name" />
-        </mat-form-field>
-      </div>
-
-      <!-- Cognome -->
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Cognome</mat-label>
-          <input matInput formControlName="lastname" />
-        </mat-form-field>
-      </div>
-
-      <!-- Email -->
-      <div class="col-lg-4 col-md-4 col-sm-12">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" />
-        </mat-form-field>
-      </div>
+    <!-- HEADER -->
+    <div class="page-header">
+      <h2>
+        {{ id ? 'Modifica dipendente' : 'Crea dipendente' }}
+      </h2>
     </div>
 
-    <div class="row" *ngIf="!loader">
+    <!-- FORM SEZIONE DATI PERSONALI -->
+    <div class="form-section">
+      <div class="form-row">
 
-      <!-- Password -->
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Password</mat-label>
-          <input matInput formControlName="password" />
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="mrossi">
         </mat-form-field>
-      </div>
 
-      <!-- Data -->
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="full">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Mario">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Cognome</mat-label>
+          <input matInput formControlName="lastname" placeholder="Rossi">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="mario.rossi@mail.it">
+        </mat-form-field>
+
+      </div>
+      <div class="form-row">
+
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" placeholder="(lascia vuoto per non modificare)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
           <mat-label>Data di nascita</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="dataNascita">
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-      </div>
 
-      <!-- Codice venditore -->
-      <div class="col-lg-4">
-        <mat-form-field appearance="outline" class="full">
+        <mat-form-field appearance="outline" class="form-field">
           <mat-label>Codice venditore</mat-label>
-          <input matInput formControlName="codVenditore" />
+          <input matInput formControlName="codVenditore" placeholder="123ABC">
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Ruoli</mat-label>
+
+          <mat-select formControlName="roles" multiple>
+            <mat-option *ngFor="let role of optionRoles" [value]="role">
+              {{ role.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
       </div>
+
     </div>
 
-    <!-- RUOLI -->
-    <div class="row" *ngIf="!loader">
-      <h4>Ruoli</h4>
 
-      <div formArrayName="roles">
-        <div *ngFor="let role of optionRoles">
-          <mat-checkbox
-            color="primary"
-            [checked]="role.checked"
-            (change)="onCheckboxChange(role, $event)">
-            {{ role.name }}
-          </mat-checkbox>
-        </div>
-      </div>
-    </div>
 
-    <!-- BOTTONI -->
-    <div class="float-end" *ngIf="!loader">
-      <button mat-raised-button type="button" (click)="indietro()">
-        Annulla
-      </button>
-      &nbsp;&nbsp;
+    <!-- FOOTER BUTTONS -->
+    <div class="footer-buttons">
+      <button mat-stroked-button type="button" (click)="indietro()">Annulla</button>
+
       <button mat-raised-button color="primary" type="submit">
         Salva
       </button>

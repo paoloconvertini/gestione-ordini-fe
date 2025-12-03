@@ -1,37 +1,35 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { CommonListComponent } from "../../commonListComponent";
-import { MatDialog } from "@angular/material/dialog";
-import { ArticoloService } from "../../../services/ordine-cliente/articolo/articolo.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { environment } from "../../../../environments/environment";
-import { HistoryDialogComponent } from "../../history-dialog/history-dialog.component";
-import { OrdineFornitoreService } from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
-import { FirmaDialogComponent } from "../../firma-dialog/firma-dialog.component";
-import { OrdineClienteService } from "../../../services/ordine-cliente/list/ordine-cliente.service";
-import { WarnDialogComponent } from "../../warn-dialog/warn-dialog.component";
-import { AddFornitoreDialogComponent } from "../../add-fornitore-dialog/add-fornitore-dialog.component";
-import { takeUntil } from "rxjs";
-import { OrdineDettaglio } from "../../../models/ordine-dettaglio";
-import { animate, state, style, transition, trigger } from "@angular/animations";
-import { Bolla } from "../../../models/Bolla";
-import { FiltroArticoli } from "../../../models/FiltroArticoli";
-import { OrdineClienteNotaDto } from "../../../models/OrdineClienteNotaDto";
-import { OrdineClienteNoteDialogComponent } from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
-import { Acconto } from "../../../models/Acconto";
-import { SelectionModel } from "@angular/cdk/collections";
-import { FiltroOrdini } from "../../../models/FiltroOrdini";
-import { ListaBollaComponent } from "../logistica/lista-bolla/lista-bolla.component";
-import { AccontoDialogComponent } from "../logistica/acconto-dialog/acconto-dialog.component";
-import { SchedeTecnicheComponent } from "../schede-tecniche/schede-tecniche.component";
-import { CollegaOAFComponent } from "../../collega-oaf/collega-oaf.component";
-import { ConfirmDialogComponent } from "../../confirm-dialog/confirm-dialog.component";
-import { ArticoloClasseFornitoreComponent } from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
-import { SaldiMagazzinoService } from "../../../services/saldi-magazzino/saldi-magazzino.service";
-import { CaricoMagazzinoDialogComponent } from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
-import { FatturaAccontoDialogComponent } from "../../fattura-acconto-dialog/fattura-acconto-dialog.component";
-import { AuthService } from "../../../services/auth/auth.service";
-
+import {Component, Input, OnInit} from '@angular/core';
+import {CommonListComponent} from "../../commonListComponent";
+import {MatDialog} from "@angular/material/dialog";
+import {ArticoloService} from "../../../services/ordine-cliente/articolo/articolo.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {environment} from "../../../../environments/environment";
+import {HistoryDialogComponent} from "../../history-dialog/history-dialog.component";
+import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
+import {FirmaDialogComponent} from "../../firma-dialog/firma-dialog.component";
+import {OrdineClienteService} from "../../../services/ordine-cliente/list/ordine-cliente.service";
+import {WarnDialogComponent} from "../../warn-dialog/warn-dialog.component";
+import {AddFornitoreDialogComponent} from "../../add-fornitore-dialog/add-fornitore-dialog.component";
+import {takeUntil} from "rxjs";
+import {OrdineDettaglio} from "../../../models/ordine-dettaglio";
+import {animate, state, style, transition, trigger} from "@angular/animations";
+import {Bolla} from "../../../models/Bolla";
+import {FiltroArticoli} from "../../../models/FiltroArticoli";
+import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
+import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
+import {Acconto} from "../../../models/Acconto";
+import {SelectionModel} from '@angular/cdk/collections';
+import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
+import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
+import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
+import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
+import {ArticoloClasseFornitoreComponent} from "../articolo-classe-fornitore/articolo-classe-fornitore.component";
+import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-magazzino.service";
+import {CaricoMagazzinoDialogComponent} from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
+import { FatturaAccontoDialogComponent } from '../../fattura-acconto-dialog/fattura-acconto-dialog.component';
+import {PermissionService} from "../../../services/auth/permission.service";
 
 export interface Option {
   name: string,
@@ -50,8 +48,8 @@ export interface OptionCons {
   styleUrls: ['./articolo.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
@@ -62,7 +60,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   user: any;
   loaderAcconti: boolean = false;
   loaderBolle: boolean = false;
-
   showAcconti: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
   status: any;
@@ -70,13 +67,14 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
   bolle: Bolla[] = [];
   acconti: Acconto[] = [];
-  radioOptions: Option[] = [{ name: "Da ordinare", checked: true }, { name: "Tutti", checked: false }];
+  radioOptions: Option[] = [{name: "Da ordinare", checked: true}, {name: "Tutti", checked: false}];
   radioConsegnatoOptions: OptionCons[] = [
-    { name: "Da consegnare", checked: false, value: 0 },
-    { name: "Consegnato", checked: false, value: 1 },
-    { name: "Pronto consegna", checked: false, value: 2 },
-    { name: "Tutti", checked: false, value: 3 }
+    {name: "Da consegnare", checked: false, value: 0},
+    {name: "Consegnato", checked: false, value: 1},
+    {name: "Pronto consegna", checked: false, value: 2},
+    {name: "Tutti", checked: false, value: 3}
   ];
+  //radioDaRiservareOptions: Option[] = [{name: "Da riservare", checked: false}, {name: "Tutti", checked: true}];
   displayedColumns: string[] = ['select', 'codice', 'descrizione', 'quantita'];
   columnAcconti: string[] = ['dataFattura', 'numeroFattura', 'rifOrdCliente', 'operazione', 'prezzoAcconto', 'iva'];
   expandedElement: any;
@@ -85,188 +83,53 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   disabilitaBolla: boolean = false;
 
 
-  constructor(
-    private ordineService: OrdineClienteService,
-    private ordineFornitoreService: OrdineFornitoreService,
-    private service: ArticoloService,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private route: Router,
-    private router: ActivatedRoute,
-    private saldiMagazzinoService: SaldiMagazzinoService,
-    private auth: AuthService
-  ) {
-    super();
-
-    this.displayedColumns = [
-      ...this.displayedColumns,
-      'qtaConsegnatoSenzaBolla',
-      'prezzo',
-      'prezzoTot',
-      'tono',
-      'qtaRiservata',
-      'qtaProntoConsegna',
-      'flRiservato',
-      'flNonDisponibile',
-      'flOrdinato',
-      'flProntoConsegna',
-      'flConsegnato',
-      'azioni'
-    ];
-  }
-
-  // ---------------------------------------------------------
-  // GETTER PERMESSI
-  // ---------------------------------------------------------
-
-  get canEditDescrizione(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.descrizione');
-  }
-
-  get canEditQuantita(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.qta');
-  }
-
-  get canEditRiservato(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.riservato');
-  }
-
-  get canEditNonDisponibile(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.nonDisp');
-  }
-
-  get canEditOrdinato(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.ordinato');
-  }
-
-  get canEditOrdinatoLimitato(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.ordinato.limitato');
-  }
-
-  get canEditProntoConsegna(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.prontoCons');
-  }
-
-  get canEditConsegnato(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.consegnato');
-  }
-
-  get canEditQtaSenzaBolla(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.qtaSenzaBolla');
-  }
-
-  get canEditTono(): boolean {
-    return this.auth.hasPerm('ordini.articoli.edit.tono');
-  }
-
-  get canViewHistory(): boolean {
-    return this.auth.hasPerm('ordini.articoli.history');
-  }
-
-  get canAddNoteArticolo(): boolean {
-    return this.auth.hasPerm('ordini.articoli.note');
-  }
-
-  get canAssocFornitori(): boolean {
-    return this.auth.hasPerm('ordini.fornitori.associa');
-  }
-
-  get canViewOAF(): boolean {
-    return this.auth.hasPerm('ordini.oaf.view');
-  }
-
-  get canCollegaOAF(): boolean {
-    return this.auth.hasPerm('ordini.oaf.collega');
-  }
-
-  get canViewNoteOrdCli(): boolean {
-    return this.auth.hasPerm('ordini.noteOrdCli.view');
-  }
-
-  get canVisualizzaNonDisponibile(): boolean {
-    return this.auth.hasPerm('ordini.flags.nonDisponibile');
-  }
-
-  get canViewConsegne(): boolean {
-    return this.auth.hasPerm('ordini.flags.consegne');
-  }
-
-  get canCreateBolla(): boolean {
-    return this.auth.hasPerm('ordini.bolla.create');
-  }
-
-  get canCreateOrdiniFornitori(): boolean {
-    return this.auth.hasPerm('ordini.fornitori.create');
-  }
-
-  get canCodificaArticoli(): boolean {
-    return this.auth.hasPerm('ordini.articoli.codifica');
-  }
-
-  get canCreaFatturaAcconto(): boolean {
-    return this.auth.hasPerm('ordini.fatturaAcconto.create');
-  }
-
-  get canAddNoteLogistica(): boolean {
-    return this.auth.hasPerm('ordini.logistica.note');
-  }
-
-  get canViewSchedeTecniche(): boolean {
-    return this.auth.hasPerm('ordini.articoli.schedeTecniche.view');
-  }
-
-  get canCaricoMagazzino(): boolean {
-    return this.auth.hasPerm('ordini.magazzino.carico');
-  }
-
-  // PULSANTI FINALI
-  get canSalvareOrdine(): boolean {
-    return this.auth.hasPerm('ordini.edit');
-  }
-
-  get canChiudereOrdine(): boolean {
-    return this.auth.hasPerm('ordini.chiudi');
-  }
-
-  get canFirmareOrdine(): boolean {
-    return this.auth.hasPerm('ordini.firma');
-  }
-
-  // ---------------------------------------------------------
-  // INIT
-  // ---------------------------------------------------------
-
   ngOnInit(): void {
-    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-      this.filtroArticoli.anno = params.anno;
-      this.filtroArticoli.serie = params.serie;
-      this.filtroArticoli.progressivo = params.progressivo;
-      this.status = params.status;
-      this.filtro.page = params.page;
-      this.filtro.size = params.size;
-    });
+    this.route.params
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((params: any) => {
 
-    if (this.status === 'DA_ORDINARE' && this.canVisualizzaNonDisponibile) {
+        this.filtroArticoli.anno = params.anno;
+        this.filtroArticoli.serie = params.serie;
+        this.filtroArticoli.progressivo = params.progressivo;
+
+        // lo stato non arriva più dalla route
+        this.status = null;
+
+        const saved = localStorage.getItem('filtro');
+        if (saved) {
+          this.filtro = JSON.parse(saved);
+        }
+      });
+
+    if (this.perm.canDefaultFiltroNonDisponibile && this.status === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
     }
-
-    if (this.status === 'COMPLETO' || this.status === 'INCOMPLETO') {
+    if ((this.status === 'COMPLETO' || this.status === 'INCOMPLETO')) {
       this.filtroArticoli.flConsegna = 0;
+      // @ts-ignore
       this.radioConsegnatoOptions[0].checked = true;
     }
-
-    if (this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE') {
+    if ((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE')) {
       this.filtroArticoli.flConsegna = 3;
+      // @ts-ignore
       this.radioConsegnatoOptions[3].checked = true;
     }
-
     this.user = localStorage.getItem(environment.USERNAME);
     this.getArticoliByOrdineId();
   }
 
-  // ---------------------------------------------------------
-  // AZIONI STANDARD
-  // ---------------------------------------------------------
+  constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService,
+              private service: ArticoloService, private dialog: MatDialog,
+              private snackbar: MatSnackBar, private router: Router, private route: ActivatedRoute,
+              public perm: PermissionService,
+              private saldiMagazzinoService: SaldiMagazzinoService) {
+    super();
+    if (this.perm.canEditQtaConsegnatoSenzaBolla) {   // nuovo permesso
+      this.displayedColumns = [...this.displayedColumns, 'qtaConsegnatoSenzaBolla'];
+    }
+    this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'tono', 'qtaRiservata', 'qtaProntoConsegna',
+      'flRiservato', 'flDisponibile', 'flOrdinato', 'flProntoConsegna', 'flConsegnato', 'azioni']
+  }
 
   salvaOrdine() {
     this.updateArticoli();
@@ -277,18 +140,16 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       return;
     }
     this.loaderBolle = true;
-    this.service.getBolle(articolo.progrGenerale)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: (data: any) => {
-          this.loaderBolle = false;
-          this.bolle = data;
-        },
-        error: (e: any) => {
-          this.loaderBolle = false;
-          console.error(e);
-        }
-      });
+    this.service.getBolle(articolo.progrGenerale).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: (data: any) => {
+        this.loaderBolle = false;
+        this.bolle = data;
+      },
+      error: (e: any) => {
+        console.error(e);
+        this.loaderBolle = false;
+      }
+    });
   }
 
   showHistory(articolo: any) {
@@ -296,27 +157,26 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       width: '65%',
       data: articolo,
       autoFocus: false,
-      maxHeight: '90vh'
+      maxHeight: '90vh' //you can adjust the value as per your view
     });
   }
 
   chiudiOrdine() {
+    let msg = "Sei sicuro di voler chiudere l'ordine? Questo potrebbe comportare il cambio di stato";
     const dialogRef2 = this.dialog.open(ConfirmDialogComponent, {
       width: '30%',
-      data: { msg: "Sei sicuro di voler chiudere l'ordine? Questo potrebbe comportare il cambio di stato" },
+      data: {msg: msg},
     });
-
     dialogRef2.afterClosed().subscribe(result => {
       if (result) {
-        this.service.chiudi(this.dataSource.filteredData)
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
-            next: (res) => {
-              if (!res.error) {
-                this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
-              }
+        this.service.chiudi(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+          next: (res) => {
+            if (!res.error) {
+              let url = '/ordini-clienti';
+              this.router.navigate([url]);
             }
-          });
+          }
+        });
       }
     });
   }
@@ -334,90 +194,89 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   apriFirma() {
-    const ordineId = `${this.filtroArticoli.anno}_${this.filtroArticoli.serie}_${this.filtroArticoli.progressivo}`;
-
-    const dialogRef = this.dialog.open(FirmaDialogComponent, { width: '60%' });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        let data = new FormData();
-        data.append('file', result);
-        data.append('orderId', ordineId);
-        this.loader = true;
-
-        this.ordineService.upload(data)
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
+    let ordineId = this.filtroArticoli.anno + '_' +
+      this.filtroArticoli.serie + '_' + this.filtroArticoli.progressivo;
+    {
+      const dialogRef = this.dialog.open(FirmaDialogComponent, {
+        width: '60%'
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          let data = new FormData();
+          data.append('file', result);
+          data.append('orderId', ordineId);
+          this.loader = true;
+          this.ordineService.upload(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
             next: (res) => {
               this.loader = false;
               if (res && !res.error) {
                 this.snackbar.open('Ordine firmato. Puoi trovare il pdf nella cartella condivisa', 'Chiudi', {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-                });
+                })
               }
-              this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
+              this.router.navigate(['/ordini-clienti']);
             },
             error: (e) => {
-              this.loader = false;
+              console.error(e);
               this.snackbar.open('Errore! Firma non creata', 'Chiudi', {
                 duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-              });
+              })
+              this.loader = false;
             }
           });
-      }
-    });
+        }
+      });
+    }
   }
 
+  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.selection.selected.length === this.dataSource.data.length;
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
   }
 
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
   toggleAllRows() {
     if (this.isAllSelected()) {
       this.selection.clear();
-    } else {
-      this.selection.select(...this.dataSource.data);
+      return;
     }
+    this.selection.select(...this.dataSource.data);
   }
 
   cercaAltriOrdini() {
     this.disabilitaBolla = true;
     this.loader = true;
-
-    let list = this.selection.selected
-      .filter(r => r.tipoRigo !== 'C' && r.tipoRigo !== 'AC' && r.flProntoConsegna && !r.flagConsegnato);
-
-    if (list.length === 0) {
-      this.snackbar.open('Attenzione: nessun articolo in pronta consegna selezionato!', 'Chiudi', {
+    let list = this.selection.selected.filter(row => row.tipoRigo !== 'C' && row.tipoRigo !== 'AC' && row.flProntoConsegna && !row.flagConsegnato);
+    if (list.length == 0) {
+      this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna che non sia già stato consegnato!', 'Chiudi', {
         duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
       });
       return;
     }
-
     let o = list[0];
-
-    this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.ordineService.cercaAltriOrdiniCliente(o.anno, o.serie, o.progressivo, this.ordineDettaglio.sottoConto).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
           if (res && res.length > 0) {
             const dialogRef = this.dialog.open(ListaBollaComponent, {
               width: '90%',
-              data: { ordini: res }
+              data: {ordini: res}
             });
-
             dialogRef.afterClosed().subscribe(result => {
-              if (Array.isArray(result)) {
+              if (result && result instanceof Array) {
                 this.selection.select(...result);
                 this.cercaAcconti();
-              } else if (result === true) {
+              } else if(result === true) {
                 this.cercaAcconti();
               } else {
                 this.disabilitaBolla = false;
+                return;
               }
-            });
 
+            });
           } else {
             this.cercaAcconti();
           }
@@ -429,120 +288,112 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           this.loader = false;
           this.disabilitaBolla = false;
         }
-      });
+      })
+
   }
 
   cercaAcconti() {
     this.loader = true;
-
-    this.service.cercaAcconti(this.ordineDettaglio.sottoConto, this.selection.selected)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.cercaAcconti(this.ordineDettaglio.sottoConto, this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
-
           if (res && res.length > 0) {
             const dialogRef = this.dialog.open(AccontoDialogComponent, {
               width: '90%',
-              data: { acconti: res }
+              data: {acconti: res}
             });
-
             dialogRef.afterClosed().subscribe(result => {
-              if (Array.isArray(result)) {
+              if (result && result instanceof Array) {
                 this.accontiDaUsare = result;
                 this.creaBolla();
-              } else if (result === true) {
+              } else if(result === true) {
                 this.creaBolla();
               } else {
                 this.disabilitaBolla = false;
+                return;
               }
             });
-
           } else {
             this.creaBolla();
           }
         },
         error: () => {
-          this.loader = false;
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
+          this.loader = false;
           this.disabilitaBolla = false;
         }
-      });
+      })
   }
 
   creaBolla() {
     this.loader = true;
-
-    this.service.creaBolla(this.selection.selected, this.accontiDaUsare)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.creaBolla(this.selection.selected, this.accontiDaUsare).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
           this.accontiDaUsare = [];
-
           if (res && !res.error) {
-            const ref = this.snackbar.open(res.msg, 'Chiudi', {
+            let snackBarRef = this.snackbar.open(res.msg, 'Chiudi', {
               horizontalPosition: 'center', verticalPosition: 'top'
             });
-            ref.afterDismissed().subscribe(() => this.disabilitaBolla = false);
-
+            snackBarRef.afterDismissed().subscribe(() => {
+              this.disabilitaBolla = false;
+            });
           } else {
             this.snackbar.open('Errore! Bolla non creata', 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
+            this.loader = false;
             this.disabilitaBolla = false;
           }
         },
         error: () => {
-          this.loader = false;
           this.snackbar.open('Server non raggiungibile!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
+          this.loader = false;
           this.disabilitaBolla = false;
         }
-      });
+      })
   }
 
   creaOrdineForn() {
     this.loader = true;
-
     let error = false;
-
     this.selection.selected.forEach(a => {
-      if (a.annoOAF) {
-        this.snackbar.open(`ATTENZIONE: per l'articolo ${a.farticolo} esiste già un ordine a fornitore!!`, 'Chiudi', {
+      if(a.annoOAF){
+        this.snackbar.open("ATTENZIONE, per l'articolo " + a.farticolo + " esiste già un ordine a fornitore!!", 'Chiudi', {
           duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
         });
         error = true;
         return;
       }
-    });
-
-    if (error) {
+    })
+    if(error){
       this.loader = false;
       return;
     }
-
-    const list = this.selection.selected.filter(a =>
-      a.farticolo !== '*PZ' && a.farticolo !== '*MQ' && a.farticolo !== '*ML'
-    );
-
-    this.ordineFornitoreService.creaOrdineFornitori(list)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    const list = this.selection.selected.filter(a => a.farticolo !== '*PZ' &&
+      a.farticolo !== '*MQ' && a.farticolo !== '*ML');
+    this.ordineFornitoreService.creaOrdineFornitori(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
-
-          if (Array.isArray(res)) {
+          if (res && res instanceof Array) {
             const dialogRef = this.dialog.open(WarnDialogComponent, {
               width: '30%',
-              data: { data: res, msg: "Ordine creato per i seguenti fornitori:" }
+              data: {
+                data: res,
+                msg: "Ordine creato per i seguenti fornitori:"
+              }
             });
-            dialogRef.afterClosed().subscribe(() => { });
-            this.route.navigate(['/ordini-clienti', 'DA_ORDINARE', this.filtro.page, this.filtro.size]);
+            dialogRef.afterClosed().subscribe(result => {
 
+            });
+            this.router.navigate(['/ordini-clienti']);
           } else if (res.error) {
             this.snackbar.open(res.msg, 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
@@ -550,24 +401,23 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         },
         error: () => {
-          this.loader = false;
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
+          this.loader = false;
         }
-      });
+      })
   }
 
   addFornitore(codice: any): void {
-    const dialogRef = this.dialog.open(AddFornitoreDialogComponent, { width: '30%' });
-
+    const dialogRef = this.dialog.open(AddFornitoreDialogComponent, {
+      width: '30%'
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loader = true;
         result.codiceArticolo = codice;
-
-        this.service.addFornitoreToArticolo(result)
-          .pipe(takeUntil(this.ngUnsubscribe))
+        this.service.addFornitoreToArticolo(result).pipe(takeUntil(this.ngUnsubscribe))
           .subscribe({
             next: (res) => {
               this.loader = false;
@@ -576,11 +426,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
               });
               this.getArticoliByOrdineId();
             },
-            error: () => {
-              this.loader = false;
+            error: (e) => {
+              console.error(e);
               this.snackbar.open('Errore! Non è stato possibile associare il fornitore all\'articolo', 'Chiudi', {
                 duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-              });
+              })
+              this.loader = false;
             }
           });
       }
@@ -589,9 +440,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   updateArticoli(): void {
     this.loader = true;
-
-    this.service.update(this.dataSource.filteredData)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.update(this.dataSource.filteredData).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
@@ -599,7 +448,8 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
             this.getArticoliByOrdineId();
           }
         },
-        error: () => {
+        error: (e) => {
+          console.error(e);
           this.loader = false;
         }
       });
@@ -607,202 +457,186 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   annulla() {
     if (this.user === this.ordineDettaglio.userLock) {
-      this.service.annulla(
-        this.filtroArticoli.anno,
-        this.filtroArticoli.serie,
-        this.filtroArticoli.progressivo
-      )
-        .pipe(takeUntil(this.ngUnsubscribe))
+      this.service.annulla(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
+              this.router.navigate(['/ordini-clienti']);
             }
-          },
-          error: () => {
+          }, error: (e: any) => {
+            console.error(e);
             this.loader = false;
           }
-        });
-
+        })
     } else {
-      this.route.navigate(['/ordini-clienti', this.filtro.page, this.filtro.size]);
+      this.router.navigate(['/ordini-clienti']);
     }
   }
 
   getArticoliByOrdineId(): void {
     this.loader = true;
-
-    this.service.getArticoliByOrdineId(this.filtroArticoli)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.getArticoliByOrdineId(this.filtroArticoli).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: OrdineDettaglio) => {
-
           if (data && data.articoli) {
             this.ordineDettaglio = data;
             this.ordineDettaglio.locked = data.locked && this.user !== this.ordineDettaglio.userLock;
+            console.log("bloccato: " + this.ordineDettaglio.locked);
           }
-
           this.createPaginator(this.ordineDettaglio.articoli, 100);
           this.selection = new SelectionModel<any>(true, []);
-
           if (this.filtro.searchText) {
             this.applyFilter();
           }
-
           this.loader = false;
         },
-        error: () => {
+        error: (e: any) => {
+          console.error(e);
           this.loader = false;
         }
-      });
+      })
   }
 
-  checkRiservati() {
-    if (this.canEditRiservato) return false;
-
-    return this.dataSource.filteredData.some(
-      (d: any) => d.tipoRigo !== 'C' && d.flagOrdinato && !d.flagRiservato
-    );
-  }
-
-  checkQta(a: any) {
-    if (a.flagRiservato) {
-      a.qtaRiservata = a.qtaDaConsegnare ? a.qtaDaConsegnare : a.quantita;
+  checkQta(articolo: any) {
+    if (articolo.flagRiservato) {
+      if (articolo.qtaDaConsegnare) {
+        articolo.qtaRiservata = articolo.qtaDaConsegnare;
+      } else {
+        articolo.qtaRiservata = articolo.quantita;
+      }
     } else {
-      a.qtaRiservata = undefined;
+      articolo.qtaRiservata = undefined;
     }
   }
 
-  checkFlagRiservato(a: any) {
-    a.flagRiservato = (a.qtaRiservata === a.quantita);
+  checkFlagRiservato(articolo: any) {
+    articolo.flagRiservato = (articolo.qtaRiservata === articolo.quantita);
   }
 
-  checkFlagProntoConsegna(a: any) {
-    a.flProntoConsegna = !!a.qtaProntoConsegna;
+  checkFlagProntoConsegna(articolo: any) {
+    articolo.flProntoConsegna = (articolo.qtaProntoConsegna && articolo.qtaProntoConsegna !== 0);
   }
 
-  checkQtaProntoConsegna(a: any) {
-    if (a.flProntoConsegna) {
-      a.qtaProntoConsegna = a.qtaDaConsegnare ? a.qtaDaConsegnare : a.quantita;
+  checkQtaProntoConsegna(articolo: any) {
+    if (articolo.flProntoConsegna) {
+      if (articolo.qtaDaConsegnare) {
+        articolo.qtaProntoConsegna = articolo.qtaDaConsegnare;
+      } else {
+        articolo.qtaProntoConsegna = articolo.quantita;
+      }
     } else {
-      a.qtaProntoConsegna = undefined;
+      articolo.qtaProntoConsegna = undefined;
     }
   }
 
   aggiungiNoteLogistica(ordine: OrdineDettaglio) {
-    let data = new OrdineClienteNotaDto();
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;
     data.serie = ordine.serie;
     data.progressivo = ordine.progressivo;
     data.note = ordine.noteLogistica;
     data.userNoteLogistica = ordine.userNoteLogistica;
     data.dataNoteLogistica = ordine.dataNoteLogistica;
-
-    const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
-      width: '50%',
-      data
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loader = true;
-        this.ordineService.addNotes(result, 1)
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
-            next: (res) => {
-              this.loader = false;
-
-              if (res && !res.error) {
-                this.snackbar.open(res.msg, 'Chiudi', {
-                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-                });
-
-                ordine.noteLogistica = result.note;
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.ordineService.addNotes(result, 1).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  ordine.noteLogistica = result.note;
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
               }
-            },
-            error: () => {
-              this.loader = false;
-              this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
-                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-              });
-            }
-          });
-      }
-    });
+            });
+        }
+      });
+    }
   }
 
-  aggiungiNote(a: any) {
-    let data = new OrdineClienteNotaDto();
-    data.anno = a.anno;
-    data.serie = a.serie;
-    data.progressivo = a.progressivo;
-    data.rigo = a.rigo;
-    data.note = a.note;
-    data.userNote = a.userNote;
-    data.dataNote = a.dataNote;
-
-    const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
-      width: '50%',
-      data
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loader = true;
-
-        this.service.addNotes(result)
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
-            next: (res) => {
-              this.loader = false;
-
-              if (res && !res.error) {
-                this.snackbar.open(res.msg, 'Chiudi', {
-                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-                });
-
-                a.note = result.note;
+  aggiungiNote(articolo: any) {
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
+    data.anno = articolo.anno;
+    data.serie = articolo.serie;
+    data.progressivo = articolo.progressivo;
+    data.rigo = articolo.rigo;
+    data.note = articolo.note;
+    data.userNote = articolo.userNote;
+    data.dataNote = articolo.dataNote;
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.service.addNotes(result).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  articolo.note = result.note;
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
               }
-            },
-            error: () => {
-              this.loader = false;
-              this.snackbar.open('Errore! Mail non inviata', 'Chiudi', {
-                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-              });
-            }
-          });
-      }
-    });
+            });
+        }
+      });
+    }
   }
 
-  mostraAcconti() {
+  mostraAcconti(sottoConto: string) {
     this.showAcconti = !this.showAcconti;
   }
 
   codificaArticoli() {
-    const list = this.ordineDettaglio.articoli?.filter(a =>
-      a.farticolo === '*PZ' || a.farticolo === '*MQ' || a.farticolo === '*ML'
-    );
-
+    const list = this.ordineDettaglio.articoli?.filter((a:any) => (a.farticolo === '*PZ' || a.farticolo === '*MQ' || a.farticolo === '*ML'));
     this.loader = true;
-
-    this.service.codificaArticoli(list)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.codificaArticoli(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
-
           this.loader = false;
-
-          if (res && res.errors?.length > 0) {
+          let response = res;
+          if (response && response.errors && response.errors.length > 0) {
             const dialogRef = this.dialog.open(WarnDialogComponent, {
               width: '30%',
-              data: { data: res.errors, msg: "La codifica ha prodotto i seguenti errori:" }
+              data: {
+                data: response.errors,
+                msg: "La codifica ha prodotti i seguenti errori:"
+              }
             });
-
             dialogRef.afterClosed().subscribe(result => {
-              if (result && res.showTCA) {
-                this.dialog.open(ArticoloClasseFornitoreComponent, {
+              if(result && res.showTCA) {
+                const dialogRef2 = this.dialog.open(ArticoloClasseFornitoreComponent, {
                   width: '85%'
+                });
+                dialogRef2.afterClosed().subscribe(res => {
+
                 });
               }
             });
@@ -812,188 +646,156 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
           }
-
           this.getArticoliByOrdineId();
         },
         error: () => {
-          this.loader = false;
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
+          this.loader = false;
         }
-      });
+      })
   }
 
   override applyFilter() {
     super.applyFilter(this.filtro.searchText);
-
-    this.dataSource.filterPredicate = (d: any, filter: string): boolean => {
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
-        d.tipoRigo !== 'C' &&
-        d.tipoRigo !== 'AC' &&
-        (
-          d.farticolo.toLowerCase().includes(filter) ||
-          d.fdescrArticolo.toLowerCase().includes(filter) ||
-          d.codArtFornitore.toLowerCase().includes(filter)
-        )
-      );
-    };
+        data.tipoRigo !== 'C' && data.tipoRigo !== 'AC' &&
+        (data.farticolo.toLowerCase().includes(filter)
+          || data.fdescrArticolo.toLowerCase().includes(filter)
+          || data.codArtFornitore.toLowerCase().includes(filter)
+        ))
+    }
   }
 
-  cercaSchedeTecniche() {
-    const list = this.selection.selected
-      .filter(r => r.tipoRigo !== 'C' && r.tipoRigo !== 'AC');
-
-    if (list.length === 0) return;
-
+  cercaSchedeTecniche(): void {
+    const list = this.selection.selected.filter(row => row.tipoRigo !== 'C' && row.tipoRigo !== 'AC');
+    if (list.length == 0) {
+      return;
+    }
     for (const l of list) {
-      if (!l.codArtFornitore || l.codArtFornitore.trim() === '') {
-        this.snackbar.open(`Articolo senza codice fornitore: ${l.farticolo}`, 'Chiudi', {
+      if (!l.codArtFornitore || l.codArtFornitore === ' ') {
+        this.snackbar.open('Articolo senza codice fornitore: ' + l.farticolo, 'Chiudi', {
           duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-        });
+        })
         return;
       }
     }
-
     this.loader = true;
-
-    this.service.cercaSchedeTecniche(list)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.cercaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
-
           if (res) {
             if (res.codArtFornList && res.codArtFornList.length > 0) {
               this.dialog.open(SchedeTecnicheComponent, {
                 width: '80%',
-                data: { articoliList: res.codArtFornList }
+                data: {
+                  articoliList: res.codArtFornList
+                }
               });
-
             } else {
               this.scaricaSchedeTecniche(res.searchDTOS);
             }
           }
         },
-        error: () => {
-          this.loader = false;
+        error: (e) => {
+          console.error(e);
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-          });
+          })
+          this.loader = false;
         }
       });
   }
 
   scaricaSchedeTecniche(list: any[]) {
     this.loader = true;
-
-    this.service.scaricaSchedeTecniche(list)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.scaricaSchedeTecniche(list).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data) => {
           this.loader = false;
-
           if (data) {
-            let a = document.createElement("a");
+            let a: any = document.createElement("a");
             document.body.appendChild(a);
-            a.style.display = "none";
-
-            let blob = new Blob([data], { type: 'application/zip' });
+            a.style = "display: none";
+            let blob = new Blob([data], {type: 'application/zip'});
             let url = window.URL.createObjectURL(blob);
-
             a.href = url;
             a.download = "schede_tecniche.zip";
             a.click();
-
             window.URL.revokeObjectURL(url);
-
           } else {
             this.snackbar.open('Errore', 'Chiudi', {
               duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
             });
           }
         },
-        error: () => {
-          this.loader = false;
+        error: (e: any) => {
+          console.log(e);
           this.snackbar.open('Errore!', 'Chiudi', {
             duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
           });
+          this.loader = false;
         }
-      });
+      })
   }
 
-  collegaOAF(a: any) {
-    this.route.navigate([
-      '/collega-oaf',
-      a.progrGenerale,
-      this.filtro.page,
-      this.filtro.size,
-      a.anno,
-      a.serie,
-      a.progressivo,
-      this.status
-    ]);
+  collegaOAF(articolo: any) {
+    this.router.navigate(['/collega-oaf', articolo.progrGenerale, this.filtro.page, this.filtro.size, articolo.anno, articolo.serie, articolo.progressivo, this.status]);
   }
 
-  resetQta(a: any) {
-    a.flagRiservato = false;
-    a.flProntoConsegna = false;
-    a.qtaRiservata = undefined;
-    a.qtaProntoConsegna = undefined;
+  resetQta(articolo: any) {
+    articolo.flagRiservato = false;
+    articolo.flProntoConsegna = false;
+    articolo.qtaRiservata = undefined;
+    articolo.qtaProntoConsegna = undefined;
   }
 
   caricaMagazzino() {
-    const list = this.selection.selected.filter(a =>
-      a.farticolo !== '*PZ' && a.farticolo !== '*MQ' && a.farticolo !== '*ML'
-    );
-
-    const dialogRef = this.dialog.open(CaricoMagazzinoDialogComponent, { width: '70%' });
-
+    const list = this.selection.selected.filter(a => a.farticolo !== '*PZ' &&
+      a.farticolo !== '*MQ' && a.farticolo !== '*ML');
+    const dialogRef = this.dialog.open(CaricoMagazzinoDialogComponent, {
+      width: '70%'
+    });
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if(result) {
         this.loader = true;
         result.articoli = list;
-
-        this.saldiMagazzinoService.caricaMagazzino(result)
-          .pipe(takeUntil(this.ngUnsubscribe))
+        this.saldiMagazzinoService.caricaMagazzino(result).pipe(takeUntil(this.ngUnsubscribe))
           .subscribe({
             next: (res) => {
               this.loader = false;
-
               if (res && !res.error) {
                 this.snackbar.open(res.msg, 'Chiudi', {
                   horizontalPosition: 'center', verticalPosition: 'top'
                 });
-
               } else {
                 this.snackbar.open('Errore! Carico di magazzino non creato', 'Chiudi', {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 });
+                this.loader = false;
               }
-            },
-            error: () => {
+            }, error: ()=> {
               this.loader = false;
-            }
-          });
+        }
+          })
       }
     });
+
   }
 
   creaFatturaAcconto() {
-    this.ordineService.getOrdineFatturaAcconto(
-      this.ordineDettaglio.sottoConto,
-      this.selection.selected
-    )
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.ordineService.getOrdineFatturaAcconto(this.ordineDettaglio.sottoConto, this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
           this.loader = false;
-
           if (res) {
             const dialogRef = this.dialog.open(FatturaAccontoDialogComponent, {
               hasBackdrop: false,
               width: '90%',
-              maxHeight: '90vh',
+              maxHeight: '90vh',  // limita l’altezza totale
               panelClass: 'pannello-acconti',
               data: {
                 ordini: res,
@@ -1001,38 +803,31 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
                 sottoConto: this.ordineDettaglio.sottoConto
               }
             });
-
             dialogRef.afterClosed().subscribe(result => {
               if (result) {
                 this.loader = true;
-
-                this.ordineService.creaFattureAcconto(result)
-                  .pipe(takeUntil(this.ngUnsubscribe))
+                this.ordineService.creaFattureAcconto(result).pipe(takeUntil(this.ngUnsubscribe))
                   .subscribe({
-                    next: (res2) => {
-                      this.loader = false;
-
-                      if (res2 && !res2.error) {
-                        this.snackbar.open(res2.msg, 'Chiudi', {
-                          horizontalPosition: 'center',
-                          verticalPosition: 'top'
-                        });
+                    next: (res) => {
+                        this.loader = false;
+                        if (res && !res.error) {
+                          this.snackbar.open(res.msg, 'Chiudi', {
+                            horizontalPosition: 'center', verticalPosition: 'top'
+                          });
                       }
                     },
                     error: () => {
-                      this.loader = false;
                       this.snackbar.open('Server non raggiungibile!', 'Chiudi', {
-                        duration: 5000,
-                        horizontalPosition: 'center',
-                        verticalPosition: 'top'
+                        duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                       });
+                      this.loader = false;
                     }
-                  });
+                  })
               }
             });
           }
         }
-      });
+      })
   }
 }
 

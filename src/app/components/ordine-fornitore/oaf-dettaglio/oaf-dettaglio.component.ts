@@ -10,8 +10,11 @@ import {AggiungiOAFDialogComponent} from "../aggiungi-oafdialog/aggiungi-oafdial
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
-import {AggiornaDataConsegnaDialogComponent} from "../../aggiorna-data-consegna-dialog/aggiorna-data-consegna-dialog.component";
-import {AuthService} from "../../../services/auth/auth.service";
+import {
+  AggiornaDataConsegnaDialogComponent
+} from "../../aggiorna-data-consegna-dialog/aggiorna-data-consegna-dialog.component";
+import {PermissionService} from "../../../services/auth/permission.service";
+import {OrdiniFornitoreStateService} from "../../../services/ordine-fornitore/state/ordini-fornitore-state.service";
 
 @Component({
   selector: 'app-oaf-dettaglio',
@@ -24,12 +27,16 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
   serie: any;
   progressivo: any;
   status: any;
+  mode: 'view' | 'edit' = 'view';
 
-  displayedColumns: string[] = ['codice', 'descrizione', 'quantita', 'prezzo', 'sconto', 'prezzoTot', 'azioni'];
+  displayedColumns: string[] = [
+    'codice', 'descrizione', 'quantita', 'prezzo',
+    'sconto', 'prezzoTot', 'azioni'
+  ];
+
   ordineFornitoreDettaglio: OrdineFornitoreDettaglio = new OrdineFornitoreDettaglio();
   filtro: FiltroOrdini = new FiltroOrdini();
-  modificato = false;
-  rigo = 0;
+  modificato: boolean = false;
 
   constructor(
     private snackbar: MatSnackBar,
@@ -37,83 +44,42 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
     private service: OafArticoloService,
     private dialog: MatDialog,
     private route: Router,
-    private router: ActivatedRoute,
-    public auth: AuthService
+    public perm: PermissionService,
+    public state: OrdiniFornitoreStateService,
+    private router: ActivatedRoute
   ) {
     super();
   }
 
-  // ------------------------------------
-  // 🔥 GETTER PERMESSI (regola scolpita nel marmo)
-  // ------------------------------------
-
-  get canModificaDescrizione() {
-    return this.auth.hasPerm('ordineFornitore.modificaDescrizione');
-  }
-
-  get canModificaQuantita() {
-    return this.auth.hasPerm('ordineFornitore.modificaQuantita');
-  }
-
-  get canModificaPrezzo() {
-    return this.auth.hasPerm('ordineFornitore.modificaPrezzo');
-  }
-
-  get canModificaSconti() {
-    return this.auth.hasPerm('ordineFornitore.modificaSconti');
-  }
-
-  get canAggiungiRigo() {
-    return this.auth.hasPerm('ordineFornitore.aggiungiRigo');
-  }
-
-  get canEliminaRigo() {
-    return this.auth.hasPerm('ordineFornitore.eliminaRigo');
-  }
-
-  get canInserisciDataConsegna() {
-    return this.auth.hasPerm('ordineFornitore.dataConsegna');
-  }
-
-  get canSalvare() {
-    return this.auth.hasPerm('ordineFornitore.salva');
-  }
-
-  get canRichiedereApprovazione() {
-    return this.auth.hasPerm('ordineFornitore.richiediApprovazione');
-  }
-
-  get canApprovare() {
-    return this.auth.hasPerm('ordineFornitore.approva');
-  }
-
-  get canVisualizzaNoteCliente() {
-    return this.auth.hasPerm('ordineFornitore.visualizzaNoteCliente');
-  }
-
-  // ------------------------------------
-
   ngOnInit(): void {
     this.router.params.subscribe((params: any) => {
+      this.mode = params.mode;
       this.anno = params.anno;
       this.serie = params.serie;
       this.progressivo = params.progressivo;
-      this.status = params.status ? params.status : undefined;
     });
 
+    this.status = this.state.getState().status;
     this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
   }
 
+  // Modalità view/edit
+  get isEditMode() { return this.mode === 'edit'; }
+  get isViewMode() { return this.mode === 'view'; }
+  get canEditByStatus() {
+    return this.status === 'F' || this.perm.canOverrideStatus;
+  }
+
   annulla() {
-    let url = '/ordini-fornitore';
-    if (this.status) url += '/' + this.status;
-    this.route.navigateByUrl(url);
+    this.route.navigateByUrl('/ordini-fornitore');
   }
 
   aggiungiRigo(articolo: any) {
+    if (!this.isEditMode || !this.canEditByStatus) return;
+
     const dialogRef = this.dialog.open(AggiungiOAFDialogComponent, {
       width: '80%',
-      data: {rigo: articolo.rigo}
+      data:{rigo: articolo.rigo}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -126,7 +92,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
         this.service.salvaOafArticoli(result)
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe({
-            next: res => {
+            next: (res) => {
               if (!res.error) {
                 this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
               } else {
@@ -136,7 +102,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
                 });
               }
             },
-            error: e => {
+            error: (e) => {
               console.error(e);
               this.loader = false;
               this.snackbar.open('Errore! Riga non creata', 'Chiudi', {
@@ -150,19 +116,19 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
 
   getOafArticoliByOrdineId(anno: any, serie: any, progressivo: any): void {
     this.loader = true;
+
     this.service.getOafArticoliByOrdineId(anno, serie, progressivo)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: data => {
-          if (data) {
+        next: (data: OrdineFornitoreDettaglio | undefined) => {
+          if(data) {
             this.ordineFornitoreDettaglio = data;
 
-            if (this.ordineFornitoreDettaglio.articoli != null && this.ordineFornitoreDettaglio.articoli.length > 0) {
-              this.ordineFornitoreDettaglio.articoli.forEach(a => this.calcolaTotale(a));
-              this.rigo = this.ordineFornitoreDettaglio.articoli[this.ordineFornitoreDettaglio.articoli.length -1].rigo;
+            if (data.articoli?.length) {
+              data.articoli.forEach(a => this.calcolaTotale(a));
             }
 
-            this.createPaginator(this.ordineFornitoreDettaglio.articoli, 100);
+            this.createPaginator(data.articoli, 100);
 
             if (this.filtro.searchText) this.applyFilter();
           }
@@ -170,138 +136,134 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
           this.modificato = false;
           this.loader = false;
         },
-        error: e => {
-          console.error(e);
-          this.loader = false;
-        }
+        error: () => { this.loader = false; }
       });
   }
 
-  approva(): void {
-    this.loader = true;
-    this.service.approvaOrdine(this.anno, this.serie, this.progressivo)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: res => {
-          this.loader = false;
-          if (!res.error) this.route.navigate(['/ordini-fornitore']);
-        },
-        error: e => {
-          console.error(e);
-          this.loader = false;
-        }
-      });
+  salva() {
+    if (!this.isEditMode || !this.canEditByStatus) return;
+
+    this.modificato = false;
+    this.updateOafArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
   }
 
   updateOafArticoli(anno: any, serie: any, progressivo: any, data: any): void {
     this.loader = true;
-    this.service.update(data)
-      .pipe(takeUntil(this.ngUnsubscribe))
+    this.service.update(data).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: res => {
+        next: (res) => {
           this.loader = false;
           if (!res.error) {
             this.getOafArticoliByOrdineId(anno, serie, progressivo);
           }
         },
-        error: e => {
+        error: (e) => {
           console.error(e);
           this.loader = false;
         }
       });
   }
 
-  salva() {
-    this.modificato = false;
-    this.updateOafArticoli(this.anno, this.serie, this.progressivo, this.dataSource.filteredData);
-  }
-
   richiediApprovazione() {
-    if (this.modificato) {
+    if (!this.isEditMode) return;
+
+    if(this.modificato) {
       this.snackbar.open('ATTENZIONE: articoli modificati senza salvare!!', 'Chiudi', {
         duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
       });
       return;
     }
 
-    let data: any[] = [];
-    this.dataSource.filteredData.forEach(d => data.push(d));
-    data.forEach(d => delete d["prezzoTot"]);
+    let data:any = [];
+    this.dataSource.filteredData.forEach((d: any) => data.push({...d}));
+    data.forEach((d:any) => delete d["prezzoTot"]);
 
-    this.oafService.richiediOafApprovazioneArticoli(this.anno, this.serie, this.progressivo, data)
+    this.oafService.richiediOafApprovazioneArticoli(
+      this.anno, this.serie, this.progressivo, data
+    )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: res => {
+        next: (res) => {
           if (!res.error) {
-            this.route.navigate(['/ordini-fornitore', 'T']);
+            this.state.setState({ status: 'T' });
+            this.route.navigateByUrl('/ordini-fornitore');
           }
         }
       });
   }
 
+  approva(): void {
+    if (!this.isEditMode) return;
+
+    this.loader = true;
+    this.service.approvaOrdine(this.anno, this.serie, this.progressivo)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if(!res.error) {
+            this.state.setState({ status: '' });
+            this.route.navigate(['/ordini-fornitore']);
+          }
+        },
+        error: () => { this.loader = false; }
+      });
+  }
+
   calcolaTotale(articolo: any) {
-    this.modificato = true;
+    articolo.prezzoTot = 0;
 
     let prezzo = articolo.oprezzo;
 
-    if (articolo.fscontoArticolo)
-      prezzo -= prezzo * (articolo.fscontoArticolo / 100);
-
-    if (articolo.scontoF1)
-      prezzo -= prezzo * (articolo.scontoF1 / 100);
-
-    if (articolo.scontoF2)
-      prezzo -= prezzo * (articolo.scontoF2 / 100);
-
-    if (articolo.fscontoP)
-      prezzo -= prezzo * (articolo.fscontoP / 100);
+    if(articolo.fscontoArticolo) prezzo -= prezzo * (articolo.fscontoArticolo/100);
+    if(articolo.scontoF1) prezzo -= prezzo * (articolo.scontoF1/100);
+    if(articolo.scontoF2) prezzo -= prezzo * (articolo.scontoF2/100);
+    if(articolo.fscontoP) prezzo -= prezzo * (articolo.fscontoP/100);
 
     articolo.prezzoTot = prezzo * articolo.oquantita;
 
     this.ordineFornitoreDettaglio.totale = 0;
-    this.ordineFornitoreDettaglio.articoli?.forEach(
-      a => this.ordineFornitoreDettaglio.totale += a.prezzoTot
+    this.ordineFornitoreDettaglio.articoli?.forEach(a =>
+      this.ordineFornitoreDettaglio.totale += a.prezzoTot
     );
+
+    this.modificato = true;
   }
 
-  elimina(articolo: any) {
+  elimina(articolo:any) {
+    if (!this.isEditMode || !this.canEditByStatus) return;
     this.openConfirmDialog('', '', articolo);
   }
 
   openConfirmDialog(extraProp: any, preProp: any, articolo: any) {
-    let msg = (preProp || '') + "Sei sicuro di voler eliminare l'articolo";
-    if (extraProp) msg += " " + extraProp;
-    msg += '?';
-
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '30%',
-      data: {msg}
+      data: {msg: "Sei sicuro di voler eliminare l'articolo?"}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loader = true;
 
-        this.service.eliminaArticolo(articolo.anno, articolo.serie, articolo.progressivo, articolo.rigo)
+        this.service.eliminaArticolo(
+          articolo.anno, articolo.serie, articolo.progressivo, articolo.rigo
+        )
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe({
-            next: res => {
+            next: (res) => {
               this.loader = false;
-
-              if (res && !res.error) {
+              if (!res.error) {
                 this.snackbar.open('Articolo eliminato', 'Chiudi', {
                   duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
                 });
               }
-
               this.getOafArticoliByOrdineId(articolo.anno, articolo.serie, articolo.progressivo);
             },
-            error: e => {
-              console.error(e);
+            error: () => {
+              this.loader = false;
               this.snackbar.open('Errore!', 'Chiudi', {
                 duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
               });
-              this.loader = false;
             }
           });
       }
@@ -310,27 +272,28 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
 
   override applyFilter() {
     super.applyFilter(this.filtro.searchText);
-
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
-        data.tipoRigo !== 'C' &&
-        (
-          data.oarticolo.toLowerCase().includes(filter) ||
-          data.odescrArticolo.toLowerCase().includes(filter)
-        )
-      );
-    };
+        data.tipoRigo !=='C' &&
+        (data.oarticolo.toLowerCase().includes(filter)
+          || data.odescrArticolo.toLowerCase().includes(filter))
+      )
+    }
   }
 
   inerisciDataConsegna(articolo: any) {
+    if (!this.isEditMode || !this.canEditByStatus) return;
+
     const dialog = this.dialog.open(AggiornaDataConsegnaDialogComponent, {
       width: '70%',
-      data: {pid: articolo.pid}
+      data: {pid: articolo.pid},
     });
 
     dialog.afterClosed().subscribe(result => {
-      if (result) {
-        this.getOafArticoliByOrdineId(articolo.anno, articolo.serie, articolo.progressivo);
+      if(result) {
+        this.getOafArticoliByOrdineId(
+          articolo.anno, articolo.serie, articolo.progressivo
+        );
       }
     });
   }

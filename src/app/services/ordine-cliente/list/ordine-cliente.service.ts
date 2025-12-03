@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import {CommonService} from "../../CommonSerivce";
 import {environment} from "../../../../environments/environment";
 import {Observable} from "rxjs";
@@ -45,8 +45,9 @@ export class OrdineClienteService extends CommonService{
     return this.http.get(`${this.url}/getStati`);
   }
 
-  download(ordine: OrdineCliente) {
-    window.document.location.href = `${this.url}/downloadOrdine/${ordine.sottoConto}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
+  download(ordine: OrdineCliente): Observable<HttpResponse<Blob>> {
+    const url = `${this.url}/downloadOrdine/${ordine.sottoConto}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
+    return this.http.get(url, { responseType: 'blob', observe: 'response' });
   }
 
   cercaBolle(): Observable<any>  {

@@ -7,11 +7,14 @@ import {OrdineClienteService} from "../../../../services/ordine-cliente/list/ord
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {takeUntil} from "rxjs";
+import {environment} from "../../../../../environments/environment";
 import {ListaService} from "../../../../services/ordine-cliente/logistica/lista.service";
 import {FiltroOrdini} from "../../../../models/FiltroOrdini";
 import {OrdineCliente} from "../../../../models/ordine-cliente";
 import {OrdineClienteNotaDto} from "../../../../models/OrdineClienteNotaDto";
-import {OrdineClienteNoteDialogComponent} from "../../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
+import {
+  OrdineClienteNoteDialogComponent
+} from "../../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {Option} from "../../ordine-cliente-list/ordine-cliente.component";
 import {ArticoloCliente} from "../../../../models/ArticoloCliente";
 import {ArticoloService} from "../../../../services/ordine-cliente/articolo/articolo.service";
@@ -30,14 +33,18 @@ import {Fill, Stroke, Text} from "ol/style";
 import {boundingExtent} from 'ol/extent.js';
 import CircleStyle from "ol/style/Circle";
 import {VeicoloService} from "../../../../services/ordine-cliente/veicolo/veicolo.service";
-import {OrdiniClientiPregressiDialogComponent} from "../ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component";
+import {
+  OrdiniClientiPregressiDialogComponent
+} from "../ordini-clienti-pregressi-dialog/ordini-clienti-pregressi-dialog.component";
 import {NotaConsegnaService} from "../../../../services/nota-consegna/nota-consegna.service";
 import {NotaConsegna} from "../../../../models/NotaConsegna";
+import {FidoClienteComponent} from "../fido-cliente/fido-cliente.component";
 import {ImportoVenditore} from "../../../../models/ImportoVenditore";
 import {BaseComponent} from "../../../baseComponent";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator, MatPaginatorIntl, PageEvent} from "@angular/material/paginator";
-import {FidoClienteComponent} from "../fido-cliente/fido-cliente.component";
+import {PermissionService} from "../../../../services/auth/permission.service";
+
 
 useGeographic();
 
@@ -45,6 +52,7 @@ const sedeLonLat = [17.5083, 40.6472];
 const sede = new Point(sedeLonLat);
 const stroke = new Stroke({color: 'black', width: 2});
 const fill = new Fill({color: 'red'});
+
 
 export interface VStatus {
   id: any,
@@ -74,85 +82,45 @@ export class ListaComponent extends BaseComponent implements OnInit {
   dataSource = new MatTableDataSource;
   dataSourceRiservati = new MatTableDataSource;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
   _intl: MatPaginatorIntl = new MatPaginatorIntl ();
-  displayedColumns: string[] = [
-    'numero', 'cliente', 'localita', 'data', 'status',
-    'dataConsegna','oraConsegna', 'ordinamento', 'veicolo', 'azioni'
-  ];
-
-  // 🔥 RUOLI ELIMINATI COMPLETAMENTE – solo permessi
+  displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'dataConsegna','oraConsegna', 'ordinamento', 'veicolo', 'azioni'];
   filtro: FiltroOrdini = new FiltroOrdini();
   radioPerVenditoreOptions: Option[] = [];
-  radioPerStatusOptions: OptStatus[] = [
-    {codice: 'TUTTI', descrizione: 'TUTTI'},
-    {codice: 'DA_PROCESSARE', descrizione: 'DA PROCESSARE'},
+  radioPerStatusOptions: OptStatus[] = [{codice: 'TUTTI', descrizione: 'TUTTI'},{codice: 'DA_PROCESSARE', descrizione: 'DA PROCESSARE'},
     {codice: 'DA_ORDINARE', descrizione: 'DA ORDINARE'},
-    {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'},
-    {codice: 'COMPLETO', descrizione: 'COMPLETO'},
-    {codice: 'ARCHIVIATO', descrizione: 'ARCHIVIATO'}
-  ];
-
+    {codice: 'INCOMPLETO', descrizione: 'INCOMPLETO'}, {codice: 'COMPLETO', descrizione: 'COMPLETO'},
+    {codice: 'ARCHIVIATO', descrizione: 'ARCHIVIATO'} ];
   stato: string = '';
   loaderDettaglio: boolean = false;
   expandedElement: any;
   articoli: ArticoloCliente[] = [];
   showMappa: boolean = false;
   map: OlMap = new OlMap();
-
   selectVeicoloOptions: VStatus[] = [];
   selectStatusOptions: OptStatus[] = [];
-
   notaConsegna: NotaConsegna = new NotaConsegna();
   importiMap: any = new Map<string, number>();
   importiList: ImportoVenditore[] = [];
-
   totalItems = 0;
 
-  constructor(
-    private auth: AuthService,
-    private router: ActivatedRoute,
-    private emailService: EmailService,
-    private service: ListaService,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private route: Router,
-    private notaConsegnaService: NotaConsegnaService,
-    private ordineClienteService: OrdineClienteService,
-    private articoloService: ArticoloService,
-    private veicoloService: VeicoloService
-  ) {
+  constructor(private authService: AuthService, private service: ListaService,
+              private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private notaConsegnaService: NotaConsegnaService,
+              private ordineClienteService: OrdineClienteService,
+              public perm: PermissionService,
+              private articoloService: ArticoloService,  private veicoloService: VeicoloService) {
     super();
-
     this._intl.itemsPerPageLabel = 'Elementi per pagina';
     this._intl.nextPageLabel = 'Prossima';
     this._intl.previousPageLabel = 'Precedente';
     this._intl.firstPageLabel = 'Prima';
     this._intl.lastPageLabel = 'Ultima';
+    if (this.perm.canDefaultLogisticaCompleto) {
+      this.filtro.status = 'COMPLETO';
+    } else {
+      this.filtro.status = 'TUTTI';
+    }
 
-    // ❗ Logica invariata: se logistica → status iniziale COMPLETO
-    this.filtro.status = 'TUTTI';
   }
-
-  /* ------------------ PERMESSI ------------------ */
-
-  get canModificaStatus() {
-    return this.auth.hasPerm('ordine.status.modifica');
-  }
-
-  get canSalvaStatus() {
-    return this.auth.hasPerm('ordine.status.salva');
-  }
-
-  get canModificaVeicolo() {
-    return this.auth.hasPerm('ordine.veicolo.modifica');
-  }
-
-  get canAggiungiNoteLogistica() {
-    return this.auth.hasPerm('ordine.note.logistica');
-  }
-
-  /* ------------------ INIT ------------------ */
 
   ngOnInit(): void {
     this.getStati();
@@ -162,35 +130,33 @@ export class ListaComponent extends BaseComponent implements OnInit {
     this.getAllRiservati();
   }
 
-  /* ------------------ PAGINAZIONE ------------------ */
-
   onPageChange(event: PageEvent) {
     this.filtro.page = event.pageIndex;
     this.filtro.size = event.pageSize;
     this.retrieveList();
   }
 
-  /* ------------------ STATI ------------------ */
-
   getStati(): void {
     this.ordineClienteService.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.radioPerStatusOptions = data;
-        if (!this.filtro.status) {
+        if(!this.filtro.status){
           this.filtro.status = 'TUTTI';
         }
-        this.selectStatusOptions = data.filter((e: any) => e.descrizione !== 'TUTTI');
+        this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
       }
     })
   }
-
-  /* ------------------ NOTE CONSEGNA ------------------ */
 
   getNotaConsegna(): void {
     let data = this.filtro.dataConsegnaStart.format('DDMMyyyy');
     this.notaConsegnaService.getNota(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data: any) => {
-        this.notaConsegna = data ? data : new NotaConsegna();
+        if(data) {
+          this.notaConsegna = data;
+        } else {
+          this.notaConsegna = new NotaConsegna();
+        }
       }
     })
   }
@@ -212,41 +178,42 @@ export class ListaComponent extends BaseComponent implements OnInit {
     this.filtro.page = 0;
   }
 
-  /* ------------------ LISTA ------------------ */
-
   retrieveList(): void {
     this.loader = true;
-    this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (data: any | undefined) => {
-        this.totalItems = data.count;
-        this.dataSource.data = data.list;
-        this.loader = false;
-      }
-    })
+    this.service.getAll(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any | undefined) => {
+          this.totalItems = data.count;
+          this.dataSource.data = data.list;
+          this.loader = false;
+        }
+      })
   }
+
 
   getAllRiservati(): void {
     this.loader = true;
-    this.service.getAllRiservati(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (data: any | undefined) => {
-        this.importiMap = data.importoRiservatiMap;
-        this.dataSourceRiservati.data = data.list;
-        this.loader = false;
-        if (!this.filtro.codVenditore) {
-          this.getVenditori();
+    this.service.getAllRiservati(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any | undefined) => {
+          this.importiMap = data.importoRiservatiMap;
+          this.dataSourceRiservati.data = data.list;
+          this.loader = false;
+          if(!this.filtro.codVenditore) {
+            this.getVenditori();
+          }
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
         }
-      },
-      error: (e: any) => {
-        console.error(e);
-        this.loader = false;
-      }
-    })
+      })
   }
 
   getVenditori(): void {
     let data = [];
     data.push('Venditore');
-    this.auth.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+    this.authService.getVenditori(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.importiList = [];
         this.radioPerVenditoreOptions = data;
@@ -255,10 +222,10 @@ export class ListaComponent extends BaseComponent implements OnInit {
           let i = new ImportoVenditore();
           i.codice = opt.codVenditore;
           i.fullname = opt.fullname;
-          if (opt.fullname === 'tutti') {
+          if(opt.fullname === 'tutti') {
             i.import = totale;
           } else {
-            i.import = this.importiMap[opt.codVenditore] ? this.importiMap[opt.codVenditore] : 0;
+            i.import = this.importiMap[opt.codVenditore]?this.importiMap[opt.codVenditore]:0;
             totale += i.import;
           }
           this.importiList.push(i);
@@ -267,72 +234,75 @@ export class ListaComponent extends BaseComponent implements OnInit {
       error: (e: any) => {
         console.error(e);
       }
+
     })
   }
 
   refreshPage() {
     this.getVenditori();
     this.loader = true;
-    this.ordineClienteService.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: () => {
-        this.retrieveList();
-        this.loader = false;
-      },
-      error: (e: any) => {
-        console.error(e);
-        this.loader = false;
-      }
-    })
+    this.ordineClienteService.aggiornaLista().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: () => {
+          this.retrieveList();
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
-  /* ------------------ NOTE ORDINE ------------------ */
-
   aggiungiNote(ordine: OrdineCliente, from: number) {
-
-    if (from === 1 && !this.canAggiungiNoteLogistica) return;
-
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;
     data.serie = ordine.serie;
     data.progressivo = ordine.progressivo;
-
-    if (from === 0) {
+    if(from === 0) {
       data.note = ordine.note;
       data.userNote = ordine.userNote;
       data.dataNote = ordine.dataNote;
     } else {
+      if (!this.perm.canNoteLogistica) return;
       data.note = ordine.noteLogistica;
       data.userNoteLogistica = ordine.userNoteLogistica;
       data.dataNoteLogistica = ordine.dataNoteLogistica;
     }
-
-    const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
-      width: '50%',
-      data: data
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.ordineClienteService.addNotes(result, from).pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe({
-            next: (res) => {
-              if (res && !res.error) {
-                this.snackbar.open(res.msg, 'Chiudi', {
-                  duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          //this.loader = true;
+          this.ordineClienteService.addNotes(result, from).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+               // this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  if(from === 0) {
+                    ordine.note = result.note;
+                  } else {
+                    ordine.noteLogistica = result.note;
+                  }
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
                 })
-                if (from === 0) ordine.note = result.note;
-                else ordine.noteLogistica = result.note;
+                this.loader = false;
               }
-            },
-            error: (e) => {
-              console.error(e);
-              this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
-                duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-              })
-            }
-          });
-      }
-    });
+            });
+        }
+      });
+    }
   }
 
   downloadOrdine(ordine: OrdineCliente) {
@@ -340,32 +310,39 @@ export class ListaComponent extends BaseComponent implements OnInit {
   }
 
   cercaBolle() {
+    if (this.perm.canCercaBolle) {
+      this.getVenditori();
+    }
     this.loader = true;
-    this.ordineClienteService.cercaBolle().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (data: any | undefined) => {
-        this.totalItems = data.count;
-        this.dataSource = new MatTableDataSource(data.list);
-        this.loader = false;
-      },
-      error: (e: any) => {
-        console.error(e);
-        this.loader = false;
-      }
-    })
+    this.ordineClienteService.cercaBolle().pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data: any | undefined) => {
+          this.totalItems = data.count;
+          this.dataSource = new MatTableDataSource(data.list);
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
+        }
+      })
   }
 
-  /* ------------------ ARTICOLI ------------------ */
-
   getArticoli(ordine: OrdineCliente) {
-    if (this.expandedElement === ordine) return;
-
+    if(this.expandedElement === ordine){
+      return;
+    }
     this.loaderDettaglio = true;
-    let bolla = ordine.status ? 'N' : '0';
-
+    let bolla = 'N';
+    if(!ordine.status) {
+      bolla = '0';
+    }
     this.articoloService.getArticoli(bolla, ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: ArticoloCliente[]) => {
-          if (data) this.articoli = data;
+          if (data) {
+            this.articoli = data;
+          }
           this.loaderDettaglio = false;
         },
         error: (e: any) => {
@@ -375,27 +352,226 @@ export class ListaComponent extends BaseComponent implements OnInit {
       })
   }
 
-  mostraNonDisponibile(articolo: any): number {
-    if (articolo.tipoRigo !== '' && articolo.tipoRigo !== ' ') return 2;
-    else if (articolo.flagNonDisponibile || (articolo.flagOrdinato && !articolo.flagRiservato)) return 1;
-    return 0;
+  mostraMappa() {
+        this.showMappa = !this.showMappa;
+        if(this.showMappa){
+          this.map.setView(new View({
+              center: sedeLonLat,
+              zoom:9,
+            })
+          );
+          this.map.setLayers([
+            new TileLayer({
+              source: new OSM(),
+            }),
+          ]);
+          this.map.setTarget('map');
+
+          const iconFeature = new Feature({
+            geometry: sede,
+          });
+
+          const iconStyle = new Style({
+            image: new Icon({
+              anchor: [0, 0],
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'pixels',
+              src: '/assets/logo-copy.png',
+            }),
+          });
+
+          iconFeature.setStyle(iconStyle);
+
+          const vectorSource = new VectorSource({
+            features: [iconFeature],
+          });
+
+          const vectorLayer = new VectorLayer({
+            source: vectorSource,
+          });
+
+          this.map.addLayer(vectorLayer);
+
+          const markerFeatures = []
+          for (let e of this.dataSource.filteredData) {
+            // @ts-ignore
+            let lon = e.longitudine;
+            // @ts-ignore
+            let lat = e.latitudine;
+            // @ts-ignore
+            let name = e.intestazione;
+            // @ts-ignore
+            let cellulare = e.cellulare;
+            // @ts-ignore
+            let telefono = e.telefono;
+            // @ts-ignore
+            let indirizzo = e.indirizzo;
+            // @ts-ignore
+            let sottoConto= e.sottoConto;
+            markerFeatures.push(new Feature({
+              geometry: new Point([lon,lat]),
+              id:sottoConto,
+              name:  name,
+              telefono: telefono,
+              indirizzo: indirizzo,
+              cellulare: cellulare
+            }));
+          }
+
+          const markerStyle = new Style({
+            image: new RegularShape({
+            fill: fill,
+            stroke: stroke,
+            points: 3,
+            radius: 10,
+            angle: 0
+          })});
+          markerFeatures.forEach(m => m.setStyle(markerStyle));
+
+          const source = new VectorSource({
+            features: markerFeatures,
+          });
+
+          const clusterSource = new Cluster({
+            distance:  10,
+            minDistance:10,
+            source: source
+          });
+
+          const styleCache:any = {};
+          function getStyle (feature:any) {
+            const size = feature.get('features').length;
+            let style = styleCache[size];
+            if (!style) {
+              style = new Style({
+                image: new CircleStyle({
+                  radius: 10,
+                  stroke: new Stroke({
+                    color: '#fff',
+                  }),
+                  fill: new Fill({
+                    color: '#3399CC',
+                  }),
+                }),
+                text: new Text({
+                  text: size.toString(),
+                  fill: new Fill({
+                    color: '#fff',
+                  }),
+                }),
+              });
+              styleCache[size] = style;
+            }
+            return style;
+          }
+
+          const clusterLayer = new VectorLayer({
+            source: clusterSource,
+            style: getStyle
+          });
+
+          this.map.addLayer(clusterLayer);
+
+          let popup = new Popup();
+
+          this.map.on('pointermove', (evt) => {
+            this.map.getTargetElement().style.cursor =
+              this.map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
+          });
+
+          this.map.on('click', (e) => {
+            this.map.getOverlays().clear();
+            let markers:any = [];
+            this.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+              if (feature.get('features').length > 1) {
+                let lat:any = feature.get('features')[0].getGeometry().getFlatCoordinates()[1];
+                let lon:any = feature.get('features')[0].getGeometry().getFlatCoordinates()[0];
+                let id:any =  feature.get('features')[0].get("id");
+                let feat:any = feature.get('features')[0];
+                markers.push(feat);
+                if(feature.get("expanded") === true){
+                  return;
+                }
+                for(let f of feature.get('features')){
+                  if(f.get("id") === id) {
+                    continue;
+                  }
+                  if(lat !== f.getGeometry().getFlatCoordinates()[1]) {
+                    break;
+                  } else if(lon !== f.getGeometry().getFlatCoordinates()[0]) {
+                    break;
+                  } else {
+                    markers.push(f);
+                  }
+
+                }
+                if(markers.length > 1) {
+                  for(let f of markers) {
+                    let coords = [f.getGeometry().getFlatCoordinates()[0] + Math.random()/100,
+                      f.getGeometry().getFlatCoordinates()[1]];
+                    popup = new Popup();
+                    popup.show(coords, this.generateHtmlPopup(f));
+                    this.map.addOverlay(popup);
+                  }
+                } else {
+                  const extent = boundingExtent(
+                    feature.get("features").map((r:any) => r.getGeometry().getCoordinates())
+                  );
+                  this.map.getView().fit(extent, {duration: 1000, padding: [25, 25, 25, 25]});
+                }
+              } else {
+                const feature = this.map.forEachFeatureAtPixel(e.pixel, function (feature) {
+                  return feature.get("features")[0];
+                });
+                if (!feature) {
+                  return;
+                }
+                popup.show(e.coordinate, this.generateHtmlPopup(feature));
+                this.map.addOverlay(popup);
+              }
+            });
+          });
+        }
   }
 
-  /* ------------------ VEICOLI ------------------ */
+  generateHtmlPopup(feature:any): string {
+   return "<div style='font-size:0.75em'>" + feature.get("name") + "<br>" +
+      feature.get("indirizzo") + "<br>tel:&nbsp;" +
+      feature.get("telefono") + "<br>cell:&nbsp" +
+      feature.get("cellulare") + "<br>" +
+      "</div>";
+  }
+
+  mostraNonDisponibile(articolo:any):number {
+    if( articolo.tipoRigo !== '' && articolo.tipoRigo !== ' ') {
+      return 2;
+    } else if(articolo.flagNonDisponibile || (articolo.flagOrdinato && !articolo.flagRiservato)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
 
   getVeicoli() {
+    //this.loader = true;
     this.veicoloService.getVeicoli().pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any) => {
-          if (data) this.selectVeicoloOptions = data;
+          if (data) {
+            this.selectVeicoloOptions = data;
+          }
+         // this.loader = false;
         },
-        error: (e: any) => console.error(e)
+        error: (e: any) => {
+          console.error(e);
+          //this.loader= false;
+        }
       })
   }
 
-  updateVeicolo(articolo: any): void {
-    if (!this.canModificaVeicolo) return;
 
+  updateVeicolo(articolo: any): void {
     this.service.updateVeicolo(articolo).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
@@ -414,27 +590,22 @@ export class ListaComponent extends BaseComponent implements OnInit {
       });
   }
 
-  /* ------------------ STATUS ------------------ */
-
   update(ordine: OrdineCliente): void {
-    if (!this.canSalvaStatus) return;
-
     this.loader = true;
-    this.service.update(ordine).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (res) => {
-        this.loader = false;
-        if (!res.error) {
-          this.snackbar.open('Stato aggiornato', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-          })
+    this.service.update(ordine).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (!res.error) {
+            this.snackbar.open('Stato aggiornato', 'Chiudi', {
+              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+            })
+          }
         }
-      }
-    });
+      });
   }
 
-  /* ------------------ FILTERS ------------------ */
-
-  reset(): void {
+  reset():void {
     this.filtro.cliente = '';
     this.filtro.anno = undefined;
     this.filtro.luogo = '';
@@ -446,16 +617,12 @@ export class ListaComponent extends BaseComponent implements OnInit {
     this.retrieveList();
   }
 
-  /* ------------------ FIDO CLIENTE ------------------ */
-
   apriFidoClienteModal(order: any) {
-    this.dialog.open(FidoClienteComponent, {
-      width: '60%',
-      data: order.sottoConto
-    });
+      this.dialog.open(FidoClienteComponent, {
+        width: '60%',
+        data: order.sottoConto
+      });
   }
-
-  /* ------------------ ORDINI PREGRESSI ------------------ */
 
   addOrder() {
     const dialogRef = this.dialog.open(OrdiniClientiPregressiDialogComponent, {
@@ -468,15 +635,8 @@ export class ListaComponent extends BaseComponent implements OnInit {
     });
   }
 
-  /* ------------------ DATA RANGE CHECK ------------------ */
-
   checkdate() {
-    return (
-      this.filtro.dataConsegnaStart &&
-      this.filtro.dataConsegnaEnd &&
-      this.filtro.dataConsegnaStart.date() === this.filtro.dataConsegnaEnd.date() &&
-      this.filtro.dataConsegnaStart.month() === this.filtro.dataConsegnaEnd.month() &&
-      this.filtro.dataConsegnaStart.year() === this.filtro.dataConsegnaEnd.year()
-    );
+    return this.filtro.dataConsegnaStart && this.filtro.dataConsegnaEnd && ((this.filtro.dataConsegnaStart.date() === this.filtro.dataConsegnaEnd.date())
+      && (this.filtro.dataConsegnaStart.month() === this.filtro.dataConsegnaEnd.month()) && (this.filtro.dataConsegnaStart.year() === this.filtro.dataConsegnaEnd.year()))
   }
 }

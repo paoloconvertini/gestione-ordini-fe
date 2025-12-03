@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {ActivatedRoute, Router} from "@angular/router";
+import {environment} from "../../../../environments/environment";
 import {OrdineFornitoreService} from "../../../services/ordine-fornitore/list/ordine-fornitore.service";
 import {OrdineCliente} from "../../../models/ordine-cliente";
 import {takeUntil} from "rxjs";
@@ -11,7 +12,9 @@ import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
 import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
-import {AuthService} from "../../../services/auth/auth.service";
+import {OrdiniFornitoreStateService} from "../../../services/ordine-fornitore/state/ordini-fornitore-state.service";
+import {PageEvent} from "@angular/material/paginator";
+import {PermissionService} from "../../../services/auth/permission.service";
 
 @Component({
   selector: 'app-oaf-list',
@@ -26,52 +29,36 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   updateList: any = [];
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(
-    private snackbar: MatSnackBar,
-    private router: ActivatedRoute,
-    private dialog: MatDialog,
-    private service: OrdineFornitoreService,
-    private route: Router,
-    private auth: AuthService              // <── AGGIUNTO
-  ) {
+  constructor(private snackbar: MatSnackBar,
+              private router: ActivatedRoute,
+              private dialog: MatDialog,
+              private service: OrdineFornitoreService,
+              private route: Router,
+              public perm: PermissionService,
+              public state: OrdiniFornitoreStateService) {
     super();
   }
 
-  // ─────────────────────────────────────────────
-  // GETTER PERMESSI (unici punti che conoscono auth)
-  // ─────────────────────────────────────────────
-
-  get canUnisciOrdini(): boolean {
-    return this.auth.hasPerm('ordineFornitore.unisci');
-  }
-
-  get canModificaInviato(): boolean {
-    return this.auth.hasPerm('ordineFornitore.modificaInviato');
-  }
-
-  get canApriOrdine(): boolean {
-    return this.auth.hasPerm('ordineFornitore.apri');
-  }
-
-  get canEliminaOrdine(): boolean {
-    return this.auth.hasPerm('ordineFornitore.elimina');
-  }
-
-  get canSalva(): boolean {
-    return this.auth.hasPerm('ordineFornitore.salva');
-  }
-
-  // ─────────────────────────────────────────────
 
   ngOnInit(): void {
-    this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
-        if (params.status) {
-          this.status = params.status;
-          this.filtro.status = params.status;
-        }
-        this.retrieveFornitoreList();
-      }
-    );
+    // recupera stato persistito
+    this.filtro = this.state.getState();
+
+    // se è la prima volta: default = Sospesi
+    if (!this.filtro.status) {
+      this.filtro.status = 'F';
+      this.state.setState({ status: 'F' });
+    }
+    this.retrieveFornitoreList();
+  }
+
+  onStatusChange() {
+    this.state.setState({
+      status: this.filtro.status,
+      page: 0
+    });
+
+    this.retrieveFornitoreList();
   }
 
   updateOaf(): void {
@@ -146,31 +133,40 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   retrieveFornitoreList(): void {
     this.loader = true;
     this.updateList = [];
-    this.service.getAllOaf(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (data: any[] | undefined) => {
-        this.createPaginator(data, 15);
-        if(this.filtro.searchText){
-          this.applyFilter();
+      this.service.getAllOaf(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+        next: (data: any[] | undefined) => {
+          this.createPaginator(data, 15);
+          if(this.filtro.searchText){
+            this.applyFilter();
+          }
+          this.loader = false;
+        },
+        error: (e: any) => {
+          console.error(e);
+          this.loader = false;
         }
-        this.loader = false;
-      },
-      error: (e: any) => {
-        console.error(e);
-        this.loader = false;
-      }
-    })
+      })
   }
 
   refreshPage() {
     this.retrieveFornitoreList();
   }
 
-  apriDettaglio(ordine: OrdineCliente) {
-    let url = "/oaf/articoli/" + ordine.anno
-      + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (this.status) {
-      url += "/" + this.status
-    }
+  editDettaglio(ordine: OrdineCliente) {
+    this.apriDettaglio('edit', ordine);
+  }
+
+  vediDettaglio(ordine: OrdineCliente) {
+    this.apriDettaglio('view', ordine);
+  }
+
+  private apriDettaglio(mode: 'edit' | 'view', ordine: OrdineCliente) {
+    // salva filtri
+    this.state.setState(this.filtro);
+
+    // costruisci URL minimale
+    const url = `/oaf/articoli/${mode}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
+
     this.route.navigateByUrl(url);
   }
 
@@ -253,7 +249,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
                 })
               }
               this.status = "F";
-              this.apriDettaglio(ordine);
+              this.editDettaglio(ordine);
             },
             error: (e) => {
               console.error(e);
@@ -280,13 +276,47 @@ export class OafListComponent extends CommonListComponent implements OnInit {
 
   }
 
-  reset():void {
+  clearSearch() {
     this.filtro.searchText = '';
-    this.filtro.flInviato = false;
+    this.state.setState({ searchText: '' });
+    this.applyFilter();
+  }
+
+  reset(): void {
+    this.state.resetState();
+    this.filtro = this.state.getState();   // ricarica default (status = F)
     this.retrieveFornitoreList();
   }
 
+  pageEvent(event: PageEvent) {
+    // aggiorna filtro
+    this.filtro.page = event.pageIndex;
+    this.filtro.size = event.pageSize;
+
+    // salva nello state
+    this.state.setState({
+      page: event.pageIndex,
+      size: event.pageSize
+    });
+  }
+
+
+  override createPaginator(data: any[] | undefined, pageSize: number) {
+    // usa la logica originale
+    super.createPaginator(data, pageSize);
+
+    // imposta la pagina salvata nello state
+    if (this.paginator && this.filtro.page !== undefined) {
+      this.paginator.pageIndex = this.filtro.page;
+    }
+
+    // riassegna paginator alla datasource
+    this.dataSource.paginator = this.paginator;
+  }
+
   override applyFilter() {
+    this.state.setState({ searchText: this.filtro.searchText });
+
     super.applyFilter(this.filtro.searchText);
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       return (
