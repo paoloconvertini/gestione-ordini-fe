@@ -15,6 +15,7 @@ import {OrdineCliente} from "../../../../models/ordine-cliente";
 import {CommonListComponent} from "../../../commonListComponent";
 import {SelectionModel} from "@angular/cdk/collections";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {PermissionService} from "../../../../services/auth/permission.service";
 
 export interface DialogData {
   ordini: any;
@@ -34,11 +35,6 @@ export interface DialogData {
 })
 export class ListaBollaComponent extends CommonListComponent implements OnInit {
   displayedColumns: string[] = ['numero', 'cliente', 'localita', 'data', 'status', 'azioni'];
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
   selection = new SelectionModel<any>(true, []);
   loaderDettaglio: boolean = false;
@@ -48,32 +44,10 @@ export class ListaBollaComponent extends CommonListComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private dialogRef: MatDialogRef<ListaBollaComponent>,
-    private authService: AuthService,
-    private router: ActivatedRoute,
-    private emailService: EmailService,
-    private service: ListaService,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private route: Router,
-    private ordineClienteService: OrdineClienteService,
-    private articoloService: ArticoloService
+    private articoloService: ArticoloService,
+    public perm: PermissionService
   ) {
     super();
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
   }
 
   ngOnInit(): void {

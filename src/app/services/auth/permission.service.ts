@@ -112,4 +112,9 @@ export class PermissionService {
     return this.auth.hasPerm('logistica.default_completo');
   }
 
+  get canSelectBolla() {
+    return this.auth.hasPerm('ordine.bolla.seleziona');
+  }
+
+
 }
