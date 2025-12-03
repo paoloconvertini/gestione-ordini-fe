@@ -119,8 +119,13 @@
               <ng-container matColumnDef="flInviato">
                 <th mat-header-cell *matHeaderCellDef>Inviato</th>
                 <td mat-cell *matCellDef="let ordine">
+                  <span *ngIf="filtro.status">
+                    <span class="material-icons-outlined">
+                      cancel_schedule_send
+                    </span>
+                  </span>
                   <span *ngIf="!filtro.status">
-                    <mat-checkbox disabled="!perm.canEditFlInviato"
+                    <mat-checkbox [disabled]="!perm.canEditFlInviato"
                                   [(ngModel)]="ordine.flInviato" color="primary" (change)="aggiungiLista(ordine)">
                     </mat-checkbox>
                   </span>
@@ -129,7 +134,10 @@
               <ng-container matColumnDef="azioni">
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let ordine">
-                  <button (click)="apriDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
+                  <button *ngIf="perm.canViewOaf" (click)="vediDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
+                    <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="visibility" color="primary"></mat-icon>
+                  </button>
+                  <button *ngIf="perm.canEditOaf" (click)="editDettaglio(ordine)" mat-icon-button matTooltip="Vai a dettaglio ordine">
                     <mat-icon aria-hidden="false" aria-label="dettaglio" fontIcon="build" color="primary"></mat-icon>
                   </button>
                   <button *ngIf="perm.canRiapriOrdineFornitore && filtro.status !== 'F'" (click)="apri(ordine)" mat-icon-button

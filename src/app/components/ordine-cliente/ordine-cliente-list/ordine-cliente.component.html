@@ -101,28 +101,28 @@
           <!-- Name Column -->
           <ng-container matColumnDef="numero">
             <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
-            <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
+            <td mat-cell *matCellDef="let ordine" (click)="openDettaglio(ordine)">
               <span [ngClass]="{'hasCarico': ordine.hasCarico}">{{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}</span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="cliente">
             <th mat-header-cell *matHeaderCellDef> Cliente</th>
-            <td [ngClass]="{'isModified': ordine.status === 'DA_ORDINARE' && (ordine.createDate !== ordine.updateDate)}" mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
+            <td [ngClass]="{'isModified': ordine.status === 'DA_ORDINARE' && (ordine.createDate !== ordine.updateDate)}" mat-cell *matCellDef="let ordine" (click)="openDettaglio(ordine)">
               <span matTooltip="{{ordine.telefono}} - {{ordine.cellulare}}">{{ordine.intestazione}}</span><br><span style="font-size:11px">{{ordine.riferimento}}</span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="localita">
             <th mat-header-cell *matHeaderCellDef> Luogo</th>
-            <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
+            <td mat-cell *matCellDef="let ordine" (click)="openDettaglio(ordine)">
               {{ordine.localita}} ({{ordine.provincia}})
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="data">
             <th mat-header-cell *matHeaderCellDef> Data</th>
-            <td mat-cell *matCellDef="let ordine" (click)="vediDettaglio(ordine)">
+            <td mat-cell *matCellDef="let ordine" (click)="openDettaglio(ordine)">
               {{ordine.dataConferma | date:'dd/MM/yyyy'}}
             </td>
           </ng-container>
@@ -130,7 +130,7 @@
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef> Stato Ord</th>
             <td mat-cell *matCellDef="let ordine" [ngClass]="{'stato': perm.canEditStato}">
-              <div [ngSwitch]="ordine.status" *ngIf="!perm.canEditStato" (click)="vediDettaglio(ordine)">
+              <div [ngSwitch]="ordine.status" *ngIf="!perm.canEditStato" (click)="openDettaglio(ordine)">
                 <b *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</b>
                 <b *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</b>
                 <b *ngSwitchDefault>{{ordine.status}}</b>

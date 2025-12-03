@@ -84,5 +84,17 @@ export class PermissionService {
     return this.auth.hasPerm('ordini_fornitori.salva');
   }
 
+  get canViewOaf() {
+    return this.auth.hasPerm('oaf.view');
+  }
+
+  get canEditOaf() {
+    return this.auth.hasPerm('oaf.edit');
+  }
+
+  get canOverrideStatus() {
+    return this.auth.hasPerm('oaf.override_status');
+  }
+
 
 }

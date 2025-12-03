@@ -79,11 +79,6 @@ const routes: Routes = [
     component: ConsegneSettimanaliComponent,
   },
   {
-    path: 'ordini-fornitore/:status',
-    canActivate: [AuthGuard],
-    component: OafListComponent,
-  },
-  {
     path: 'ordini-fornitore',
     canActivate: [AuthGuard],
     component: OafListComponent,
@@ -94,12 +89,7 @@ const routes: Routes = [
     component: OafMonitorComponent,
   },
   {
-    path: 'oaf/articoli/:anno/:serie/:progressivo/:status',
-    canActivate: [AuthGuard],
-    component: OafDettaglioComponent,
-  },
-  {
-    path: 'oaf/articoli/:anno/:serie/:progressivo',
+    path: 'oaf/articoli/:mode/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: OafDettaglioComponent,
   },

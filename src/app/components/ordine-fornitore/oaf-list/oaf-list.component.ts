@@ -152,12 +152,21 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.retrieveFornitoreList();
   }
 
-  apriDettaglio(ordine: OrdineCliente) {
-    let url = "/oaf/articoli/" + ordine.anno
-      + "/" + ordine.serie + "/" + ordine.progressivo;
-    if (this.status) {
-      url += "/" + this.status
-    }
+  editDettaglio(ordine: OrdineCliente) {
+    this.apriDettaglio('edit', ordine);
+  }
+
+  vediDettaglio(ordine: OrdineCliente) {
+    this.apriDettaglio('view', ordine);
+  }
+
+  private apriDettaglio(mode: 'edit' | 'view', ordine: OrdineCliente) {
+    // salva filtri
+    this.state.setState(this.filtro);
+
+    // costruisci URL minimale
+    const url = `/oaf/articoli/${mode}/${ordine.anno}/${ordine.serie}/${ordine.progressivo}`;
+
     this.route.navigateByUrl(url);
   }
 
@@ -240,7 +249,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
                 })
               }
               this.status = "F";
-              this.apriDettaglio(ordine);
+              this.editDettaglio(ordine);
             },
             error: (e) => {
               console.error(e);

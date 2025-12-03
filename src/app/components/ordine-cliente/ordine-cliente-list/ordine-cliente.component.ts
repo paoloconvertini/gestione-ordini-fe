@@ -332,6 +332,24 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     }
   }
 
+
+  openDettaglio(ordine: any) {
+    // locked = sempre sola lettura
+    if (ordine.isLocked) {
+      this.vediDettaglio(ordine);
+      return;
+    }
+
+    // archiviato = sempre sola lettura
+    if (ordine.status === 'ARCHIVIATO') {
+      this.vediDettaglio(ordine);
+      return;
+    }
+
+    // altrimenti edit
+    this.editDettaglio(ordine);
+  }
+
   editDettaglio(ordine: OrdineCliente) {
     this.apriDettaglio('edit', ordine);
   }

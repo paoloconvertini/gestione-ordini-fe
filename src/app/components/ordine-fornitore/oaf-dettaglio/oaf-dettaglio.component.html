@@ -50,38 +50,70 @@
           <ng-container matColumnDef="descrizione">
             <th mat-header-cell *matHeaderCellDef> Descrizione</th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="(!isAmministrativo && !isAdmin)">{{articolo.odescrArticolo}}</span>
-              <textarea (change)="modificato = true" *ngIf="(isAmministrativo || isAdmin)" type="text" [(ngModel)]="articolo.odescrArticolo" class="form-control"></textarea>
+              <span *ngIf="isViewMode || !canEditByStatus">{{articolo.odescrArticolo}}</span>
+              <textarea (change)="modificato = true"
+                        *ngIf="isEditMode && canEditByStatus"
+                        [(ngModel)]="articolo.odescrArticolo"
+                        class="form-control"></textarea>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="quantita">
             <th mat-header-cell *matHeaderCellDef> Quantità</th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="((!isAmministrativo && !isAdmin) || status!=='F') && articolo.tipoRigo !== 'C'">{{articolo.oquantita}}&nbsp;</span>
-              <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" *ngIf="(isAmministrativo || isAdmin) && articolo.tipoRigo !== 'C' && status==='F'" type="number" min="0" class="form-control input quantita" [(ngModel)]="articolo.oquantita">
-              {{articolo.ounitaMisura}}
+              <span *ngIf="isViewMode || !canEditByStatus || articolo.tipoRigo==='C'">
+                {{articolo.oquantita}}&nbsp;
+              </span>
+              <input *ngIf="isEditMode && canEditByStatus && articolo.tipoRigo!=='C'"
+                     (keyup)="calcolaTotale(articolo)"
+                     (change)="calcolaTotale(articolo)"
+                     type="number"
+                     min="0"
+                     class="form-control input quantita"
+                     [(ngModel)]="articolo.oquantita">
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="prezzo">
             <th mat-header-cell *matHeaderCellDef> Prezzo</th>
             <td mat-cell *matCellDef="let articolo">
-             <span *ngIf="((!isAmministrativo && !isAdmin) || status!=='F') && articolo.tipoRigo !== 'C'">{{articolo.oprezzo | currency: 'EUR':'symbol'}}</span>
-              <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" *ngIf="(isAmministrativo || isAdmin) && articolo.tipoRigo !== 'C' && status==='F'" type="number" min="0" class="form-control" [(ngModel)]="articolo.oprezzo">
+              <span *ngIf="isViewMode || !canEditByStatus || articolo.tipoRigo==='C'">
+                {{articolo.oprezzo | currency}}
+              </span>
+              <input *ngIf="isEditMode && canEditByStatus && articolo.tipoRigo!=='C'"
+                     (keyup)="calcolaTotale(articolo)"
+                     (change)="calcolaTotale(articolo)"
+                     type="number"
+                     min="0"
+                     class="form-control"
+                     [(ngModel)]="articolo.oprezzo">
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="sconto">
             <th mat-header-cell *matHeaderCellDef> Sconto</th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="((!isAmministrativo && !isAdmin) || status!=='F') && articolo.tipoRigo !== 'C'">{{articolo.fscontoArticolo}}&nbsp;{{articolo.scontoF1 }}&nbsp;{{articolo.scontoF2}}&nbsp;{{articolo.fscontoP}}</span>
-              <span *ngIf="(isAmministrativo || isAdmin) && articolo.tipoRigo !== 'C' && status==='F'">
-                <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" type="number" min="0" class="form-control input" [(ngModel)]="articolo.fscontoArticolo">
-                <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" type="number" min="0" class="form-control input" [(ngModel)]="articolo.scontoF1">
-                <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" type="number" min="0" class="form-control input" [(ngModel)]="articolo.scontoF2">
-                <input (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)" type="number" min="0" class="form-control input" [(ngModel)]="articolo.fscontoP">
+              <span *ngIf="isViewMode || !canEditByStatus || articolo.tipoRigo==='C'">
+                {{articolo.fscontoArticolo}}&nbsp;
+                              {{articolo.scontoF1}}&nbsp;
+                              {{articolo.scontoF2}}&nbsp;
+                              {{articolo.fscontoP}}
               </span>
+              <span *ngIf="isEditMode && canEditByStatus && articolo.tipoRigo!=='C'">
+              <input type="number" min="0" class="form-control input"
+                (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)"
+                [(ngModel)]="articolo.fscontoArticolo">
+              <input type="number" min="0" class="form-control input"
+                     (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)"
+                     [(ngModel)]="articolo.scontoF1">
+
+              <input type="number" min="0" class="form-control input"
+                     (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)"
+                     [(ngModel)]="articolo.scontoF2">
+              <input type="number" min="0" class="form-control input"
+                     (keyup)="calcolaTotale(articolo)" (change)="calcolaTotale(articolo)"
+                     [(ngModel)]="articolo.fscontoP">
+            </span>
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -101,18 +133,32 @@
                           aria-label="nota ordine cliente" fontIcon="shopping_bag"
                           ></mat-icon>
               </button>
-              <button class="no-pointer" *ngIf="articolo.noteOrdCli && articolo.noteOrdCli.trim() && (isAdmin || isAmministrativo || isVenditore)" mat-button
+              <button class="no-pointer" *ngIf="articolo.noteOrdCli && isEditMode" mat-button
                       matTooltip="{{articolo.noteOrdCli}}" color="primary">
                 <mat-icon>event_note</mat-icon>
               </button>
-              <button *ngIf="(status || isAdmin)" class="float-end" mat-button (click)="aggiungiRigo(articolo)" color="primary" matTooltip="Aggiungi rigo">
+              <button *ngIf="isEditMode && canEditByStatus"
+                      class="float-end"
+                      mat-button
+                      (click)="aggiungiRigo(articolo)"
+                      color="primary"
+                      matTooltip="Aggiungi rigo">
                 <mat-icon>add</mat-icon>
               </button>
-              <button *ngIf="(isAmministrativo || isAdmin)" (click)="elimina(articolo)" mat-button matTooltip="Cancella articolo" color="primary">
-                <mat-icon aria-hidden="false" aria-label="firma" >clear</mat-icon>
+              <button *ngIf="isEditMode && canEditByStatus"
+                      (click)="elimina(articolo)"
+                      mat-button
+                      matTooltip="Cancella articolo"
+                      color="primary">
+                <mat-icon>clear</mat-icon>
               </button>
-              <button *ngIf="(isAmministrativo || isAdmin)" (click)="inerisciDataConsegna(articolo)" mat-button matTooltip="Inserisci data consegna articolo" color="primary" [ngClass]="{'color': (articolo.campouser1 === 'S')}">
-                <mat-icon aria-hidden="false" aria-label="firma" >insert_invitation</mat-icon>
+              <button *ngIf="isEditMode && canEditByStatus"
+                      (click)="inerisciDataConsegna(articolo)"
+                      mat-button
+                      matTooltip="Inserisci data consegna articolo"
+                      color="primary"
+                      [ngClass]="{'color': (articolo.campouser1 === 'S')}">
+                <mat-icon>insert_invitation</mat-icon>
               </button>
             </td>
           </ng-container>
@@ -133,15 +179,15 @@
   <div class="row float-end">
     <div class="col-lg-12 col-md-12 col-sm-12">
       <button mat-raised-button color="primary"
-              *ngIf="isAdmin || (isAmministrativo && status)"
+              *ngIf="isEditMode && canEditByStatus"
               (click)="salva()" class="margin-top">Salva
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="primary"
-              *ngIf="isAdmin || (isAmministrativo && status==='F')"
+              *ngIf="isEditMode && status==='F'"
               (click)="richiediApprovazione()" class="margin-top">Richiedi approvazione
       </button>&nbsp;&nbsp;
       <button mat-raised-button color="primary"
-              *ngIf="isAdmin && status === 'T'"
+              *ngIf="isEditMode && status === 'T' && perm.canOverrideStatus"
               (click)="approva()" class="margin-top margin-left">Approva
       </button>
     </div>
