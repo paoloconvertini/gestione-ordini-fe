@@ -93,6 +93,7 @@ import {PermissionListComponent} from "./components/permissions/permission-list/
 import {MatListModule} from "@angular/material/list";
 import {MatChipsModule} from "@angular/material/chips";
 import { PermissionEditDialogComponent } from './components/permissions/permission-edit-dialog/permission-edit-dialog.component';
+import {MapComponent} from "./components/shared/map/map.component";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -158,7 +159,8 @@ export const DateFormats = {
     AccontiNonValidatiDialogComponent,
     PermissionListComponent,
     PermissionRoleDrawerComponent,
-    PermissionEditDialogComponent
+    PermissionEditDialogComponent,
+    MapComponent
   ],
   imports: [
     MatDatepickerModule,
