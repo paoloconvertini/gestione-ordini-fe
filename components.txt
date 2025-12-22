@@ -140,10 +140,10 @@ src/app/components
 │   │   │   ├── fido-cliente.component.spec.ts
 │   │   │   └── fido-cliente.component.ts
 │   │   ├── lista
-│   │   │   ├── lista.component.css
-│   │   │   ├── lista.component.html
-│   │   │   ├── lista.component.spec.ts
-│   │   │   └── lista.component.ts
+│   │   │   ├── gestione-consegne.component.css
+│   │   │   ├── gestione-consegne.component.html
+│   │   │   ├── gestione-consegne.component.spec.ts
+│   │   │   └── gestione-consegne.component.ts
 │   │   ├── lista-bolla
 │   │   │   ├── lista-bolla.component.css
 │   │   │   ├── lista-bolla.component.html

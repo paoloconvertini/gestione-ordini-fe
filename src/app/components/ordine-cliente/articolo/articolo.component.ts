@@ -21,7 +21,7 @@ import {OrdineClienteNoteDialogComponent} from "../../ordine-cliente-note-dialog
 import {Acconto} from "../../../models/Acconto";
 import {SelectionModel} from '@angular/cdk/collections';
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
-import {ListaBollaComponent} from "../logistica/lista-bolla/lista-bolla.component";
+import {ListaBollaComponent} from "../logistica/lista-bolla-dialog/lista-bolla.component";
 import {AccontoDialogComponent} from "../logistica/acconto-dialog/acconto-dialog.component";
 import {SchedeTecnicheComponent} from "../schede-tecniche/schede-tecniche.component";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
@@ -30,6 +30,8 @@ import {SaldiMagazzinoService} from "../../../services/saldi-magazzino/saldi-mag
 import {CaricoMagazzinoDialogComponent} from "../../carico-magazzino-dialog/carico-magazzino-dialog.component";
 import { FatturaAccontoDialogComponent } from '../../fattura-acconto-dialog/fattura-acconto-dialog.component';
 import {PermissionService} from "../../../services/auth/permission.service";
+import {OrdiniClientiStateService} from "../../../services/state/ordini-clienti-state.service";
+import {AuthService} from "../../../services/auth/auth.service";
 
 export interface Option {
   name: string,
@@ -62,7 +64,6 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   loaderBolle: boolean = false;
   showAcconti: boolean = false;
   filtroArticoli: FiltroArticoli = new FiltroArticoli();
-  status: any;
   ordineDettaglio: OrdineDettaglio = new OrdineDettaglio();
   selection = new SelectionModel<any>(true, []);
   bolle: Bolla[] = [];
@@ -91,37 +92,31 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
         this.filtroArticoli.anno = params.anno;
         this.filtroArticoli.serie = params.serie;
         this.filtroArticoli.progressivo = params.progressivo;
-
-        // lo stato non arriva più dalla route
-        this.status = null;
-
-        const saved = localStorage.getItem('filtro');
-        if (saved) {
-          this.filtro = JSON.parse(saved);
-        }
       });
 
-    if (this.perm.canDefaultFiltroNonDisponibile && this.status === 'DA_ORDINARE') {
+    this.filtro = this.state.getState();
+    this.user = this.authService.getCurrentUser()?.username;
+
+    if (this.perm.canDefaultFiltroNonDisponibile && this.filtro.statusOrdine === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
     }
-    if ((this.status === 'COMPLETO' || this.status === 'INCOMPLETO')) {
+    if ((this.filtro.statusOrdine === 'COMPLETO' || this.filtro.statusOrdine === 'INCOMPLETO')) {
       this.filtroArticoli.flConsegna = 0;
       // @ts-ignore
       this.radioConsegnatoOptions[0].checked = true;
     }
-    if ((this.status === 'DA_ORDINARE' || this.status === 'DA_PROCESSARE')) {
+    if ((this.filtro.statusOrdine === 'DA_PROCESSARE')) {
       this.filtroArticoli.flConsegna = 3;
       // @ts-ignore
       this.radioConsegnatoOptions[3].checked = true;
     }
-    this.user = localStorage.getItem(environment.USERNAME);
     this.getArticoliByOrdineId();
   }
 
   constructor(private ordineService: OrdineClienteService, private ordineFornitoreService: OrdineFornitoreService,
-              private service: ArticoloService, private dialog: MatDialog,
+              private service: ArticoloService, private dialog: MatDialog, private authService: AuthService,
               private snackbar: MatSnackBar, private router: Router, private route: ActivatedRoute,
-              public perm: PermissionService,
+              public perm: PermissionService, private state: OrdiniClientiStateService,
               private saldiMagazzinoService: SaldiMagazzinoService) {
     super();
     if (this.perm.canEditQtaConsegnatoSenzaBolla) {   // nuovo permesso
@@ -743,7 +738,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   collegaOAF(articolo: any) {
-    this.router.navigate(['/collega-oaf', articolo.progrGenerale, this.filtro.page, this.filtro.size, articolo.anno, articolo.serie, articolo.progressivo, this.status]);
+    this.router.navigate(['/collega-oaf', articolo.progrGenerale, articolo.anno, articolo.serie, articolo.progressivo]);
   }
 
   resetQta(articolo: any) {

@@ -1,0 +1,177 @@
+.nota-presente {
+  color:#d11f0c!important;
+}
+.nota-logistica-presente {
+  color: #25be32 !important;
+}
+
+.input {
+  width: 65px;
+}
+
+.note {
+  font-size:0.75em;
+  min-width: 300px;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+.mat-column-veicolo{
+  min-width: 206px;
+}
+
+.select {
+  width:140px;
+}
+
+.example-detail-row td {
+  border-top-width: 0;
+  background-color: #b0cca2;
+  color: #050505;
+}
+
+.table{
+  font-size: 0.85em;
+
+}
+
+.map-wrapper {
+  margin-bottom: 16px;
+}
+
+.mat-mdc-icon-button[disabled] {
+  pointer-events: auto!important;
+}
+
+.flVenditore {
+  background: #607d8b;
+}
+
+.flVenditoreIcon {
+  color: #000!important;
+}
+
+.stato {
+  width: 200px;
+}
+
+.mat-column-status{
+  font-size: 13px;
+}
+
+.select {
+  width:100px;
+}
+
+.container-importo {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.cerca {
+  border: 1px solid #e5e5e5;
+  padding: 8px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cerca-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.cerca-field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.cerca-wide {
+  flex: 2;
+}
+
+.cerca-actions-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.lista-page {
+  padding: 16px;
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ordine-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.filter-block {
+  margin-bottom: 12px;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.filter-inline {
+  display: inline-flex;
+  margin-right: 16px;
+}
+
+.table-wrapper {
+  position: relative;
+  margin-top: 16px;
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.paginator {
+  margin-top: 8px;
+}
+
+.nota-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.nota-form {
+  flex: 1;
+}
+
+.nota-field {
+  width: 100%;
+}
+
+.nota-actions {
+  margin-top: 20px;
+}
+
+.cerca-wide {
+  flex: 2 1 260px;
+}
+

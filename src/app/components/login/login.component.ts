@@ -45,16 +45,18 @@ export class LoginComponent extends BaseComponent {
 
           // 1️⃣ AMMINISTRATIVO → ordini-clienti con filtro preimpostato DA_ORDINARE
           if (this.perm.canRedirectAmministrativo) {
-            this.state.setState({ status: 'DA_ORDINARE', page: 0 });
+            this.state.setState({ filtroStatus: 'DA_ORDINARE', page: 0 });
             this.router.navigate(['/ordini-clienti']);
             return;
           }
 
           // 2️⃣ LOGISTICA → pagina logistica
           if (this.perm.canRedirectLogistica) {
-            this.router.navigate(['/logistica-ordini']);
+            this.state.clearOnLogout(); // SOLO PER TEST
+            this.router.navigate(['/gestione-consegne']);
             return;
           }
+
 
           // 3️⃣ DEFAULT → ordini-clienti (status rimane quello salvato o default “TUTTI”)
           if (this.perm.canRedirectDefault) {

@@ -1,3 +1,14 @@
+<div class="header-bar">
+  <div class="ordine-title">
+    <span>CONSEGNE SETTIMANALI</span>
+    <button mat-icon-button (click)="mostraMappa()">
+      <mat-icon>location_on</mat-icon>
+    </button>
+  </div>
+</div>
+<div *ngIf="showMappa" class="map-wrapper">
+  <app-map  [ordini]="ordiniMappa"></app-map>
+</div>
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 text-center">
     <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-3" mat-raised-button (click)="retrieveList(-3)" matTooltip="Settimana precedente">

@@ -53,16 +53,21 @@ export class PermissionService {
   get canNoteLogistica() { return this.auth.hasPerm('ordini_clienti.note_logistica'); }
 
   get canRedirectAmministrativo() {
-    return this.auth.hasPerm('login.redirect.amministrativo');
+    return this.auth.hasPerm('login.redirect.amministrativo')
+      && !this.auth.hasRole('Admin');
   }
 
   get canRedirectLogistica() {
-    return this.auth.hasPerm('login.redirect.logistica');
+    return this.auth.hasPerm('login.redirect.logistica')
+      && !this.auth.hasRole('Admin');
   }
 
   get canRedirectDefault() {
-    return this.auth.hasPerm('login.redirect.default');
+    // Admin rientra SEMPRE qui
+    return this.auth.hasPerm('login.redirect.default')
+      || this.auth.hasRole('Admin');
   }
+
 
   get canUnisciOrdini() {
     return this.auth.hasPerm('ordini_fornitori.unisci');

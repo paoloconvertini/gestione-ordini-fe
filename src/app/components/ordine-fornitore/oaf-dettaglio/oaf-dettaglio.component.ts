@@ -59,7 +59,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       this.progressivo = params.progressivo;
     });
 
-    this.status = this.state.getState().status;
+    this.status = this.state.getState().filtroStatus;
     this.getOafArticoliByOrdineId(this.anno, this.serie, this.progressivo);
   }
 
@@ -185,7 +185,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
       .subscribe({
         next: (res) => {
           if (!res.error) {
-            this.state.setState({ status: 'T' });
+            this.state.setState({ filtroStatus: 'T' });
             this.route.navigateByUrl('/ordini-fornitore');
           }
         }
@@ -202,7 +202,7 @@ export class OafDettaglioComponent extends CommonListComponent implements OnInit
         next: (res) => {
           this.loader = false;
           if(!res.error) {
-            this.state.setState({ status: '' });
+            this.state.setState({ filtroStatus: '' });
             this.route.navigate(['/ordini-fornitore']);
           }
         },

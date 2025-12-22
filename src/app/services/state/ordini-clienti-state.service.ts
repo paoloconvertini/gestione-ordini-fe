@@ -11,6 +11,7 @@ export class OrdiniClientiStateService {
   private state: FiltroOrdini = new FiltroOrdini();
 
   constructor() {
+    console.log('[STATE] constructor');
     this.loadFromStorage();
   }
 
@@ -27,14 +28,17 @@ export class OrdiniClientiStateService {
 
   /** Reset completo */
   resetState(): void {
+    console.log('[STATE] resetState');
     this.state = new FiltroOrdini();
     // status di default identico al tuo vecchio comportamento
-    this.state.status = 'TUTTI';
+    this.state.filtroStatus = 'TUTTI';
     this.saveToStorage();
   }
 
   /** Logout = pulizia totale */
   clearOnLogout(): void {
+    console.log('[STATE] clearOnLogout');
+
     sessionStorage.removeItem(STORAGE_KEY);
     this.resetState();
   }
@@ -45,7 +49,9 @@ export class OrdiniClientiStateService {
   }
 
   private loadFromStorage(): void {
+    console.log('[STATE] loadFromStorage start');
     const json = sessionStorage.getItem(STORAGE_KEY);
+    console.log('[STATE] stored json =', json);
     if (!json) return;
 
     try {

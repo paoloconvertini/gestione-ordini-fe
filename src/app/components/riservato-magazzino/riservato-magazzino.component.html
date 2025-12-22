@@ -38,7 +38,7 @@
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12">
       <mat-radio-group (change)="retrieveList()"
-                       aria-label="Select an option" [(ngModel)]="filtro.status" >
+                       aria-label="Select an option" [(ngModel)]="filtro.filtroStatus" >
         <mat-radio-button *ngFor="let option of radioPerStatusOptions"
                           [value]="option.codice">
           {{option.descrizione}}

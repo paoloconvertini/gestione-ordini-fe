@@ -45,16 +45,16 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     this.filtro = this.state.getState();
 
     // se è la prima volta: default = Sospesi
-    if (!this.filtro.status) {
-      this.filtro.status = 'F';
-      this.state.setState({ status: 'F' });
+    if (!this.filtro.filtroStatus) {
+      this.filtro.filtroStatus = 'F';
+      this.state.setState({ filtroStatus: 'F' });
     }
     this.retrieveFornitoreList();
   }
 
   onStatusChange() {
     this.state.setState({
-      status: this.filtro.status,
+      filtroStatus: this.filtro.filtroStatus,
       page: 0
     });
 

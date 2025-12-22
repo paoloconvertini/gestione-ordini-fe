@@ -44,6 +44,7 @@ import {BaseComponent} from "../../../baseComponent";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator, MatPaginatorIntl, PageEvent} from "@angular/material/paginator";
 import {PermissionService} from "../../../../services/auth/permission.service";
+import {OrdineMappaDto} from "../../../../models/ordineMappaDto";
 
 
 useGeographic();
@@ -66,8 +67,8 @@ export interface OptStatus {
 
 @Component({
   selector: 'app-lista',
-  templateUrl: './lista.component.html',
-  styleUrls: ['./lista.component.css'],
+  templateUrl: './gestione-consegne.component.html',
+  styleUrls: ['./gestione-consegne.component.css'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -76,7 +77,7 @@ export interface OptStatus {
     ]),
   ],
 })
-export class ListaComponent extends BaseComponent implements OnInit {
+export class GestioneConsegneComponent extends BaseComponent implements OnInit {
 
   loader = false;
   dataSource = new MatTableDataSource;
@@ -102,6 +103,7 @@ export class ListaComponent extends BaseComponent implements OnInit {
   importiMap: any = new Map<string, number>();
   importiList: ImportoVenditore[] = [];
   totalItems = 0;
+  ordiniMappa: OrdineMappaDto[] = [];
 
   constructor(private authService: AuthService, private service: ListaService,
               private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router, private notaConsegnaService: NotaConsegnaService,
@@ -115,9 +117,9 @@ export class ListaComponent extends BaseComponent implements OnInit {
     this._intl.firstPageLabel = 'Prima';
     this._intl.lastPageLabel = 'Ultima';
     if (this.perm.canDefaultLogisticaCompleto) {
-      this.filtro.status = 'COMPLETO';
+      this.filtro.filtroStatus = 'COMPLETO';
     } else {
-      this.filtro.status = 'TUTTI';
+      this.filtro.filtroStatus = 'TUTTI';
     }
 
   }
@@ -140,8 +142,8 @@ export class ListaComponent extends BaseComponent implements OnInit {
     this.ordineClienteService.getStati().pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: (data) => {
         this.radioPerStatusOptions = data;
-        if(!this.filtro.status){
-          this.filtro.status = 'TUTTI';
+        if(!this.filtro.filtroStatus){
+          this.filtro.filtroStatus = 'TUTTI';
         }
         this.selectStatusOptions = data.filter( (e:any) => e.descrizione !== 'TUTTI');
       }
@@ -352,186 +354,20 @@ export class ListaComponent extends BaseComponent implements OnInit {
       })
   }
 
-  mostraMappa() {
-        this.showMappa = !this.showMappa;
-        if(this.showMappa){
-          this.map.setView(new View({
-              center: sedeLonLat,
-              zoom:9,
-            })
-          );
-          this.map.setLayers([
-            new TileLayer({
-              source: new OSM(),
-            }),
-          ]);
-          this.map.setTarget('map');
+  mostraMappa(): void {
+    this.showMappa = !this.showMappa;
 
-          const iconFeature = new Feature({
-            geometry: sede,
-          });
+    if (this.showMappa) {
+      this.loadOrdiniMappa();
+    }
+  }
 
-          const iconStyle = new Style({
-            image: new Icon({
-              anchor: [0, 0],
-              anchorXUnits: 'fraction',
-              anchorYUnits: 'pixels',
-              src: '/assets/logo-copy.png',
-            }),
-          });
-
-          iconFeature.setStyle(iconStyle);
-
-          const vectorSource = new VectorSource({
-            features: [iconFeature],
-          });
-
-          const vectorLayer = new VectorLayer({
-            source: vectorSource,
-          });
-
-          this.map.addLayer(vectorLayer);
-
-          const markerFeatures = []
-          for (let e of this.dataSource.filteredData) {
-            // @ts-ignore
-            let lon = e.longitudine;
-            // @ts-ignore
-            let lat = e.latitudine;
-            // @ts-ignore
-            let name = e.intestazione;
-            // @ts-ignore
-            let cellulare = e.cellulare;
-            // @ts-ignore
-            let telefono = e.telefono;
-            // @ts-ignore
-            let indirizzo = e.indirizzo;
-            // @ts-ignore
-            let sottoConto= e.sottoConto;
-            markerFeatures.push(new Feature({
-              geometry: new Point([lon,lat]),
-              id:sottoConto,
-              name:  name,
-              telefono: telefono,
-              indirizzo: indirizzo,
-              cellulare: cellulare
-            }));
-          }
-
-          const markerStyle = new Style({
-            image: new RegularShape({
-            fill: fill,
-            stroke: stroke,
-            points: 3,
-            radius: 10,
-            angle: 0
-          })});
-          markerFeatures.forEach(m => m.setStyle(markerStyle));
-
-          const source = new VectorSource({
-            features: markerFeatures,
-          });
-
-          const clusterSource = new Cluster({
-            distance:  10,
-            minDistance:10,
-            source: source
-          });
-
-          const styleCache:any = {};
-          function getStyle (feature:any) {
-            const size = feature.get('features').length;
-            let style = styleCache[size];
-            if (!style) {
-              style = new Style({
-                image: new CircleStyle({
-                  radius: 10,
-                  stroke: new Stroke({
-                    color: '#fff',
-                  }),
-                  fill: new Fill({
-                    color: '#3399CC',
-                  }),
-                }),
-                text: new Text({
-                  text: size.toString(),
-                  fill: new Fill({
-                    color: '#fff',
-                  }),
-                }),
-              });
-              styleCache[size] = style;
-            }
-            return style;
-          }
-
-          const clusterLayer = new VectorLayer({
-            source: clusterSource,
-            style: getStyle
-          });
-
-          this.map.addLayer(clusterLayer);
-
-          let popup = new Popup();
-
-          this.map.on('pointermove', (evt) => {
-            this.map.getTargetElement().style.cursor =
-              this.map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
-          });
-
-          this.map.on('click', (e) => {
-            this.map.getOverlays().clear();
-            let markers:any = [];
-            this.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-              if (feature.get('features').length > 1) {
-                let lat:any = feature.get('features')[0].getGeometry().getFlatCoordinates()[1];
-                let lon:any = feature.get('features')[0].getGeometry().getFlatCoordinates()[0];
-                let id:any =  feature.get('features')[0].get("id");
-                let feat:any = feature.get('features')[0];
-                markers.push(feat);
-                if(feature.get("expanded") === true){
-                  return;
-                }
-                for(let f of feature.get('features')){
-                  if(f.get("id") === id) {
-                    continue;
-                  }
-                  if(lat !== f.getGeometry().getFlatCoordinates()[1]) {
-                    break;
-                  } else if(lon !== f.getGeometry().getFlatCoordinates()[0]) {
-                    break;
-                  } else {
-                    markers.push(f);
-                  }
-
-                }
-                if(markers.length > 1) {
-                  for(let f of markers) {
-                    let coords = [f.getGeometry().getFlatCoordinates()[0] + Math.random()/100,
-                      f.getGeometry().getFlatCoordinates()[1]];
-                    popup = new Popup();
-                    popup.show(coords, this.generateHtmlPopup(f));
-                    this.map.addOverlay(popup);
-                  }
-                } else {
-                  const extent = boundingExtent(
-                    feature.get("features").map((r:any) => r.getGeometry().getCoordinates())
-                  );
-                  this.map.getView().fit(extent, {duration: 1000, padding: [25, 25, 25, 25]});
-                }
-              } else {
-                const feature = this.map.forEachFeatureAtPixel(e.pixel, function (feature) {
-                  return feature.get("features")[0];
-                });
-                if (!feature) {
-                  return;
-                }
-                popup.show(e.coordinate, this.generateHtmlPopup(feature));
-                this.map.addOverlay(popup);
-              }
-            });
-          });
-        }
+  loadOrdiniMappa(): void {
+    this.service.getAllForMap(this.filtro)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(data => {
+        this.ordiniMappa = data;
+      });
   }
 
   generateHtmlPopup(feature:any): string {

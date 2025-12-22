@@ -54,10 +54,10 @@ export class RiservatoMagazzinoComponent extends CommonListComponent implements 
               private ordineClienteService: OrdineClienteService,  private articoloService: ArticoloService) {
     super();
     if(localStorage.getItem(environment.LOGISTICA)){
-      this.filtro.status = 'COMPLETO';
+      this.filtro.filtroStatus = 'COMPLETO';
       this.isLogistica = true;
     } else {
-      this.filtro.status = 'TUTTI';
+      this.filtro.filtroStatus = 'TUTTI';
     }
     if (localStorage.getItem(environment.ADMIN)) {
       this.isAdmin = true;

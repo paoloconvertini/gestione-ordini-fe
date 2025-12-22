@@ -29,7 +29,7 @@ export class OrdiniFornitoreStateService {
   resetState(): void {
     this.state = new FiltroOrdini();
     // Default richiesto: appena entri nella pagina = Sospesi
-    this.state.status = 'F';
+    this.state.filtroStatus = 'F';
     this.saveToStorage();
   }
 

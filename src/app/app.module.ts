@@ -52,8 +52,8 @@ import { OrdineClienteNoteDialogComponent } from './components/ordine-cliente-no
 import { AggiungiOAFDialogComponent } from './components/ordine-fornitore/aggiungi-oafdialog/aggiungi-oafdialog.component';
 import {MatSortModule} from "@angular/material/sort";
 import {MatSelectModule} from "@angular/material/select";
-import { ListaComponent } from './components/ordine-cliente/logistica/lista/lista.component';
-import { ListaBollaComponent } from './components/ordine-cliente/logistica/lista-bolla/lista-bolla.component';
+import { GestioneConsegneComponent } from './components/ordine-cliente/logistica/lista/gestione-consegne.component';
+import { ListaBollaComponent } from './components/ordine-cliente/logistica/lista-bolla-dialog/lista-bolla.component';
 import { AccontoDialogComponent } from './components/ordine-cliente/logistica/acconto-dialog/acconto-dialog.component';
 import { BoxDocciaComponent } from './components/box-doccia/box-doccia.component';
 import { SchedeTecnicheComponent } from './components/ordine-cliente/schede-tecniche/schede-tecniche.component';
@@ -128,7 +128,7 @@ export const DateFormats = {
     RoleComponent,
     OrdineClienteNoteDialogComponent,
     AggiungiOAFDialogComponent,
-    ListaComponent,
+    GestioneConsegneComponent,
     ListaBollaComponent,
     AccontoDialogComponent,
     BoxDocciaComponent,

@@ -18,6 +18,7 @@ import {
 } from "../consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component";
 import {NotaConsegna} from "../../models/NotaConsegna";
 import {NotaConsegnaService} from "../../services/nota-consegna/nota-consegna.service";
+import {OrdineMappaDto} from "../../models/ordineMappaDto";
 const moment = require('moment');
 
 @Component({
@@ -42,6 +43,8 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
   notaConsegnaGiov: NotaConsegna = new NotaConsegna();
   notaConsegnaVen: NotaConsegna = new NotaConsegna();
   notaConsegnaSab: NotaConsegna = new NotaConsegna();
+  showMappa: boolean = false;
+  ordiniMappa: OrdineMappaDto[] = [];
 
   constructor(    private notaConsegnaService: NotaConsegnaService, private router: Router,
                   private viewportScroller: ViewportScroller,
@@ -51,26 +54,27 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
                   private articoloService: ArticoloService,
                   private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
   }
 
   ngOnInit(): void {
     this.retrieveList(0);
     this.user = localStorage.getItem(environment.USERNAME);
+  }
+
+  mostraMappa(): void {
+    this.showMappa = !this.showMappa;
+
+    if (this.showMappa) {
+      this.loadOrdiniMappa();
+    }
+  }
+
+  loadOrdiniMappa(): void {
+    this.service.getAllForMap(this.filtro)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(data => {
+        this.ordiniMappa = data;
+      });
   }
 
   retrieveList(delta:number): void {

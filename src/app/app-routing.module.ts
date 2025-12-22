@@ -10,7 +10,7 @@ import {ResetPasswordComponent} from "./components/reset-password/reset-password
 import { UserDetailComponent } from './components/users/user-detail/user-detail.component';
 import {UserListComponent} from "./components/users/user-list/user-list.component";
 import {RoleComponent} from "./components/role/role.component";
-import {ListaComponent} from "./components/ordine-cliente/logistica/lista/lista.component";
+import {GestioneConsegneComponent} from "./components/ordine-cliente/logistica/lista/gestione-consegne.component";
 import {BoxDocciaComponent} from "./components/box-doccia/box-doccia.component";
 import { AmmortamentoComponent } from './components/cespite/ammortamenti/ammortamento.component';
 import {RiservatoMagazzinoComponent} from "./components/riservato-magazzino/riservato-magazzino.component";
@@ -69,9 +69,9 @@ const routes: Routes = [
     component: ArticoloComponent,
   },
   {
-    path: 'logistica-ordini',
+    path: 'gestione-consegne',
     canActivate: [AuthGuard],
-    component: ListaComponent,
+    component: GestioneConsegneComponent,
   },
   {
     path: 'consegne-settimanali',
@@ -94,7 +94,7 @@ const routes: Routes = [
     component: OafDettaglioComponent,
   },
   {
-    path: 'collega-oaf/:progrGenerale/:page/:size/:anno/:serie/:progressivo/:status',
+    path: 'collega-oaf/:progrGenerale/:anno/:serie/:progressivo',
     canActivate: [AuthGuard],
     component: CollegaOAFComponent,
   },

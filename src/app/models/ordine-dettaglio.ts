@@ -16,4 +16,5 @@ export class OrdineDettaglio{
   noteLogistica: string = ''
   userNoteLogistica: string = ''
   dataNoteLogistica: any
+  status: any
 }

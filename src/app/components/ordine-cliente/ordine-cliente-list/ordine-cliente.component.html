@@ -2,11 +2,11 @@
   <div class="row">
     <div class="col-md-12  ordine-title">
       ORDINI
-      <span *ngIf="filtro.status==='DA_PROCESSARE'"> DA PROCESSARE</span>
-      <span *ngIf="filtro.status==='DA_ORDINARE'"> DA ORDINARE</span>
-      <span *ngIf="filtro.status==='INCOMPLETO'"> INCOMPLETI</span>
-      <span *ngIf="filtro.status==='COMPLETO'"> COMPLETI</span>
-      <span *ngIf="filtro.status==='ARCHIVIATO'"> ARCHIVIATI</span>
+      <span *ngIf="filtro.filtroStatus==='DA_PROCESSARE'"> DA PROCESSARE</span>
+      <span *ngIf="filtro.filtroStatus==='DA_ORDINARE'"> DA ORDINARE</span>
+      <span *ngIf="filtro.filtroStatus==='INCOMPLETO'"> INCOMPLETI</span>
+      <span *ngIf="filtro.filtroStatus==='COMPLETO'"> COMPLETI</span>
+      <span *ngIf="filtro.filtroStatus==='ARCHIVIATO'"> ARCHIVIATI</span>
     </div>
   </div>
   <div class="blink_text" *ngIf="countHasCarico > 0">ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati</div>
@@ -39,7 +39,7 @@
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12">
       <mat-radio-group
-                       aria-label="Select an option" [(ngModel)]="filtro.status" >
+                       aria-label="Select an option" [(ngModel)]="filtro.filtroStatus" >
         <mat-radio-button *ngFor="let option of radioPerStatusOptions"
                           [value]="option.codice">
           <div [ngSwitch]="option.descrizione">
@@ -181,7 +181,7 @@
                 <mat-icon aria-hidden="false" aria-label="firma" fontIcon="send" color="primary"></mat-icon>
               </button>
               <button
-                *ngIf="filtro.status !== 'DA_PROCESSARE' && perm.canRiapriOrdine"
+                *ngIf="filtro.filtroStatus !== 'DA_PROCESSARE' && perm.canRiapriOrdine"
                 (click)="apri(ordine)"
                 mat-icon-button
                 matTooltip="Apri ordine">
@@ -198,7 +198,7 @@
                           color="warn"></mat-icon>
               </button>
               <button mat-icon-button matTooltip="Ordine non firmato dal cliente"
-                      *ngIf="(filtro.status === 'ARCHIVIATO' && perm.canWarnNonFirmato) && !ordine.hasFirma" #tooltip="matTooltip"
+                      *ngIf="(filtro.filtroStatus === 'ARCHIVIATO' && perm.canWarnNonFirmato) && !ordine.hasFirma" #tooltip="matTooltip"
                       (click)="tooltip.toggle()">
                 <mat-icon class="warnNoBolla warnNoFirma" aria-hidden="false" aria-label="warning"
                           fontIcon="report"></mat-icon>

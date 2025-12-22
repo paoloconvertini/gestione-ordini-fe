@@ -1,6 +1,8 @@
 export class FiltroOrdini {
 
-  status: string = '';
+  filtroStatus: string = '';
+
+  statusOrdine: any;
 
   codVenditore:  string = '';
 

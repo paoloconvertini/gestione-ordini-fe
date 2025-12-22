@@ -26,9 +26,6 @@ export class CollegaOAFComponent extends CommonListComponent implements OnInit{
   annoOAF: any;
   serieOAF: any;
   progressivoOAF: any;
-  status: any;
-  page:any;
-  size:any;
   selection = new SelectionModel<any>(false, []);
   displayedColumns: string[] = ['select', 'codice', 'descrizione', 'quantita', 'prezzo', 'sconto', 'prezzoTot'];
   ordineFornitoreDettaglio: OrdineFornitoreDettaglio = new OrdineFornitoreDettaglio();
@@ -41,11 +38,8 @@ export class CollegaOAFComponent extends CommonListComponent implements OnInit{
     this.router.params.subscribe((params: any) => {
       this.progrGenerale = params.progrGenerale;
       this.anno = params.anno;
-      this.size = params.size;
-      this.page = params.page;
       this.progressivo = params.progressivo;
       this.serie = params.serie;
-      this.status = params.status;
     });
     this.collegaOAFForm = this.fb.group({
       annoOAF: new FormControl('', Validators.required),
@@ -97,7 +91,7 @@ export class CollegaOAFComponent extends CommonListComponent implements OnInit{
             this.snackbar.open(res.msg, 'Chiudi', {
               duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
             })
-          let url = "/articoli/edit/" + this.page + "/" + this.size + "/"  + this.anno + "/" + this.serie + "/" + this.progressivo + "/" + this.status;
+          let url = "/articoli/edit/" + this.anno + "/" + this.serie + "/" + this.progressivo;
           this.route.navigateByUrl(url);
         }
       });
