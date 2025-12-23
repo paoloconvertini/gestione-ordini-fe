@@ -1,6 +1,6 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12  ordine-title">
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="page-title ordine-title">
       ORDINI
       <span *ngIf="filtro.filtroStatus==='DA_PROCESSARE'"> DA PROCESSARE</span>
       <span *ngIf="filtro.filtroStatus==='DA_ORDINARE'"> DA ORDINARE</span>
@@ -8,96 +8,96 @@
       <span *ngIf="filtro.filtroStatus==='COMPLETO'"> COMPLETI</span>
       <span *ngIf="filtro.filtroStatus==='ARCHIVIATO'"> ARCHIVIATI</span>
     </div>
+    <button *ngIf="false" class="" (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
+      Bolle
+    </button>
+    <button class="" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
+      Aggiorna lista
+    </button>
   </div>
-  <div class="blink_text" *ngIf="countHasCarico > 0">ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati</div>
-  <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-5"></div>
-    <div class="col-lg-1 col-md-1 col-sm-1"></div>
-    <div class="col-lg-6 col-md-6 col-sm-6">
-      <button *ngIf="false" class="float-end " (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
-        Bolle
-      </button>
-      <button class="float-end margin-right" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
-        Aggiorna lista
-      </button>
-    </div>
+  <div class="blink_text warning-banner" *ngIf="countHasCarico > 0">
+    ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati
   </div>
-  <div class="row cerca">
-    <div *ngIf="perm.canProntoConsegna" class="col-lg-12 col-md-12 col-sm-12">
-      <mat-checkbox color="primary" class="example-margin"
+  <div class="filters-panel">
+    <!-- RIGA 1: SOLO RADIO -->
+    <div class="filters-row radios-row">
+      <div *ngIf="perm.canProntoConsegna" class="">
+        <mat-checkbox color="primary" class="example-margin"
 
                       [(ngModel)]="filtro.prontoConsegna">
           Pronto consegna
         </mat-checkbox>
-    </div>
-    <div *ngIf="perm.canFiltroVenditore" class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group  [(ngModel)]="filtro.codVenditore">
+      </div>
+      <div *ngIf="perm.canFiltroVenditore" class="">
+        <mat-radio-group  [(ngModel)]="filtro.codVenditore">
           <mat-radio-button *ngFor="let option of radioPerVenditoreOptions"
-                              [value]="option.codVenditore">{{option.fullname}}
+                            [value]="option.codVenditore">{{option.fullname}}
           </mat-radio-button>
         </mat-radio-group>
+      </div>
+      <div class="filter-group">
+        <mat-radio-group
+          aria-label="Select an option" [(ngModel)]="filtro.filtroStatus" >
+          <mat-radio-button *ngFor="let option of radioPerStatusOptions"
+                            [value]="option.codice">
+            <div [ngSwitch]="option.descrizione">
+              <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
+              <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
+              <span *ngSwitchDefault>{{option.descrizione}}</span>
+            </div>
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12">
-      <mat-radio-group
-                       aria-label="Select an option" [(ngModel)]="filtro.filtroStatus" >
-        <mat-radio-button *ngFor="let option of radioPerStatusOptions"
-                          [value]="option.codice">
-          <div [ngSwitch]="option.descrizione">
-            <span *ngSwitchCase="'DA_PROCESSARE'">DA PROCESSARE</span>
-            <span *ngSwitchCase="'DA_ORDINARE'">DA ORDINARE</span>
-            <span *ngSwitchDefault>{{option.descrizione}}</span>
-          </div>
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
-    <div class="col-md-1">
-      <mat-form-field>
-        <mat-label>Anno</mat-label>
-        <input matInput type="number" [(ngModel)]="filtro.anno" >
-      </mat-form-field>
-    </div>
-    <div class="col-md-2">
-      <mat-form-field>
-        <mat-label>Progr.</mat-label>
-        <input matInput type="number" [(ngModel)]="filtro.progressivo" >
-      </mat-form-field>
-    </div>
-    <div class="col-md-3">
-      <mat-form-field>
-        <mat-label>Cliente</mat-label>
-        <input matInput type="text" [(ngModel)]="filtro.cliente" >
-      </mat-form-field>
-    </div>
-    <div class="col-md-2">
-      <mat-form-field>
-        <mat-label>Luogo</mat-label>
-        <input matInput type="text" [(ngModel)]="filtro.luogo" >
-      </mat-form-field>
-    </div>
-    <div class="col-md-2">
-      <mat-form-field>
-        <mat-label>Data ordine</mat-label>
+    <div class="filters-row fields-row">
+      <div class="filter-field anno">
+        <mat-form-field>
+          <mat-label>Anno</mat-label>
+          <input matInput type="number" [(ngModel)]="filtro.anno" >
+        </mat-form-field>
+      </div>
+      <div class="filter-field progr">
+        <mat-form-field>
+          <mat-label>Progr.</mat-label>
+          <input matInput type="number" [(ngModel)]="filtro.progressivo" >
+        </mat-form-field>
+      </div>
+      <div class="filter-field cliente">
+        <mat-form-field>
+          <mat-label>Cliente</mat-label>
+          <input matInput type="text" [(ngModel)]="filtro.cliente" >
+        </mat-form-field>
+      </div>
+      <div class="filter-field luogo">
+        <mat-form-field>
+          <mat-label>Luogo</mat-label>
+          <input matInput type="text" [(ngModel)]="filtro.luogo" >
+        </mat-form-field>
+      </div>
+      <div class="filter-field data">
+        <mat-form-field>
+          <mat-label>Data ordine</mat-label>
           <input matInput [matDatepicker]="picker" [(ngModel)]="filtro.dataOrdine" >
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <div class="col-md-1 float-end">
-      <button mat-raised-button color="warn" (click)="reset()">
-        Reset
-      </button>
-    </div>
-    <div class="col-md-1 float-end">
-      <button mat-raised-button color="primary" (click)="cerca()">
-        Cerca
-      </button>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="filter-actions">
+        <button mat-raised-button color="warn" (click)="reset()">
+          Reset
+        </button>
+      </div>
+      <div class="filter-actions">
+        <button mat-raised-button color="primary" (click)="cerca()">
+          Cerca
+        </button>
+      </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12">
-      <div class="mat-elevation-z8">
-        <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
-        <table class="table-container" *ngIf="!loader" mat-table [dataSource]="dataSource">
+  <div class="table-panel">
+    <div class="table-wrapper">
+      <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
+        <table class="" *ngIf="!loader" mat-table [dataSource]="dataSource">
           <!-- Name Column -->
           <ng-container matColumnDef="numero">
             <th mat-header-cell *matHeaderCellDef> Numero Ordine</th>
@@ -221,10 +221,9 @@
 
           <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell no-result-list" colspan="4">Nessun risultato</td>
+            <td class="mat-cell no-result-list" [attr.colspan]="displayedColumns.length">Nessun risultato</td>
           </tr>
         </table>
-
         <mat-paginator aria-label="Select page of ordini clienti"
                        [length]="totalItems"
                        [pageSize]="filtro.size"
@@ -234,12 +233,6 @@
 
         </mat-paginator>
       </div>
-    </div>
-  </div>
-  <div class="row float-end">
-    <div class="col-lg-12 col-md-12 col-sm-12">
-
-    </div>
   </div>
 </div>
 

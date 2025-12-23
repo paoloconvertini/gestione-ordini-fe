@@ -1,13 +1,139 @@
-.input {
-  display: inline;
-  height: fit-content;
+/* =========================
+   LAYOUT PAGINA
+========================= */
+.page-wrapper {
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.mat-column-nome{
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* =========================
+   WARNING
+========================= */
+.warning-banner {
+  margin-bottom: 12px;
+}
+
+/* =========================
+   FILTRI - CONTENITORE
+========================= */
+.filters-panel {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =========================
+   FILTRI - RIGA RADIO
+========================= */
+.radios-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.radios-row mat-radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+/* =========================
+   FILTRI - RIGA CAMPI + BOTTONI (DESKTOP)
+========================= */
+.fields-row {
+  display: grid;
+  grid-template-columns:
+    minmax(60px, 80px)
+    minmax(60px, 80px)
+    minmax(120px, 1fr)
+    minmax(120px, 1fr)
+    minmax(120px, 1fr)
+    auto
+    auto;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: baseline;
+}
+
+.filter-field mat-form-field {
+  width: 100%;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* =========================
+   FILTRI - MOBILE / TABLET
+========================= */
+@media (max-width: 900px) {
+  .fields-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-actions {
+    justify-self: end;
+  }
+}
+
+/* =========================
+   TABELLA
+========================= */
+.table-panel {
+  margin-top: 8px;
+}
+
+.table-wrapper {
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+}
+
+.paginator-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+
+/* =========================
+   MATERIAL / VARI
+========================= */
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-column-nome {
   padding-left: 16px;
 }
 
-.mat-column-status{
+.mat-column-status {
   font-size: 13px;
 }
 
@@ -16,7 +142,7 @@
 }
 
 .select {
-  width:100px;
+  width: 100px;
 }
 
 .option {
@@ -26,11 +152,6 @@
 .mat-column-azioni {
   text-align: right;
   font-weight: bold;
-}
-
-.mat-form-field {
-  font-size: 14px;
-  width: 80%;
 }
 
 .warnNoBolla {
@@ -47,7 +168,7 @@
 }
 
 .nota-presente {
-  color:#d11f0c!important;
+  color: #d11f0c !important;
 }
 
 .nota-logistica-presente {
@@ -55,7 +176,7 @@
 }
 
 .mat-mdc-icon-button[disabled] {
-  pointer-events: auto!important;
+  pointer-events: auto !important;
 }
 
 .hasCarico {
@@ -68,38 +189,17 @@
   background-color: lightpink;
 }
 
-.blink_text
-{
-  animation:2s blinker linear infinite;
-  -webkit-animation:2s blinker linear infinite;
-  -moz-animation:2s blinker linear infinite;
+/* =========================
+   BLINK
+========================= */
+.blink_text {
+  animation: blinker 2s linear infinite;
   color: red;
   text-align: center;
 }
 
-.cerca {
-  border: 1px solid #e5e5e5;
-  margin-bottom:5px;
-  padding: 5px 0;
-}
-
-@-moz-keyframes blinker
-{
-  0% { opacity: 1.0; }
-  50% { opacity: 0.0; }
-  100% { opacity: 1.0; }
-}
-
-@-webkit-keyframes blinker
-{
-  0% { opacity: 1.0; }
-  50% { opacity: 0.0; }
-  100% { opacity: 1.0; }
-}
-
-@keyframes blinker
-{
-  0% { opacity: 1.0; }
-  50% { opacity: 0.0; }
-  100% { opacity: 1.0; }
+@keyframes blinker {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
 }
