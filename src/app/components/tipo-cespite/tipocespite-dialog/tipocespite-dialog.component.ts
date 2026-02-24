@@ -6,6 +6,7 @@ import {takeUntil} from "rxjs";
 import {TipocespiteService} from "../../../services/tipocespite/tipocespite.service";
 import {ActivatedRoute} from "@angular/router";
 import {OrdineClienteNotaDto} from "../../../models/OrdineClienteNotaDto";
+import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-tipocespite-dialog',
@@ -16,9 +17,10 @@ export class TipocespiteDialogComponent extends CommonListComponent implements O
   isAdmin: boolean = false;
   displayedColumns: string[] = ['tipoCespite', 'descrizione', 'gruppoConto', 'sottoConto', 'azioni']
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: string, private service: TipocespiteService, private dialogRef: MatDialogRef<TipocespiteDialogComponent>, private router: ActivatedRoute) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: string, private authService: AuthService,
+              private service: TipocespiteService, private dialogRef: MatDialogRef<TipocespiteDialogComponent>, private router: ActivatedRoute) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
+    if (this.authService.hasRole('Admin')) {
       this.isAdmin = true;
     }
     this.origin = data;

@@ -8,6 +8,7 @@ import {environment} from "../../../../environments/environment";
 import {CespiteService} from "../../../services/cespite/cespite.service";
 import {ConfirmDialogComponent} from "../../confirm-dialog/confirm-dialog.component";
 import {TipocespiteDialogComponent} from "../../tipo-cespite/tipocespite-dialog/tipocespite-dialog.component";
+import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-cespite',
@@ -22,9 +23,9 @@ export class CespiteComponent extends CommonListComponent implements OnInit {
   isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(private service: CespiteService, private route: Router, private dialog: MatDialog, private router: ActivatedRoute) {
+  constructor(private service: CespiteService, private authService: AuthService, private dialog: MatDialog, private router: ActivatedRoute) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
+    if (this.authService.hasRole('Admin')) {
       this.isAdmin = true;
     }
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {

@@ -40,20 +40,8 @@ export class AmmortamentoComponent extends CommonListComponent implements OnInit
 
   constructor(private tipocespiteService: TipocespiteService, private fb: FormBuilder, private authService: AuthService, private router: ActivatedRoute, private service: CespiteService, private dialog: MatDialog, private snackbar: MatSnackBar) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
+    if (this.authService.hasRole('Admin')) {
       this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
     }
     this.router.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe((params: any) => {
       if (params.param) {

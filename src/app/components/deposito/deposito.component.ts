@@ -9,6 +9,7 @@ import {takeUntil} from "rxjs";
 import {Deposito} from "../../models/deposito";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {ListaCarichiService} from "../../services/lista-carichi/lista-carichi.service";
+import {AuthService} from "../../services/auth/auth.service";
 
 @Component({
   selector: 'app-deposito',
@@ -22,9 +23,9 @@ export class DepositoComponent extends CommonListComponent implements OnInit {
   filtro: FiltroOrdini = new FiltroOrdini();
 
 
-  constructor(private service: ListaCarichiService, private route: Router, private dialog: MatDialog) {
+  constructor(private authService: AuthService, private service: ListaCarichiService, private route: Router, private dialog: MatDialog) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
+    if (this.authService.hasRole('Admin')) {
       this.isAdmin = true;
     }
   }

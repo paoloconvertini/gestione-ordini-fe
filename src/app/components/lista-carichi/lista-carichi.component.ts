@@ -33,21 +33,6 @@ export class ListaCarichiComponent extends CommonListComponent implements OnInit
 
   constructor(private authService: AuthService, private router: ActivatedRoute, private service: ListaCarichiService, private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
     super();
-    if (localStorage.getItem(environment.ADMIN)) {
-      this.isAdmin = true;
-    }
-    if (localStorage.getItem(environment.MAGAZZINIERE)) {
-      this.isMagazziniere = true;
-    }
-    if (localStorage.getItem(environment.AMMINISTRATIVO)) {
-      this.isAmministrativo = true;
-    }
-    if (localStorage.getItem(environment.VENDITORE)) {
-      this.isVenditore = true;
-    }
-    if (localStorage.getItem(environment.LOGISTICA)) {
-      this.isLogistica = true;
-    }
   }
 
 

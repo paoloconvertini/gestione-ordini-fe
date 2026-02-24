@@ -7,6 +7,7 @@ import {environment} from "../../../../environments/environment";
 import {takeUntil} from "rxjs";
 import {CespiteService} from "../../../services/cespite/cespite.service";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-cespite-dialog',
@@ -18,10 +19,11 @@ export class CespiteDialogComponent extends CommonListComponent implements OnIni
   displayedColumns: string[] = ['tipoCespite', 'progressivo', 'desc', 'azioni']
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(private service: CespiteService, private dialogRef: MatDialogRef<CespiteDialogComponent>,  @Inject(MAT_DIALOG_DATA) public data: string) {
+  constructor(private authService: AuthService,
+    private service: CespiteService, private dialogRef: MatDialogRef<CespiteDialogComponent>,  @Inject(MAT_DIALOG_DATA) public data: string) {
     super();
     this.origin = data;
-    if (localStorage.getItem(environment.ADMIN)) {
+    if (this.authService.hasRole('Admin')) {
       this.isAdmin = true;
     }
   }

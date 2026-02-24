@@ -1,0 +1,61 @@
+.step-form-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.step-form-row .mat-form-field {
+  width: 200px;
+}
+
+.consegne-list {
+  margin-top: 16px;
+  max-height: 350px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.consegna-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fff;
+  cursor: move;
+}
+
+.consegna-header {
+  display: grid;
+  grid-template-columns: 60px 1fr 150px;
+  align-items: center;
+  gap: 12px;
+}
+
+.ordine-index {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.localita {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.header-right {
+  text-align: right;
+  font-size: 13px;
+}
+
+.consegna-footer {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}

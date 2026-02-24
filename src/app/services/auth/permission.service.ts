@@ -37,6 +37,10 @@ export class PermissionService {
     return this.auth.hasPerm('analisi_dati.situazione_ordini');
   }
 
+  get canViewListaCarico() {
+    return this.auth.hasPerm('lista_carico.view');
+  }
+
   get canViewContabilita() {
     return this.auth.hasPerm('contabilita.view');
   }

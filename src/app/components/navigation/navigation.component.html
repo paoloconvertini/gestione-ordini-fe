@@ -29,8 +29,13 @@
       Situazione ordini
     </button>
   </mat-menu>
-
-  <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>
+  <button mat-button  *ngIf="perm.canViewListaCarico" [matMenuTriggerFor]="listaCarichi">Lista di Carico</button>
+  <mat-menu #listaCarichi="matMenu">
+    <button mat-menu-item [routerLink]="['lista-carichi']">Da inviare</button>
+    <button mat-menu-item [routerLink]="['lista-carichi-inviata']">Inviata</button>
+    <button mat-menu-item [routerLink]="['depositi']">Depositi</button>
+  </mat-menu>
+<!--  <button mat-button [routerLink]="['/box-doccia']">Box doccia</button>-->
 
   <!-- Contabilità -->
   <button *ngIf="perm.canViewContabilita"

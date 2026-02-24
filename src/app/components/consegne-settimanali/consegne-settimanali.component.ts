@@ -28,11 +28,6 @@ const moment = require('moment');
 })
 export class ConsegneSettimanaliComponent extends BaseComponent implements OnInit{
 
-  isAdmin: boolean = false;
-  isMagazziniere: boolean = false;
-  isAmministrativo: boolean = false;
-  isVenditore: boolean = false;
-  isLogistica: boolean = false;
   loader = false;
   filtro: FiltroOrdini = new FiltroOrdini();
   user: any;
@@ -58,7 +53,7 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
   ngOnInit(): void {
     this.retrieveList(0);
-    this.user = localStorage.getItem(environment.USERNAME);
+    this.user = this.authService.getCurrentUser()?.username;
   }
 
   mostraMappa(): void {

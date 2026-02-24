@@ -7,6 +7,7 @@ import {environment} from "../../../../environments/environment";
 import {TipocespiteService} from "../../../services/tipocespite/tipocespite.service";
 import {takeUntil} from "rxjs";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
+import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-tipo-cespite-list',
@@ -19,7 +20,8 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
   isAdmin: boolean = false;
   filtro: FiltroOrdini = new FiltroOrdini();
 
-  constructor(private service: TipocespiteService, private router: ActivatedRoute, private route: Router, private dialog: MatDialog) {
+  constructor(private service: TipocespiteService, private router: ActivatedRoute, private authService: AuthService,
+              private route: Router, private dialog: MatDialog) {
     super();
     this.router.params.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
@@ -28,7 +30,7 @@ export class TipoCespiteListComponent extends CommonListComponent implements OnI
           }
         }
       );
-    if (localStorage.getItem(environment.ADMIN)) {
+    if (this.authService.hasRole('Admin')) {
       this.isAdmin = true;
     }
   }

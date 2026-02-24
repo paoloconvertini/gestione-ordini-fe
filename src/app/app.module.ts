@@ -88,12 +88,15 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatBadgeModule} from "@angular/material/badge";
 import { FatturaAccontoCartDialogComponent } from './components/fattura-acconto-cart-dialog/fattura-acconto-cart-dialog.component';
 import { AccontiNonValidatiDialogComponent } from './components/acconti-non-validati-dialog/acconti-non-validati-dialog.component';
-import { PermissionRoleDrawerComponent } from './components/permissions/permission-role-drawer/permission-role-drawer.component';
 import {PermissionListComponent} from "./components/permissions/permission-list/permission-list.component";
 import {MatListModule} from "@angular/material/list";
 import {MatChipsModule} from "@angular/material/chips";
 import { PermissionEditDialogComponent } from './components/permissions/permission-edit-dialog/permission-edit-dialog.component';
 import {MapComponent} from "./components/shared/map/map.component";
+import {
+  ProgrammaConsegnaDialogComponent
+} from "./components/programma-consegna-dialog/programma-consegna-dialog.component";
+import {CdkDrag, CdkDropList} from "@angular/cdk/drag-drop";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -158,9 +161,9 @@ export const DateFormats = {
     FatturaAccontoCartDialogComponent,
     AccontiNonValidatiDialogComponent,
     PermissionListComponent,
-    PermissionRoleDrawerComponent,
     PermissionEditDialogComponent,
-    MapComponent
+    MapComponent,
+    ProgrammaConsegnaDialogComponent
   ],
   imports: [
     MatDatepickerModule,
@@ -212,7 +215,9 @@ export const DateFormats = {
     MatDividerModule,
     MatBadgeModule,
     MatListModule,
-    MatChipsModule
+    MatChipsModule,
+    CdkDropList,
+    CdkDrag
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
