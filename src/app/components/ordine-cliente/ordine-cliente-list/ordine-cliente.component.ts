@@ -24,7 +24,6 @@ import { ScrollPositionService } from '../../../services/scroll-position.service
 import {OrdiniClientiStateService} from "../../../services/state/ordini-clienti-state.service";
 import {PermissionService} from "../../../services/auth/permission.service";
 import {DownloadUtil} from "../../../utils/download-util";
-import {ProgrammaConsegnaDialogComponent} from "../../programma-consegna-dialog/programma-consegna-dialog.component";
 
 
 export interface Option {
@@ -74,70 +73,6 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     private downloadUtil: DownloadUtil,
     private state: OrdiniClientiStateService) {
     super();
-  }
-
-  // ---------------------------------------------------------
-// PERMESSI — refactoring ruoli → permessi
-// ---------------------------------------------------------
-
-// Visualizzare lista ordini
-  get canViewOrdini(): boolean {
-    return this.authService.hasPerm('ordini.view');
-  }
-
-// Filtro "Pronto consegna" (Admin, Logistica)
-  get canFiltroProntoConsegna(): boolean {
-    return this.authService.hasPerm('ordini.filtro.prontoConsegna');
-  }
-
-// Filtro per venditore (Admin, Venditore)
-  get canFiltroVenditore(): boolean {
-    return this.authService.hasPerm('ordini.filtro.venditore');
-  }
-
-// Aprire dettaglio ordine (tutti)
-  get canVediDettaglio(): boolean {
-    return this.authService.hasPerm('ordini.dettaglio.view');
-  }
-
-// Modificare stato ordine (solo Admin)
-  get canEditStato(): boolean {
-    return this.authService.hasPerm('ordini.stato.edit');
-  }
-
-// Sbloccare ordine (solo Admin)
-  get canSbloccaOrdine(): boolean {
-    return this.authService.hasPerm('ordini.sblocca');
-  }
-
-// Aggiungere note cliente (tutti)
-  get canNotaCliente(): boolean {
-    return this.authService.hasPerm('ordini.note.cliente');
-  }
-
-// Aggiungere note logistica (Admin, Logistica)
-  get canNotaLogistica(): boolean {
-    return this.authService.hasPerm('ordini.note.logistica');
-  }
-
-// Download ordine (Admin, Venditore, Amministrativo)
-  get canDownloadOrdine(): boolean {
-    return this.authService.hasPerm('ordini.download');
-  }
-
-// Firmare ordine cliente (Admin, Venditore)
-  get canFirmareOrdine(): boolean {
-    return this.authService.hasPerm('ordini.firma');
-  }
-
-// Inviare email (Admin, Venditore)
-  get canInviaEmail(): boolean {
-    return this.authService.hasPerm('ordini.email');
-  }
-
-// Riaprire ordine (Admin, Amministrativo, Magazziniere)
-  get canApriOrdine(): boolean {
-    return this.authService.hasPerm('ordini.apri');
   }
 
   ngOnInit(): void {
