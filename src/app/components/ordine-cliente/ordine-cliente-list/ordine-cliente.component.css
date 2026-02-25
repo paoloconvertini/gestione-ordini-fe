@@ -150,8 +150,8 @@ table {
 }
 
 .mat-column-azioni {
-  text-align: right;
-  font-weight: bold;
+  width: 1%;
+  white-space: nowrap;
 }
 
 .warnNoBolla {
@@ -189,6 +189,81 @@ table {
   background-color: lightpink;
 }
 
+/* Layout numero ordine */
+.order-number {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Testo numero ben leggibile */
+.order-text {
+  font-weight: 600;
+  color: #1a1a1a;   /* contrasto netto */
+}
+
+/* Contenitore icone stato */
+.order-status-icons {
+  display: flex;
+  gap: 4px;
+}
+
+/* Icone piccole stile apice */
+.order-status-icons .mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  vertical-align: super;
+  opacity: 0.85;
+}
+
+/* LOCK tenue */
+.status-lock {
+  color: #6c757d; /* grigio elegante */
+}
+
+/* Warning tenue ma visibile */
+.status-warn {
+  color: #d97706; /* arancio soft */
+}
+
+/* Pronta consegna tenue */
+.status-pronto {
+  color: #2563eb; /* blu soft */
+}
+
+.azioni-cell {
+  white-space: nowrap;
+}
+
+.azioni-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.azioni-wrapper button {
+  margin: 0;
+  padding: 0;
+}
+
+.azioni-wrapper .mat-icon-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.azioni-wrapper .mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  display: block;
+}
 /* =========================
    BLINK
 ========================= */
