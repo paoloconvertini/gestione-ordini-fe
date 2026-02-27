@@ -31,6 +31,7 @@ export const environment = {
   ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore',
   NOTA_CONSEGNA: 'nota-consegna',
   LISTA_DI_CARICO: 'lista-carichi',
-  SALDI_MAGAZINO: 'saldi-magazzino'
+  SALDI_MAGAZINO: 'saldi-magazzino',
+  SHOWROOM: 'showroom',
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };

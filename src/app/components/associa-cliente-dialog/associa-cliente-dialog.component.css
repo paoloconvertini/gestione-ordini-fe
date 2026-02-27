@@ -1,0 +1,23 @@
+.full-width {
+  width: 100%;
+}
+
+.autocomplete-results {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.cliente-item {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.cliente-item:hover {
+  background: #f1f1f1;
+}
+
+.cliente-item.selected {
+  background: #e3f2fd;
+}

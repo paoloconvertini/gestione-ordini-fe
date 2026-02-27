@@ -17,6 +17,10 @@ export class PermissionService {
     return this.auth.hasPerm('roles.view');
   }
 
+  get canViewMotivi() {
+    return this.auth.hasPerm('motivi.view');
+  }
+
   get canViewOrdiniClienti() {
     return this.auth.hasPerm('ordini_clienti.view');
   }
@@ -59,6 +63,9 @@ export class PermissionService {
   get canRedirectAmministrativo() {
     return this.auth.hasPerm('login.redirect.amministrativo')
       && !this.auth.hasRole('Admin');
+  }
+  get canViewLogistica() {
+    return this.auth.hasPerm('logistica.view');
   }
 
   get canRedirectLogistica() {
@@ -140,6 +147,14 @@ export class PermissionService {
 
   get canCreaFatturaAcconto() {
     return this.auth.hasPerm('articoli.crea_fattura_acconto');
+  }
+
+  get canViewRegistroVisite(): boolean {
+    return this.auth.hasPerm('showroom.view');
+  }
+
+  get canFilterSede() {
+    return this.auth.hasPerm('showroom.sede.filter');
   }
 
 // canSelectBolla → già esiste (ordine.bolla.seleziona)

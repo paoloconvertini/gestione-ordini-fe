@@ -1,0 +1,87 @@
+<h2 mat-dialog-title>
+  {{ isEdit ? 'Modifica Visita' : 'Nuova Visita' }}
+</h2>
+
+<mat-dialog-content>
+
+  <div class="form-grid">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome cliente</mat-label>
+      <input matInput [(ngModel)]="dto.nomeCliente">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Telefono</mat-label>
+      <input matInput [(ngModel)]="dto.telefono">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Motivo principale</mat-label>
+      <mat-select [(ngModel)]="motivoRootId"
+                  (selectionChange)="onMotivoRootChange($event.value)">
+        <mat-option *ngFor="let m of motiviRoot"
+                    [value]="m.id">
+          {{ m.descrizione }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Sotto-motivo (opzionale)</mat-label>
+      <mat-select [(ngModel)]="motivoFiglioId"
+                  [disabled]="!motiviFigli.length">
+        <mat-option [value]="null">
+          Nessuno
+        </mat-option>
+
+        <mat-option *ngFor="let m of motiviFigli"
+                    [value]="m.id">
+          {{ m.descrizione }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Venditore</mat-label>
+      <mat-select [(ngModel)]="dto.venditoreCodice">
+        <mat-option *ngFor="let v of venditori"
+                    [value]="v.codVenditore">
+          {{ v.fullname }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Comune</mat-label>
+      <input matInput
+             [(ngModel)]="comuneSearch"
+             (ngModelChange)="onComuneSearch($event)">
+    </mat-form-field>
+
+    <div class="autocomplete-dropdown" *ngIf="listaComuni && listaComuni.length > 0">
+      <div class="autocomplete-item"
+           *ngFor="let c of listaComuni"
+           (click)="selectComune(c)">
+        {{ c.nomeComune }} ({{ c.siglaProvincia }})
+      </div>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button mat-button (click)="close()">
+    Annulla
+  </button>
+
+  <button mat-raised-button
+          color="primary"
+          (click)="save()"
+          [disabled]="loader">
+    Salva
+  </button>
+
+</mat-dialog-actions>

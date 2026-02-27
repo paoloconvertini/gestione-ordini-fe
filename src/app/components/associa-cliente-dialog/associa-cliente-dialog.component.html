@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Associa Cliente</h2>
+
+<mat-dialog-content>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Cerca cliente</mat-label>
+    <input matInput
+           [(ngModel)]="searchText"
+           (ngModelChange)="onSearch($event)"
+           placeholder="Digita almeno 3 caratteri">
+  </mat-form-field>
+
+  <div class="autocomplete-results" *ngIf="clienti.length">
+
+    <div class="cliente-item"
+         *ngFor="let c of clienti"
+         (click)="selectCliente(c)"
+         [class.selected]="selectedCliente?.codiceCliente === c.codiceCliente">
+
+      <strong>{{ c.nome }}</strong><br>
+      <small>{{ c.codiceCliente }}</small>
+
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button mat-button (click)="close()">
+    Annulla
+  </button>
+
+  <button mat-raised-button
+          color="primary"
+          (click)="save()"
+          [disabled]="loader || !selectedCliente">
+    Salva
+  </button>
+
+</mat-dialog-actions>

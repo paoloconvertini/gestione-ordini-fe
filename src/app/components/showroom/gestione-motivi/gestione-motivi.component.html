@@ -1,0 +1,58 @@
+<div class="page-header">
+  <div class="page-title">Gestione Motivi Visita</div>
+
+  <button mat-raised-button color="primary" (click)="createRoot()">
+    Nuovo Motivo
+  </button>
+</div>
+
+<mat-card *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</mat-card>
+
+<mat-card *ngFor="let root of rootList" class="root-card">
+
+  <div class="root-header">
+    <div class="root-title">
+      {{ root.descrizione }}
+    </div>
+
+    <div class="actions">
+      <button mat-icon-button color="primary" (click)="createFiglio(root.id)">
+        <mat-icon>add</mat-icon>
+      </button>
+
+      <button mat-icon-button (click)="edit(root)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteMotivo(root.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="figli" *ngIf="figliMap[root.id]?.length">
+
+    <div class="figlio"
+         *ngFor="let figlio of figliMap[root.id]">
+
+      <div class="figlio-title">
+        {{ figlio.descrizione }}
+      </div>
+
+      <div class="actions">
+        <button mat-icon-button (click)="edit(figlio)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deleteMotivo(figlio.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</mat-card>

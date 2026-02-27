@@ -42,6 +42,13 @@ export class LoginComponent extends BaseComponent {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
+          // 0️⃣ SHOWROOM ONLY
+          if (this.perm.canViewRegistroVisite
+            && !this.perm.canViewOrdiniClienti
+            && !this.perm.canViewOrdiniFornitori) {
+            this.router.navigate(['/registro-visite']);
+            return;
+          }
 
           // 1️⃣ AMMINISTRATIVO → ordini-clienti con filtro preimpostato DA_ORDINARE
           if (this.perm.canRedirectAmministrativo) {

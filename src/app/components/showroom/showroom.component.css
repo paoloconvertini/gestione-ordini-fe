@@ -1,0 +1,112 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  padding: 0 32px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.filter-card {
+  margin: 0 24px 24px 24px;
+}
+
+.table-card {
+  margin: 20px 24px 24px 24px;
+}
+
+.filter-card {
+  padding: 24px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.table-card {
+  margin-top: 20px;
+}
+
+.loader {
+  margin: 40px auto;
+  display: block;
+}
+
+.motivo-child {
+  font-weight: 600;
+}
+
+.motivo-parent {
+  font-size: 12px;
+  opacity: 0.7;
+  line-height: 1.2;
+}
+
+.cliente-nome {
+  font-weight: 600;
+}
+
+.cliente-codice {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.cliente-telefono {
+  font-size: 12px;
+  opacity: 0.65;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.telefono-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  opacity: 0.6;
+}
+
+.comune-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+  max-height: 220px;
+  overflow-y: auto;
+
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.autocomplete-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover {
+  background: #f1f1f1;
+}

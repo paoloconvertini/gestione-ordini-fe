@@ -97,6 +97,11 @@ import {
   ProgrammaConsegnaDialogComponent
 } from "./components/programma-consegna-dialog/programma-consegna-dialog.component";
 import {CdkDrag, CdkDropList} from "@angular/cdk/drag-drop";
+import { ShowroomComponent } from './components/showroom/showroom.component';
+import { RegistroVisiteDialogComponent } from './components/registro-visite-dialog/registro-visite-dialog.component';
+import { AssociaClienteDialogComponent } from './components/associa-cliente-dialog/associa-cliente-dialog.component';
+import { GestioneMotiviComponent } from './components/showroom/gestione-motivi/gestione-motivi.component';
+import { MotivoDialogComponent } from './components/showroom/motivo-dialog/motivo-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -163,7 +168,12 @@ export const DateFormats = {
     PermissionListComponent,
     PermissionEditDialogComponent,
     MapComponent,
-    ProgrammaConsegnaDialogComponent
+    ProgrammaConsegnaDialogComponent,
+    ShowroomComponent,
+    RegistroVisiteDialogComponent,
+    AssociaClienteDialogComponent,
+    GestioneMotiviComponent,
+    MotivoDialogComponent
   ],
   imports: [
     MatDatepickerModule,

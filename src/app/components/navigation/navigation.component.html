@@ -4,12 +4,16 @@
   <span class="toolbar-title">Gestione ordini</span>
 
   <span class="spacer"></span>
-
+  <button *ngIf="perm.canViewRegistroVisite"
+          mat-button
+          [routerLink]="['/registro-visite']">
+    Registro Visite
+  </button>
   <!-- MENU PRINCIPALE (SOTTOMENU) -->
   <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
   <button *ngIf="perm.canViewOrdiniFornitori" mat-button [routerLink]="['/ordini-fornitore']">Ordine Fornitori</button>
 
-  <button mat-button [matMenuTriggerFor]="logistica">Logistica</button>
+  <button mat-button *ngIf="perm.canViewLogistica" [matMenuTriggerFor]="logistica">Logistica</button>
   <mat-menu #logistica="matMenu">
     <button mat-menu-item [routerLink]="['/ordini-clienti']">Pronto consegna</button>
     <button mat-menu-item [routerLink]="['/gestione-consegne']">Gestione consegne</button>
@@ -101,6 +105,11 @@
     <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/permissions']">
       <mat-icon>lock</mat-icon>
       <span>Gestisci permessi</span>
+    </button>
+
+    <button *ngIf="perm.canViewMotivi" mat-menu-item [routerLink]="['/gestione-motivi']">
+      <mat-icon>category</mat-icon>
+      <span>Gestione motivi showroom</span>
     </button>
 
     <mat-divider></mat-divider>

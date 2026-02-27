@@ -26,12 +26,24 @@ import {ListaCarichiInviatiComponent} from "./components/lista-carichi-inviati/l
 import {ConsegneSettimanaliComponent} from "./components/consegne-settimanali/consegne-settimanali.component";
 import {CollegaOAFComponent} from "./components/collega-oaf/collega-oaf.component";
 import {PermissionListComponent} from "./components/permissions/permission-list/permission-list.component";
+import {ShowroomComponent} from "./components/showroom/showroom.component";
+import {GestioneMotiviComponent} from "./components/showroom/gestione-motivi/gestione-motivi.component";
 
 const routes: Routes = [
   {
     path: 'users',
     canActivate: [AuthGuard],
     component: UserListComponent
+  },
+  {
+    path: 'registro-visite',
+    canActivate: [AuthGuard],
+    component: ShowroomComponent
+  },
+  {
+    path: 'gestione-motivi',
+    canActivate: [AuthGuard],
+    component: GestioneMotiviComponent
   },
   {
     path: 'users-detail/:id',

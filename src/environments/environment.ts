@@ -36,7 +36,8 @@ export const environment = {
   TIPOCESPITE: 'tipocespite',
   ARTICOLO_CLASSE_FORNITORE: 'articoloClasseFornitore',
   NOTA_CONSEGNA: 'nota-consegna',
-  LISTA_DI_CARICO: 'lista-carichi'
+  LISTA_DI_CARICO: 'lista-carichi',
+  SHOWROOM: 'showroom',
 };
 
 /*

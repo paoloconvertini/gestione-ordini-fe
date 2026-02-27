@@ -1,0 +1,38 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24px 24px 16px 24px;
+}
+
+.root-card {
+  margin: 0 24px 16px 24px;
+  padding: 16px;
+}
+
+.root-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.root-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.figli {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: 2px solid #e0e0e0;
+}
+
+.figlio {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.figlio-title {
+  font-size: 14px;
+}

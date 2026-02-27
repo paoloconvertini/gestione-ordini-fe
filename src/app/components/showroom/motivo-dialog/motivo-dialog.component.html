@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>
+  {{ isEdit ? 'Modifica motivo' : 'Nuovo motivo' }}
+</h2>
+
+<form [formGroup]="form">
+
+  <mat-dialog-content>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descrizione</mat-label>
+      <input matInput formControlName="descrizione" />
+
+      <mat-error *ngIf="form.get('descrizione')?.hasError('required')">
+        Campo obbligatorio
+      </mat-error>
+
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="close()">
+      Annulla
+    </button>
+
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid"
+            (click)="save()">
+      Salva
+    </button>
+  </mat-dialog-actions>
+
+</form>
