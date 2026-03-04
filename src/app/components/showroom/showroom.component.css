@@ -16,8 +16,113 @@
   margin: 0 24px 24px 24px;
 }
 
-.table-card {
-  margin: 20px 24px 24px 24px;
+.visit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 24px;
+}
+
+.visit-card {
+  display: flex;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 18px;
+
+  border: 1px solid #e6e9ef;   /* bordo generale */
+  border-left: 4px solid #1976d2; /* ACCENTO */
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.visit-card:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.visit-content {
+  width: 100%;
+}
+
+.visit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cliente-nome {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.visit-row {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.visit-row.secondary {
+  color: rgba(0,0,0,0.6);
+  font-size: 12px;
+}
+
+.visit-motivo-wrapper {
+  margin-top: 10px;
+}
+
+.motivo-parent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(0,0,0,0.45);
+}
+
+.motivo-parent mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.motivo-child {
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.visit-phone {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.7);
+}
+
+.phone-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.visit-actions {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.visit-card:hover .visit-actions {
+  opacity: 1;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: rgba(0,0,0,0.5);
 }
 
 .filter-card {
@@ -109,4 +214,49 @@
 
 .autocomplete-item:hover {
   background: #f1f1f1;
+}
+
+.page-container {
+  background: #f5f7fa;
+  padding-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-item mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  color: rgba(0,0,0,0.55);
+}
+.page-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-sede {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.6);
+}
+
+.result-badge {
+  background: #1976d2;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 14px;
 }

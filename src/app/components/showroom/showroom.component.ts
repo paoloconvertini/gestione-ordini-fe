@@ -19,7 +19,7 @@ import {AuthService} from "../../services/auth/auth.service";
 export class ShowroomComponent extends BaseComponent implements OnInit {
 
   loader = false;
-  dataSource = new MatTableDataSource<any>();
+  dataSource: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -35,7 +35,7 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
   filtro: FiltroShowroom = new FiltroShowroom();
 
   totalItems = 0;
-
+  pageResult: any;
   province: string[] = [];
   listaComuni: any[] = [];
   sedi: any[] = [];
@@ -91,9 +91,11 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (data: any) => {
+          this.pageResult = data;
+          this.dataSource = data.list;
           this.totalItems = data.count;
-          this.dataSource.data = data.list;
           this.loader = false;
+
         },
         error: () => {
           this.loader = false;
@@ -179,5 +181,9 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
     this.service.getSedi().subscribe(res => {
       this.sedi = res;
     });
+  }
+
+  get currentSedeLabel(): string | null {
+    return this.pageResult?.sedeCorrenteDescrizione ?? null;
   }
 }

@@ -4,6 +4,8 @@ import { takeUntil } from 'rxjs';
 import {BaseComponent} from "../baseComponent";
 import {ShowroomService} from "../../services/showroom/showroom.service";
 import {AuthService} from "../../services/auth/auth.service";
+import {PermissionService} from "../../services/auth/permission.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-registro-visite-dialog',
@@ -26,10 +28,14 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
 
   isEdit = false;
   loader = false;
+  sedi: any[] = [];
 
   constructor(
     private service: ShowroomService,
     private authService: AuthService,
+    public perm: PermissionService,
+    private showroomService: ShowroomService,
+    private snackbar: MatSnackBar,
     private dialogRef: MatDialogRef<RegistroVisiteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -39,6 +45,11 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
   ngOnInit(): void {
 
     this.isEdit = !!this.data;
+    if (this.perm.canFilterSede) {
+      this.showroomService.getSedi().subscribe(res => {
+        this.sedi = res;
+      });
+    }
 
     if (this.isEdit) {
       this.dto = { ...this.data };
@@ -123,7 +134,10 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
   }
 
   save() {
-
+    if (this.perm.canFilterSede && !this.dto.sedeId) {
+      this.snackbar.open('Selezionare la sede', 'Chiudi', { duration: 2000 });
+      return;
+    }
     const motivoDaSalvare =
       this.motivoFiglioId ?? this.motivoRootId;
 

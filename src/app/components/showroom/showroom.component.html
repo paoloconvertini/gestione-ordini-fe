@@ -1,20 +1,22 @@
 <div class="page-header">
-  <div class="page-title">
-    <span
-      [matBadge]="totalItems"
-      [matBadgeColor]="totalItems === 0 ? 'warn' : 'primary'"
-      matBadgeOverlap="false"
-      matBadgePosition="after"
-      matBadgeSize="medium">
+
+  <div class="page-title-wrapper">
+
+    <div class="page-title">
       Registro Visite
+      <span class="page-sede" *ngIf="currentSedeLabel">
+        – {{ currentSedeLabel }}
+      </span>
+    </div>
+
+    <span class="result-badge">
+      {{ totalItems }}
     </span>
+
   </div>
 
-  <button mat-raised-button
-          color="primary"
-          *ngIf="perm.canViewRegistroVisite"
-          (click)="openDialog()">
-    Nuova Visita
+  <button mat-raised-button color="primary" (click)="openDialog()">
+    + Nuova Visita
   </button>
 
 </div>
@@ -95,124 +97,92 @@
 
   <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
 
-  <table mat-table
-         *ngIf="!loader"
-         [dataSource]="dataSource">
-    <ng-container matColumnDef="sede">
-      <th mat-header-cell *matHeaderCellDef>Sede</th>
-      <td mat-cell *matCellDef="let e">
-        {{ e.sedeDescrizione }}
-      </td>
-    </ng-container>
-    <!-- Data -->
-    <ng-container matColumnDef="dataVisita">
-      <th mat-header-cell *matHeaderCellDef>Data</th>
-      <td mat-cell *matCellDef="let e">
-        {{ e.dataVisita | date:'dd/MM/yyyy HH:mm' }}
-      </td>
-    </ng-container>
+  <div class="page-container">
+    <div class="visit-list" *ngIf="!loader">
 
-    <!-- Cliente -->
-    <ng-container matColumnDef="nomeCliente">
-      <th mat-header-cell *matHeaderCellDef>Cliente</th>
-      <td mat-cell *matCellDef="let e">
-        <div class="cliente-wrapper">
-          <div class="cliente-nome">
-            {{ e.nomeCliente }}
+      <div class="visit-card"
+           *ngFor="let e of dataSource">
+
+        <!-- CONTENUTO -->
+        <div class="visit-content">
+
+          <div class="visit-header">
+            <div class="cliente-nome">
+              {{ e.nomeCliente }}
+            </div>
+
+            <div class="visit-actions">
+              <button mat-icon-button (click)="openDialog(e)">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button mat-icon-button
+                      color="warn"
+                      *ngIf="perm.canViewRegistroVisite"
+                      (click)="delete(e.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           </div>
-          <div class="cliente-codice"
-               *ngIf="e.codiceCliente">
-            Conto: {{ e.codiceCliente }}
+
+          <div class="visit-row">
+            <span class="info-item">
+              <mat-icon>location_on</mat-icon>
+              {{ e.comuneNome }} ({{ e.provinciaSigla }})
+            </span>
+
+            <span class="info-item" *ngIf="perm.canFilterSede">
+              <mat-icon>store</mat-icon>
+              {{ e.sedeDescrizione }}
+            </span>
           </div>
-          <div class="cliente-telefono" *ngIf="e.telefono">
-            <mat-icon class="telefono-icon">smartphone</mat-icon>{{ e.telefono }}
+
+          <div class="visit-row secondary">
+            <span class="info-item">
+              <mat-icon>event</mat-icon>
+              {{ e.dataVisita | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+
+            <span class="info-item">
+              <mat-icon>person</mat-icon>
+              {{ e.venditoreNome }}
+            </span>
           </div>
+
+          <div class="visit-motivo-wrapper">
+
+            <div class="motivo-parent" *ngIf="e.motivoParentDescrizione">
+              <mat-icon>category</mat-icon>
+              {{ e.motivoParentDescrizione }}
+            </div>
+
+            <div class="motivo-child">
+              {{ e.motivoDescrizione }}
+            </div>
+
+          </div>
+
+          <div class="visit-phone" *ngIf="e.telefono">
+            <mat-icon class="phone-icon">call</mat-icon>
+            {{ e.telefono }}
+          </div>
+
         </div>
-      </td>
-    </ng-container>
 
-    <!-- Comune -->
-    <ng-container matColumnDef="comune">
-      <th mat-header-cell *matHeaderCellDef>Località</th>
-      <td mat-cell *matCellDef="let e">
-        {{ e.comuneNome }} ({{ e.provinciaSigla }})
-      </td>
-    </ng-container>
+      </div>
 
-    <!-- Motivo -->
-    <ng-container matColumnDef="motivo">
-      <th mat-header-cell *matHeaderCellDef>Motivo</th>
-      <td mat-cell *matCellDef="let e">
-        <div class="motivo-wrapper">
-
-          <!-- Figlio o motivo salvato -->
-          <div class="motivo-child">
-            {{ e.motivoDescrizione }}
-          </div>
-
-          <!-- Padre solo se esiste -->
-          <div class="motivo-parent"
-               *ngIf="e.motivoParentDescrizione">
-            {{ e.motivoParentDescrizione }}
-          </div>
-
-        </div>
-      </td>
-    </ng-container>
-
-    <!-- Venditore -->
-    <ng-container matColumnDef="venditore">
-      <th mat-header-cell *matHeaderCellDef>Venditore</th>
-      <td mat-cell *matCellDef="let e">
-        {{ e.venditoreNome }}
-      </td>
-    </ng-container>
-
-    <!-- Azioni -->
-    <ng-container matColumnDef="azioni">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let e">
-
-        <button mat-icon-button (click)="openDialog(e)">
-          <mat-icon>edit</mat-icon>
-        </button>
-
-        <button mat-icon-button
-                color="warn"
-                *ngIf="perm.canViewRegistroVisite"
-                (click)="delete(e.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-
-        <button mat-icon-button
-                [color]="e.codiceCliente ? 'accent' : 'primary'"
-                (click)="openAssociaCliente(e.id)"
-                matTooltip="{{ e.codiceCliente ? 'Cliente associato' : 'Associa cliente' }}">
-          <mat-icon>
-            {{ e.codiceCliente ? 'link_off' : 'link' }}
-          </mat-icon>
-        </button>
-
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-    <tr *matNoDataRow>
-      <td [attr.colspan]="displayedColumns.length">
+      <div *ngIf="dataSource.length === 0" class="no-data">
         Nessuna visita trovata
-      </td>
-    </tr>
+      </div>
 
-  </table>
+    </div>
 
-  <mat-paginator
-    [length]="totalItems"
-    [pageSize]="filtro.size"
-    [pageIndex]="filtro.page"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPageChange($event)">
-  </mat-paginator>
-
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="filtro.size"
+      [pageIndex]="filtro.page"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
 </mat-card>

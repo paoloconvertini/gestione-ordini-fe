@@ -15,6 +15,20 @@
 body {
   width: 100%;
 }
+/* Fix Bootstrap + Angular Material floating label */
+.mat-mdc-form-field .mdc-floating-label {
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
+}
+
+.mat-mdc-form-field .mdc-notched-outline__notch {
+  max-width: 100% !important;
+}
+
+.mat-mdc-form-field {
+  line-height: normal !important;
+}
 
 .color-white {
   color: white!important;
