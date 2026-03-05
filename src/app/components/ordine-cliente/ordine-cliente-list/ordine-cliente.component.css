@@ -2,9 +2,16 @@
    LAYOUT PAGINA
 ========================= */
 .page-wrapper {
-  padding: 16px;
+  padding: 16px 24px;
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+@media (min-width: 1600px) {
+  .page-wrapper {
+    max-width: 1800px;
+  }
 }
 
 .page-header {
