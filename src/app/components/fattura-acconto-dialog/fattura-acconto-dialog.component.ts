@@ -19,16 +19,17 @@ export interface DialogData {
   styleUrls: ['./fattura-acconto-dialog.component.css']
 })
 export class FatturaAccontoDialogComponent extends BaseComponent implements OnInit {
+
   ordini: any = [];
   acconti: AccontoIva[] = [];
   intestazione: any;
   sottoConto: any;
-  tabSelezionato = 0; // primo tab aperto di default
+  tabSelezionato = 0;
   nonValidatiCountByKey: Record<string, number> = {};
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
               private ordineService: OrdineClienteService,
-              private dialogRef: MatDialogRef<FatturaAccontoDialogComponent>,
+              private dialogRef: MatDialogRef<FatturaAccontoDialogComponent, AccontoIva[]>,
               private snackBar: MatSnackBar,
               private dialog: MatDialog) {
     super();
@@ -38,20 +39,32 @@ export class FatturaAccontoDialogComponent extends BaseComponent implements OnIn
   }
 
   ngOnInit(): void {
+
     const calls: Observable<number>[] = (this.ordini || []).map((o: any) =>
       this.ordineService.getAccontiNonValidatiCount(o.anno, o.serie, o.progressivo)
     );
 
     if (calls.length) {
+
       forkJoin(calls).subscribe({
         next: (counts: number[]) => {
+
           this.ordini.forEach((o: any, i: number) => {
             this.nonValidatiCountByKey[this.keyOrdine(o)] = counts[i] || 0;
           });
-          // inizializza le stringhe UI dai valori numerici presenti
+
           this.ordini.forEach((o: any) => {
-            (o.fatturaAccontoIvaViewList || []).forEach((iva: any) => this.syncStringsFromModel(iva));
+            (o.fatturaAccontoIvaViewList || []).forEach((iva: any) => {
+              iva.nuovoAccontoIvato = 0;
+              iva.nuovoAcconto = 0;
+              iva.percentuale = 0;
+              iva.aSaldo = false;
+
+              iva.nuovoAccontoIvatoStr = '';
+              iva.percentualeStr = '';
+            });
           });
+
         },
         error: () => {
           this.snackBar.open('Errore nel controllo acconti non validati', 'Chiudi', {
@@ -59,17 +72,13 @@ export class FatturaAccontoDialogComponent extends BaseComponent implements OnIn
           });
         }
       });
-    } else {
-      // nessuna chiamata: inizializza comunque le stringhe
-      this.ordini.forEach((o: any) => {
-        (o.fatturaAccontoIvaViewList || []).forEach((iva: any) => this.syncStringsFromModel(iva));
-      });
+
     }
+
   }
 
-  // ---------- Helpers numerici / formattazione ----------
-  private round2(value: any): number {
-    return value == null || isNaN(value) ? 0 : Math.round((+value + Number.EPSILON) * 100) / 100;
+  private round2(value: number): number {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
   private parseNumber(value: any): number {
@@ -79,95 +88,124 @@ export class FatturaAccontoDialogComponent extends BaseComponent implements OnIn
     return isNaN(num) ? NaN : num;
   }
 
-  private parseAndRound(value: any): number {
-    const n = this.parseNumber(value);
-    return isNaN(n) ? 0 : this.round2(n);
-  }
-
-  /** Per la UI: sempre due decimali e virgola */
   format2(value: any): string {
-    const n = this.parseNumber(value);
-    if (isNaN(n)) return '';
-    return n.toFixed(2).replace('.', ',');
+    if (value == null || isNaN(value)) return '';
+    return this.round2(value).toFixed(2).replace('.', ',');
   }
 
-  /** Allinea le stringhe UI dai valori numerici */
-  syncStringsFromModel(iva: any) {
-    iva.nuovoAccontoIvatoStr = this.format2(iva.nuovoAccontoIvato);
-    iva.percentualeStr = this.format2(iva.percentuale);
+  private aggiornaDaIvato(iva: any) {
+    const ivato = this.round2(iva.nuovoAccontoIvato || 0);
+    const ivaPerc = Number(iva.fcodiceIva);
+    iva.nuovoAcconto = this.round2(
+      ivato / (1 + ivaPerc / 100)
+    );
+    const perc = iva.residuoFatturabileIvato === 0
+      ? 0
+      : this.round2(ivato / iva.residuoFatturabileIvato * 100);
+    iva.percentuale = perc;
+    iva.aSaldo = perc === 100;
+    iva.nuovoAccontoIvatoStr = this.format2(ivato);
+    iva.percentualeStr = this.format2(perc);
   }
 
-  // ---------- Calcoli business (non toccano le stringhe UI) ----------
-  calcolaIva(row: any) {
-    row.nuovoAccontoIvato = this.round2(row.residuoFatturabileIvato * row.percentuale / 100);
-    row.nuovoAcconto     = this.round2(row.residuoFatturabile * row.percentuale / 100);
-    row.percentuale      = this.round2(row.percentuale);
-    row.aSaldo           = row.percentuale === 100;
+  private aggiornaDaPercentuale(iva: any) {
+
+    const perc = this.round2(iva.percentuale || 0);
+
+    const ivato = this.round2(
+      iva.residuoFatturabileIvato * perc / 100
+    );
+
+    iva.nuovoAccontoIvato = ivato;
+
+    iva.nuovoAcconto = this.round2(
+      iva.residuoFatturabile * perc / 100
+    );
+
+    iva.aSaldo = perc === 100;
+
+    iva.nuovoAccontoIvatoStr = this.format2(ivato);
+    iva.percentualeStr = this.format2(perc);
+
   }
 
-  calcolaPercentuale(iva: any, saldo: boolean) {
-    if (saldo) {
-      iva.nuovoAccontoIvato = this.round2(iva.residuoFatturabileIvato);
-      iva.nuovoAcconto      = this.round2(iva.residuoFatturabile);
-      iva.percentuale       = 100;
-    } else {
-      const denom = iva.residuoFatturabileIvato || 0;
-      iva.percentuale = denom === 0 ? 0 : this.round2(iva.nuovoAccontoIvato / denom * 100);
-      iva.nuovoAcconto = this.round2(iva.residuoFatturabile * iva.percentuale / 100);
-    }
-    iva.aSaldo = iva.percentuale === 100;
-  }
-
-  // ---------- Slider ----------
   onSliderChange(iva: any) {
-    iva.nuovoAccontoIvato = this.round2(iva.nuovoAccontoIvato);
-    this.calcolaPercentuale(iva, false);
-    this.syncStringsFromModel(iva); // aggiorna UI a due decimali
+
+    const val = Number(iva.nuovoAccontoIvato);
+
+    iva.nuovoAccontoIvato = this.round2(val);
+
+    this.aggiornaDaIvato(iva);
+
   }
 
-  // ---------- Input manuale: IMPORTO IVATO ----------
   onAccontoIvatoChange(iva: any, value: string) {
-    // manteniamo la stringa così com'è mentre si digita
+
     iva.nuovoAccontoIvatoStr = value;
 
     const n = this.parseNumber(value);
+
     if (!isNaN(n)) {
-      iva.nuovoAccontoIvato = n;            // aggiorna il modello numerico → muove lo slider
-      this.calcolaPercentuale(iva, false);  // ricalcola la percentuale
-      // Aggiorna SOLO la percentuale a video (non l'importo che stai digitando)
-      iva.percentualeStr = this.format2(iva.percentuale);
+      iva.nuovoAccontoIvato = n;
     }
+
   }
 
-  onAccontoIvatoBlur(iva: any, value: string) {
-    const n = this.parseAndRound(value);
-    iva.nuovoAccontoIvato = n;
-    this.calcolaPercentuale(iva, false);
-    this.syncStringsFromModel(iva); // ora entrambe le stringhe sono formattate xx,yy
+  onAccontoIvatoBlur(iva: any) {
+
+    iva.nuovoAccontoIvato = this.round2(iva.nuovoAccontoIvato);
+
+    this.aggiornaDaIvato(iva);
+
   }
 
-  // ---------- Input manuale: PERCENTUALE ----------
   onPercentualeChange(iva: any, value: string) {
+
     iva.percentualeStr = value;
 
     const n = this.parseNumber(value);
+
     if (!isNaN(n)) {
       iva.percentuale = n;
-      this.calcolaIva(iva); // ricalcola importi
-      // Aggiorna SOLO l'altro campo (importo) a video
-      iva.nuovoAccontoIvatoStr = this.format2(iva.nuovoAccontoIvato);
     }
+
   }
 
-  onPercentualeBlur(iva: any, value: string) {
-    const n = this.parseAndRound(value);
-    iva.percentuale = n;
-    this.calcolaIva(iva);
-    this.syncStringsFromModel(iva);
+  onPercentualeBlur(iva: any) {
+
+    iva.percentuale = this.round2(iva.percentuale);
+
+    this.aggiornaDaPercentuale(iva);
+
   }
 
-  // ---------- Aggiunta al carrello / dialog ----------
+  calcolaPercentuale(iva: any, saldo: boolean) {
+
+    if (saldo) {
+
+      iva.percentuale = 100;
+
+      iva.nuovoAccontoIvato = this.round2(iva.residuoFatturabileIvato);
+      iva.nuovoAcconto = this.round2(iva.residuoFatturabile);
+
+      iva.nuovoAccontoIvatoStr = this.format2(iva.nuovoAccontoIvato);
+      iva.percentualeStr = '100,00';
+
+    } else {
+
+      iva.percentuale = 0;
+      iva.nuovoAccontoIvato = 0;
+      iva.nuovoAcconto = 0;
+
+      iva.nuovoAccontoIvatoStr = '';
+      iva.percentualeStr = '';
+
+    }
+
+  }
+
   aggiungi(iva: any, ordine: any) {
+
     const element = {
       aSaldo: iva.aSaldo,
       iva: iva.fcodiceIva,
@@ -178,32 +216,31 @@ export class FatturaAccontoDialogComponent extends BaseComponent implements OnIn
       progressivo: ordine.progressivo,
       contoCliente: this.sottoConto
     };
-    if (this.acconti.length > 0) {
-      let errore = false;
-      this.acconti.forEach((a: AccontoIva) => {
-        if (a.iva === element.iva && a.anno === element.anno && a.serie === element.serie && a.progressivo === element.progressivo) {
-          this.snackBar.open('ATTENZIONE! Acconto già inserito', 'Chiudi', {
-            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
-          });
-          errore = true;
-          return;
-        }
+
+    if (this.acconti.some((a: any) =>
+      a.iva === element.iva &&
+      a.anno === element.anno &&
+      a.serie === element.serie &&
+      a.progressivo === element.progressivo)) {
+
+      this.snackBar.open('ATTENZIONE! Acconto già inserito', 'Chiudi', {
+        duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
       });
-      if (!errore) {
-        this.acconti.push(element);
-        this.snackBar.open('Acconto inserito', 'Chiudi', {
-          duration: 1000, horizontalPosition: 'right', verticalPosition: 'bottom'
-        });
-      }
-    } else {
-      this.acconti.push(element);
-      this.snackBar.open('Acconto inserito', 'Chiudi', {
-        duration: 1000, horizontalPosition: 'right', verticalPosition: 'bottom'
-      });
+
+      return;
+
     }
+
+    this.acconti.push(element);
+
+    this.snackBar.open('Acconto inserito', 'Chiudi', {
+      duration: 1000, horizontalPosition: 'right', verticalPosition: 'bottom'
+    });
+
   }
 
   apriCarrello() {
+
     const dialogRef = this.dialog.open(FatturaAccontoCartDialogComponent, {
       width: '90%',
       data: {
@@ -212,16 +249,13 @@ export class FatturaAccontoDialogComponent extends BaseComponent implements OnIn
         sottoConto: this.sottoConto
       }
     });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dialogRef.close(this.acconti);
       }
     });
-  }
 
-  // ---------- Util ----------
-  chiudi() {
-    this.dialogRef.close();
   }
 
   keyOrdine(o: any): string {
@@ -234,20 +268,37 @@ export class FatturaAccontoDialogComponent extends BaseComponent implements OnIn
   }
 
   apriNonValidatiPerOrdine(ordine: any) {
-    this.ordineService.getAccontiNonValidatiByOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+
+    this.ordineService.getAccontiNonValidatiByOrdine(
+      ordine.anno,
+      ordine.serie,
+      ordine.progressivo
+    ).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (list) => {
+
           if (!list?.length) {
             this.snackBar.open('Nessun acconto non validato per questo ordine', 'Chiudi', { duration: 3000 });
             return;
           }
-          this.dialog.open(AccontiNonValidatiDialogComponent, { width: '600px', data: list });
+
+          this.dialog.open(AccontiNonValidatiDialogComponent, {
+            width: '600px',
+            data: list
+          });
+
         },
         error: () => {
           this.snackBar.open('Errore nel recupero acconti non validati', 'Chiudi', { duration: 3000 });
         }
       });
+
   }
+
+  chiudi(): void {
+    this.dialogRef.close();
+  }
+
 }
 
 export interface AccontoIva {
@@ -260,7 +311,6 @@ export interface AccontoIva {
   contoCliente: any
   aSaldo: boolean
 
-  // campi UI (stringhe) per evitare riformattazioni mentre si digita
   nuovoAccontoIvatoStr?: string
   percentualeStr?: string
 }

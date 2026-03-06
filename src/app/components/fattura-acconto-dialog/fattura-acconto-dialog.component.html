@@ -1,48 +1,67 @@
-<!-- HEADER STICKY: titolo + bottone + tab -->
 <div class="dialog-header">
+
   <h1 mat-dialog-title>
-    Ordini cliente di <b>{{intestazione}} - {{sottoConto}}</b>
+    Ordini cliente di <b>{{ intestazione }} - {{ sottoConto }}</b>
   </h1>
 
-  <div mat-dialog-actions class="actions-top">
-    <button mat-raised-button color="primary"
-            matBadge="{{acconti.length}}"
+  <div class="actions-top">
+    <button mat-raised-button
+            color="primary"
+            [matBadge]="acconti.length"
             matBadgeColor="warn"
             (click)="apriCarrello()"
             class="btn-cart">
-      Acconti <mat-icon>shopping_cart</mat-icon>
+      Acconti
+      <mat-icon>shopping_cart</mat-icon>
     </button>
   </div>
-  <mat-tab-group mat-stretch-tabs class="box mat-elevation-z4" [(selectedIndex)]="tabSelezionato">
+
+  <mat-tab-group
+    mat-stretch-tabs
+    class="box mat-elevation-z4"
+    [(selectedIndex)]="tabSelezionato">
+
     <mat-tab *ngFor="let ordine of ordini; let tabIndex = index">
+
       <ng-template mat-tab-label>
-        {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
+
+        {{ ordine.anno }}/{{ ordine.serie }}/{{ ordine.progressivo }}
 
         <span *ngIf="hasNonValidati(ordine)"
               class="warn-wrap"
               matTooltip="Acconti non validati per questo ordine"
               (click)="$event.stopPropagation(); apriNonValidatiPerOrdine(ordine)">
+
           <mat-icon class="warn-base" color="warn">warning_amber</mat-icon>
-          <span class="warn-count">{{ nonValidatiCountByKey[keyOrdine(ordine)] }}</span>
+
+          <span class="warn-count">
+            {{ nonValidatiCountByKey[keyOrdine(ordine)] }}
+          </span>
+
         </span>
+
       </ng-template>
 
-      {{ordine.anno}}/{{ordine.serie}}/{{ordine.progressivo}}
     </mat-tab>
-  </mat-tab-group>
-</div>
 
-<!-- CONTENUTO SCROLLABILE: solo il corpo dei tab -->
+  </mat-tab-group>
+
+</div>
 <div mat-dialog-content class="dialog-content">
-  <!-- iteriamo sugli ordini e mostriamo solo quello del tab attivo -->
-  <div *ngFor="let ordine of ordini; let tabIndex = index" [hidden]="tabSelezionato !== tabIndex">
+
+  <div *ngFor="let ordine of ordini; let tabIndex = index"
+       [hidden]="tabSelezionato !== tabIndex">
+
     <div *ngFor="let iva of ordine.fatturaAccontoIvaViewList">
-      <mat-label>
-        <h3>IVA: {{iva.fcodiceIva}}%</h3>
-      </mat-label>
+
+      <h3>IVA: {{ iva.fcodiceIva }}%</h3>
+
       <mat-card class="riepilogo">
+
         <mat-card-content>
+
           <table>
+
             <thead>
             <tr>
               <th></th>
@@ -50,97 +69,128 @@
               <th>Importo</th>
             </tr>
             </thead>
+
             <tbody>
+
             <tr>
               <td>Totale ordine</td>
-              <td>{{iva.importo | currency:'EUR':'symbol':'1.2-2'}}</td>
-              <td>{{iva.importoIvato | currency:'EUR':'symbol':'1.2-2'}}</td>
+              <td>{{ iva.importo | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ iva.importoIvato | currency:'EUR':'symbol':'1.2-2' }}</td>
             </tr>
+
             <tr>
               <td>Residuo ordine</td>
-              <td>{{iva.importoResiduo | currency:'EUR':'symbol':'1.2-2'}}</td>
-              <td>{{iva.importoResiduoIvato | currency:'EUR':'symbol':'1.2-2'}}</td>
+              <td>{{ iva.importoResiduo | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ iva.importoResiduoIvato | currency:'EUR':'symbol':'1.2-2' }}</td>
             </tr>
+
             <tr>
               <td>Residuo acconti</td>
-              <td>{{iva.residuoAcconti | currency:'EUR':'symbol':'1.2-2'}}</td>
-              <td>{{iva.residuoAccontiIvato | currency:'EUR':'symbol':'1.2-2'}}</td>
+              <td>{{ iva.residuoAcconti | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ iva.residuoAccontiIvato | currency:'EUR':'symbol':'1.2-2' }}</td>
             </tr>
+
             </tbody>
+
           </table>
+
         </mat-card-content>
+
       </mat-card>
 
+
       <div>
-        <mat-label>Residuo imponibile fatturabile: <b>{{iva.residuoFatturabile | currency:'EUR':'symbol':'1.2-2'}}</b></mat-label>&nbsp;&nbsp;
-        <mat-label>Residuo fatturabile: <b>{{iva.residuoFatturabileIvato | currency:'EUR':'symbol':'1.2-2'}}</b>
-          <span *ngIf="iva.residuoFatturabile < 0" style="color:red">
-              <mat-icon>warning_amber</mat-icon>
-            </span>
-        </mat-label>
-        <mat-checkbox [(ngModel)]="iva.aSaldo" [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
-                      name="aSaldo"
-                      (change)="calcolaPercentuale(iva, true); syncStringsFromModel(iva)"
-                      class="example-margin" color="primary">A saldo</mat-checkbox><br>
 
         <div>
-          <mat-label>Seleziona con lo slider</mat-label>&nbsp;
+          Residuo imponibile fatturabile:
+          <b>{{ iva.residuoFatturabile | currency:'EUR':'symbol':'1.2-2' }}</b>
+        </div>
+
+        <div>
+          Residuo fatturabile:
+          <b>{{ iva.residuoFatturabileIvato | currency:'EUR':'symbol':'1.2-2' }}</b>
+
+          <span *ngIf="iva.residuoFatturabile < 0" style="color:red">
+            <mat-icon>warning_amber</mat-icon>
+          </span>
+        </div>
+
+
+        <mat-checkbox
+          [(ngModel)]="iva.aSaldo"
+          [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
+          (change)="calcolaPercentuale(iva, iva.aSaldo)"
+          color="primary">
+
+          A saldo
+
+        </mat-checkbox>
+
+
+        <div *ngIf="!iva.aSaldo">
+
+          <mat-label>Seleziona con lo slider</mat-label>
+
           <mat-slider
-            [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
             class="example-margin"
+            [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
             [max]="iva.residuoFatturabileIvato"
             [min]="0"
             step="0.01">
-            <input name="iva22"
-                   (change)="onSliderChange(iva)"
-                   matSliderThumb
-                   [(ngModel)]="iva.nuovoAccontoIvato">
+
+            <input matSliderThumb
+                   [(ngModel)]="iva.nuovoAccontoIvato"
+                   (change)="onSliderChange(iva)">
+
           </mat-slider>
 
-          <span>
-            <mat-form-field class="input" appearance="fill">
-              <mat-label>o inserisci un importo in euro</mat-label>
-              <!-- Stringa di appoggio per digitazione; normalizza su blur -->
-              <input [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
-                     name="iva22"
-                     matInput
-                     [ngModel]="iva.nuovoAccontoIvatoStr ?? format2(iva.nuovoAccontoIvato)"
-                     (ngModelChange)="onAccontoIvatoChange(iva, $event)"
-                     (blur)="onAccontoIvatoBlur(iva, (iva.nuovoAccontoIvatoStr ?? ''))"
-                     required
-                     type="text"
-                     inputmode="decimal">
-            </mat-form-field>&nbsp;&nbsp;
+          <div style="display:flex; gap:10px; align-items:center; margin-top:10px;">
 
-            <mat-form-field class="input" appearance="fill">
-              <mat-label>o una percentuale</mat-label>
-              <!-- Stringa di appoggio per digitazione; normalizza su blur -->
-              <input [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
-                     name="percentuale"
-                     matInput
-                     [ngModel]="iva.percentualeStr ?? format2(iva.percentuale)"
-                     (ngModelChange)="onPercentualeChange(iva, $event)"
-                     (blur)="onPercentualeBlur(iva, (iva.percentualeStr ?? ''))"
-                     required
+            <mat-form-field appearance="fill">
+              <mat-label>Importo €</mat-label>
+              <input matInput
                      type="text"
-                     inputmode="decimal">
+                     inputmode="decimal"
+                     [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
+                     [ngModel]="iva.nuovoAccontoIvatoStr"
+                     (ngModelChange)="onAccontoIvatoChange(iva, $event)"
+                     (blur)="onAccontoIvatoBlur(iva)">
             </mat-form-field>
 
-            <button [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
-                    color="primary"
-                    mat-raised-button
-                    (click)="aggiungi(iva, ordine)"
-                    class="float-end btn-aggiungi">Aggiungi</button>
-          </span>
+            <mat-form-field appearance="fill">
+              <mat-label>%</mat-label>
+              <input matInput
+                     type="text"
+                     inputmode="decimal"
+                     [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
+                     [ngModel]="iva.percentualeStr"
+                     (ngModelChange)="onPercentualeChange(iva, $event)"
+                     (blur)="onPercentualeBlur(iva)">
+            </mat-form-field>
+
+          </div>
+
         </div>
+
+        <!-- bottone SEMPRE visibile -->
+        <div style="margin-top:10px;">
+          <button mat-raised-button
+                  color="primary"
+                  [disabled]="iva.residuoFatturabile <= 0 || hasNonValidati(ordine)"
+                  (click)="aggiungi(iva, ordine)">
+            Aggiungi
+          </button>
+        </div>
+
       </div>
 
-      <mat-divider class="divider"></mat-divider>
-    </div>
-  </div>
-</div>
+      <mat-divider style="margin-top:15px;"></mat-divider>
 
-<!-- FOOTER -->
-<div mat-dialog-actions>
-  <button mat-button mat-dialog-close>Chiudi</button>
+    </div>
+
+  </div>
+
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="chiudi()">Chiudi</button>
 </div>

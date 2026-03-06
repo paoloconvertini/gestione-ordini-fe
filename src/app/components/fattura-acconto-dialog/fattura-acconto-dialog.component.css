@@ -1,7 +1,6 @@
 .box {
   margin:5px;
   padding:10px;
-  max-height: 60%;
 }
 
 .example-margin {
@@ -59,7 +58,7 @@
 }
 
 /* footer sempre visibile */
-.mat-dialog-actions {
+.mat-mdc-dialog-actions {
   position: sticky;
   bottom: 0;
   z-index: 10;
