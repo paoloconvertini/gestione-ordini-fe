@@ -23,11 +23,28 @@
           </mat-radio-group>
         </div>
 
-        <mat-checkbox color="primary"
-                      [(ngModel)]="filtro.flInviato"
-                      (change)="state.setState({ flInviato: filtro.flInviato }); retrieveFornitoreList();">
-          Da inviare
-        </mat-checkbox>
+        <div class="invio-toggle" *ngIf="filtro.filtroStatus === ''">
+
+          <mat-button-toggle-group
+            [(ngModel)]="filtro.filtroInvio"
+            (change)="onFiltroInvioChange()"
+            appearance="standard">
+
+            <mat-button-toggle value="tutti">
+              Tutti
+            </mat-button-toggle>
+
+            <mat-button-toggle value="da_inviare">
+              Da inviare
+            </mat-button-toggle>
+
+            <mat-button-toggle value="inviati">
+              Inviati
+            </mat-button-toggle>
+
+          </mat-button-toggle-group>
+
+        </div>
 
       </div>
 

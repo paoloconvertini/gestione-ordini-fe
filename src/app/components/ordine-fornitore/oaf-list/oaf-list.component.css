@@ -79,3 +79,17 @@
   align-items: flex-start;
 }
 
+.invio-toggle {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.invio-toggle mat-button-toggle-group {
+  border-radius: 8px;
+}
+
+.invio-toggle .mat-button-toggle-checked {
+  background-color: #607d8b;
+  color: white;
+}

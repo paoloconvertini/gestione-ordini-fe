@@ -102,6 +102,7 @@ import { RegistroVisiteDialogComponent } from './components/registro-visite-dial
 import { AssociaClienteDialogComponent } from './components/associa-cliente-dialog/associa-cliente-dialog.component';
 import { GestioneMotiviComponent } from './components/showroom/gestione-motivi/gestione-motivi.component';
 import { MotivoDialogComponent } from './components/showroom/motivo-dialog/motivo-dialog.component';
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -175,60 +176,61 @@ export const DateFormats = {
     GestioneMotiviComponent,
     MotivoDialogComponent
   ],
-  imports: [
-    MatDatepickerModule,
-    MatMomentDateModule,
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    HttpClientModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter,
-        // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
-        allowedDomains: [SAME_ORIGIN],
-        // Non allegare il token a login/refresh (adatta ai tuoi path reali)
-        disallowedRoutes: [/^\/auth\/login\b/, /^\/auth\/refresh\b/],
-        // opzionale:
-        // skipWhenExpired: true,
-      }
-    }),
-    MatProgressSpinnerModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatCheckboxModule,
-    FormsModule,
-    MatTooltipModule,
-    MatGridListModule,
-    MatRadioModule,
-    MatSidenavModule,
-    MatMenuModule,
-    MatAutocompleteModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatMomentDateModule,
-    MatSortModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatStepperModule,
-    MatTabsModule,
-    MatSliderModule,
-    MatDividerModule,
-    MatBadgeModule,
-    MatListModule,
-    MatChipsModule,
-    CdkDropList,
-    CdkDrag
-  ],
+    imports: [
+        MatDatepickerModule,
+        MatMomentDateModule,
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatCardModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        HttpClientModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter,
+                // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
+                allowedDomains: [SAME_ORIGIN],
+                // Non allegare il token a login/refresh (adatta ai tuoi path reali)
+                disallowedRoutes: [/^\/auth\/login\b/, /^\/auth\/refresh\b/],
+                // opzionale:
+                // skipWhenExpired: true,
+            }
+        }),
+        MatProgressSpinnerModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatCheckboxModule,
+        FormsModule,
+        MatTooltipModule,
+        MatGridListModule,
+        MatRadioModule,
+        MatSidenavModule,
+        MatMenuModule,
+        MatAutocompleteModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatMomentDateModule,
+        MatSortModule,
+        MatSelectModule,
+        MatExpansionModule,
+        MatStepperModule,
+        MatTabsModule,
+        MatSliderModule,
+        MatDividerModule,
+        MatBadgeModule,
+        MatListModule,
+        MatChipsModule,
+        CdkDropList,
+        CdkDrag,
+        MatButtonToggleModule
+    ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},
     {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },

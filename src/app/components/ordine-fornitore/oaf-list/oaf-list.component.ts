@@ -328,4 +328,23 @@ export class OafListComponent extends CommonListComponent implements OnInit {
       )
     }
   }
+
+  onFiltroInvioChange() {
+
+    if (this.filtro.filtroInvio === 'da_inviare') {
+      this.filtro.flInviato = true;
+    }
+
+    if (this.filtro.filtroInvio === 'inviati') {
+      this.filtro.flInviato = false;
+    }
+
+    if (this.filtro.filtroInvio === 'tutti') {
+      this.filtro.flInviato = false;
+    }
+
+    this.state.setState({ filtroInvio: this.filtro.filtroInvio });
+
+    this.retrieveFornitoreList();
+  }
 }

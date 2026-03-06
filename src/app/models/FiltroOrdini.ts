@@ -27,5 +27,6 @@ export class FiltroOrdini {
   luogo: any;
   dataOrdine: any;
   deltaSettimana:number =0;
+  filtroInvio: string = 'tutti';
 
 }
