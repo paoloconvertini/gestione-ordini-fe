@@ -473,10 +473,11 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
   }
 
   openProgrammaConsegna(ordine: OrdineCliente): void {
-    this.dialog.open(ProgrammaConsegnaDialogComponent, {
-      width: '800px',
-      data: { ordine }
-    });
+      this.dialog.open(ProgrammaConsegnaDialogComponent, {
+        width: '1200px',
+        maxHeight: '90vh',
+        data: { ordine }
+      });
   }
 
 }

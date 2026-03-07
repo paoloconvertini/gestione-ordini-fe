@@ -51,7 +51,13 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
   @Input() selectable: boolean = false;
 
-  @Output() giornoSelected = new EventEmitter<Date>();
+  @Input() veicolo: number | null = null;
+
+  @Input() fascia: string | null = null;
+
+  @Output() giornoSelezionato = new EventEmitter<any>();
+
+  giornoSelezionatoCorrente: any;
 
   constructor(
     private notaConsegnaService: NotaConsegnaService,
@@ -166,7 +172,9 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
     if (this.selectable) {
 
-      this.giornoSelected.emit(new Date(giorno.data));
+      this.giornoSelezionatoCorrente = giorno;
+
+      this.giornoSelezionato.emit(giorno);
 
       return;
 
@@ -184,6 +192,18 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
       autoFocus: false,
       maxHeight: '90vh'
     });
+
+  }
+
+  selezionaGiorno(giorno: any): void {
+
+    if (!this.selectable) {
+      return;
+    }
+
+    this.giornoSelezionatoCorrente = giorno;
+
+    this.giornoSelezionato.emit(giorno);
 
   }
 

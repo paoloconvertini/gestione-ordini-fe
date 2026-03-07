@@ -12,7 +12,7 @@
   <app-map [ordini]="ordiniMappa"></app-map>
 </div>
 
-<div class="week-navigation" *ngIf="!compactMode">
+<div class="week-navigation">
   <button
     class="calendar-btn"
     [disabled]="filtro.deltaSettimana === -3"
@@ -79,7 +79,11 @@
             <div class="giorni-header">
               <div class="giorni-row">
 
-                <div class="giorni-box" *ngFor="let giorno of giorni">
+                <div
+                  class="giorni-box"
+                  *ngFor="let giorno of giorni"
+                  [class.giorno-selected]="giorno === giornoSelezionatoCorrente"
+                  (click)="selezionaGiorno(giorno)">
                   <h2 class="titolo">
                     <div class="giorno-header">
                       <span class="giorno-sett">

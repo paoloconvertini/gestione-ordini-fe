@@ -3,14 +3,6 @@
 <mat-dialog-content>
 
   <form [formGroup]="form" class="step-form-row">
-
-    <mat-form-field appearance="outline">
-      <mat-label>Data</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="dataConsegna">
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-
     <mat-form-field appearance="outline">
       <mat-label>Fascia</mat-label>
       <mat-select formControlName="oraConsegna">
@@ -28,53 +20,39 @@
       </mat-select>
     </mat-form-field>
 
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="form.invalid"
-      (click)="caricaConsegne()">
-      Mostra consegne
-    </button>
-
   </form>
-
   <div
-    cdkDropList
-    class="consegne-list"
-    (cdkDropListDropped)="drop($event)"
-    *ngIf="consegne.length">
+    class="giorno-selezionato"
+    *ngIf="giornoSelezionatoLabel"
+    [ngClass]="fasciaClasse">
 
-    <div
-      class="consegna-card"
-      *ngFor="let c of consegne"
-      cdkDrag>
+    Consegna programmata per
+    <strong>{{ giornoSelezionatoLabel }}</strong>
 
-      <div class="consegna-header">
-        <div class="ordine-index">{{c.ordine}}</div>
-        <div class="localita">{{c.localita}}</div>
-        <div class="header-right">
-          {{c.anno}}/{{c.serie}}/{{c.progressivo}}
-        </div>
-      </div>
-
-      <div class="consegna-body">
-        <b>{{c.intestazione}}</b>
-        <div>{{c.riferimento}}</div>
-      </div>
-
-      <div class="consegna-footer">
-        <span class="badge">{{c.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}</span>
-        <span class="badge">{{c.descVeicolo}}</span>
-      </div>
-
-    </div>
   </div>
+  <!-- PLANNER SEMPRE VISIBILE -->
+  <app-consegne-settimanali
+    [compactMode]="true"
+    [selectable]="true"
+    [veicolo]="form.value.veicolo"
+    [fascia]="form.value.oraConsegna"
+    (giornoSelezionato)="giornoSelezionato($event)">
+  </app-consegne-settimanali>
 
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+
   <button mat-button (click)="chiudi()">Annulla</button>
-  <button mat-raised-button color="primary" (click)="conferma()">
-    Conferma
+
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="form.invalid || !giornoSelezionatoData"
+    (click)="conferma()">
+
+    Salva
+
   </button>
+
 </mat-dialog-actions>

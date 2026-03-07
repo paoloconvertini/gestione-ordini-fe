@@ -59,3 +59,22 @@
   border-radius: 4px;
   font-size: 12px;
 }
+
+.giorno-selezionato {
+  text-align: center;
+  font-size: 15px;
+  margin: 10px 0 16px 0;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.fascia-mattina {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.fascia-pomeriggio {
+  background: #fff3e0;
+  color: #ef6c00;
+}

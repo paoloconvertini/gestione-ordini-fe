@@ -407,8 +407,17 @@ export class GestioneConsegneComponent extends BaseComponent implements OnInit {
   }
 
 
-  updateVeicolo(articolo: any): void {
-    this.service.updateVeicolo(articolo).pipe(takeUntil(this.ngUnsubscribe))
+  updateVeicolo(ordine: any): void {
+    const payload = {
+      anno: ordine.anno,
+      serie: ordine.serie,
+      progressivo: ordine.progressivo,
+      veicolo: ordine.veicolo,
+      dataConsegna: ordine.dataConsegna,
+      oraConsegna: ordine.oraConsegna,
+      ordine: ordine.ordine
+    };
+    this.service.updateVeicolo(payload).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
           if (!res.error) {
