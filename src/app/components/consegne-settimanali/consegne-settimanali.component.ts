@@ -1,24 +1,29 @@
-import {Component, OnInit} from '@angular/core';
-import {BaseComponent} from "../baseComponent";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ViewportScroller} from "@angular/common";
-import {ScrollPositionService} from "../../services/scroll-position.service";
-import {AuthService} from "../../services/auth/auth.service";
-import {EmailService} from "../../services/email/email.service";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {takeUntil} from "rxjs";
-import {environment} from "../../../environments/environment";
-import {FiltroOrdini} from "../../models/FiltroOrdini";
-import {ListaService} from "../../services/ordine-cliente/logistica/lista.service";
-import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
-import {ArticoloService} from "../../services/ordine-cliente/articolo/articolo.service";
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { BaseComponent } from "../baseComponent";
+import { ActivatedRoute, Router } from "@angular/router";
+import { ViewportScroller } from "@angular/common";
+import { ScrollPositionService } from "../../services/scroll-position.service";
+import { AuthService } from "../../services/auth/auth.service";
+import { EmailService } from "../../services/email/email.service";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { takeUntil } from "rxjs";
+
+import { FiltroOrdini } from "../../models/FiltroOrdini";
+import { ListaService } from "../../services/ordine-cliente/logistica/lista.service";
+import { ArticoloService } from "../../services/ordine-cliente/articolo/articolo.service";
+
 import {
   ConsegneSettimanaliDettaglioDialogComponent
 } from "../consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component";
-import {NotaConsegna} from "../../models/NotaConsegna";
-import {NotaConsegnaService} from "../../services/nota-consegna/nota-consegna.service";
-import {OrdineMappaDto} from "../../models/ordineMappaDto";
+
+import { NotaConsegna } from "../../models/NotaConsegna";
+import { NotaConsegnaService } from "../../services/nota-consegna/nota-consegna.service";
+import { OrdineMappaDto } from "../../models/ordineMappaDto";
+import {GiornoConsegne} from "../../models/GiornoConsegne";
+import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
+
+
 const moment = require('moment');
 
 @Component({
@@ -26,153 +31,180 @@ const moment = require('moment');
   templateUrl: './consegne-settimanali.component.html',
   styleUrls: ['./consegne-settimanali.component.css']
 })
-export class ConsegneSettimanaliComponent extends BaseComponent implements OnInit{
+export class ConsegneSettimanaliComponent extends BaseComponent implements OnInit {
 
   loader = false;
+
   filtro: FiltroOrdini = new FiltroOrdini();
+
   user: any;
-  consegne: ConsegneSettimanali = new ConsegneSettimanali();
-  notaConsegnaLun: NotaConsegna = new NotaConsegna();
-  notaConsegnaMar: NotaConsegna = new NotaConsegna();
-  notaConsegnaMer: NotaConsegna = new NotaConsegna();
-  notaConsegnaGiov: NotaConsegna = new NotaConsegna();
-  notaConsegnaVen: NotaConsegna = new NotaConsegna();
-  notaConsegnaSab: NotaConsegna = new NotaConsegna();
+
+  giorni: GiornoConsegne[] = [];
+
+  noteConsegna: { [key: string]: NotaConsegna } = {};
+
   showMappa: boolean = false;
+
   ordiniMappa: OrdineMappaDto[] = [];
 
-  constructor(    private notaConsegnaService: NotaConsegnaService, private router: Router,
-                  private viewportScroller: ViewportScroller,
-                  private scrollPositionService: ScrollPositionService,
-                  private authService: AuthService, private activatedRoute: ActivatedRoute,
-                  private emailService: EmailService, private service: ListaService,
-                  private articoloService: ArticoloService,
-                  private dialog: MatDialog, private snackbar: MatSnackBar, private route: Router) {
+  @Input() compactMode: boolean = false;
+
+  @Input() selectable: boolean = false;
+
+  @Output() giornoSelected = new EventEmitter<Date>();
+
+  constructor(
+    private notaConsegnaService: NotaConsegnaService,
+    private router: Router,
+    private viewportScroller: ViewportScroller,
+    private scrollPositionService: ScrollPositionService,
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
+    private emailService: EmailService,
+    private service: ListaService,
+    private articoloService: ArticoloService,
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar,
+    private route: Router
+  ) {
     super();
   }
 
   ngOnInit(): void {
+
     this.retrieveList(0);
+
     this.user = this.authService.getCurrentUser()?.username;
+
   }
 
   mostraMappa(): void {
+
     this.showMappa = !this.showMappa;
 
     if (this.showMappa) {
       this.loadOrdiniMappa();
     }
+
   }
 
   loadOrdiniMappa(): void {
+
     this.service.getAllForMap(this.filtro)
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(data => {
-        this.ordiniMappa = data;
+      .subscribe({
+        next: (data) => {
+          this.ordiniMappa = data;
+        }
       });
+
   }
 
-  retrieveList(delta:number): void {
+  retrieveList(delta: number): void {
+
     this.loader = true;
+
     this.filtro.deltaSettimana = delta;
-    this.service.getConsegneSettimanali(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+
+    this.service.getConsegneSettimanali(this.filtro)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (data: any | undefined) => {
-          this.consegne = data;
-          if(this.consegne.lunedi.consegne && this.consegne.lunedi.consegne.length > 0) {
-            this.getNotaConsegna( this.consegne.lunedi.consegne[0].dataConsegna, 1);
-          }
-          if(this.consegne.martedi.consegne && this.consegne.martedi.consegne.length > 0) {
-            this.getNotaConsegna( this.consegne.martedi.consegne[0].dataConsegna, 2);
-          }
 
-          if(this.consegne.mercoledi.consegne && this.consegne.mercoledi.consegne.length > 0) {
-            this.getNotaConsegna( this.consegne.mercoledi.consegne[0].dataConsegna, 3);
-          }
+        next: (data: ConsegneSettimanali) => {
 
-          if(this.consegne.giovedi.consegne && this.consegne.giovedi.consegne.length > 0) {
-            this.getNotaConsegna( this.consegne.giovedi.consegne[0].dataConsegna, 4);
-          }
+          this.giorni = data?.giorni || [];
 
-          if(this.consegne.venerdi.consegne && this.consegne.venerdi.consegne.length > 0) {
-            this.getNotaConsegna( this.consegne.venerdi.consegne[0].dataConsegna, 5);
-          }
-          if(this.consegne.sabato.consegne && this.consegne.sabato.consegne.length > 0) {
-            this.getNotaConsegna( this.consegne.sabato.consegne[0].dataConsegna, 6);
-          }
+          this.giorni.forEach(g => {
+
+            if (g.data) {
+              this.getNotaConsegna(g.data);
+            }
+
+          });
+
+          this.loader = false;
+
+        },
+
+        error: () => {
           this.loader = false;
         }
-      })
+
+      });
+
   }
 
+  getNotaConsegna(dataConsegna: any): void {
 
-  getNotaConsegna(date: any, giorno:number): void {
-    date = moment(date);
-    let data = date.format('DDMMyyyy');
-    this.notaConsegnaService.getNota(data).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
-      next: (data: any) => {
-        switch (giorno) {
-          case 1: {
-            if(data) {
-              this.notaConsegnaLun = data;
-            } else {
-              this.notaConsegnaLun = new NotaConsegna();
-            }
-            break;
-          }
-          case 2: {
-            if(data) {
-              this.notaConsegnaMar = data;
-            } else {
-              this.notaConsegnaMar = new NotaConsegna();
-            }
-            break;
-          }
-          case 3: {
-            if(data) {
-              this.notaConsegnaMer = data;
-            } else {
-              this.notaConsegnaMer = new NotaConsegna();
-            }
-            break;
-          }
-          case 4: {
-            if(data) {
-              this.notaConsegnaGiov = data;
-            } else {
-              this.notaConsegnaGiov = new NotaConsegna();
-            }
-            break;
-          }
-          case 5: {
-            if(data) {
-              this.notaConsegnaVen = data;
-            } else {
-              this.notaConsegnaVen = new NotaConsegna();
-            }
-            break;
-          }
-          case 6: {
-            if(data) {
-              this.notaConsegnaSab = data;
-            } else {
-              this.notaConsegnaSab = new NotaConsegna();
-            }
-            break;
-          }
+    const date = moment(dataConsegna);
+
+    const data = date.format('DDMMyyyy');
+
+    this.notaConsegnaService.getNota(data)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+
+        next: (nota: NotaConsegna) => {
+
+          this.noteConsegna[data] = nota ? nota : new NotaConsegna();
+
         }
 
-      }
-    })
+      });
+
+  }
+
+  getNota(giorno: GiornoConsegne): NotaConsegna {
+
+    const key = moment(giorno.data).format('DDMMyyyy');
+
+    return this.noteConsegna[key];
+
+  }
+
+  onClickConsegna(consegna: any, giorno: GiornoConsegne): void {
+
+    if (this.selectable) {
+
+      this.giornoSelected.emit(new Date(giorno.data));
+
+      return;
+
+    }
+
+    this.dettaglio(consegna);
+
   }
 
   dettaglio(consegna: any) {
+
     this.dialog.open(ConsegneSettimanaliDettaglioDialogComponent, {
       width: '90%',
       data: consegna,
       autoFocus: false,
-      maxHeight: '90vh' //you can adjust the value as per your view
+      maxHeight: '90vh'
     });
+
+  }
+
+  getLabelGiorno(giorno: string): string {
+
+    switch (giorno) {
+      case 'MONDAY':
+        return 'LUN';
+      case 'TUESDAY':
+        return 'MAR';
+      case 'WEDNESDAY':
+        return 'MER';
+      case 'THURSDAY':
+        return 'GIO';
+      case 'FRIDAY':
+        return 'VEN';
+      case 'SATURDAY':
+        return 'SAB';
+      default:
+        return giorno;
+    }
 
   }
 

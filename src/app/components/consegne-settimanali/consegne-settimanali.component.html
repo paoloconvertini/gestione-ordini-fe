@@ -1,314 +1,170 @@
-<div class="header-bar">
+<div class="header-bar" *ngIf="!compactMode">
   <div class="ordine-title">
     <span>CONSEGNE SETTIMANALI</span>
+
     <button mat-icon-button (click)="mostraMappa()">
       <mat-icon>location_on</mat-icon>
     </button>
   </div>
 </div>
-<div *ngIf="showMappa" class="map-wrapper">
-  <app-map  [ordini]="ordiniMappa"></app-map>
+
+<div *ngIf="showMappa && !compactMode" class="map-wrapper">
+  <app-map [ordini]="ordiniMappa"></app-map>
 </div>
-<div class="row">
-  <div class="col-lg-12 col-md-12 col-sm-12 text-center">
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-3" mat-raised-button (click)="retrieveList(-3)" matTooltip="Settimana precedente">
-      <mat-icon>first_page</mat-icon>
-    </button>
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-2" mat-raised-button (click)="retrieveList(-2)" matTooltip="2° Settimana precedente">
-      <mat-icon>keyboard_double_arrow_left</mat-icon>
-    </button>
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===-1" mat-raised-button (click)="retrieveList(-1)" matTooltip="3° Settimana precedente">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===0" mat-raised-button (click)="retrieveList(0)" matTooltip="Settimana corrente">
-      <mat-icon>today</mat-icon>
-    </button>
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===1" mat-raised-button (click)="retrieveList(1)" matTooltip="Settimana prossima">
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-    <button class="calendar-btn" [disabled]="filtro.deltaSettimana===2" mat-raised-button (click)="retrieveList(2)" matTooltip="2° Settimana prossima">
-      <mat-icon>keyboard_double_arrow_right</mat-icon>
-    </button>
-    <button [disabled]="filtro.deltaSettimana===3" mat-raised-button (click)="retrieveList(3)" matTooltip="3° Settimana prossima">
-      <mat-icon>last_page</mat-icon>
-    </button>
-  </div>
+
+<div class="week-navigation" *ngIf="!compactMode">
+  <button
+    class="calendar-btn"
+    [disabled]="filtro.deltaSettimana === -3"
+    mat-raised-button
+    (click)="retrieveList(-3)">
+    <mat-icon>first_page</mat-icon>
+  </button>
+
+  <button
+    class="calendar-btn"
+    [disabled]="filtro.deltaSettimana === -2"
+    mat-raised-button
+    (click)="retrieveList(-2)">
+    <mat-icon>keyboard_double_arrow_left</mat-icon>
+  </button>
+
+  <button
+    class="calendar-btn"
+    [disabled]="filtro.deltaSettimana === -1"
+    mat-raised-button
+    (click)="retrieveList(-1)">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+
+  <button
+    class="calendar-btn"
+    [disabled]="filtro.deltaSettimana === 0"
+    mat-raised-button
+    (click)="retrieveList(0)">
+    <mat-icon>today</mat-icon>
+  </button>
+
+  <button
+    class="calendar-btn"
+    [disabled]="filtro.deltaSettimana === 1"
+    mat-raised-button
+    (click)="retrieveList(1)">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
+  <button
+    class="calendar-btn"
+    [disabled]="filtro.deltaSettimana === 2"
+    mat-raised-button
+    (click)="retrieveList(2)">
+    <mat-icon>keyboard_double_arrow_right</mat-icon>
+  </button>
+
+  <button
+    [disabled]="filtro.deltaSettimana === 3"
+    mat-raised-button
+    (click)="retrieveList(3)">
+    <mat-icon>last_page</mat-icon>
+  </button>
 </div>
-<div class="main">
-  <div class="main2">
+
+<div class="planner-wrapper">
+  <div class="planner-content">
     <div class="giorni-container">
-      <div class="grid">
-        <div class="grid2">
+      <div class="planner-grid">
+        <div class="planner-grid-inner">
           <div class="presentation">
-            <div class="row giorni">
+
+            <div class="giorni-header">
               <div class="giorni-row">
-                <!--  LUNEDI-->
-                <div class="giorni-box">
+
+                <div class="giorni-box" *ngFor="let giorno of giorni">
                   <h2 class="titolo">
-                    <div aria-hidden="true" class="giorno-sett">Lun</div>
-                    <div class="giorno-num">
-                      <span *ngIf="consegne.lunedi.consegne && consegne.lunedi.consegne.length > 0">
-                        {{consegne.lunedi.consegne[0].dataConsegna | date:'d'}}
+                    <div class="giorno-header">
+                      <span class="giorno-sett">
+                        {{ getLabelGiorno(giorno.giorno) }}
                       </span>
-                      <button  *ngIf="notaConsegnaLun && notaConsegnaLun.id" mat-icon-button
-                               matTooltip="{{notaConsegnaLun.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                        <mat-icon aria-hidden="false"
-                          aria-label="nota consegna"
-                          color="primary">announcement</mat-icon>
-                      </button>
-                    </div>
-                  </h2>
-                </div>
-                <!--  MARTEDI-->
-                <div class="giorni-box">
-                  <h2 class="titolo">
-                    <div aria-hidden="true" class="giorno-sett">Mar</div>
-                    <div class="giorno-num"><span *ngIf="consegne.martedi.consegne && consegne.martedi.consegne.length > 0">{{consegne.martedi.consegne[0].dataConsegna | date:'d'}}</span>
-                      <button  *ngIf="notaConsegnaMar && notaConsegnaMar.id" mat-icon-button
-                               matTooltip="{{notaConsegnaMar.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                        <mat-icon aria-hidden="false"
-                                  aria-label="nota consegna"
-                                  color="primary">announcement</mat-icon>
-                      </button>
-                    </div>
-                  </h2>
-                </div>
-                <!--  MERCOLEDI-->
-                <div class="giorni-box">
-                  <h2 class="titolo">
-                    <div aria-hidden="true" class="giorno-sett">Mer</div>
-                    <div class="giorno-num">
-                      <span *ngIf="consegne.mercoledi.consegne && consegne.mercoledi.consegne.length > 0">{{consegne.mercoledi.consegne[0].dataConsegna | date:'d'}}
+                      <span
+                        class="badge-consegne"
+                        [class.badge-active]="giorno.numeroConsegne > 0">{{ giorno.numeroConsegne }}
                       </span>
-                      <button  *ngIf="notaConsegnaMer && notaConsegnaMer.id" mat-icon-button
-                               matTooltip="{{notaConsegnaMer.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                        <mat-icon aria-hidden="false"
-                                  aria-label="nota consegna"
-                                  color="primary">announcement</mat-icon>
+                    </div>
+                    <div class="giorno-num">
+                      {{ giorno.data | date:'d' }}
+                      <button
+                        *ngIf="getNota(giorno)?.id"
+                        mat-icon-button
+                        matTooltip="{{ getNota(giorno)?.nota }}"
+                        #tooltip="matTooltip"
+                        (click)="tooltip.toggle()">
+                        <mat-icon color="primary">announcement</mat-icon>
                       </button>
                     </div>
+
                   </h2>
                 </div>
-                <!--  GIOVEDI-->
-                <div class="giorni-box">
-                  <h2 class="titolo">
-                    <div aria-hidden="true" class="giorno-sett">Gio</div>
-                    <div class="giorno-num"><span *ngIf="consegne.giovedi.consegne && consegne.giovedi.consegne.length > 0">{{consegne.giovedi.consegne[0].dataConsegna | date:'d'}}</span>
-                      <button  *ngIf="notaConsegnaGiov && notaConsegnaGiov.id" mat-icon-button
-                               matTooltip="{{notaConsegnaGiov.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                        <mat-icon aria-hidden="false"
-                                  aria-label="nota consegna"
-                                  color="primary">announcement</mat-icon>
-                      </button>
-                    </div>
-                  </h2>
-                </div>
-                <!--  VENERDI-->
-                <div class="giorni-box">
-                  <h2 class="titolo">
-                    <div aria-hidden="true" class="giorno-sett">Ven</div>
-                    <div class="giorno-num"><span *ngIf="consegne.venerdi.consegne && consegne.venerdi.consegne.length > 0">{{consegne.venerdi.consegne[0].dataConsegna | date:'d'}}</span>
-                      <button  *ngIf="notaConsegnaVen && notaConsegnaVen.id" mat-icon-button
-                               matTooltip="{{notaConsegnaVen.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                        <mat-icon aria-hidden="false"
-                                  aria-label="nota consegna"
-                                  color="primary">announcement</mat-icon>
-                      </button>
-                    </div>
-                  </h2>
-                </div>
-                <!--  SABATO-->
-                <div class="giorni-box">
-                  <h2 class="titolo">
-                    <div aria-hidden="true" class="giorno-sett">Sab</div>
-                    <div class="giorno-num"><span *ngIf="consegne.sabato.consegne && consegne.sabato.consegne.length > 0">{{consegne.sabato.consegne[0].dataConsegna | date:'d'}}</span>
-                      <button  *ngIf="notaConsegnaSab && notaConsegnaSab.id" mat-icon-button
-                               matTooltip="{{notaConsegnaSab.nota}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                        <mat-icon aria-hidden="false"
-                                  aria-label="nota consegna"
-                                  color="primary">announcement</mat-icon>
-                      </button>
-                    </div>
-                  </h2>
-                </div>
+
               </div>
             </div>
+
             <div class="consegne">
               <div class="consegne-container">
                 <div class="consegne-box">
                   <div class="consegne-row">
-                    <div class="grid-cell">
-                      <div *ngFor="let consegna of consegne.lunedi.consegne; index as i">
+
+                    <div class="grid-cell" *ngFor="let giorno of giorni">
+                      <div *ngFor="let consegna of giorno.consegne">
                         <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
+                          <div
+                            class="evento"
+                            [ngClass]="{ 'pomeriggio': consegna.oraConsegna === 'P' }"
+                            (click)="onClickConsegna(consegna, giorno)">
+
                             <div class="evento-title">
-                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
-                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
-                              <div class="evento-intestazione">
-                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
+                              <div class="evento-localita">
+                                {{ consegna.localita }}
                               </div>
-                              <div class="evento-intestazione">
-                                {{consegna.intestazione}}
+                              <div class="evento-ordine">
+                                {{ consegna.anno }}/{{ consegna.serie }}/{{ consegna.progressivo }}
                               </div>
-                              <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}}
+                              <div class="evento-cliente">
+                                <mat-icon class="evento-icon">person</mat-icon>
+                                {{ consegna.intestazione }}
                               </div>
-                              <div class="evento-intestazione">
-                                Cell.:{{consegna.cellulare}}
+                              <div class="evento-divider" *ngIf="!compactMode && consegna.indirizzo"></div>
+                              <div class="evento-indirizzo" *ngIf="!compactMode && consegna.indirizzo">
+                                <mat-icon class="evento-icon">place</mat-icon>
+                                {{ consegna.indirizzo }}
                               </div>
-                              <div class="evento-intestazione">
-                                {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
+                              <div class="evento-divider" *ngIf="!compactMode && consegna.cellulare"></div>
+                              <div class="evento-cellulare" *ngIf="!compactMode && consegna.cellulare">
+                                <mat-icon class="evento-icon">phone</mat-icon>
+                                {{ consegna.cellulare }}
                               </div>
-                              <div class="evento-intestazione">Mezzo: {{consegna.descVeicolo}}</div>
+                              <div class="evento-footer">
+
+    <span>
+      {{ consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina' }}
+    </span>
+
+                                <span>
+      {{ consegna.descVeicolo }}
+    </span>
+
+                              </div>
+
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="grid-cell">
-                      <div *ngFor="let consegna of consegne.martedi.consegne; index as i">
-                        <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
-                            <div class="evento-title">
-                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
-                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
-                              <div class="evento-intestazione">
-                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.intestazione}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Cell.:{{consegna.cellulare}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
-                              </div>
-                              <div class="evento-intestazione">Mezzo: {{consegna.descVeicolo}}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="grid-cell">
-                      <div *ngFor="let consegna of consegne.mercoledi.consegne; index as i">
-                        <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
-                            <div class="evento-title">
-                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
-                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
-                              <div class="evento-intestazione">
-                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.intestazione}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Cell.:{{consegna.cellulare}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
-                              </div>
-                              <div class="evento-intestazione">Mezzo: {{consegna.descVeicolo}}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="grid-cell">
-                      <div *ngFor="let consegna of consegne.giovedi.consegne; index as i">
-                        <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
-                            <div class="evento-title">
-                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
-                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
-                              <div class="evento-intestazione">
-                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.intestazione}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Cell.:{{consegna.cellulare}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
-                              </div>
-                              <div class="evento-intestazione">Mezzo: {{consegna.descVeicolo}}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="grid-cell">
-                      <div *ngFor="let consegna of consegne.venerdi.consegne; index as i">
-                        <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
-                            <div class="evento-title">
-                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
-                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
-                              <div class="evento-intestazione">
-                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.intestazione}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Cell.:{{consegna.cellulare}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
-                              </div>
-                              <div class="evento-intestazione">Mezzo: {{consegna.descVeicolo}}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="grid-cell">
-                      <div *ngFor="let consegna of consegne.sabato.consegne; index as i">
-                        <div class="box-evento">
-                          <div class="evento" [ngClass]="{'pomeriggio' : consegna.oraConsegna === 'P' }" (click)="dettaglio(consegna)">
-                            <div class="evento-title">
-                              <div class="evento-indirizzo text-center"><b>{{consegna.localita}}</b></div>
-                              <div class="evento-indirizzo">{{consegna.indirizzo}}</div>
-                              <div class="evento-intestazione">
-                                N. ord: {{consegna.anno}}/{{consegna.serie}}/{{consegna.progressivo}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.intestazione}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Tel.: {{consegna.telefono}}
-                              </div>
-                              <div class="evento-intestazione">
-                                Cell.:{{consegna.cellulare}}
-                              </div>
-                              <div class="evento-intestazione">
-                                {{consegna.ordine}} - {{consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina'}}
-                              </div>
-                              <div class="evento-intestazione">Mezzo: {{consegna.descVeicolo}}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
