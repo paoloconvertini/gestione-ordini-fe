@@ -188,10 +188,37 @@ export class GestioneConsegneComponent extends BaseComponent implements OnInit {
           this.totalItems = data.count;
           this.dataSource.data = data.list;
           this.loader = false;
+          if (this.showMappa) {
+            this.buildOrdiniMappa(data.list);
+          }
         }
       })
   }
 
+  private buildOrdiniMappa(lista: any[]): void {
+
+    const result: OrdineMappaDto[] = [];
+
+    for (const o of lista) {
+
+      if (!o.latitudine || !o.longitudine) continue;
+
+      result.push({
+        latitudine: o.latitudine,
+        longitudine: o.longitudine,
+        intestazione: o.intestazione,
+        indirizzo: o.indirizzo,
+        telefono: o.telefono,
+        cellulare: o.cellulare,
+        sottoConto: o.sottoConto,
+        ordine: o.ordine,
+        oraConsegna: o.oraConsegna,
+        idVeicolo: o.idVeicolo
+      });
+    }
+
+    this.ordiniMappa = result;
+  }
 
   getAllRiservati(): void {
     this.loader = true;

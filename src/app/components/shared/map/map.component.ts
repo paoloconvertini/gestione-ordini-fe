@@ -1,23 +1,17 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 
 import OlMap from 'ol/Map';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
-import { Vector as VectorSource, Cluster } from 'ol/source';
-import { Point } from 'ol/geom';
-import { Feature } from 'ol';
-import { Style, Fill, Stroke, Text } from 'ol/style';
+import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
+import {Cluster, Vector as VectorSource} from 'ol/source';
+import {Point} from 'ol/geom';
+import {Feature} from 'ol';
+import {Fill, Stroke, Style, Text} from 'ol/style';
 import CircleStyle from 'ol/style/Circle';
-import { useGeographic } from 'ol/proj';
-import Popup from 'ol-popup';
-import { boundingExtent } from 'ol/extent';
+import {useGeographic} from 'ol/proj';
+import {boundingExtent} from 'ol/extent';
+import Overlay from 'ol/Overlay';
 
 useGeographic();
 
@@ -35,14 +29,20 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
   private map!: OlMap;
   private clusterLayer!: VectorLayer<VectorSource>;
-  private popup!: Popup;
+  @ViewChild('popup') popupElement!: ElementRef;
+  @ViewChild('popupContent') popupContent!: ElementRef;
+
+  private overlay!: Overlay;
 
   ngAfterViewInit(): void {
     this.initMap();
+    if (this.ordini?.length) {
+      this.renderMarkers();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['ordini'] && this.map) {
+    if (changes['ordini'] && this.map && this.clusterLayer) {
       this.renderMarkers();
     }
   }
@@ -60,7 +60,24 @@ export class MapComponent implements AfterViewInit, OnChanges {
         zoom: 9
       })
     });
+    this.overlay = new Overlay({
+      element: this.popupElement.nativeElement,
+      positioning: 'bottom-center',
+      autoPan: true
+    });
 
+    this.map.addOverlay(this.overlay);
+    this.clusterLayer = new VectorLayer({
+      source: new Cluster({
+        distance: 10,
+        source: new VectorSource()
+      }),
+      style: this.clusterStyle
+    });
+
+    this.map.addLayer(this.clusterLayer);
+
+    this.registerEvents();
     this.addSedeMarker();
   }
 
@@ -86,10 +103,6 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
   private renderMarkers(): void {
 
-    if (this.clusterLayer) {
-      this.map.removeLayer(this.clusterLayer);
-    }
-
     const features: Feature[] = [];
 
     for (const e of this.ordini) {
@@ -106,20 +119,11 @@ export class MapComponent implements AfterViewInit, OnChanges {
       );
     }
 
-    const source = new VectorSource({ features });
+    const clusterSource = this.clusterLayer.getSource() as Cluster;
+    const vectorSource = clusterSource.getSource() as VectorSource;
 
-    const clusterSource = new Cluster({
-      distance: 10,
-      source
-    });
-
-    this.clusterLayer = new VectorLayer({
-      source: clusterSource,
-      style: this.clusterStyle
-    });
-
-    this.map.addLayer(this.clusterLayer);
-    this.registerEvents();
+    vectorSource.clear();
+    vectorSource.addFeatures(features);
   }
 
   private styleCache: any = {};
@@ -144,7 +148,6 @@ export class MapComponent implements AfterViewInit, OnChanges {
   };
 
   private registerEvents(): void {
-    this.popup = new Popup();
 
     this.map.on('pointermove', evt => {
       this.map.getTargetElement().style.cursor =
@@ -152,32 +155,95 @@ export class MapComponent implements AfterViewInit, OnChanges {
     });
 
     this.map.on('click', e => {
-      this.map.getOverlays().clear();
+
+      this.overlay.setPosition(undefined);
 
       this.map.forEachFeatureAtPixel(e.pixel, feature => {
+
         const features = feature.get('features');
 
+        if (!features || features.length === 0) return;
+
         if (features.length === 1) {
-          const f = features[0];
-          this.popup.show(e.coordinate, `
-            <div style="font-size:0.75em">
-              ${f.get('name')}<br>
-              ${f.get('indirizzo')}<br>
-              tel: ${f.get('telefono')}<br>
-              cell: ${f.get('cellulare')}
-            </div>
-          `);
-          this.map.addOverlay(this.popup);
+
+          this.showSinglePopup(features[0], e.coordinate);
+
         } else {
-          const extent = boundingExtent(
-            features.map((r: any) => r.getGeometry().getCoordinates())
+
+          const coords: [number, number][] = features.map((f: any) =>
+            f.getGeometry().getCoordinates() as [number, number]
           );
-          this.map.getView().fit(extent, {
-            duration: 1000,
-            padding: [25, 25, 25, 25]
-          });
+
+          const allSame = coords.every((c: [number, number]) =>
+            c[0] === coords[0][0] && c[1] === coords[0][1]
+          );
+          console.log('features length', features.length);
+          console.log('allSame', allSame);
+          if (allSame) {
+            this.showMultiplePopup(features, e.coordinate);
+          } else {
+            const extent = boundingExtent(coords);
+            this.map.getView().fit(extent, {
+              duration: 1000,
+              padding: [25, 25, 25, 25]
+            });
+          }
         }
+
       });
+
     });
+  }
+  private showSinglePopup(feature: any, coordinate: any): void {
+    this.popupContent.nativeElement.innerHTML = `
+    <div style="font-size:0.75em">
+      <strong>${feature.get('name')}</strong><br>
+      ${feature.get('indirizzo')}<br>
+      tel: ${feature.get('telefono') || '-'}<br>
+      cell: ${feature.get('cellulare') || '-'}
+    </div>
+  `;
+    this.overlay.setPosition(coordinate);
+  }
+
+  private showMultiplePopup(features: any[], coordinate: any): void {
+
+    const grouped: Record<string, any[]> = {};
+
+    for (const f of features) {
+
+      const key = f.get('sottoConto');
+
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+
+      grouped[key].push(f);
+    }
+
+    let html = `<div style="font-size:0.8em">`;
+
+    for (const key in grouped) {
+
+      const group = grouped[key];
+      const first = group[0];
+
+      html += `
+      <div style="margin-bottom:8px;">
+        <strong>${first.get('name')}</strong>
+        ${group.length > 1 ? `(${group.length} ordini)` : ''}
+        <br>
+        ${first.get('indirizzo')}<br>
+        tel: ${first.get('telefono') || '-'}<br>
+        cell: ${first.get('cellulare') || '-'}
+      </div>
+      <hr>
+    `;
+    }
+
+    html += `</div>`;
+
+    this.popupContent.nativeElement.innerHTML = html;
+    this.overlay.setPosition(coordinate);
   }
 }

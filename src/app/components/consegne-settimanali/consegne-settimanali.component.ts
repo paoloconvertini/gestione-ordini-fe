@@ -127,7 +127,9 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
             }
 
           });
-
+          if (this.showMappa) {
+            this.buildOrdiniMappa();
+          }
           this.loader = false;
 
         },
@@ -138,6 +140,37 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
       });
 
+  }
+
+  private buildOrdiniMappa(): void {
+
+    const result: OrdineMappaDto[] = [];
+
+    for (const giorno of this.giorni) {
+
+      if (!giorno.consegne) continue;
+
+      for (const c of giorno.consegne) {
+
+        if (!c.latitudine || !c.longitudine) continue;
+
+        result.push({
+          latitudine: c.latitudine,
+          longitudine: c.longitudine,
+          intestazione: c.intestazione,
+          indirizzo: c.indirizzo,
+          telefono: c.telefono,
+          cellulare: c.cellulare,
+          sottoConto: c.sottoConto,
+          ordine: c.ordine,
+          oraConsegna: c.oraConsegna,
+          idVeicolo: c.veicolo
+        });
+
+      }
+    }
+
+    this.ordiniMappa = result;
   }
 
   getNotaConsegna(dataConsegna: any): void {
