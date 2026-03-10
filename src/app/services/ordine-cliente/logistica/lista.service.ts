@@ -47,4 +47,12 @@ export class ListaService extends CommonService{
   salvaConsegne(lista: any[]): Observable<any> {
     return this.http.post<any>(`${this.url}/salva-consegne`, lista);
   }
+
+  eliminaProgrammazione(anno: any, serie: any, progressivo: any) {
+    return this.http.delete<any>(`${this.url}/elimina-programmazione/${anno}/${serie}/${progressivo}`);
+  }
+
+  riordinaConsegne(lista: any) {
+    return this.http.put<any>(`${this.url}/riordina-consegne`, lista);
+  }
 }

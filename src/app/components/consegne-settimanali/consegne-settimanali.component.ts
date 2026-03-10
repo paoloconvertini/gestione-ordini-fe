@@ -22,6 +22,9 @@ import { NotaConsegnaService } from "../../services/nota-consegna/nota-consegna.
 import { OrdineMappaDto } from "../../models/ordineMappaDto";
 import {GiornoConsegne} from "../../models/GiornoConsegne";
 import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {ConsegnaEditDialogComponent} from "../consegna-edit-dialog/consegna-edit-dialog.component";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
 
 const moment = require('moment');
@@ -148,26 +151,39 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
     for (const giorno of this.giorni) {
 
-      if (!giorno.consegne) continue;
+      if (!giorno.fasce) continue;
 
-      for (const c of giorno.consegne) {
+      for (const fascia of giorno.fasce) {
 
-        if (!c.latitudine || !c.longitudine) continue;
+        if (!fascia.veicoli) continue;
 
-        result.push({
-          latitudine: c.latitudine,
-          longitudine: c.longitudine,
-          intestazione: c.intestazione,
-          indirizzo: c.indirizzo,
-          telefono: c.telefono,
-          cellulare: c.cellulare,
-          sottoConto: c.sottoConto,
-          ordine: c.ordine,
-          oraConsegna: c.oraConsegna,
-          idVeicolo: c.veicolo
-        });
+        for (const veicolo of fascia.veicoli) {
+
+          if (!veicolo.consegne) continue;
+
+          for (const c of veicolo.consegne) {
+
+            if (!c.latitudine || !c.longitudine) continue;
+
+            result.push({
+              latitudine: c.latitudine,
+              longitudine: c.longitudine,
+              intestazione: c.intestazione,
+              indirizzo: c.indirizzo,
+              telefono: c.telefono,
+              cellulare: c.cellulare,
+              sottoConto: c.sottoConto,
+              ordine: c.ordine,
+              oraConsegna: c.oraConsegna,
+              idVeicolo: c.veicolo
+            });
+
+          }
+
+        }
 
       }
+
     }
 
     this.ordiniMappa = result;
@@ -237,6 +253,83 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
     this.giornoSelezionatoCorrente = giorno;
 
     this.giornoSelezionato.emit(giorno);
+
+  }
+
+  modificaConsegna(consegna: any): void {
+
+    const dialogRef = this.dialog.open(ConsegnaEditDialogComponent, {
+      width: '450px',
+      data: { consegna }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result) {
+        this.retrieveList(this.filtro.deltaSettimana);
+      }
+
+    });
+
+  }
+
+  eliminaConsegna(consegna: any): void {
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        msg: 'Vuoi eliminare la programmazione della consegna?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (!result) {
+        return;
+      }
+
+      this.service.eliminaProgrammazione(
+        consegna.anno,
+        consegna.serie,
+        consegna.progressivo
+      ).subscribe(() => {
+
+        this.snackbar.open('Consegna rimossa', 'OK', {
+          duration: 2000
+        });
+
+        this.retrieveList(this.filtro.deltaSettimana);
+
+      });
+
+    });
+
+  }
+
+  drop(event: CdkDragDrop<any[]>, veicolo: any): void {
+
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+
+    moveItemInArray(
+      veicolo.consegne,
+      event.previousIndex,
+      event.currentIndex
+    );
+
+    const lista = veicolo.consegne.map((c: any, index: number) => ({
+      anno: c.anno,
+      serie: c.serie,
+      progressivo: c.progressivo,
+      ordine: index + 1
+    }));
+
+    this.service.riordinaConsegne(lista)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.retrieveList(this.filtro.deltaSettimana);
+      });
 
   }
 

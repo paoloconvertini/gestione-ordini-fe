@@ -118,50 +118,119 @@
                   <div class="consegne-row">
 
                     <div class="grid-cell" *ngFor="let giorno of giorni">
-                      <div *ngFor="let consegna of giorno.consegne">
-                        <div class="box-evento">
+
+                      <ng-container *ngFor="let fascia of giorno.fasce">
+
+                        <div class="fascia-header">
+                          {{ fascia.fascia === 'M' ? 'Mattina' : 'Pomeriggio' }}
+                        </div>
+
+                        <ng-container *ngFor="let veicolo of fascia.veicoli">
+
+                          <div class="veicolo-header">
+                            <mat-icon class="veicolo-icon">local_shipping</mat-icon>
+                            {{ veicolo.descrizione }}
+                          </div>
+
                           <div
-                            class="evento"
-                            [ngClass]="{ 'pomeriggio': consegna.oraConsegna === 'P' }"
-                            (click)="onClickConsegna(consegna, giorno)">
+                            cdkDropList
+                            [cdkDropListData]="veicolo.consegne"
+                            (cdkDropListDropped)="drop($event, veicolo)">
+                              <div *ngFor="let consegna of veicolo.consegne">
+                              <div class="box-evento" cdkDrag>
+                                <div
+                                  class="evento"
+                                  [ngClass]="{ 'pomeriggio': consegna.oraConsegna === 'P' }"
+                                  (click)="onClickConsegna(consegna, giorno)">
+                                  <div class="ordine-badge">
+                                    {{ consegna.ordine }}
+                                  </div>
+                                  <div class="evento-overlay">
 
-                            <div class="evento-title">
-                              <div class="evento-localita">
-                                {{ consegna.localita }}
-                              </div>
-                              <div class="evento-ordine">
-                                {{ consegna.anno }}/{{ consegna.serie }}/{{ consegna.progressivo }}
-                              </div>
-                              <div class="evento-cliente">
-                                <mat-icon class="evento-icon">person</mat-icon>
-                                {{ consegna.intestazione }}
-                              </div>
-                              <div class="evento-divider" *ngIf="!compactMode && consegna.indirizzo"></div>
-                              <div class="evento-indirizzo" *ngIf="!compactMode && consegna.indirizzo">
-                                <mat-icon class="evento-icon">place</mat-icon>
-                                {{ consegna.indirizzo }}
-                              </div>
-                              <div class="evento-divider" *ngIf="!compactMode && consegna.cellulare"></div>
-                              <div class="evento-cellulare" *ngIf="!compactMode && consegna.cellulare">
-                                <mat-icon class="evento-icon">phone</mat-icon>
-                                {{ consegna.cellulare }}
-                              </div>
-                              <div class="evento-footer">
+                                    <button
+                                      mat-mini-fab
+                                      color="primary"
+                                      (click)="modificaConsegna(consegna); $event.stopPropagation()"
+                                      matTooltip="Modifica consegna">
 
-    <span>
-      {{ consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina' }}
-    </span>
+                                      <mat-icon>edit</mat-icon>
 
-                                <span>
-      {{ consegna.descVeicolo }}
-    </span>
+                                    </button>
+
+                                    <button
+                                      mat-mini-fab
+                                      color="warn"
+                                      (click)="eliminaConsegna(consegna); $event.stopPropagation()"
+                                      matTooltip="Elimina consegna">
+
+                                      <mat-icon>delete</mat-icon>
+
+                                    </button>
+
+
+                                    <button
+                                      mat-mini-fab
+                                      cdkDragHandle
+                                      color="accent"
+                                      matTooltip="Riordina consegna">
+
+                                      <mat-icon>drag_indicator</mat-icon>
+
+                                    </button>
+
+                                  </div>
+                                  <div class="evento-title">
+                                    <div class="evento-localita">
+                                      {{ consegna.localita }}
+                                    </div>
+
+                                    <div class="evento-ordine">
+                                      {{ consegna.anno }}/{{ consegna.serie }}/{{ consegna.progressivo }}
+                                    </div>
+
+                                    <div class="evento-cliente">
+                                      <mat-icon class="evento-icon">person</mat-icon>
+                                      {{ consegna.intestazione }}
+                                    </div>
+
+                                    <div class="evento-divider" *ngIf="!compactMode && consegna.indirizzo"></div>
+
+                                    <div class="evento-indirizzo" *ngIf="!compactMode && consegna.indirizzo">
+                                      <mat-icon class="evento-icon">place</mat-icon>
+                                      {{ consegna.indirizzo }}
+                                    </div>
+
+                                    <div class="evento-divider" *ngIf="!compactMode && consegna.cellulare"></div>
+
+                                    <div class="evento-cellulare" *ngIf="!compactMode && consegna.cellulare">
+                                      <mat-icon class="evento-icon">phone</mat-icon>
+                                      {{ consegna.cellulare }}
+                                    </div>
+
+                                    <div class="evento-footer">
+
+                  <span>
+                    {{ consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina' }}
+                  </span>
+
+                                      <span>
+                    {{ consegna.descVeicolo }}
+                  </span>
+
+                                    </div>
+
+                                  </div>
+
+                                </div>
 
                               </div>
-
                             </div>
                           </div>
-                        </div>
-                      </div>
+
+                        </ng-container>
+
+                      </ng-container>
+
                     </div>
 
                   </div>
