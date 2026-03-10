@@ -79,7 +79,7 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
-    <div *ngIf="filtro.statusOrdine !== 'DA_ORDINARE' " class="col-lg-5 col-md-12 col-sm-12">
+    <div class="col-lg-5 col-md-12 col-sm-12">
       <mat-radio-group (change)="getArticoliByOrdineId()"
                        aria-label="Select an option" [(ngModel)]="filtroArticoli.flConsegna">
         <mat-radio-button *ngFor="let option of radioConsegnatoOptions" [checked]="option.checked"
