@@ -247,10 +247,12 @@
           <ng-container matColumnDef="flOrdinato">
             <th mat-header-cell *matHeaderCellDef>Ord.</th>
             <td mat-cell *matCellDef="let articolo">
-                <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditOrdinato"><mat-checkbox (change)="checkFlags(articolo, 1)"
-                                                                     disabled="{{ordineDettaglio.locked || filtro.statusOrdine === 'ARCHIVIATO'}}"
-                                                                     [(ngModel)]="articolo.flagOrdinato"
-                                                                     color="primary"></mat-checkbox>
+                <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                  <mat-checkbox (change)="checkFlags(articolo, 1)"
+                                disabled="{{!perm.canEditOrdinato || ordineDettaglio.locked || filtro.statusOrdine === 'ARCHIVIATO'}}"
+                                [(ngModel)]="articolo.flagOrdinato"
+                                color="primary">
+                  </mat-checkbox>
                 </span>
             </td>
           </ng-container>
