@@ -59,11 +59,13 @@ export class LoginComponent extends BaseComponent {
 
           // 2️⃣ LOGISTICA → pagina logistica
           if (this.perm.canRedirectLogistica) {
-            this.state.clearOnLogout(); // SOLO PER TEST
-            this.router.navigate(['/gestione-consegne']);
+            const state = this.state.getState();
+            state.prontoConsegna = true;
+            state.page = 0;
+            this.state.setState(state);
+            this.router.navigate(['/ordini-clienti']);
             return;
           }
-
 
           // 3️⃣ DEFAULT → ordini-clienti (status rimane quello salvato o default “TUTTI”)
           if (this.perm.canRedirectDefault) {
