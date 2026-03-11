@@ -25,6 +25,7 @@ import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {ConsegnaEditDialogComponent} from "../consegna-edit-dialog/consegna-edit-dialog.component";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {NotaConsegnaDialogComponent} from "../nota-consegna-dialog/nota-consegna-dialog.component";
 
 
 const moment = require('moment');
@@ -204,6 +205,55 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
           this.noteConsegna[data] = nota ? nota : new NotaConsegna();
 
         }
+
+      });
+
+  }
+
+  apriNota(giorno: GiornoConsegne): void {
+
+    const key = moment(giorno.data).format('DDMMyyyy');
+
+    const notaEsistente = this.noteConsegna[key];
+
+    const dialogRef = this.dialog.open(NotaConsegnaDialogComponent, {
+      width: '500px',
+      data: {
+        nota: notaEsistente ? notaEsistente.nota : ''
+      }
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((testo: string) => {
+
+        if (!testo) {
+          return;
+        }
+
+        const dto: any = {
+          id: notaEsistente?.id || null,
+          dataNota: giorno.data,
+          nota: testo
+        };
+
+        this.notaConsegnaService.salvaNota(dto)
+          .pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe((res: any) => {
+
+            if (res && !res.error) {
+
+              this.snackbar.open(res.msg, 'Chiudi', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top'
+              });
+
+              this.getNotaConsegna(giorno.data);
+
+            }
+
+          });
 
       });
 

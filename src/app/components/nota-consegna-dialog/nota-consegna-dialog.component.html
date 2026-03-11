@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Nota giorno</h2>
+
+<mat-dialog-content>
+
+  <mat-form-field appearance="outline" style="width:100%">
+    <mat-label>Nota</mat-label>
+
+    <textarea
+      matInput
+      rows="4"
+      [(ngModel)]="nota">
+    </textarea>
+
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button mat-button (click)="dialogRef.close()">Annulla</button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="dialogRef.close(nota)">
+
+    Salva
+
+  </button>
+
+</mat-dialog-actions>

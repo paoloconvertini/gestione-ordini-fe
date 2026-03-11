@@ -104,6 +104,7 @@ import { GestioneMotiviComponent } from './components/showroom/gestione-motivi/g
 import { MotivoDialogComponent } from './components/showroom/motivo-dialog/motivo-dialog.component';
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {ConsegnaEditDialogComponent} from "./components/consegna-edit-dialog/consegna-edit-dialog.component";
+import { NotaConsegnaDialogComponent } from './components/nota-consegna-dialog/nota-consegna-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -176,7 +177,8 @@ export const DateFormats = {
     AssociaClienteDialogComponent,
     GestioneMotiviComponent,
     MotivoDialogComponent,
-    ConsegnaEditDialogComponent
+    ConsegnaEditDialogComponent,
+    NotaConsegnaDialogComponent
   ],
   imports: [
     MatDatepickerModule,

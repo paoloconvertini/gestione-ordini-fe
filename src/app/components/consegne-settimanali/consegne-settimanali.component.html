@@ -97,12 +97,13 @@
                     <div class="giorno-num">
                       {{ giorno.data | date:'d' }}
                       <button
-                        *ngIf="getNota(giorno)?.id"
                         mat-icon-button
-                        matTooltip="{{ getNota(giorno)?.nota }}"
-                        #tooltip="matTooltip"
-                        (click)="tooltip.toggle()">
-                        <mat-icon color="primary">announcement</mat-icon>
+                        (click)="apriNota(giorno); $event.stopPropagation()"
+                        matTooltip="{{ getNota(giorno)?.nota || 'Inserisci nota' }}">
+                        <mat-icon
+                          [color]="getNota(giorno)?.nota ? 'accent' : 'primary'">
+                          announcement
+                        </mat-icon>
                       </button>
                     </div>
 
