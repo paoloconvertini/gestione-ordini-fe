@@ -225,11 +225,11 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
     dialogRef.afterClosed()
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((testo: string) => {
+      .subscribe((testo: string | undefined) => {
 
-        if (!testo) {
-          return;
-        }
+          if (testo === undefined) {
+            return;
+          }
 
         const dto: any = {
           id: notaEsistente?.id || null,
