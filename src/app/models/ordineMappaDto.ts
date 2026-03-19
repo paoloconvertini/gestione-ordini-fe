@@ -1,4 +1,7 @@
 export interface OrdineMappaDto {
+  anno: number;
+  serie: string;
+  progressivo: number;
   latitudine: number;
   longitudine: number;
 
@@ -12,4 +15,5 @@ export interface OrdineMappaDto {
   ordine?: number;
   oraConsegna?: 'M' | 'P';
   idVeicolo?: number;
+  localita?: string;
 }

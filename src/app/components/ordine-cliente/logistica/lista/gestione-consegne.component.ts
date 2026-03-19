@@ -204,6 +204,9 @@ export class GestioneConsegneComponent extends BaseComponent implements OnInit {
       if (!o.latitudine || !o.longitudine) continue;
 
       result.push({
+        anno: o.anno,
+        serie: o.serie,
+        progressivo: o.progressivo,
         latitudine: o.latitudine,
         longitudine: o.longitudine,
         intestazione: o.intestazione,

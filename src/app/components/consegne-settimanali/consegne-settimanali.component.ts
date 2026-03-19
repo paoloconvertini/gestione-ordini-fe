@@ -1,31 +1,33 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { BaseComponent } from "../baseComponent";
-import { ActivatedRoute, Router } from "@angular/router";
-import { ViewportScroller } from "@angular/common";
-import { ScrollPositionService } from "../../services/scroll-position.service";
-import { AuthService } from "../../services/auth/auth.service";
-import { EmailService } from "../../services/email/email.service";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { takeUntil } from "rxjs";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {BaseComponent} from "../baseComponent";
+import {ActivatedRoute, Router} from "@angular/router";
+import {ViewportScroller} from "@angular/common";
+import {ScrollPositionService} from "../../services/scroll-position.service";
+import {AuthService} from "../../services/auth/auth.service";
+import {EmailService} from "../../services/email/email.service";
+import {MatDialog} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {takeUntil} from "rxjs";
 
-import { FiltroOrdini } from "../../models/FiltroOrdini";
-import { ListaService } from "../../services/ordine-cliente/logistica/lista.service";
-import { ArticoloService } from "../../services/ordine-cliente/articolo/articolo.service";
+import {FiltroOrdini} from "../../models/FiltroOrdini";
+import {ListaService} from "../../services/ordine-cliente/logistica/lista.service";
+import {ArticoloService} from "../../services/ordine-cliente/articolo/articolo.service";
 
 import {
   ConsegneSettimanaliDettaglioDialogComponent
 } from "../consegne-settimanali-dettaglio-dialog/consegne-settimanali-dettaglio-dialog.component";
 
-import { NotaConsegna } from "../../models/NotaConsegna";
-import { NotaConsegnaService } from "../../services/nota-consegna/nota-consegna.service";
-import { OrdineMappaDto } from "../../models/ordineMappaDto";
+import {NotaConsegna} from "../../models/NotaConsegna";
+import {NotaConsegnaService} from "../../services/nota-consegna/nota-consegna.service";
+import {OrdineMappaDto} from "../../models/ordineMappaDto";
 import {GiornoConsegne} from "../../models/GiornoConsegne";
 import {ConsegneSettimanali} from "../../models/ConsegneSettimanali";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {ConsegnaEditDialogComponent} from "../consegna-edit-dialog/consegna-edit-dialog.component";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {NotaConsegnaDialogComponent} from "../nota-consegna-dialog/nota-consegna-dialog.component";
+import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
+import {CoordinateDialogComponent} from "../coordinate-dialog/coordinate-dialog.component";
 
 
 const moment = require('moment');
@@ -65,17 +67,11 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
   constructor(
     private notaConsegnaService: NotaConsegnaService,
-    private router: Router,
-    private viewportScroller: ViewportScroller,
-    private scrollPositionService: ScrollPositionService,
     private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
-    private emailService: EmailService,
     private service: ListaService,
-    private articoloService: ArticoloService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    private route: Router
+    private pianoContiService: PianocontiService
   ) {
     super();
   }
@@ -85,16 +81,6 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
     this.retrieveList(0);
 
     this.user = this.authService.getCurrentUser()?.username;
-
-  }
-
-  mostraMappa(): void {
-
-    this.showMappa = !this.showMappa;
-
-    if (this.showMappa) {
-      this.loadOrdiniMappa();
-    }
 
   }
 
@@ -167,6 +153,9 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
             if (!c.latitudine || !c.longitudine) continue;
 
             result.push({
+              anno: c.anno,
+              serie: c.serie,
+              progressivo: c.progressivo,
               latitudine: c.latitudine,
               longitudine: c.longitudine,
               intestazione: c.intestazione,
@@ -176,7 +165,8 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
               sottoConto: c.sottoConto,
               ordine: c.ordine,
               oraConsegna: c.oraConsegna,
-              idVeicolo: c.veicolo
+              idVeicolo: c.veicolo,
+              localita: c.localita
             });
 
           }
@@ -404,4 +394,105 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
   }
 
+  apriMappaGiorno(giorno: GiornoConsegne): void {
+    if (this.showMappa && this.giornoSelezionatoCorrente === giorno) {
+      this.showMappa = false;
+      this.ordiniMappa = [];
+      return;
+    }
+    this.giornoSelezionatoCorrente = giorno;
+
+    const result: OrdineMappaDto[] = [];
+
+    if (giorno.fasce) {
+      for (const fascia of giorno.fasce) {
+
+        if (!fascia.veicoli) continue;
+
+        for (const veicolo of fascia.veicoli) {
+
+          if (!veicolo.consegne) continue;
+
+          for (const c of veicolo.consegne) {
+            console.log("CHECK CONSEGNA", c.intestazione, c.latitudine, c.longitudine);
+
+            if (!c.latitudine || !c.longitudine) continue;
+
+            result.push({
+              anno: c.anno,
+              serie: c.serie,
+              progressivo: c.progressivo,
+              latitudine: c.latitudine,
+              longitudine: c.longitudine,
+              intestazione: c.intestazione,
+              indirizzo: c.indirizzo,
+              telefono: c.telefono,
+              cellulare: c.cellulare,
+              sottoConto: c.sottoConto,
+              ordine: c.ordine,
+              oraConsegna: c.oraConsegna,
+              idVeicolo: c.veicolo,
+              localita: c.localita
+            });
+
+          }
+        }
+      }
+    }
+
+    this.ordiniMappa = result;
+    this.showMappa = true;
+
+  }
+
+  hasMissingCoords(c: any): boolean {
+    return !c.latitudine || !c.longitudine || (c.latitudine === 0 && c.longitudine === 0);
+  }
+
+  onOptimizationApplied(lista: any[]) {
+
+    this.service.riordinaConsegne(lista)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.retrieveList(this.filtro.deltaSettimana);
+      });
+
+  }
+
+  fixCoordinates(consegna: any, event: MouseEvent) {
+    event.stopPropagation();
+
+    const dialogRef = this.dialog.open(CoordinateDialogComponent, {
+      width: '400px',
+      data: {
+        indirizzo: `${consegna.indirizzo} ${consegna.localita}`,
+        sottoConto: consegna.sottoConto
+      }
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((result) => {
+
+        if (!result) return;
+
+        this.pianoContiService.updateCoordinates({
+          sottoConto: consegna.sottoConto,
+          coords: result.coords
+        }).subscribe(() => {
+
+          this.snackbar.open('Coordinate aggiornate', 'OK', {
+            duration: 2000
+          });
+
+          this.retrieveList(this.filtro.deltaSettimana);
+
+        });
+
+      });
+  }
+
+  protected apriNotaOrdine(consegna: any) {
+    alert("Nota ordine: " + consegna.notaOrdine);
+  }
 }

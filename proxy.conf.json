@@ -1,28 +1,34 @@
 {
   "/api": {
-    "target": "http://localhost:8080",
+    "target": "http://127.0.0.1:8080",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "warn"
+    "logLevel": "debug"
   },
   "/api-ceglie": {
-    "target": "http://localhost:8083",
+    "target": "http://127.0.0.1:8083",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "warn"
   },
   "/api-ostuni": {
-    "target": "http://localhost:8082",
+    "target": "http://127.0.0.1:8082",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "warn"
   },
   "/auth": {
-    "target": "http://localhost:8081",
+    "target": "http://127.0.0.1:8081",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "warn",
     "pathRewrite": { "^/auth": "/api" }
+  },
+  "/osrm": {
+    "target": "http://localhost:5001",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/osrm": "" }
   }
 }
 

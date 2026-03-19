@@ -38,6 +38,8 @@ export const environment = {
   NOTA_CONSEGNA: 'nota-consegna',
   LISTA_DI_CARICO: 'lista-carichi',
   SHOWROOM: 'showroom',
+  OSRM_BASE_URL: '/osrm/',
+  ROUTE_DRIVING: 'route/v1/driving/'
 };
 
 /*

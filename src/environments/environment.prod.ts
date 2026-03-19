@@ -33,5 +33,7 @@ export const environment = {
   LISTA_DI_CARICO: 'lista-carichi',
   SALDI_MAGAZINO: 'saldi-magazzino',
   SHOWROOM: 'showroom',
+  OSRM_BASE_URL: 'http://localhost:5001',
+  ROUTE_DRIVING: 'route/v1/driving/',
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };

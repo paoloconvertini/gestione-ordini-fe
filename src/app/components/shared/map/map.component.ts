@@ -1,17 +1,29 @@
-import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
-
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges, Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import OlMap from 'ol/Map';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import {Cluster, Vector as VectorSource} from 'ol/source';
-import {Point} from 'ol/geom';
+import {MultiPoint, Point} from 'ol/geom';
 import {Feature} from 'ol';
 import {Fill, Stroke, Style, Text} from 'ol/style';
 import CircleStyle from 'ol/style/Circle';
 import {useGeographic} from 'ol/proj';
 import {boundingExtent} from 'ol/extent';
 import Overlay from 'ol/Overlay';
+import {LineString} from 'ol/geom';
+import {RouteService} from "../../../services/route/route.service";
+import {RegularShape} from "ol/style.js";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 useGeographic();
 
@@ -25,12 +37,28 @@ const sede = new Point(sedeLonLat);
 })
 export class MapComponent implements AfterViewInit, OnChanges {
 
-  @Input() ordini: any[] = [];
+  constructor(private service: RouteService, private snackbar: MatSnackBar) { }
 
-  private map!: OlMap;
-  private clusterLayer!: VectorLayer<VectorSource>;
+  @Input() ordini: any[] = [];
+  @Input() giornoLabel: string = '';
+  @Output() optimizationApplied = new EventEmitter<any[]>();
   @ViewChild('popup') popupElement!: ElementRef;
   @ViewChild('popupContent') popupContent!: ElementRef;
+
+  private ordiniFiltrati: any[] = [];
+  selectedVeicolo: number | null = null;
+  selectedFascia: 'M' | 'P' | null = null;
+  private map!: OlMap;
+  private styleCache: any = {};
+  private clusterLayer!: VectorLayer<VectorSource>;
+  private routeLayer!: VectorLayer<VectorSource>;
+  private optimizedRouteLayer!: VectorLayer<VectorSource>;
+  routeStats: Record<string, { km: number; time: number }> = {};
+  optimizedStats: Record<string, { km: number; time: number }> = {};
+  savingStats: Record<string, { km: number; time: number }> = {};
+  currentOrder: any[] = [];
+  optimizedOrder: any[] = [];
+
 
   private overlay!: Overlay;
 
@@ -75,6 +103,27 @@ export class MapComponent implements AfterViewInit, OnChanges {
       style: this.clusterStyle
     });
 
+    this.routeLayer = new VectorLayer({
+      source: new VectorSource(),
+      style: new Style({
+        stroke: new Stroke({
+          color: 'rgba(25,118,210,0.6)',
+          width: 4
+        })
+      })
+    });
+    this.optimizedRouteLayer = new VectorLayer({
+      source: new VectorSource(),
+      style: new Style({
+        stroke: new Stroke({
+          color: 'rgba(76,175,80,0.7)',
+          width: 4,
+          lineDash: [10, 10]
+        })
+      })
+    });
+    this.map.addLayer(this.routeLayer);
+    this.map.addLayer(this.optimizedRouteLayer);
     this.map.addLayer(this.clusterLayer);
 
     this.registerEvents();
@@ -104,9 +153,21 @@ export class MapComponent implements AfterViewInit, OnChanges {
   private renderMarkers(): void {
 
     const features: Feature[] = [];
+    this.ordiniFiltrati = [];
 
     for (const e of this.ordini) {
+
+      if (this.selectedVeicolo && e.idVeicolo !== this.selectedVeicolo) {
+        continue;
+      }
+
+      if (this.selectedFascia && e.oraConsegna !== this.selectedFascia) {
+        continue;
+      }
+
       if (!e.latitudine || !e.longitudine) continue;
+
+      this.ordiniFiltrati.push(e);
 
       features.push(
         new Feature({
@@ -114,7 +175,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
           name: e.intestazione,
           indirizzo: e.indirizzo,
           telefono: e.telefono,
-          cellulare: e.cellulare
+          cellulare: e.cellulare,
+          ordine: e.ordine
         })
       );
     }
@@ -124,27 +186,49 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
     vectorSource.clear();
     vectorSource.addFeatures(features);
-  }
+    if (this.ordiniFiltrati.length === 0) {
 
-  private styleCache: any = {};
+      const source = this.routeLayer.getSource();
+      if (source) source.clear();
+
+      const optSource = this.optimizedRouteLayer.getSource();
+      if (optSource) optSource.clear();
+
+      this.routeStats = {};
+      this.optimizedStats = {};
+      this.savingStats = {};
+
+      return;
+
+    }
+    this.renderRoute();
+  }
 
   private clusterStyle = (feature: any) => {
     const size = feature.get('features').length;
-
-    if (!this.styleCache[size]) {
-      this.styleCache[size] = new Style({
+    const features = feature.get('features');
+    const ordine = features[0].get('newOrdine') || features[0].get('ordine');
+    const key = size === 1 ? `single_${ordine}` : `cluster_${size}`;
+    if (!this.styleCache[key]) {
+      this.styleCache[key] = new Style({
         image: new CircleStyle({
-          radius: 10,
-          fill: new Fill({ color: '#3399CC' }),
-          stroke: new Stroke({ color: '#fff' })
+          radius: size === 1 ? 12 : 14,
+          fill: new Fill({
+            color: size === 1 ? '#1976d2' : '#455a64'
+          }),
+          stroke: new Stroke({
+            color: '#fff',
+            width: 2
+          })
         }),
         text: new Text({
-          text: size.toString(),
-          fill: new Fill({ color: '#fff' })
+          text: size === 1 && ordine ? ordine.toString() : size.toString(),
+          fill: new Fill({ color: '#fff' }),
+          font: 'bold 12px Roboto'
         })
       });
     }
-    return this.styleCache[size];
+    return this.styleCache[key];
   };
 
   private registerEvents(): void {
@@ -245,5 +329,321 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
     this.popupContent.nativeElement.innerHTML = html;
     this.overlay.setPosition(coordinate);
+  }
+
+  private drawOptimizedRoute(geometry: any) {
+
+    const line = new LineString(geometry.coordinates);
+
+    const feature = new Feature({
+      geometry: line
+    });
+
+    feature.setStyle(
+      new Style({
+        stroke: new Stroke({
+          color: '#2e7d32',
+          width: 4,
+          lineDash: [10, 10]
+        })
+      })
+    );
+
+    const source = this.optimizedRouteLayer.getSource();
+    if (!source) return;
+
+    source.addFeature(feature);
+  }
+
+  private drawRoute(geometry: any, veicolo?: number, fascia?: 'M' | 'P') {
+
+    let color = '#1976d2';
+
+    if (veicolo === 1 && fascia === 'M') color = '#1976d2';
+    if (veicolo === 1 && fascia === 'P') color = '#d32f2f';
+    if (veicolo === 2 && fascia === 'M') color = '#388e3c';
+    if (veicolo === 2 && fascia === 'P') color = '#f57c00';
+
+    const line = new LineString(geometry.coordinates);
+
+    const feature = new Feature({
+      geometry: line
+    });
+
+    feature.setStyle(
+      new Style({
+        stroke: new Stroke({
+          color: color,
+          width: 4
+        })
+      })
+    );
+
+    const source = this.routeLayer.getSource();
+
+    if (!source) return;
+
+    source.addFeature(feature);
+
+  }
+
+  private renderRoute() {
+    const optSource = this.optimizedRouteLayer.getSource();
+    if (optSource) optSource.clear();
+
+    this.optimizedStats = {};
+    if (!this.ordiniFiltrati || this.ordiniFiltrati.length === 0) {
+      return;
+    }
+
+    const groups: any = {};
+
+    for (const o of this.ordiniFiltrati) {
+
+      if (!o.latitudine || !o.longitudine) continue;
+
+      const key = `${o.idVeicolo}_${o.oraConsegna}`;
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(o);
+    }
+
+    const source = this.routeLayer.getSource();
+    if (source) source.clear();
+    this.routeStats = {};
+    for (const key in groups) {
+
+      const list = groups[key].sort((a: any, b: any) =>
+        (a.ordine || 0) - (b.ordine || 0)
+      );
+
+      const coords: string[] = [];
+
+      coords.push(`${sedeLonLat[0]},${sedeLonLat[1]}`);
+
+      for (const o of list) {
+        coords.push(`${o.longitudine},${o.latitudine}`);
+      }
+
+      coords.push(`${sedeLonLat[0]},${sedeLonLat[1]}`);
+
+      const first = list[0];
+
+      this.service.getRoute(coords).subscribe(json => {
+
+        if (!json?.routes?.length) return;
+
+        const geometry = json.routes[0].geometry;
+        const route = json.routes[0];
+
+        this.routeStats[key] = {
+          km: route.distance / 1000,
+          time: Math.round(route.duration / 60)
+        };
+
+        this.drawRoute(
+          geometry,
+          first.idVeicolo,
+          first.oraConsegna
+        );
+
+      });
+
+    }
+
+  }
+
+  toggleRoute() {
+    const visible = this.routeLayer.getVisible();
+    this.routeLayer.setVisible(!visible);
+  }
+
+  optimizeRoute() {
+
+    if (!this.ordiniFiltrati || this.ordiniFiltrati.length === 0) {
+      return;
+    }
+
+    if (this.selectedVeicolo == null || this.selectedFascia == null) {
+
+      this.snackbar.open(
+        'Seleziona veicolo e fascia per ottimizzare il percorso',
+        'OK',
+        {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        }
+      );
+
+      return;
+    }
+    this.routeLayer.setVisible(false);
+    this.optimizedRouteLayer.setVisible(true);
+    const optSource = this.optimizedRouteLayer.getSource();
+    if (optSource) optSource.clear();
+
+    this.optimizedStats = {};
+    this.savingStats = {};
+
+    const groups: any = {};
+
+    // 🔹 costruzione gruppi (come già fai)
+    for (const o of this.ordiniFiltrati) {
+
+      if (!o.latitudine || !o.longitudine) continue;
+
+      const key = `${o.idVeicolo}_${o.oraConsegna}`;
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(o);
+    }
+
+    // 🔴 prendo SOLO il gruppo selezionato
+    const key = `${this.selectedVeicolo}_${this.selectedFascia}`;
+    const list = groups[key];
+
+    if (!list || list.length === 0) {
+      return;
+    }
+
+    // 🔹 ordinamento attuale
+    const sorted = list.sort((a: any, b: any) =>
+      (a.ordine || 0) - (b.ordine || 0)
+    );
+
+    const coords: string[] = [];
+
+    // partenza sede
+    coords.push(`${sedeLonLat[0]},${sedeLonLat[1]}`);
+
+    for (const o of sorted) {
+      coords.push(`${o.longitudine},${o.latitudine}`);
+    }
+
+    // ritorno sede
+    coords.push(`${sedeLonLat[0]},${sedeLonLat[1]}`);
+
+    const first = sorted[0];
+
+    this.service.getOptimizedRoute(coords).subscribe(json => {
+
+      if (!json?.trips?.length) return;
+
+      const route = json.trips[0];
+      const geometry = route.geometry;
+
+      // 🔹 stats ottimizzate
+      this.optimizedStats[key] = {
+        km: route.distance / 1000,
+        time: Math.round(route.duration / 60)
+      };
+
+      // 🔹 saving rispetto route normale
+      if (this.routeStats[key]) {
+        this.savingStats[key] = {
+          km: this.routeStats[key].km - this.optimizedStats[key].km,
+          time: this.routeStats[key].time - this.optimizedStats[key].time
+        };
+      }
+
+      const waypoints = json.waypoints;
+
+// filtro via sede (primo e ultimo)
+      const customerWaypoints = waypoints.filter((w: any, index: number) => {
+        return index !== 0 && index !== waypoints.length - 1;
+      });
+
+// array risultato
+      const optimized: any[] = new Array(customerWaypoints.length);
+
+// mapping corretto
+      customerWaypoints.forEach((w: any, index: number) => {
+        const newIndex = w.waypoint_index - 1; // 🔴 fondamentale
+        optimized[newIndex] = sorted[index];
+      });
+
+      this.currentOrder = sorted;
+      this.optimizedOrder = optimized.filter(x => x); // pulizia eventuali undefined
+      // reset
+      this.ordiniFiltrati.forEach(o => o.newOrdine = null);
+
+// assegno nuovo ordine
+      this.optimizedOrder.forEach((o: any, index: number) => {
+        o.newOrdine = index + 1;
+      });
+
+// 🔥 rifaccio i marker
+      this.renderMarkers();
+      this.drawOptimizedRoute(geometry);
+
+    });
+  }
+
+
+  centerMap() {
+    this.map.getView().setCenter(sedeLonLat);
+    this.map.getView().setZoom(10);
+  }
+
+  setVeicolo(v: number | null) {
+    this.selectedVeicolo = v;
+    this.renderMarkers();
+  }
+
+  setFascia(f: 'M' | 'P' | null) {
+    this.selectedFascia = f;
+    this.renderMarkers();
+  }
+
+  rejectOptimization() {
+
+    // pulisco layer ottimizzato
+    const optSource = this.optimizedRouteLayer.getSource();
+    if (optSource) optSource.clear();
+
+    // reset dati UI
+    this.optimizedOrder = [];
+    this.optimizedStats = {};
+    this.savingStats = {};
+    this.routeLayer.setVisible(true);
+    this.optimizedRouteLayer.setVisible(false);
+
+  }
+
+  applyOptimization() {
+
+    if (!this.optimizedOrder || this.optimizedOrder.length === 0) {
+      return;
+    }
+
+    const result = this.optimizedOrder.map((o: any, index: number) => ({
+      anno: o.anno,
+      serie: o.serie,
+      progressivo: o.progressivo,
+      ordine: index + 1
+    }));
+
+    this.optimizationApplied.emit(result);
+
+    this.rejectOptimization();
+
+  }
+
+  isChanged(item: any, index: number): boolean {
+    const originalIndex = this.currentOrder.findIndex(
+      o =>
+        o.anno === item.anno &&
+        o.serie === item.serie &&
+        o.progressivo === item.progressivo
+    );
+
+    return originalIndex !== index;
   }
 }

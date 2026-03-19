@@ -340,7 +340,7 @@
 
   opacity: 0;
   transition: opacity 0.18s ease;
-
+  z-index: 2;
 }
 
 /* compare solo in hover */
@@ -378,6 +378,7 @@
 
 .evento-localita {
   padding-left: 34px;
+  padding-right: 20px;
 }
 
 .cdk-drag-preview {
@@ -403,6 +404,52 @@
 
 :host-context(.mat-mdc-dialog-container) .presentation {
   min-width: 900px;
+}
+
+.map-day-btn {
+  margin-left: 6px;
+}
+
+.evento {
+  position: relative;
+}
+
+.evento-warning {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+
+  border-radius: 50%;
+
+  color: #f44336;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  z-index: 3;
+}
+
+.evento-warning mat-icon {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
+.evento-missing-coords {
+  border-left: 4px solid #f44336;
+  background: #fff7f7;
+  color: #000;
+}
+.evento-missing-coords .evento-title, .evento-missing-coords .evento-localita, .evento-missing-coords .evento-ordine, .evento-missing-coords .evento-cliente, .evento-missing-coords .evento-indirizzo, .evento-missing-coords .evento-cellulare { color: #000; }
+.evento-missing-coords mat-icon {
+  color: #000;
 }
 
 /* RESPONSIVE */

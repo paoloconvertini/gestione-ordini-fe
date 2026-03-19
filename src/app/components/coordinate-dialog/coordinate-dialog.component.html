@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Imposta coordinate</h2>
+
+<mat-dialog-content>
+
+  <div class="indirizzo">
+    {{ data.indirizzo }}
+  </div>
+
+  <div class="maps-link" (click)="openMaps()">
+    <mat-icon>map</mat-icon>
+    Apri su Google Maps
+  </div>
+  <div class="hint">
+    Tasto destro su mappa → copia coordinate
+  </div>
+
+  <div class="inputs">
+
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Coordinate (lat, lon)</mat-label>
+      <input matInput [(ngModel)]="coords">
+    </mat-form-field>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  <button mat-raised-button color="primary" (click)="confirm()">Salva</button>
+</mat-dialog-actions>

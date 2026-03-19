@@ -1,6 +1,135 @@
 <div class="map-wrapper">
-  <div id="map"></div>
+  <div class="map-toolbar">
+    <div class="toolbar-left">
+      <span class="giorno-label">
+       <mat-icon class="giorno-icon">calendar_today</mat-icon> {{ giornoLabel }}
+      </span>
+      <button mat-button
+              (click)="setVeicolo(null)"
+              [class.active-filter]="selectedVeicolo === null">
+        <mat-icon>apps</mat-icon>
+        Tutti
+      </button>
 
+      <button mat-button
+              (click)="setVeicolo(2)"
+              [class.active-filter]="selectedVeicolo === 2">
+        <mat-icon>local_shipping</mat-icon>
+        Camion
+      </button>
+
+      <button mat-button
+              (click)="setVeicolo(1)"
+              [class.active-filter]="selectedVeicolo === 1">
+        <mat-icon>airport_shuttle</mat-icon>
+        Furgone
+      </button>
+      <button mat-button
+              (click)="setFascia(null)"
+              [class.active-filter]="selectedFascia === null">
+        <mat-icon>schedule</mat-icon>
+        Tutto il giorno
+      </button>
+      <button mat-button
+              (click)="setFascia('M')"
+              [class.active-filter]="selectedFascia === 'M'">
+        <mat-icon>light_mode</mat-icon>
+        Mattina
+      </button>
+      <button mat-button
+              (click)="setFascia('P')"
+              [class.active-filter]="selectedFascia === 'P'">
+        <mat-icon>dark_mode</mat-icon>
+        Pomeriggio
+      </button>
+    </div>
+    <div class="toolbar-divider"></div>
+    <div class="toolbar-right">
+      <button mat-icon-button (click)="toggleRoute()" matTooltip="Mostra/Nascondi percorso">
+        <mat-icon>route</mat-icon>
+      </button>
+      <button mat-icon-button (click)="optimizeRoute()" matTooltip="Ottimizza percorso">
+        <mat-icon>auto_fix_high</mat-icon>
+      </button>
+      <button mat-icon-button (click)="centerMap()" matTooltip="Centra mappa">
+        <mat-icon>center_focus_strong</mat-icon>
+      </button>
+    </div>
+    <div class="route-stats">
+      <ng-container *ngFor="let s of routeStats | keyvalue">
+        <div class="stat-row">
+            <span class="stat-label">
+              <mat-icon class="stat-icon">
+                {{ s.key.split('_')[0] === '1' ? 'airport_shuttle' : 'local_shipping' }}
+              </mat-icon>
+              {{ s.key.split('_')[0] === '1' ? 'Furgone' : 'Camion' }}
+              <mat-icon class="stat-icon">
+                {{ s.key.split('_')[1] === 'M' ? 'light_mode' : 'dark_mode' }}
+              </mat-icon>
+              {{ s.key.split('_')[1] === 'M' ? 'Mattina' : 'Pomeriggio' }}
+            </span>
+          <span class="stat-normal">
+              {{ s.value.km | number:'1.0-1' }} km • {{ s.value.time }} min
+            </span>
+          <span *ngIf="optimizedStats[s.key]" class="stat-optimized">
+              → {{ optimizedStats[s.key].km | number:'1.0-1' }} km • {{ optimizedStats[s.key].time }} min
+            </span>
+          <span *ngIf="savingStats[s.key]"
+                [class.stat-saving-good]="savingStats[s.key].km < 0 || savingStats[s.key].time < 0"
+                class="stat-saving">
+              ({{ savingStats[s.key].km | number:'1.0-1' }} km • {{ savingStats[s.key].time }} min)
+            </span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="map-layout">
+    <div class="map-side" *ngIf="optimizedOrder?.length">
+      <div class="route-compare" *ngIf="optimizedOrder?.length">
+        <div class="compare-title">
+          <mat-icon>compare_arrows</mat-icon>
+          Confronto percorso
+        </div>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <div class="compare-header">
+              <mat-icon>route</mat-icon>
+              Attuale
+            </div>
+            <div class="compare-row" *ngFor="let o of currentOrder">
+              <span class="compare-index">{{o.ordine}}</span>
+              <span class="compare-name">{{o.intestazione}}</span>
+              <span class="compare-name">{{o.localita}}</span>
+            </div>
+          </div>
+          <div class="compare-col optimized">
+            <div class="compare-header">
+              <mat-icon>auto_fix_high</mat-icon>
+              Ottimizzato
+            </div>
+            <div class="compare-row" *ngFor="let o of optimizedOrder; let i=index"
+                 [class.changed]="isChanged(o, i)">
+              <span class="compare-index">{{i+1}}</span>
+              <span class="compare-name"><span *ngIf="isChanged(o, i)">→</span>{{o.intestazione}}</span>
+              <span class="compare-name">{{o.localita}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="compare-actions">
+          <button mat-stroked-button (click)="rejectOptimization()">
+            Mantieni ordine
+          </button>
+          <button mat-raised-button color="primary" (click)="applyOptimization()">
+            Applica ottimizzazione
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+  </div>
   <div #popup class="custom-popup">
     <div #popupContent></div>
   </div>

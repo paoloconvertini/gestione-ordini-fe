@@ -1,15 +1,14 @@
 <div class="header-bar" *ngIf="!compactMode">
   <div class="ordine-title">
     <span>CONSEGNE SETTIMANALI</span>
-
-    <button mat-icon-button (click)="mostraMappa()">
-      <mat-icon>location_on</mat-icon>
-    </button>
   </div>
 </div>
 
 <div *ngIf="showMappa && !compactMode" class="map-wrapper">
-  <app-map [ordini]="ordiniMappa"></app-map>
+  <app-map
+    [ordini]="ordiniMappa"
+    (optimizationApplied)="onOptimizationApplied($event)">
+  </app-map>
 </div>
 
 <div class="week-navigation">
@@ -93,15 +92,23 @@
                         class="badge-consegne"
                         [class.badge-active]="giorno.numeroConsegne > 0">{{ giorno.numeroConsegne }}
                       </span>
+                      <button
+                        matTooltip="Mostra percorso"
+                        *ngIf="!compactMode"
+                        mat-icon-button
+                        class="map-day-btn"
+                        (click)="apriMappaGiorno(giorno); $event.stopPropagation()">
+                        <mat-icon>map</mat-icon>
+                      </button>
                     </div>
                     <div class="giorno-num">
                       {{ giorno.data | date:'d' }}
                       <button
                         mat-icon-button
                         (click)="apriNota(giorno); $event.stopPropagation()"
-                        matTooltip="{{ getNota(giorno)?.nota || 'Inserisci nota' }}">
+                        matTooltip="{{ getNota(giorno).nota || 'Inserisci nota' }}">
                         <mat-icon
-                          [color]="getNota(giorno)?.nota ? 'accent' : 'primary'">
+                          [color]="getNota(giorno).nota ? 'accent' : 'primary'">
                           announcement
                         </mat-icon>
                       </button>
@@ -139,15 +146,27 @@
                             (cdkDropListDropped)="drop($event, veicolo)">
                               <div *ngFor="let consegna of veicolo.consegne">
                               <div class="box-evento" cdkDrag>
-                                <div
-                                  class="evento"
-                                  [ngClass]="{ 'pomeriggio': consegna.oraConsegna === 'P' }"
-                                  (click)="onClickConsegna(consegna, giorno)">
+                                <div class="evento" [ngClass]="{'pomeriggio': consegna.oraConsegna === 'P',
+                                       'evento-missing-coords': hasMissingCoords(consegna)}"
+                                     (click)="onClickConsegna(consegna, giorno)">
+                                  <div class="evento-warning"
+                                       *ngIf="hasMissingCoords(consegna)"
+                                       matTooltip="Clicca per calcolare le coordinate"
+                                       (click)="fixCoordinates(consegna, $event)">
+                                    <mat-icon>location_off</mat-icon>
+                                  </div>
                                   <div class="ordine-badge">
                                     {{ consegna.ordine }}
                                   </div>
                                   <div class="evento-overlay">
 
+                                    <button
+                                      mat-mini-fab
+                                      color="primary"
+                                      (click)="apriNotaOrdine(consegna); $event.stopPropagation()"
+                                      matTooltip="Apri nota">
+                                      <mat-icon>speaker_notes</mat-icon>
+                                    </button>
                                     <button
                                       mat-mini-fab
                                       color="primary"
