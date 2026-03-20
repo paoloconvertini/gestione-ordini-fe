@@ -204,7 +204,11 @@ export const DateFormats = {
         // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
         allowedDomains: [SAME_ORIGIN],
         // Non allegare il token a login/refresh (adatta ai tuoi path reali)
-        disallowedRoutes: [/^\/auth\/login\b/, /^\/auth\/refresh\b/],
+        disallowedRoutes: [
+          /^\/auth\/login\b/,
+          /^\/auth\/refresh\b/,
+          /^\/osrm\//   // 🔥 QUESTO RISOLVE TUTTO
+        ],
         // opzionale:
         // skipWhenExpired: true,
       }
