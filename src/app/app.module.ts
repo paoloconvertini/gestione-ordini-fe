@@ -111,11 +111,6 @@ export function tokenGetter() {
   return localStorage.getItem('access_token');
 }
 
-// Regex per la stessa origin (dominio:porta della pagina attuale)
-const SAME_ORIGIN = new RegExp(
-  '^' + (window.location.host || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'
-);
-
 
 export const DateFormats = {
   parse: {
@@ -202,7 +197,7 @@ export const DateFormats = {
       config: {
         tokenGetter,
         // Allego il token solo verso la *stessa origin* (richieste relative tipo /api/...)
-        allowedDomains: [SAME_ORIGIN],
+        allowedDomains: [window.location.hostname],
         // Non allegare il token a login/refresh (adatta ai tuoi path reali)
         disallowedRoutes: [
           /^\/auth\/login\b/,
