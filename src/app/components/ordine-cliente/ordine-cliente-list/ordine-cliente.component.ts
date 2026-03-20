@@ -65,7 +65,6 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
     private viewportScroller: ViewportScroller,
     private scrollPositionService: ScrollPositionService,
     private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
     private emailService: EmailService,
     private service: OrdineClienteService,
     private dialog: MatDialog,

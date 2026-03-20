@@ -146,6 +146,42 @@
                             (cdkDropListDropped)="drop($event, veicolo)">
                               <div *ngFor="let consegna of veicolo.consegne">
                               <div class="box-evento" cdkDrag>
+                                <div class="evento-toolbar">
+
+                                  <button (click)="aggiungiNote(consegna)"
+                                          mat-icon-button
+                                          matTooltip="{{ consegna.note || 'Inserisci nota' }}">
+                                    <mat-icon
+                                      [color]="consegna.note ? 'accent' : 'primary'">
+                                      speaker_notes
+                                    </mat-icon>
+                                  </button>
+
+                                  <button mat-icon-button
+                                          (click)="modificaConsegna(consegna); $event.stopPropagation()"
+                                          matTooltip="Modifica">
+                                    <mat-icon>edit</mat-icon>
+                                  </button>
+
+                                  <button mat-icon-button
+                                          (click)="eliminaConsegna(consegna); $event.stopPropagation()"
+                                          matTooltip="Elimina">
+                                    <mat-icon>delete</mat-icon>
+                                  </button>
+
+                                  <button mat-icon-button
+                                          (click)="copiaDati(consegna); $event.stopPropagation()"
+                                          matTooltip="Copia dati">
+                                    <mat-icon>content_copy</mat-icon>
+                                  </button>
+
+                                  <button mat-icon-button
+                                          cdkDragHandle
+                                          matTooltip="Riordina">
+                                    <mat-icon>drag_indicator</mat-icon>
+                                  </button>
+
+                                </div>
                                 <div class="evento" [ngClass]="{'pomeriggio': consegna.oraConsegna === 'P',
                                        'evento-missing-coords': hasMissingCoords(consegna)}"
                                      (click)="onClickConsegna(consegna, giorno)">
@@ -158,48 +194,8 @@
                                   <div class="ordine-badge">
                                     {{ consegna.ordine }}
                                   </div>
-                                  <div class="evento-overlay">
-
-                                    <button
-                                      mat-mini-fab
-                                      color="primary"
-                                      (click)="apriNotaOrdine(consegna); $event.stopPropagation()"
-                                      matTooltip="Apri nota">
-                                      <mat-icon>speaker_notes</mat-icon>
-                                    </button>
-                                    <button
-                                      mat-mini-fab
-                                      color="primary"
-                                      (click)="modificaConsegna(consegna); $event.stopPropagation()"
-                                      matTooltip="Modifica consegna">
-
-                                      <mat-icon>edit</mat-icon>
-
-                                    </button>
-
-                                    <button
-                                      mat-mini-fab
-                                      color="warn"
-                                      (click)="eliminaConsegna(consegna); $event.stopPropagation()"
-                                      matTooltip="Elimina consegna">
-
-                                      <mat-icon>delete</mat-icon>
-
-                                    </button>
-
-
-                                    <button
-                                      mat-mini-fab
-                                      cdkDragHandle
-                                      color="accent"
-                                      matTooltip="Riordina consegna">
-
-                                      <mat-icon>drag_indicator</mat-icon>
-
-                                    </button>
-
-                                  </div>
                                   <div class="evento-title">
+
                                     <div class="evento-localita">
                                       {{ consegna.localita }}
                                     </div>

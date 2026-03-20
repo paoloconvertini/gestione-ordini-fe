@@ -28,6 +28,9 @@ import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {NotaConsegnaDialogComponent} from "../nota-consegna-dialog/nota-consegna-dialog.component";
 import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
 import {CoordinateDialogComponent} from "../coordinate-dialog/coordinate-dialog.component";
+import {OrdineClienteNoteDialogComponent} from "../ordine-cliente-note-dialog/ordine-cliente-note-dialog.component";
+import {OrdineClienteNotaDto} from "../../models/OrdineClienteNotaDto";
+import {OrdineClienteService} from "../../services/ordine-cliente/list/ordine-cliente.service";
 
 
 const moment = require('moment');
@@ -71,7 +74,8 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
     private service: ListaService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    private pianoContiService: PianocontiService
+    private pianoContiService: PianocontiService,
+    private ordineClienteService: OrdineClienteService,
   ) {
     super();
   }
@@ -492,7 +496,64 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
       });
   }
 
-  protected apriNotaOrdine(consegna: any) {
-    alert("Nota ordine: " + consegna.notaOrdine);
+  aggiungiNote(ordine: any) {
+    let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
+    data.anno = ordine.anno;
+    data.serie = ordine.serie;
+    data.progressivo = ordine.progressivo;
+    data.note = ordine.note;
+    data.userNote = ordine.userNote;
+    data.dataNote = ordine.dataNote;
+
+    {
+      const dialogRef = this.dialog.open(OrdineClienteNoteDialogComponent, {
+        width: '50%',
+        data: data
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loader = true;
+          this.ordineClienteService.addNotes(result, 0).pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+              next: (res) => {
+                this.loader = false;
+                if (res && !res.error) {
+                  this.snackbar.open(res.msg, 'Chiudi', {
+                    duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+                  })
+                  ordine.note = result.note;
+                }
+              },
+              error: (e) => {
+                console.error(e);
+                this.snackbar.open('Errore! Nota non creata', 'Chiudi', {
+                  duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+                })
+                this.loader = false;
+              }
+            });
+        }
+      });
+    }
+  }
+
+
+
+  copiaDati(consegna: any) {
+
+    const testo = [
+      consegna.intestazione,
+      consegna.indirizzo,
+      consegna.localita,
+      consegna.cellulare
+    ]
+      .filter(x => x)
+      .join('\n');
+
+    navigator.clipboard.writeText(testo);
+
+    this.snackbar.open('Dati copiati', 'OK', {
+      duration: 2000
+    });
   }
 }

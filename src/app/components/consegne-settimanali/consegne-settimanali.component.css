@@ -170,6 +170,7 @@
   max-width: 1100px;
   margin: auto;
   gap: 16px;
+  overflow: visible;
 }
 
 .grid-cell {
@@ -177,6 +178,7 @@
   box-sizing: border-box;
   border-right: 1px solid #e0e0e0;
   padding-right: 8px;
+  overflow: visible;
 }
 
 .grid-cell:last-child {
@@ -187,7 +189,8 @@
 /* CARD CONSEGNA */
 
 .box-evento {
-  display: flex;
+  position: relative;
+  overflow: visible; /* 🔴 fondamentale */
   margin-bottom: 10px;
 }
 
@@ -198,12 +201,15 @@
   background-color: #607d8b;
   border: 1px solid #607d8b;
   box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
-  transition: transform .15s ease, box-shadow .15s ease;
+  /*ransition: transform .15s ease, box-shadow .15s ease;*/
+  position: relative;
+  overflow: visible;
+  transition: box-shadow 0.2s ease;
 }
 
 .evento:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, .18);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
 .pomeriggio {
@@ -211,15 +217,11 @@
   border-color: #eb8309;
 }
 
-.evento {
-  overflow: hidden;
-}
-
 .evento-title {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 10px;
+  padding: 32px 10px 10px;
 }
 
 .evento-localita {
@@ -313,17 +315,6 @@
   border-radius: 6px;
 }
 
-.evento {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: box-shadow 0.2s ease;
-}
-
-.evento:hover {
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-}
-
 /* overlay */
 
 .evento-overlay {
@@ -410,10 +401,6 @@
   margin-left: 6px;
 }
 
-.evento {
-  position: relative;
-}
-
 .evento-warning {
   position: absolute;
   top: 6px;
@@ -452,6 +439,51 @@
   color: #000;
 }
 
+.evento-toolbar {
+  position: absolute;
+
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 8px;
+
+  padding: 6px 10px;
+
+  background: rgba(33,33,33,0.95);
+  border-radius: 8px;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+
+  opacity: 0;
+  transition: all 0.15s ease;
+
+  z-index: 10;
+
+  white-space: nowrap; /* 🔴 fondamentale */
+}
+
+.box-evento:hover .evento-toolbar {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.evento-toolbar button {
+  color: white;
+
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+}
+
+.evento-toolbar mat-icon {
+  font-size: 20px;
+}
+
+.nota-presente {
+  color: #d11f0c !important;
+}
 /* RESPONSIVE */
 
 @media (max-width: 1200px) {
