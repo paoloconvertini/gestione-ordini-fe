@@ -106,6 +106,7 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {ConsegnaEditDialogComponent} from "./components/consegna-edit-dialog/consegna-edit-dialog.component";
 import { NotaConsegnaDialogComponent } from './components/nota-consegna-dialog/nota-consegna-dialog.component';
 import { CoordinateDialogComponent } from './components/coordinate-dialog/coordinate-dialog.component';
+import {FullCalendarModule} from "@fullcalendar/angular";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -235,7 +236,8 @@ export const DateFormats = {
     CdkDropList,
     CdkDrag,
     MatButtonToggleModule,
-    CdkDragHandle
+    CdkDragHandle,
+    FullCalendarModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy},

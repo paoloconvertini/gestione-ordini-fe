@@ -76,7 +76,21 @@
       </mat-form-field>
     </div>
 
+    <div class="filter-field venditore">
+      <mat-form-field appearance="outline">
+        <mat-label>Venditore</mat-label>
+        <mat-select [(ngModel)]="filtro.codVenditore">
 
+          <mat-option [value]="null">Tutti</mat-option>
+
+          <mat-option *ngFor="let option of radioPerVenditoreOptions"
+                      [value]="option.codVenditore">
+            {{ option.fullname }}
+          </mat-option>
+
+        </mat-select>
+      </mat-form-field>
+    </div>
 
   </div>
 

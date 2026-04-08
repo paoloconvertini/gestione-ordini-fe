@@ -12,4 +12,6 @@ export class FiltroShowroom {
   size: number = 10;
 
   sedeId?: number | null;
+
+  codVenditore: string | null = null;
 }

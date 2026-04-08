@@ -40,12 +40,13 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
   listaComuni: any[] = [];
   sedi: any[] = [];
   comuneSearch: string | null = null;
-
+  radioPerVenditoreOptions: any[] = [];
 
   constructor(
     private service: ShowroomService,
     public perm: PermissionService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {
     super();
   }
@@ -56,6 +57,7 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
     if (this.perm.canFilterSede) {
       this.loadSedi();
     }
+    this.getVenditori();
     this.displayedColumns = [
       ...(this.perm.canFilterSede ? ['sede'] : []),
       'dataVisita',
@@ -99,6 +101,22 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
         },
         error: () => {
           this.loader = false;
+        }
+      });
+  }
+
+  getVenditori(): void {
+    let data = [];
+    data.push('Venditore');
+
+    this.authService.getVenditori(data)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (data) => {
+          this.radioPerVenditoreOptions = data;
+        },
+        error: (e: any) => {
+          console.error(e);
         }
       });
   }
