@@ -15,10 +15,6 @@
 
   </div>
 
-  <button mat-raised-button color="primary" (click)="openDialog()">
-    + Nuova Visita
-  </button>
-
 </div>
 <mat-card class="filter-card">
 
@@ -92,6 +88,19 @@
       </mat-form-field>
     </div>
 
+    <mat-form-field appearance="outline">
+      <mat-label>Motivo visita</mat-label>
+      <mat-select [(ngModel)]="filtro.motivoId">
+        <mat-option [value]="null">Tutti</mat-option>
+
+        <mat-option *ngFor="let m of motiviRoot"
+                    [value]="m.id">
+          {{ m.descrizione }}
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
   </div>
 
   <!-- 🔥 RIGA PULSANTI SEPARATA SEMPRE -->
@@ -112,91 +121,8 @@
   <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
 
   <div class="page-container">
-    <div class="visit-list" *ngIf="!loader">
-
-      <div class="visit-card"
-           *ngFor="let e of dataSource">
-
-        <!-- CONTENUTO -->
-        <div class="visit-content">
-
-          <div class="visit-header">
-            <div class="cliente-nome">
-              {{ e.nomeCliente }}
-            </div>
-
-            <div class="visit-actions">
-              <button mat-icon-button (click)="openDialog(e)">
-                <mat-icon>edit</mat-icon>
-              </button>
-
-              <button mat-icon-button
-                      color="warn"
-                      *ngIf="perm.canViewRegistroVisite"
-                      (click)="delete(e.id)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-
-          <div class="visit-row">
-            <span class="info-item">
-              <mat-icon>location_on</mat-icon>
-              {{ e.comuneNome }} ({{ e.provinciaSigla }})
-            </span>
-
-            <span class="info-item" *ngIf="perm.canFilterSede">
-              <mat-icon>store</mat-icon>
-              {{ e.sedeDescrizione }}
-            </span>
-          </div>
-
-          <div class="visit-row secondary">
-            <span class="info-item">
-              <mat-icon>event</mat-icon>
-              {{ e.dataVisita | date:'dd/MM/yyyy HH:mm' }}
-            </span>
-
-            <span class="info-item">
-              <mat-icon>person</mat-icon>
-              {{ e.venditoreNome }}
-            </span>
-          </div>
-
-          <div class="visit-motivo-wrapper">
-
-            <div class="motivo-parent" *ngIf="e.motivoParentDescrizione">
-              <mat-icon>category</mat-icon>
-              {{ e.motivoParentDescrizione }}
-            </div>
-
-            <div class="motivo-child">
-              {{ e.motivoDescrizione }}
-            </div>
-
-          </div>
-
-          <div class="visit-phone" *ngIf="e.telefono">
-            <mat-icon class="phone-icon">call</mat-icon>
-            {{ e.telefono }}
-          </div>
-
-        </div>
-
-      </div>
-
-      <div *ngIf="dataSource.length === 0" class="no-data">
-        Nessuna visita trovata
-      </div>
-
+    <div *ngIf="!loader" class="calendar-wrapper">
+      <full-calendar [options]="calendarOptions"></full-calendar>
     </div>
-
-    <mat-paginator
-      [length]="totalItems"
-      [pageSize]="filtro.size"
-      [pageIndex]="filtro.page"
-      [pageSizeOptions]="[5, 10, 20]"
-      (page)="onPageChange($event)">
-    </mat-paginator>
   </div>
 </mat-card>

@@ -29,6 +29,7 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
   isEdit = false;
   loader = false;
   sedi: any[] = [];
+  oraVisita: string | null = null;
 
   constructor(
     private service: ShowroomService,
@@ -44,16 +45,41 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
 
   ngOnInit(): void {
 
-    this.isEdit = !!this.data;
+    this.isEdit = this.data && this.data.id != null;
+
     if (this.perm.canFilterSede) {
       this.showroomService.getSedi().subscribe(res => {
         this.sedi = res;
       });
     }
 
+    // 🔥 BASE DTO
+    this.dto = {
+      dataVisita: new Date()
+    };
+
+    // 🔥 MODIFICA
     if (this.isEdit) {
       this.dto = { ...this.data };
       this.comuneSearch = this.data.comuneNome;
+
+      if (this.dto.dataVisita) {
+        this.dto.dataVisita = new Date(this.dto.dataVisita);
+      }
+    }
+
+    // 🔥 NUOVO DA CALENDARIO
+    if (!this.isEdit && this.data?.dataVisita) {
+      this.dto.dataVisita = new Date(this.data.dataVisita);
+    }
+
+    if (this.dto.dataVisita) {
+      const d = new Date(this.dto.dataVisita);
+
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+
+      this.oraVisita = `${hh}:${mm}`;
     }
 
     this.loadMotiviRoot();
@@ -61,6 +87,7 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
     if (this.isEdit && this.dto.motivoId) {
       this.loadMotivoForEdit(this.dto.motivoId);
     }
+
     this.loadVenditori();
   }
 
@@ -152,7 +179,20 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
     const call = this.isEdit
       ? this.service.update(this.dto.id, this.dto)
       : this.service.create(this.dto);
+    if (this.dto.dataVisita && this.oraVisita) {
 
+      const [hh, mm] = this.oraVisita.split(':');
+
+      const d = new Date(this.dto.dataVisita);
+
+      d.setHours(Number(hh));
+      d.setMinutes(Number(mm));
+      d.setSeconds(0);
+
+      this.dto.dataVisita = new Date(
+        d.getTime() - d.getTimezoneOffset() * 60000
+      );
+    }
     call.pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
@@ -163,6 +203,18 @@ export class RegistroVisiteDialogComponent extends BaseComponent implements OnIn
           this.loader = false;
         }
       });
+  }
+
+  onTelefonoInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    const clean = input.value.replace(/[^0-9]/g, '');
+
+    if (input.value !== clean) {
+      input.value = clean;
+    }
+
+    this.dto.telefono = clean;
   }
 
   close() {

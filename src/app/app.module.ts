@@ -107,6 +107,7 @@ import {ConsegnaEditDialogComponent} from "./components/consegna-edit-dialog/con
 import { NotaConsegnaDialogComponent } from './components/nota-consegna-dialog/nota-consegna-dialog.component';
 import { CoordinateDialogComponent } from './components/coordinate-dialog/coordinate-dialog.component';
 import {FullCalendarModule} from "@fullcalendar/angular";
+import { EventActionsDialogComponent } from './components/event-actions-dialog/event-actions-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -176,7 +177,8 @@ export const DateFormats = {
     MotivoDialogComponent,
     ConsegnaEditDialogComponent,
     NotaConsegnaDialogComponent,
-    CoordinateDialogComponent
+    CoordinateDialogComponent,
+    EventActionsDialogComponent
   ],
   imports: [
     MatDatepickerModule,

@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Gestione visita</h2>
+
+<mat-dialog-content>
+
+  <div class="cliente-info">
+    Cliente: <strong>{{ data.nomeCliente }}</strong><br>
+    Venditore: <span>{{ data.venditoreNome }}</span>
+  </div>
+
+  <div class="actions-list">
+
+    <button mat-stroked-button class="action-btn"
+            (click)="modifica()">
+      <mat-icon>edit</mat-icon>
+      Modifica
+    </button>
+
+    <button mat-stroked-button class="action-btn"
+            (click)="nuovo()">
+      <mat-icon>add</mat-icon>
+      Nuovo appuntamento
+    </button>
+
+    <button mat-stroked-button class="action-btn"
+            (click)="associaCliente()">
+      <mat-icon>person_add</mat-icon>
+      Associa cliente
+    </button>
+
+    <button mat-stroked-button class="action-btn warn"
+            (click)="elimina()">
+      <mat-icon>delete</mat-icon>
+      Elimina
+    </button>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Chiudi</button>
+</mat-dialog-actions>

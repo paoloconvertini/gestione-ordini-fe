@@ -14,4 +14,6 @@ export class FiltroShowroom {
   sedeId?: number | null;
 
   codVenditore: string | null = null;
+
+  motivoId?: number | null;
 }

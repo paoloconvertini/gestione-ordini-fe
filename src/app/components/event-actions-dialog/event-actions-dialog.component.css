@@ -1,0 +1,22 @@
+.cliente-info {
+  margin-bottom: 15px;
+}
+
+.actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-btn {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.action-btn mat-icon {
+  margin-right: 8px;
+}
+
+.action-btn.warn {
+  color: #d32f2f;
+}

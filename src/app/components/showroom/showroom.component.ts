@@ -10,6 +10,10 @@ import {RegistroVisiteDialogComponent} from "../registro-visite-dialog/registro-
 import {MatDialog} from "@angular/material/dialog";
 import {AssociaClienteDialogComponent} from "../associa-cliente-dialog/associa-cliente-dialog.component";
 import {AuthService} from "../../services/auth/auth.service";
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import {EventActionsDialogComponent} from "../event-actions-dialog/event-actions-dialog.component";
 
 @Component({
   selector: 'app-showroom',
@@ -41,6 +45,8 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
   sedi: any[] = [];
   comuneSearch: string | null = null;
   radioPerVenditoreOptions: any[] = [];
+  calendarOptions: any = {};
+  motiviRoot: any[] = [];
 
   constructor(
     private service: ShowroomService,
@@ -54,10 +60,12 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.loadProvince();
     this.retrieveList();
+    this.initCalendar();
     if (this.perm.canFilterSede) {
       this.loadSedi();
     }
     this.getVenditori();
+    this.loadMotiviRoot();
     this.displayedColumns = [
       ...(this.perm.canFilterSede ? ['sede'] : []),
       'dataVisita',
@@ -69,15 +77,87 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
     ];
   }
 
-  onPageChange(event: PageEvent) {
-    this.filtro.page = event.pageIndex;
-    this.filtro.size = event.pageSize;
-    this.retrieveList();
+  initCalendar() {
+    this.calendarOptions = {
+      plugins: [
+        dayGridPlugin,
+        timeGridPlugin,       // 👈 settimana
+        interactionPlugin
+      ],
+
+      initialView: 'timeGridWeek',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek' // 👈 switch
+      },
+
+      buttonText: {
+        today: 'Oggi',
+        month: 'Mese',
+        week: 'Settimana'
+      },
+
+      locale: 'it',
+      height: 'auto',
+      slotMinTime: '08:00:00',
+      slotMaxTime: '20:00:00',
+      events: [],
+      eventDisplay: 'auto',
+
+      eventDidMount: (info: any) => {
+        const tooltip = info.event.extendedProps.tooltip;
+
+        if (tooltip) {
+          info.el.setAttribute('title', tooltip);
+        }
+      },
+
+      dateClick: (arg: any) => {
+        this.openDialogWithDate(arg.date);
+      },
+
+      eventClick: (arg: any) => {
+
+        const dialogRef = this.dialog.open(EventActionsDialogComponent, {
+          width: '400px',
+          data: arg.event.extendedProps
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+
+          const evento = arg.event.extendedProps;
+
+          if (result === 'modifica') {
+            this.openDialog(evento);
+          }
+
+          if (result === 'nuovo') {
+            this.openDialogWithDate(arg.event.start);
+          }
+
+          if (result === 'elimina') {
+            this.delete(evento.id);
+          }
+
+          if (result === 'associa') {
+            this.openAssociaCliente(evento.id);
+          }
+
+        });
+      }
+    };
   }
 
   cerca(): void {
     this.filtro.page = 0;
     this.retrieveList();
+  }
+
+  loadMotiviRoot() {
+    this.service.getMotiviRoot()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(res => this.motiviRoot = res);
   }
 
   reset(): void {
@@ -95,6 +175,7 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
         next: (data: any) => {
           this.pageResult = data;
           this.dataSource = data.list;
+          this.loadCalendarEvents();
           this.totalItems = data.count;
           this.loader = false;
 
@@ -103,6 +184,58 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
           this.loader = false;
         }
       });
+  }
+
+  loadCalendarEvents() {
+    const events = this.dataSource.map(e => ({
+      id: e.id,
+      title: `${e.nomeCliente}`,
+      date: e.dataVisita,
+      textColor: '#ffffff',
+      extendedProps: {
+        ...e,
+        tooltip: this.buildTooltip(e)
+      }
+    }));
+    this.calendarOptions = {
+      ...this.calendarOptions,
+      events: events
+    };
+  }
+
+  buildTooltip(e: any): string {
+
+    let t = `Cliente: ${e.nomeCliente}\n`;
+    t += `Venditore: ${e.venditoreNome}\n`;
+
+    if (e.codiceCliente) {
+      t += `Codice: ${e.codiceCliente}\n`;
+    }
+
+    if (e.sedeDescrizione) {
+      t += `Sede: ${e.sedeDescrizione}\n`;
+    }
+
+    if (e.motivoDescrizione) {
+      t += `Motivo: ${e.motivoDescrizione}`;
+    }
+
+    return t;
+  }
+
+  openDialogWithDate(date: Date) {
+    const data = {
+      dataVisita: date
+    };
+    const dialogRef = this.dialog.open(RegistroVisiteDialogComponent, {
+      width: '700px',
+      data: data
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.retrieveList();
+      }
+    });
   }
 
   getVenditori(): void {
@@ -204,4 +337,5 @@ export class ShowroomComponent extends BaseComponent implements OnInit {
   get currentSedeLabel(): string | null {
     return this.pageResult?.sedeCorrenteDescrizione ?? null;
   }
+
 }
