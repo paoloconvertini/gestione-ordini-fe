@@ -1,4 +1,4 @@
-import { Component, ViewChild  } from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import SignaturePad from 'signature_pad';
 import {MatDialogRef} from "@angular/material/dialog";
 
@@ -7,26 +7,54 @@ import {MatDialogRef} from "@angular/material/dialog";
   templateUrl: './firma-dialog.component.html',
   styleUrls: ['./firma-dialog.component.css']
 })
-export class FirmaDialogComponent {
+export class FirmaDialogComponent implements AfterViewInit{
 
   constructor(private dialogRef: MatDialogRef<FirmaDialogComponent>) {
   }
 
-  signPad: any;
   @ViewChild('signPadCanvas', {static: false}) signaturePadElement:any;
-  signImage:any;
+  signPad: any;
 
   ngAfterViewInit() {
-    this.signPad = new SignaturePad(this.signaturePadElement.nativeElement);
-    this.signPad.minWidth = 0.5;
-    this.signPad.maxWidth = 1;
+    const canvas = this.signaturePadElement.nativeElement;
 
+    setTimeout(() => this.resizeCanvas(), 0);
+
+    this.signPad = new SignaturePad(canvas, {
+      minWidth: 1.5,
+      maxWidth: 3,
+      penColor: '#000'
+    });
+    this.signPad.velocityFilterWeight = 0.7;
+    this.signPad.throttle = 16;
+
+    canvas.style.touchAction = 'none';
+    window.addEventListener('resize', () => this.resizeCanvas());
   }
-  /*Clean whole the signature*/
+
+  resizeCanvas() {
+    const canvas = this.signaturePadElement.nativeElement;
+
+    const data = this.signPad ? this.signPad.toData() : null;
+
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext('2d').scale(ratio, ratio);
+
+    if (this.signPad) {
+      this.signPad.clear();
+      if (data) {
+        this.signPad.fromData(data);
+      }
+    }
+  }
+
   clearSignPad() {
     this.signPad.clear();
   }
-  /*Here you can save the signature as a Image*/
+
   saveSignPad() {
     this.dialogRef.close(this.signPad.toDataURL());
   }

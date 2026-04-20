@@ -266,7 +266,10 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
       ordine.serie + '_' + ordine.progressivo;
     {
       const dialogRef = this.dialog.open(FirmaDialogComponent, {
-        width: '60%'
+        width: '100vw',
+        height: '100vh',
+        maxWidth: '100vw',
+        panelClass: 'full-screen-dialog'
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {

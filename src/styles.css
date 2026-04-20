@@ -420,3 +420,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   padding: 0 24px 16px 24px;
 }
 
+.full-screen-dialog .mat-dialog-container {
+  padding: 0 !important;
+  height: 100vh;
+}
