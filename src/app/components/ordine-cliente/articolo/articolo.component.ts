@@ -248,6 +248,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       this.snackbar.open('Attenzione non è possibile procedere non è stato selezionato nessun articolo in pronta consegna che non sia già stato consegnato!', 'Chiudi', {
         duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
       });
+      this.loader = false;
       return;
     }
     let o = list[0];
@@ -325,34 +326,48 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
   creaBolla() {
     this.loader = true;
-    this.service.creaBolla(this.selection.selected, this.accontiDaUsare).pipe(takeUntil(this.ngUnsubscribe))
+
+    this.service.creaBolla(this.selection.selected, this.accontiDaUsare)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res) => {
+          // ✔️ SOLO SUCCESSO (201)
           this.loader = false;
           this.accontiDaUsare = [];
-          if (res && !res.error) {
-            let snackBarRef = this.snackbar.open(res.msg, 'Chiudi', {
-              horizontalPosition: 'center', verticalPosition: 'top'
-            });
-            snackBarRef.afterDismissed().subscribe(() => {
-              this.disabilitaBolla = false;
-            });
-          } else {
-            this.snackbar.open('Errore! Bolla non creata', 'Chiudi', {
-              duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
-            });
-            this.loader = false;
-            this.disabilitaBolla = false;
-          }
-        },
-        error: () => {
-          this.snackbar.open('Server non raggiungibile!', 'Chiudi', {
-            duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+
+          this.snackbar.open(res.msg, 'Chiudi', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
           });
+
+          // 🔥 refresh lista
+          this.getArticoliByOrdineId();
+          this.selection.clear();
+          this.disabilitaBolla = false;
+        },
+
+        error: (err) => {
           this.loader = false;
           this.disabilitaBolla = false;
+
+          // ✔️ gestione errori backend
+          if (err?.error) {
+            // err.error = ResponseDto
+            this.snackbar.open(err.error.msg || 'Errore!', 'Chiudi', {
+              duration: 5000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top'
+            });
+          } else {
+            // ✔️ server down / rete
+            this.snackbar.open('Server non raggiungibile!', 'Chiudi', {
+              duration: 5000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top'
+            });
+          }
         }
-      })
+      });
   }
 
   creaOrdineForn() {
