@@ -185,6 +185,14 @@
               </span>
             </td>
           </ng-container>
+          <ng-container matColumnDef="iva">
+            <th mat-header-cell *matHeaderCellDef>IVA</th>
+            <td mat-cell *matCellDef="let articolo">
+              <span *ngIf="articolo.tipoRigo !== 'C' && articolo.tipoRigo !== 'AC'">
+                {{articolo.aliquota}}%
+              </span>
+            </td>
+          </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="tono">
             <th mat-header-cell *matHeaderCellDef>Tono</th>

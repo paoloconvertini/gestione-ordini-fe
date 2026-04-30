@@ -122,7 +122,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     if (this.perm.canEditQtaConsegnatoSenzaBolla) {   // nuovo permesso
       this.displayedColumns = [...this.displayedColumns, 'qtaConsegnatoSenzaBolla'];
     }
-    this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'tono', 'qtaRiservata', 'qtaProntoConsegna',
+    this.displayedColumns = [...this.displayedColumns, 'prezzo', 'prezzoTot', 'iva', 'tono', 'qtaRiservata', 'qtaProntoConsegna',
       'flRiservato', 'flDisponibile', 'flOrdinato', 'flProntoConsegna', 'flConsegnato', 'azioni']
   }
 

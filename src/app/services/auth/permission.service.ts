@@ -57,6 +57,7 @@ export class PermissionService {
   get canFirmaCliente() { return this.auth.hasPerm('ordini_clienti.firma_cliente'); }
   get canInviaEmail() { return this.auth.hasPerm('ordini_clienti.invia_email'); }
   get canRiapriOrdine() { return this.auth.hasPerm('ordini_clienti.riapri'); }
+  get canCopiaOrdine() { return this.auth.hasPerm('ordini_clienti.copia'); }
   get canWarnNonFirmato() { return this.auth.hasPerm('ordini_clienti.warn_non_firmato'); }
   get canNoteLogistica() { return this.auth.hasPerm('ordini_clienti.note_logistica'); }
 

@@ -80,4 +80,7 @@ export class OrdineClienteService extends CommonService{
   }
 
 
+  copiaOrdine(anno: number | undefined, serie: string | undefined, progressivo: number | undefined) {
+    return this.http.get<any>(`${this.url}/copia-ordine/${anno}/${serie}/${progressivo}`);
+  }
 }

@@ -261,6 +261,26 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
       });
   }
 
+
+  copiaOrdine(ordine: OrdineCliente): void {
+    this.loader = true;
+    this.service.copiaOrdine(ordine.anno, ordine.serie, ordine.progressivo).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res) => {
+          this.loader = false;
+          if (res && !res.error) {
+            this.retrieveList();
+          }
+        },
+        error: (e) => {
+          this.snackbar.open('Errore!', 'Chiudi', {
+            duration: 2000, horizontalPosition: 'center', verticalPosition: 'top'
+          })
+          this.loader = false;
+        }
+      });
+  }
+
   apriFirma(ordine: OrdineCliente) {
     let ordineId = ordine.anno + '_' +
       ordine.serie + '_' + ordine.progressivo;

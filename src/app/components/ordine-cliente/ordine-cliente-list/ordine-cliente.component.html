@@ -276,6 +276,12 @@
                     <span>Vedi allegati</span>
                   </a>
 
+                  <button *ngIf="perm.canCopiaOrdine" mat-menu-item
+                          (click)="copiaOrdine(ordine)">
+                    <mat-icon>content_copy</mat-icon>
+                    <span>Copia ordine</span>
+                  </button>
+
                 </mat-menu>
               </div>
             </td>
