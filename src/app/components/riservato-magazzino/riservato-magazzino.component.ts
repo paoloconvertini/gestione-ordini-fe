@@ -84,7 +84,7 @@ export class RiservatoMagazzinoComponent extends CommonListComponent implements 
       .subscribe({
         next: (data: any | undefined) => {
           this.importiMap = data.importoRiservatiMap;
-          this.createPaginator(data.ordineDTOList, 100);
+          this.createPaginator(data.pageOrdineDto.list, 100);
           if(this.filtro.searchText){
             this.applyFilter();
           }
