@@ -291,51 +291,43 @@
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let articolo">
-              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-menu-item
-                       matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
-                          {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )) : ''}}
-                          {{articolo.qtyuser1?('. Settimana cons.: ' + articolo.qtyuser1): ''}}
-                          {{articolo.datauser1?('. Data cons.: ' + (articolo.datauser1 | date: 'dd/MM/yyyy')): ''}}
-                          " #tooltip="matTooltip" (click)="tooltip.toggle()">
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" (click)="showHistory(articolo)" mat-icon-button
+                      matTooltip="Storia articolo">
+                <mat-icon aria-hidden="false" aria-label="firma" color="primary">work_history</mat-icon>
+              </button>
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" (click)="aggiungiNote(articolo)" mat-icon-button matTooltip="Aggiungi note" >
+                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':articolo.note}"></mat-icon>
+              </button>
+              <button
+                *ngIf="perm.canAssociaFornitore && filtro.statusOrdine === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ' && articolo.farticolo !== '*ML'"
+                (click)="addFornitore(articolo.farticolo)" mat-icon-button
+                matTooltip="Associa fornitore">
+                <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
+              </button>
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-icon-button
+                      matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )) : ''}}
+                        {{articolo.qtyuser1?('. Settimana cons.: ' + articolo.qtyuser1): ''}}
+                        {{articolo.datauser1?('. Data cons.: ' + (articolo.datauser1 | date: 'dd/MM/yyyy')): ''}}
+                        " #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore"
                           color="primary">store</mat-icon>
               </button>
-              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.noteOrdCli && perm.canViewNoteOAF" mat-menu-item
-                       matTooltip="{{articolo.noteOrdCli}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.annoOAF" mat-icon-button matToolTip="Collega OAF" (click)="collegaOAF(articolo)">
+                <mat-icon aria-hidden="false"
+                          aria-label="collega ordine fornitore"
+                          color="primary">add_link</mat-icon>
+              </button>
+              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.noteOrdCli && perm.canViewNoteOAF" mat-icon-button
+                      matTooltip="{{articolo.noteOrdCli}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
                 <mat-icon aria-hidden="false"
                           aria-label="nota ordine fornitore"
                           color="primary">info</mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.flBolla" mat-menu-item aria-label="expand row" (click)="getBolle(articolo); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
                 <mat-icon color="primary">local_shipping</mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" mat-icon-button
-                      [matMenuTriggerFor]="menuAltro">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menuAltro="matMenu">
-                <button (click)="showHistory(articolo)" mat-menu-item>
-                  <mat-icon aria-hidden="false" aria-label="firma" color="primary">work_history</mat-icon>
-                  <span>Storia articolo</span>
-                </button>
-                <button  (click)="aggiungiNote(articolo)" mat-menu-item>
-                  <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':articolo.note}"></mat-icon>
-                  <span>Aggiungi note</span>
-                </button>
-                <button
-                  *ngIf="perm.canAssociaFornitore && filtro.statusOrdine === 'DA_ORDINARE' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ' && articolo.farticolo !== '*ML'"
-                  (click)="addFornitore(articolo.farticolo)" mat-menu-item>
-                  <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
-                  <span>Associa fornitore</span>
-                </button>
-                <button  *ngIf=" !articolo.annoOAF" mat-menu-item (click)="collegaOAF(articolo)">
-                  <mat-icon aria-hidden="false"
-                            aria-label="collega ordine fornitore"
-                            color="primary">add_link</mat-icon>
-                  <span>Collega OAF</span>
-                </button>
-              </mat-menu>
             </td>
           </ng-container>
 
