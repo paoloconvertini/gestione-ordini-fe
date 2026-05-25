@@ -108,6 +108,12 @@ import { NotaConsegnaDialogComponent } from './components/nota-consegna-dialog/n
 import { CoordinateDialogComponent } from './components/coordinate-dialog/coordinate-dialog.component';
 import {FullCalendarModule} from "@fullcalendar/angular";
 import { EventActionsDialogComponent } from './components/event-actions-dialog/event-actions-dialog.component';
+import { AttivitaMontaggioComponent } from './components/attivita-montaggio/attivita-montaggio.component';
+import { AttivitaMontaggioDialogComponent } from './components/attivita-montaggio-dialog/attivita-montaggio-dialog.component';
+import { OperaiComponent } from './components/operai/operai.component';
+import { OperaioDialogComponent } from './components/operaio-dialog/operaio-dialog.component';
+import { TipiAttivitaMontaggioComponent } from './components/tipi-attivita-montaggio/tipi-attivita-montaggio.component';
+import { TipoAttivitaMontaggioDialogComponent } from './components/tipo-attivita-montaggio-dialog/tipo-attivita-montaggio-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -178,7 +184,13 @@ export const DateFormats = {
     ConsegnaEditDialogComponent,
     NotaConsegnaDialogComponent,
     CoordinateDialogComponent,
-    EventActionsDialogComponent
+    EventActionsDialogComponent,
+    AttivitaMontaggioComponent,
+    AttivitaMontaggioDialogComponent,
+    OperaiComponent,
+    OperaioDialogComponent,
+    TipiAttivitaMontaggioComponent,
+    TipoAttivitaMontaggioDialogComponent
   ],
   imports: [
     MatDatepickerModule,

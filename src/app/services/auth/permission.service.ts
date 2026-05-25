@@ -154,6 +154,10 @@ export class PermissionService {
     return this.auth.hasPerm('showroom.view');
   }
 
+  get canViewAttivitaMontaggio(): boolean {
+    return this.auth.hasPerm('attivita.montaggio.view');
+  }
+
   get canFilterSede() {
     return this.auth.hasPerm('showroom.sede.filter');
   }

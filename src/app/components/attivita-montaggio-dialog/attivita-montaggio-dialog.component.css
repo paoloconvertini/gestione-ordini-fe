@@ -1,0 +1,62 @@
+.dialog-content {
+  padding-top: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.section-card {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: rgba(0,0,0,0.75);
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.attivita-row {
+  display: grid;
+  grid-template-columns: 2fr 120px 160px 2fr 60px;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.tab-content {
+  padding-top: 20px;
+}

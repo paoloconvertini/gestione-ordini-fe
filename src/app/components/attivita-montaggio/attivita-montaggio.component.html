@@ -1,0 +1,150 @@
+<div class="page-header">
+
+  <div class="page-title-wrapper">
+
+    <div class="page-title">
+      Agenda Montaggi
+    </div>
+
+    <span class="result-badge">
+      {{ totalItems }}
+    </span>
+
+  </div>
+
+</div>
+
+<mat-card class="filter-card">
+
+  <div class="filter-grid">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data da</mat-label>
+
+      <input matInput
+             [matDatepicker]="pickerDa"
+             [(ngModel)]="filtro.dataDa">
+
+      <mat-datepicker-toggle matIconSuffix
+                             [for]="pickerDa">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #pickerDa>
+      </mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data a</mat-label>
+
+      <input matInput
+             [matDatepicker]="pickerA"
+             [(ngModel)]="filtro.dataA">
+
+      <mat-datepicker-toggle matIconSuffix
+                             [for]="pickerA">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #pickerA>
+      </mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cliente</mat-label>
+
+      <input matInput
+             [(ngModel)]="filtro.nomeCliente">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Stato</mat-label>
+
+      <mat-select [(ngModel)]="filtro.stato">
+
+        <mat-option [value]="null">
+          Tutti
+        </mat-option>
+
+        <mat-option *ngFor="let stato of stati"
+                    [value]="stato.value">
+          {{ stato.label }}
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Operaio</mat-label>
+
+      <mat-select [(ngModel)]="filtro.idOperaio">
+
+        <mat-option [value]="null">
+          Tutti
+        </mat-option>
+
+        <mat-option *ngFor="let operaio of operai"
+                    [value]="operaio.id">
+          {{ operaio.nome }}
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Scala mobile</mat-label>
+
+      <mat-select [(ngModel)]="filtro.scalaMobile">
+
+        <mat-option [value]="null">
+          Tutti
+        </mat-option>
+
+        <mat-option [value]="true">
+          SI
+        </mat-option>
+
+        <mat-option [value]="false">
+          NO
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
+  </div>
+
+  <div class="filter-actions">
+
+    <button mat-stroked-button
+            color="warn"
+            (click)="reset()">
+      Reset
+    </button>
+
+    <button mat-raised-button
+            color="primary"
+            (click)="search()">
+      Cerca
+    </button>
+
+  </div>
+
+</mat-card>
+
+<mat-card class="table-card">
+
+  <mat-spinner *ngIf="loader"
+               class="loader">
+  </mat-spinner>
+
+  <div class="page-container">
+
+    <div *ngIf="!loader"
+         class="calendar-wrapper">
+
+      <full-calendar [options]="calendarOptions">
+      </full-calendar>
+
+    </div>
+
+  </div>
+
+</mat-card>

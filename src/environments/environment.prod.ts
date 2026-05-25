@@ -35,5 +35,8 @@ export const environment = {
   SHOWROOM: 'showroom',
   OSRM_BASE_URL: '/osrm/',
   ROUTE_DRIVING: 'route/v1/driving/',
+  OPERAI: 'operai',
+  ATTIVITA_MONTAGGIO: 'attivita-montaggio',
+  TIPI_ATTIVITA_MONTAGGIO: 'tipi-attivita-montaggio',
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };

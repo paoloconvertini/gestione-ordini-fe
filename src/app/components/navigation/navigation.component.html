@@ -9,6 +9,12 @@
           [routerLink]="['/registro-visite']">
     Registro Visite
   </button>
+  <span class="spacer"></span>
+  <button *ngIf="perm.canViewAttivitaMontaggio"
+          mat-button
+          [routerLink]="['/attivita-montaggio']">
+    Attività di Montaggio
+  </button>
   <!-- MENU PRINCIPALE (SOTTOMENU) -->
   <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
   <button *ngIf="perm.canViewOrdiniFornitori" mat-button [routerLink]="['/ordini-fornitore']">Ordine Fornitori</button>

@@ -39,7 +39,10 @@ export const environment = {
   LISTA_DI_CARICO: 'lista-carichi',
   SHOWROOM: 'showroom',
   OSRM_BASE_URL: '/osrm/',
-  ROUTE_DRIVING: 'route/v1/driving/'
+  ROUTE_DRIVING: 'route/v1/driving/',
+  OPERAI: 'operai',
+  ATTIVITA_MONTAGGIO: 'attivita-montaggio',
+  TIPI_ATTIVITA_MONTAGGIO: 'tipi-attivita-montaggio',
 };
 
 /*

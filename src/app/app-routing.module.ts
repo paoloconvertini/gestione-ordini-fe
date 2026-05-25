@@ -28,12 +28,18 @@ import {CollegaOAFComponent} from "./components/collega-oaf/collega-oaf.componen
 import {PermissionListComponent} from "./components/permissions/permission-list/permission-list.component";
 import {ShowroomComponent} from "./components/showroom/showroom.component";
 import {GestioneMotiviComponent} from "./components/showroom/gestione-motivi/gestione-motivi.component";
+import {AttivitaMontaggioComponent} from "./components/attivita-montaggio/attivita-montaggio.component";
 
 const routes: Routes = [
   {
     path: 'users',
     canActivate: [AuthGuard],
     component: UserListComponent
+  },
+  {
+    path: 'attivita-montaggio',
+    canActivate: [AuthGuard],
+    component: AttivitaMontaggioComponent
   },
   {
     path: 'registro-visite',
