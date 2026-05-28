@@ -64,3 +64,44 @@
 .calendar-wrapper {
   padding: 10px;
 }
+
+::ng-deep .fc-timegrid-event {
+  min-height: 120px;
+}
+
+::ng-deep .fc-timegrid-event-harness {
+  margin-bottom: 6px;
+}
+
+.calendar-event {
+  padding: 6px;
+  line-height: 1.35;
+}
+
+.calendar-event-cliente {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calendar-event-indirizzo,
+.calendar-event-info,
+.calendar-event-attivita {
+  font-size: 10px;
+}
+
+.calendar-event-attivita {
+  font-size: 11px;
+  margin-top: 3px;
+  opacity: 0.95;
+}
+
+.calendar-event-info {
+  font-size: 11px;
+  margin-top: 2px;
+  opacity: 0.95;
+}
+
+::ng-deep .fc-event-title,
+::ng-deep .fc-event-main {
+  white-space: normal !important;
+}

@@ -34,4 +34,8 @@ export class AttivitaMontaggioService extends CommonService {
   delete(id: number): Observable<any> {
     return this.http.delete<any>(`${this.url}/${id}`);
   }
+
+  exportIcs(filtro: any) {
+    return this.http.post(`${this.url}/export-ics`, filtro, {responseType: 'blob'});
+  }
 }

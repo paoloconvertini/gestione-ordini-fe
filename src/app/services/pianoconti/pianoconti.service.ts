@@ -23,4 +23,8 @@ export class PianocontiService extends CommonService {
   updateCoordinates(dto: any) {
     return this.http.post(`${this.url}/update-coordinates`, dto);
   }
+
+  searchClienti(q: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/search-clienti`, {params: {q: q}});
+  }
 }

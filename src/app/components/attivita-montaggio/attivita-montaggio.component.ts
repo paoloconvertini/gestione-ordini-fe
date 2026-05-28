@@ -6,13 +6,15 @@ import { AttivitaMontaggioService } from '../../services/attivita-montaggio/atti
 import { OperaiService } from '../../services/operai/operai.service';
 import {MatDialog} from "@angular/material/dialog";
 import {AttivitaMontaggioDialogComponent} from "../attivita-montaggio-dialog/attivita-montaggio-dialog.component";
+import {takeUntil} from "rxjs";
+import {BaseComponent} from "../baseComponent";
 
 @Component({
   selector: 'app-attivita-montaggio',
   templateUrl: './attivita-montaggio.component.html',
   styleUrls: ['./attivita-montaggio.component.css']
 })
-export class AttivitaMontaggioComponent implements OnInit {
+export class AttivitaMontaggioComponent extends BaseComponent implements OnInit {
 
   loader = false;
 
@@ -48,6 +50,7 @@ export class AttivitaMontaggioComponent implements OnInit {
     private operaiService: OperaiService,
     private dialog: MatDialog
   ) {
+    super();
   }
 
   ngOnInit(): void {
@@ -93,7 +96,30 @@ export class AttivitaMontaggioComponent implements OnInit {
       },
 
       events: [],
-
+      eventContent: (arg: any) => {
+        const e = arg.event.extendedProps;
+        return {
+          html: `
+            <div class="calendar-event">
+              <div class="calendar-event-cliente">
+                ${e.clienteLabel || ''}
+              </div>
+              <div class="calendar-event-indirizzo">
+                📍 ${e.indirizzoLabel || ''}
+                ${e.localita ? ', ' + e.localita : ''}
+              </div>
+              <div class="calendar-event-info">
+                📞 ${e.telefono || ''}
+              </div>
+              <div class="calendar-event-info">
+                🕒 ${e.dataOraLabel || ''}
+              </div>
+              <div class="calendar-event-attivita">
+                 🧰 ${e.attivitaLabel || ''}
+              </div>
+            </div>`
+        };
+      },
       eventDidMount: (info: any) => {
 
         const e = info.event.extendedProps;
@@ -128,8 +154,7 @@ export class AttivitaMontaggioComponent implements OnInit {
   }
 
   loadOperai(): void {
-
-    this.operaiService.getAll()
+    this.operaiService.getAll().pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
           this.operai = res;
@@ -138,10 +163,8 @@ export class AttivitaMontaggioComponent implements OnInit {
   }
 
   search(): void {
-
     this.loader = true;
-
-    this.service.search(this.filtro)
+    this.service.search(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (res: any) => {
 
@@ -153,7 +176,7 @@ export class AttivitaMontaggioComponent implements OnInit {
 
             events.push({
               id: e.id,
-              title: e.nomeCliente,
+              title: '',
               start: e.dataOraDa,
               end: e.dataOraA,
               backgroundColor: e.colore,
@@ -225,6 +248,20 @@ export class AttivitaMontaggioComponent implements OnInit {
 
         if (result) {
           this.search();
+        }
+      });
+  }
+
+  exportIcs(): void {
+    this.service.exportIcs(this.filtro).pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'agenda-montaggi.ics';
+          a.click();
+          window.URL.revokeObjectURL(url);
         }
       });
   }

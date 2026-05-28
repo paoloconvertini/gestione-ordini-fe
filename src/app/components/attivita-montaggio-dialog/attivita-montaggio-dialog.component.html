@@ -24,73 +24,87 @@
                 Pianificazione
               </div>
 
-              <div class="row-2">
+              <!-- RIGA DATE -->
 
-                <div class="row-2">
+              <div class="row-4">
 
-                  <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline">
 
-                    <mat-label>Data inizio</mat-label>
+                  <mat-label>Data inizio</mat-label>
 
-                    <input matInput
-                           [matDatepicker]="pickerDataDa"
-                           [(ngModel)]="model.dataDa">
+                  <input matInput
+                         [matDatepicker]="pickerDataDa"
+                         [(ngModel)]="model.dataDa">
 
-                    <mat-datepicker-toggle matIconSuffix
-                                           [for]="pickerDataDa">
-                    </mat-datepicker-toggle>
+                  <mat-datepicker-toggle matIconSuffix
+                                         [for]="pickerDataDa">
+                  </mat-datepicker-toggle>
 
-                    <mat-datepicker #pickerDataDa>
-                    </mat-datepicker>
+                  <mat-datepicker #pickerDataDa>
+                  </mat-datepicker>
 
-                  </mat-form-field>
+                </mat-form-field>
 
-                  <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline">
 
-                    <mat-label>Ora inizio</mat-label>
+                  <mat-label>Ora inizio</mat-label>
 
-                    <input matInput
-                           type="time"
-                           [(ngModel)]="model.oraDa">
+                  <input matInput
+                         type="time"
+                         [(ngModel)]="model.oraDa">
 
-                  </mat-form-field>
+                </mat-form-field>
 
-                </div>
+                <mat-form-field appearance="outline">
 
-                <div class="row-2">
+                  <mat-label>Data fine</mat-label>
 
-                  <mat-form-field appearance="outline">
+                  <input matInput
+                         [matDatepicker]="pickerDataA"
+                         [(ngModel)]="model.dataA">
 
-                    <mat-label>Data fine</mat-label>
+                  <mat-datepicker-toggle matIconSuffix
+                                         [for]="pickerDataA">
+                  </mat-datepicker-toggle>
 
-                    <input matInput
-                           [matDatepicker]="pickerDataA"
-                           [(ngModel)]="model.dataA">
+                  <mat-datepicker #pickerDataA>
+                  </mat-datepicker>
 
-                    <mat-datepicker-toggle matIconSuffix
-                                           [for]="pickerDataA">
-                    </mat-datepicker-toggle>
+                </mat-form-field>
 
-                    <mat-datepicker #pickerDataA>
-                    </mat-datepicker>
+                <mat-form-field appearance="outline">
 
-                  </mat-form-field>
+                  <mat-label>Ora fine</mat-label>
 
-                  <mat-form-field appearance="outline">
+                  <input matInput
+                         type="time"
+                         [(ngModel)]="model.oraA">
 
-                    <mat-label>Ora fine</mat-label>
-
-                    <input matInput
-                           type="time"
-                           [(ngModel)]="model.oraA">
-
-                  </mat-form-field>
-
-                </div>
+                </mat-form-field>
 
               </div>
 
-              <div class="row-2">
+              <!-- RIGA INFO -->
+
+              <div class="row-3">
+
+                <mat-form-field appearance="outline">
+
+                  <mat-label>Tipo appuntamento</mat-label>
+
+                  <mat-select [(ngModel)]="model.tipoAppuntamento">
+
+                    <mat-option value="MONTAGGIO">
+                      Montaggio
+                    </mat-option>
+
+                    <mat-option value="RILIEVO">
+                      Rilievo
+                    </mat-option>
+
+                  </mat-select>
+
+                </mat-form-field>
 
                 <mat-form-field appearance="outline">
 
@@ -133,14 +147,46 @@
 
               <div class="row-3">
 
-                <mat-form-field appearance="outline">
+                <div class="cliente-wrapper">
 
-                  <mat-label>Cliente</mat-label>
+                  <mat-form-field appearance="outline">
 
-                  <input matInput
-                         [(ngModel)]="model.nomeCliente">
+                    <mat-label>Cliente</mat-label>
 
-                </mat-form-field>
+                    <input matInput
+                           [(ngModel)]="clienteSearch"
+                           (ngModelChange)="onClienteSearch($event)">
+
+                  </mat-form-field>
+
+                  <div class="autocomplete-dropdown"
+                       *ngIf="listaClienti.length > 0">
+
+                    <div class="autocomplete-item"
+                         *ngFor="let c of listaClienti"
+                         (click)="selectCliente(c)">
+
+                      <div class="cliente-item-title">
+                        {{ c.intestazione }}
+                      </div>
+
+                      <div class="cliente-item-sub">
+
+                        Cliente:
+                        {{ c.sottoConto }}
+
+                        <br>
+
+                        {{ c.localita }}
+                        ({{ c.provincia }})
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
 
                 <mat-form-field appearance="outline">
 

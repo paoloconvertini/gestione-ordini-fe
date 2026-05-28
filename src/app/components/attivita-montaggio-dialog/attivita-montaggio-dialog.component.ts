@@ -7,6 +7,7 @@ import {OperaiService} from "../../services/operai/operai.service";
 import {takeUntil} from "rxjs";
 import {BaseComponent} from "../baseComponent";
 import {CommonListComponent} from "../commonListComponent";
+import {PianocontiService} from "../../services/pianoconti/pianoconti.service";
 
 @Component({
   selector: 'app-attivita-montaggio-dialog',
@@ -18,6 +19,7 @@ export class AttivitaMontaggioDialogComponent extends BaseComponent implements O
   loader = false;
 
   model: any = {
+    tipoAppuntamento: 'MONTAGGIO',
     dettagli: [],
     operai: []
   };
@@ -27,6 +29,8 @@ export class AttivitaMontaggioDialogComponent extends BaseComponent implements O
   comuneSearch: string | null = null;
   tipiAttivita: any[] = [];
   operai: any[] = [];
+  listaClienti: any[] = [];
+  clienteSearch: string | null = null;
 
   stati = [
     {
@@ -53,7 +57,8 @@ export class AttivitaMontaggioDialogComponent extends BaseComponent implements O
     private service: AttivitaMontaggioService,
     private showroomService: ShowroomService,
     private tipiService: TipiAttivitaMontaggioService,
-    private operaiService: OperaiService
+    private operaiService: OperaiService,
+    private pianoContiService: PianocontiService
   ) {
     super();
   }
@@ -121,8 +126,8 @@ export class AttivitaMontaggioDialogComponent extends BaseComponent implements O
               dataA.toTimeString().substring(0, 5);
           }
 
-          this.comuneSearch = this.model.paese;
-
+          this.comuneSearch = this.model.comune;
+          this.clienteSearch = this.model.nomeCliente;
           this.loader = false;
         },
         error: (e: any) => {
@@ -130,6 +135,40 @@ export class AttivitaMontaggioDialogComponent extends BaseComponent implements O
           this.loader = false;
         }
       });
+  }
+
+  onClienteSearch(value: string): void {
+    this.clienteSearch = value;
+    this.model.nomeCliente = value;
+    this.model.gruppoConto = null;
+    this.model.sottoConto = null;
+    if (!value || value.length < 3) {
+      this.listaClienti = [];
+      return;
+    }
+    this.pianoContiService.searchClienti(value).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+        next: (res: any) => {
+          this.listaClienti = res;
+        },
+        error: (e: any) => {
+          console.error(e);
+        }
+      });
+  }
+
+  selectCliente(cliente: any): void {
+    this.model.gruppoConto = cliente.gruppoConto;
+    this.model.sottoConto = cliente.sottoConto;
+    this.model.nomeCliente = cliente.intestazione;
+    this.model.via = cliente.indirizzo;
+    this.model.cap = cliente.cap;
+    this.model.comune = cliente.localita;
+    this.comuneSearch = cliente.localita;
+    this.model.provincia = cliente.provincia;
+    this.model.telefono = cliente.cellulare || cliente.telefono;
+    this.model.email = cliente.email;
+    this.clienteSearch = cliente.intestazione;
+    this.listaClienti = [];
   }
 
   close(): void {
@@ -247,7 +286,7 @@ export class AttivitaMontaggioDialogComponent extends BaseComponent implements O
 
   selectComune(c: any): void {
 
-    this.model.paese = c.nomeComune;
+    this.model.comune = c.nomeComune;
     this.model.provincia = c.siglaProvincia;
 
     this.comuneSearch = c.nomeComune;

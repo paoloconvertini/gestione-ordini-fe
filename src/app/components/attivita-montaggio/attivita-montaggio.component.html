@@ -1,17 +1,24 @@
 <div class="page-header">
-
   <div class="page-title-wrapper">
-
     <div class="page-title">
       Agenda Montaggi
     </div>
-
-    <span class="result-badge">
-      {{ totalItems }}
-    </span>
-
+    <span class="result-badge">{{ totalItems }}</span>
+    <mat-button-toggle-group
+      class="tipo-toggle"
+      [(ngModel)]="filtro.tipoAppuntamento"
+      (change)="search()">
+      <mat-button-toggle [value]="null">
+        Tutti
+      </mat-button-toggle>
+      <mat-button-toggle value="MONTAGGIO">
+        Montaggi
+      </mat-button-toggle>
+      <mat-button-toggle value="RILIEVO">
+        Rilievi
+      </mat-button-toggle>
+    </mat-button-toggle-group>
   </div>
-
 </div>
 
 <mat-card class="filter-card">
@@ -123,6 +130,9 @@
             color="primary"
             (click)="search()">
       Cerca
+    </button>
+    <button mat-raised-button color="primary" (click)="exportIcs()">
+      Esporta Appuntamenti
     </button>
 
   </div>
