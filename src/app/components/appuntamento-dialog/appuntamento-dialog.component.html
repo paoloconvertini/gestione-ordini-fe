@@ -1,0 +1,355 @@
+<mat-dialog-content>
+
+  <mat-spinner *ngIf="loader">
+  </mat-spinner>
+
+  <div *ngIf="!loader"
+       class="dialog-content">
+
+    <!-- CLIENTE -->
+
+    <div class="form-row">
+
+      <div class="cliente-wrapper field field-full">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Cliente</mat-label>
+
+          <input matInput
+                 [(ngModel)]="clienteSearch"
+                 (ngModelChange)="onClienteSearch($event)">
+
+        </mat-form-field>
+
+        <div class="autocomplete-dropdown"
+             *ngIf="listaClienti.length > 0">
+
+          <div class="autocomplete-item"
+               *ngFor="let c of listaClienti"
+               (click)="selectCliente(c)">
+
+            <div class="cliente-item-title">
+              {{ c.intestazione }}
+            </div>
+
+            <div class="cliente-item-sub">
+
+              Cliente:
+              {{ c.sottoConto }}
+
+              <br>
+
+              {{ c.localita }}
+              ({{ c.provincia }})
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DATA -->
+
+    <div class="form-row form-row-3">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Data</mat-label>
+
+          <input matInput
+                 [matDatepicker]="pickerData"
+                 [(ngModel)]="dto.dataAppuntamento">
+
+          <mat-datepicker-toggle matIconSuffix
+                                 [for]="pickerData">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #pickerData>
+          </mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Ora Da</mat-label>
+
+          <input matInput
+                 type="time"
+                 [(ngModel)]="dto.oraDa">
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Ora A</mat-label>
+
+          <input matInput
+                 type="time"
+                 [(ngModel)]="dto.oraA">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- APPUNTAMENTO -->
+
+    <div class="form-row form-row-2">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Venditore</mat-label>
+
+          <mat-select [(ngModel)]="dto.codVenditore">
+
+            <mat-option *ngFor="let v of venditori"
+                        [value]="v.codVenditore">
+
+              {{ v.fullname }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Sede</mat-label>
+
+          <mat-select [(ngModel)]="dto.sedeId">
+
+            <mat-option *ngFor="let s of sedi"
+                        [value]="s.id">
+
+              {{ s.descrizione }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- MOTIVO -->
+
+    <div class="form-row form-row-2">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Motivo</mat-label>
+
+          <mat-select
+            [(ngModel)]="motivoRootId"
+            (selectionChange)="onMotivoRootChange($event.value)">
+
+            <mat-option *ngFor="let m of motiviRoot"
+                        [value]="m.id">
+
+              {{ m.descrizione }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field"
+           *ngIf="motiviFigli.length > 0">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Sotto Motivo</mat-label>
+
+          <mat-select [(ngModel)]="motivoFiglioId">
+
+            <mat-option *ngFor="let m of motiviFigli"
+                        [value]="m.id">
+
+              {{ m.descrizione }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- CONTATTI -->
+
+    <div class="form-row form-row-2">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Telefono</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.telefono">
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Email</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.email">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- INDIRIZZO -->
+
+    <div class="form-row">
+
+      <div class="field field-full">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Via</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.via">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="form-row form-row-3">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>CAP</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.cap">
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Comune</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.comune">
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Provincia</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.provincia">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <!-- NOTE -->
+
+    <div class="form-row">
+
+      <div class="field field-full">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Note</mat-label>
+
+          <textarea matInput
+                    rows="5"
+                    [(ngModel)]="dto.note">
+          </textarea>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button mat-stroked-button
+          color="warn"
+          *ngIf="dto.id"
+          (click)="delete()">
+
+    Elimina
+
+  </button>
+
+  <button mat-stroked-button
+          (click)="close()">
+
+    Chiudi
+
+  </button>
+
+  <button mat-raised-button
+          color="primary"
+          (click)="save()">
+
+    Salva
+
+  </button>
+
+</mat-dialog-actions>

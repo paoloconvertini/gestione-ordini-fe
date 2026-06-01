@@ -1,0 +1,185 @@
+<div class="page-header">
+
+  <div class="page-title-wrapper">
+
+    <div class="page-title">
+      Agenda Appuntamenti
+    </div>
+
+    <span class="result-badge">
+      {{ totalItems }}
+    </span>
+
+  </div>
+
+</div>
+
+<mat-card class="filter-card">
+
+  <div class="filter-grid">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Data da</mat-label>
+
+      <input matInput
+             [matDatepicker]="pickerDa"
+             [(ngModel)]="filtro.dataDa">
+
+      <mat-datepicker-toggle matIconSuffix
+                             [for]="pickerDa">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #pickerDa>
+      </mat-datepicker>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Data a</mat-label>
+
+      <input matInput
+             [matDatepicker]="pickerA"
+             [(ngModel)]="filtro.dataA">
+
+      <mat-datepicker-toggle matIconSuffix
+                             [for]="pickerA">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker #pickerA>
+      </mat-datepicker>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Cliente</mat-label>
+
+      <input matInput
+             [(ngModel)]="filtro.nomeCliente">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Venditore</mat-label>
+
+      <mat-select [(ngModel)]="filtro.codVenditore">
+
+        <mat-option [value]="null">
+          Tutti
+        </mat-option>
+
+        <mat-option *ngFor="let v of venditori"
+                    [value]="v.codVenditore">
+
+          {{ v.fullname }}
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Motivo</mat-label>
+
+      <mat-select [(ngModel)]="filtro.motivoId">
+
+        <mat-option [value]="null">
+          Tutti
+        </mat-option>
+
+        <mat-option *ngFor="let m of motiviRoot"
+                    [value]="m.id">
+
+          {{ m.descrizione }}
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Sede</mat-label>
+
+      <mat-select [(ngModel)]="filtro.sedeId">
+
+        <mat-option [value]="null">
+          Tutte
+        </mat-option>
+
+        <mat-option *ngFor="let s of sedi"
+                    [value]="s.id">
+
+          {{ s.descrizione }}
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+  </div>
+
+  <div class="filter-actions">
+
+    <button mat-stroked-button
+            color="warn"
+            (click)="reset()">
+
+      Reset
+
+    </button>
+
+    <button mat-raised-button
+            color="primary"
+            (click)="search()">
+
+      Cerca
+
+    </button>
+
+    <button mat-raised-button
+            color="primary"
+            (click)="exportIcs()">
+
+      Esporta Appuntamenti
+
+    </button>
+
+    <button mat-raised-button
+            color="accent"
+            (click)="openDialog()">
+
+      Nuovo Appuntamento
+
+    </button>
+
+  </div>
+
+</mat-card>
+
+<mat-card class="table-card">
+
+  <mat-spinner *ngIf="loader"
+               class="loader">
+  </mat-spinner>
+
+  <div class="page-container">
+
+    <div *ngIf="!loader"
+         class="calendar-wrapper">
+
+      <full-calendar [options]="calendarOptions">
+      </full-calendar>
+
+    </div>
+
+  </div>
+
+</mat-card>

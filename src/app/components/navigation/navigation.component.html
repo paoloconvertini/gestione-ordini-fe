@@ -4,16 +4,32 @@
   <span class="toolbar-title">Gestione ordini</span>
 
   <span class="spacer"></span>
-  <button *ngIf="perm.canViewRegistroVisite"
+  <button *ngIf="perm.canViewAgende"
           mat-button
-          [routerLink]="['/registro-visite']">
-    Registro Visite
+          [matMenuTriggerFor]="agende">
+    Agende
   </button>
-  <button *ngIf="perm.canViewAttivitaMontaggio"
-          mat-button
-          [routerLink]="['/attivita-montaggio']">
-    Attività di Montaggio
-  </button>
+  <mat-menu #agende="matMenu">
+
+    <button *ngIf="perm.canViewAttivitaMontaggio"
+            mat-menu-item
+            [routerLink]="['/attivita-montaggio']">
+      Attivita Montaggio
+    </button>
+
+    <button *ngIf="perm.canViewAppuntamenti"
+            mat-menu-item
+            [routerLink]="['/agenda-appuntamenti']">
+      Agenda Appuntamenti
+    </button>
+
+    <button *ngIf="perm.canViewRegistroVisite"
+            mat-menu-item
+            [routerLink]="['/registro-visite']">
+      Registro Visiste
+    </button>
+
+  </mat-menu>
   <!-- MENU PRINCIPALE (SOTTOMENU) -->
   <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
   <button *ngIf="perm.canViewOrdiniFornitori" mat-button [routerLink]="['/ordini-fornitore']">Ordine Fornitori</button>

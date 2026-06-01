@@ -29,6 +29,7 @@ import {PermissionListComponent} from "./components/permissions/permission-list/
 import {ShowroomComponent} from "./components/showroom/showroom.component";
 import {GestioneMotiviComponent} from "./components/showroom/gestione-motivi/gestione-motivi.component";
 import {AttivitaMontaggioComponent} from "./components/attivita-montaggio/attivita-montaggio.component";
+import {AgendaAppuntamentiComponent} from "./components/agenda-appuntamenti/agenda-appuntamenti.component";
 
 const routes: Routes = [
   {
@@ -45,6 +46,11 @@ const routes: Routes = [
     path: 'registro-visite',
     canActivate: [AuthGuard],
     component: ShowroomComponent
+  },
+  {
+    path: 'agenda-appuntamenti',
+    canActivate: [AuthGuard],
+    component: AgendaAppuntamentiComponent
   },
   {
     path: 'gestione-motivi',

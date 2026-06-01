@@ -424,3 +424,31 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   padding: 0 !important;
   height: 100vh;
 }
+
+.appuntamento-event {
+  padding: 4px 6px;
+  line-height: 1.2;
+}
+
+.appuntamento-event-cliente {
+  font-size: 10px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.appuntamento-event-venditore {
+  font-size: 10px;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.appuntamento-event-indirizzo {
+  font-size: 10px;
+  margin-top: 1px;
+  font-style: italic;
+}
+
+.appuntamento-event-info {
+  font-size: 11px;
+  margin-top: 1px;
+}
