@@ -70,3 +70,10 @@
 .autocomplete-item:hover {
   background: #f5f7fa;
 }
+
+.validation-error {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: -16px;
+  margin-bottom: 12px;
+}

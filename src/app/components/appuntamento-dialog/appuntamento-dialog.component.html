@@ -12,7 +12,8 @@
 
       <div class="cliente-wrapper field field-full">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.nomeCliente?.trim() ? 'warn' : 'primary'">
 
           <mat-label>Cliente</mat-label>
 
@@ -21,6 +22,10 @@
                  (ngModelChange)="onClienteSearch($event)">
 
         </mat-form-field>
+        <div class="validation-error"
+             *ngIf="saveAttempted && !dto.nomeCliente?.trim()">
+          Cliente obbligatorio
+        </div>
 
         <div class="autocomplete-dropdown"
              *ngIf="listaClienti.length > 0">
@@ -59,7 +64,8 @@
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.dataAppuntamento ? 'warn' : 'primary'">
 
           <mat-label>Data</mat-label>
 
@@ -75,35 +81,45 @@
           </mat-datepicker>
 
         </mat-form-field>
-
+        <div class="validation-error"
+             *ngIf="saveAttempted && !dto.dataAppuntamento">
+          Data obbligatoria
+        </div>
       </div>
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.oraDa ? 'warn' : 'primary'">
 
           <mat-label>Ora Da</mat-label>
 
           <input matInput
                  type="time"
                  [(ngModel)]="dto.oraDa">
-
         </mat-form-field>
-
+        <div class="validation-error"
+             *ngIf="saveAttempted && !dto.oraDa">
+          Ora inizio obbligatoria
+        </div>
       </div>
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.oraA ? 'warn' : 'primary'">
 
           <mat-label>Ora A</mat-label>
 
           <input matInput
                  type="time"
                  [(ngModel)]="dto.oraA">
-
         </mat-form-field>
 
+        <div class="validation-error"
+             *ngIf="saveAttempted && !dto.oraA">
+          Ora fine obbligatoria
+        </div>
       </div>
 
     </div>
@@ -114,7 +130,8 @@
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.codVenditore ? 'warn' : 'primary'">
 
           <mat-label>Venditore</mat-label>
 
@@ -128,14 +145,17 @@
             </mat-option>
 
           </mat-select>
-
         </mat-form-field>
-
+        <div class="validation-error"
+             *ngIf="saveAttempted && !dto.codVenditore">
+          Venditore obbligatorio
+        </div>
       </div>
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.sedeId ? 'warn' : 'primary'">
 
           <mat-label>Sede</mat-label>
 
@@ -149,9 +169,11 @@
             </mat-option>
 
           </mat-select>
-
         </mat-form-field>
-
+        <div class="validation-error"
+             *ngIf="saveAttempted && !dto.sedeId">
+          Sede obbligatoria
+        </div>
       </div>
 
     </div>
@@ -162,7 +184,8 @@
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !motivoRootId ? 'warn' : 'primary'">
 
           <mat-label>Motivo</mat-label>
 
@@ -179,8 +202,13 @@
 
           </mat-select>
 
-        </mat-form-field>
 
+
+        </mat-form-field>
+        <div class="validation-error"
+             *ngIf="saveAttempted && !motivoRootId">
+          Motivo obbligatorio
+        </div>
       </div>
 
       <div class="field"
@@ -241,9 +269,9 @@
 
     <!-- INDIRIZZO -->
 
-    <div class="form-row">
+    <div class="form-row form-row-2">
 
-      <div class="field field-full">
+      <div class="field">
 
         <mat-form-field appearance="outline">
 
@@ -251,6 +279,19 @@
 
           <input matInput
                  [(ngModel)]="dto.via">
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Civico</mat-label>
+
+          <input matInput
+                 [(ngModel)]="dto.civico">
 
         </mat-form-field>
 
@@ -275,14 +316,33 @@
 
       <div class="field">
 
-        <mat-form-field appearance="outline">
+        <div class="comune-wrapper">
 
-          <mat-label>Comune</mat-label>
+          <mat-form-field appearance="outline">
 
-          <input matInput
-                 [(ngModel)]="dto.comune">
+            <mat-label>Comune</mat-label>
 
-        </mat-form-field>
+            <input matInput
+                   [(ngModel)]="comuneSearch"
+                   (ngModelChange)="onComuneSearch($event)">
+
+          </mat-form-field>
+
+          <div class="autocomplete-dropdown"
+               *ngIf="listaComuni.length > 0">
+
+            <div class="autocomplete-item"
+                 *ngFor="let c of listaComuni"
+                 (click)="selectComune(c)">
+
+              {{ c.nomeComune }}
+              ({{ c.siglaProvincia }})
+
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -292,8 +352,16 @@
 
           <mat-label>Provincia</mat-label>
 
-          <input matInput
-                 [(ngModel)]="dto.provincia">
+          <mat-select [(ngModel)]="dto.provincia">
+
+            <mat-option *ngFor="let p of province"
+                        [value]="p">
+
+              {{ p }}
+
+            </mat-option>
+
+          </mat-select>
 
         </mat-form-field>
 

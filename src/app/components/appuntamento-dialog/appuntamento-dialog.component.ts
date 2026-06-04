@@ -35,6 +35,10 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
   listaClienti: any[] = [];
 
   clienteSearch: string | null = null;
+  province: string[] = [];
+  listaComuni: any[] = [];
+  comuneSearch: string | null = null;
+  saveAttempted = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -54,6 +58,8 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
     this.loadVenditori();
 
     this.loadMotiviRoot();
+
+    this.loadProvince();
 
     this.dto = {};
 
@@ -91,9 +97,8 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
 
           this.dto = res;
 
-          this.clienteSearch =
-            this.dto.nomeCliente;
-
+          this.clienteSearch = this.dto.nomeCliente;
+          this.comuneSearch = this.dto.comune;
           if (this.dto.dataAppuntamento) {
             this.dto.dataAppuntamento =
               new Date(this.dto.dataAppuntamento);
@@ -230,8 +235,14 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
 
   save(): void {
 
+    this.saveAttempted = true;
+
     this.dto.motivoId =
       this.motivoFiglioId ?? this.motivoRootId;
+
+    if (!this.isValid()) {
+      return;
+    }
 
     this.loader = true;
 
@@ -275,5 +286,53 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  loadProvince(): void {
+
+    this.showroomService.getProvince()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe({
+        next: (res: any) => {
+          this.province = res;
+        }
+      });
+  }
+
+  onComuneSearch(value: string): void {
+
+    if (!value || value.length < 3) {
+      this.listaComuni = [];
+      return;
+    }
+
+    this.showroomService.searchComuni(
+      this.dto.provincia || null,
+      value
+    ).subscribe(res => {
+      this.listaComuni = res;
+    });
+  }
+
+  selectComune(c: any): void {
+
+    this.dto.comune = c.nomeComune;
+    this.dto.provincia = c.siglaProvincia;
+
+    this.comuneSearch = c.nomeComune;
+
+    this.listaComuni = [];
+  }
+
+  isValid(): boolean {
+    return !!(
+      this.dto.sedeId
+      && this.dto.nomeCliente?.trim()
+      && this.dto.dataAppuntamento
+      && this.dto.oraDa
+      && this.dto.oraA
+      && this.dto.codVenditore
+      && this.dto.motivoId
+    );
   }
 }
