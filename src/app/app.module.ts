@@ -116,6 +116,8 @@ import { TipiAttivitaMontaggioComponent } from './components/tipi-attivita-monta
 import { TipoAttivitaMontaggioDialogComponent } from './components/tipo-attivita-montaggio-dialog/tipo-attivita-montaggio-dialog.component';
 import { AgendaAppuntamentiComponent } from './components/agenda-appuntamenti/agenda-appuntamenti.component';
 import { AppuntamentoDialogComponent } from './components/appuntamento-dialog/appuntamento-dialog.component';
+import { AssenzeGiornoDialogComponent } from './components/assenze-giorno-dialog/assenze-giorno-dialog.component';
+import { AssenzaDialogComponent } from './components/assenza-dialog/assenza-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -194,7 +196,9 @@ export const DateFormats = {
     TipiAttivitaMontaggioComponent,
     TipoAttivitaMontaggioDialogComponent,
     AgendaAppuntamentiComponent,
-    AppuntamentoDialogComponent
+    AppuntamentoDialogComponent,
+    AssenzeGiornoDialogComponent,
+    AssenzaDialogComponent
   ],
   imports: [
     MatDatepickerModule,

@@ -17,23 +17,15 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
   selectedTabIndex = 0;
 
   loader = false;
-
   dto: any = {};
-
   sedi: any[] = [];
-
   venditori: any[] = [];
-
   motiviRoot: any[] = [];
-
+  codVenditoreAppuntamento: string | null = null;
   motiviFigli: any[] = [];
-
   motivoRootId: number | null = null;
-
   motivoFiglioId: number | null = null;
-
   listaClienti: any[] = [];
-
   clienteSearch: string | null = null;
   province: string[] = [];
   listaComuni: any[] = [];
@@ -62,7 +54,8 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
     this.loadProvince();
 
     this.dto = {};
-
+    this.dto.tipoEvento = 'APPUNTAMENTO';
+    this.dto.codVenditori = [];
     if (this.data?.id) {
       this.load();
       return;
@@ -96,7 +89,9 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
         next: (res: any) => {
 
           this.dto = res;
-
+          if (this.dto.codVenditori?.length > 0) {
+            this.codVenditoreAppuntamento = this.dto.codVenditori[0];
+          }
           this.clienteSearch = this.dto.nomeCliente;
           this.comuneSearch = this.dto.comune;
           if (this.dto.dataAppuntamento) {
@@ -236,9 +231,12 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
   save(): void {
 
     this.saveAttempted = true;
-
-    this.dto.motivoId =
-      this.motivoFiglioId ?? this.motivoRootId;
+    if (this.dto.tipoEvento === 'APPUNTAMENTO') {
+      this.dto.codVenditori = this.codVenditoreAppuntamento
+          ? [this.codVenditoreAppuntamento]
+          : [];
+    }
+    this.dto.motivoId = this.motivoFiglioId ?? this.motivoRootId;
 
     if (!this.isValid()) {
       return;
@@ -257,7 +255,9 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
           this.loader = false;
           this.dialogRef.close(true);
         },
-        error: () => {
+        error: (err) => {
+          console.error(err);
+          alert(err?.error?.message || 'Errore durante il salvataggio');
           this.loader = false;
         }
       });
@@ -325,13 +325,25 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
   }
 
   isValid(): boolean {
-    return !!(
+
+    const baseValid =
       this.dto.sedeId
-      && this.dto.nomeCliente?.trim()
       && this.dto.dataAppuntamento
       && this.dto.oraDa
       && this.dto.oraA
-      && this.dto.codVenditore
+      && this.dto.codVenditori
+      && this.dto.codVenditori.length > 0;
+
+    if (!baseValid) {
+      return false;
+    }
+
+    if (this.dto.tipoEvento === 'FORMAZIONE') {
+      return true;
+    }
+
+    return !!(
+      this.dto.nomeCliente?.trim()
       && this.dto.motivoId
     );
   }

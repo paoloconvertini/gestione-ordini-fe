@@ -1,423 +1,226 @@
 <mat-dialog-content>
-
-  <mat-spinner *ngIf="loader">
-  </mat-spinner>
-
-  <div *ngIf="!loader"
-       class="dialog-content">
-
-    <!-- CLIENTE -->
-
+  <mat-spinner *ngIf="loader"></mat-spinner>
+  <div *ngIf="!loader" class="dialog-content">
     <div class="form-row">
-
+      <div class="field field-full">
+        <mat-radio-group [(ngModel)]="dto.tipoEvento">
+          <mat-radio-button value="APPUNTAMENTO">Appuntamento</mat-radio-button>
+          <mat-radio-button value="FORMAZIONE">Formazione</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+    <!-- CLIENTE -->
+    <div *ngIf="dto.tipoEvento === 'APPUNTAMENTO'" class="form-row">
       <div class="cliente-wrapper field field-full">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !dto.nomeCliente?.trim() ? 'warn' : 'primary'">
-
+        <mat-form-field appearance="outline" [color]="saveAttempted && !dto.nomeCliente?.trim() ? 'warn' : 'primary'">
           <mat-label>Cliente</mat-label>
-
-          <input matInput
-                 [(ngModel)]="clienteSearch"
-                 (ngModelChange)="onClienteSearch($event)">
-
+          <input matInput [(ngModel)]="clienteSearch" (ngModelChange)="onClienteSearch($event)">
         </mat-form-field>
-        <div class="validation-error"
-             *ngIf="saveAttempted && !dto.nomeCliente?.trim()">
+        <div class="validation-error" *ngIf="saveAttempted && !dto.nomeCliente?.trim()">
           Cliente obbligatorio
         </div>
-
-        <div class="autocomplete-dropdown"
-             *ngIf="listaClienti.length > 0">
-
-          <div class="autocomplete-item"
-               *ngFor="let c of listaClienti"
-               (click)="selectCliente(c)">
-
-            <div class="cliente-item-title">
-              {{ c.intestazione }}
-            </div>
-
+        <div class="autocomplete-dropdown" *ngIf="listaClienti.length > 0">
+          <div class="autocomplete-item" *ngFor="let c of listaClienti" (click)="selectCliente(c)">
+            <div class="cliente-item-title">{{ c.intestazione }}</div>
             <div class="cliente-item-sub">
-
               Cliente:
               {{ c.sottoConto }}
-
               <br>
-
               {{ c.localita }}
               ({{ c.provincia }})
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
 
     <!-- DATA -->
-
     <div class="form-row form-row-3">
-
       <div class="field">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !dto.dataAppuntamento ? 'warn' : 'primary'">
-
+        <mat-form-field appearance="outline" [color]="saveAttempted && !dto.dataAppuntamento ? 'warn' : 'primary'">
           <mat-label>Data</mat-label>
-
-          <input matInput
-                 [matDatepicker]="pickerData"
-                 [(ngModel)]="dto.dataAppuntamento">
-
-          <mat-datepicker-toggle matIconSuffix
-                                 [for]="pickerData">
+          <input matInput [matDatepicker]="pickerData" [(ngModel)]="dto.dataAppuntamento">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerData">
           </mat-datepicker-toggle>
-
-          <mat-datepicker #pickerData>
-          </mat-datepicker>
-
+          <mat-datepicker #pickerData></mat-datepicker>
         </mat-form-field>
-        <div class="validation-error"
-             *ngIf="saveAttempted && !dto.dataAppuntamento">
+        <div class="validation-error" *ngIf="saveAttempted && !dto.dataAppuntamento">
           Data obbligatoria
         </div>
       </div>
-
       <div class="field">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !dto.oraDa ? 'warn' : 'primary'">
-
+        <mat-form-field appearance="outline" [color]="saveAttempted && !dto.oraDa ? 'warn' : 'primary'">
           <mat-label>Ora Da</mat-label>
-
-          <input matInput
-                 type="time"
-                 [(ngModel)]="dto.oraDa">
+          <input matInput type="time" [(ngModel)]="dto.oraDa">
         </mat-form-field>
-        <div class="validation-error"
-             *ngIf="saveAttempted && !dto.oraDa">
+        <div class="validation-error" *ngIf="saveAttempted && !dto.oraDa">
           Ora inizio obbligatoria
         </div>
       </div>
-
       <div class="field">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !dto.oraA ? 'warn' : 'primary'">
-
+        <mat-form-field appearance="outline" [color]="saveAttempted && !dto.oraA ? 'warn' : 'primary'">
           <mat-label>Ora A</mat-label>
-
-          <input matInput
-                 type="time"
-                 [(ngModel)]="dto.oraA">
+          <input matInput type="time" [(ngModel)]="dto.oraA">
         </mat-form-field>
-
-        <div class="validation-error"
-             *ngIf="saveAttempted && !dto.oraA">
+        <div class="validation-error" *ngIf="saveAttempted && !dto.oraA">
           Ora fine obbligatoria
         </div>
       </div>
-
+    </div>
+    <div class="form-row" *ngIf="dto.tipoEvento === 'FORMAZIONE'">
+      <div class="field field-full">
+        <mat-form-field appearance="outline">
+          <mat-label>Descrizione</mat-label>
+          <input matInput [(ngModel)]="dto.descrizione">
+        </mat-form-field>
+      </div>
     </div>
 
     <!-- APPUNTAMENTO -->
-
     <div class="form-row form-row-2">
-
-      <div class="field">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !dto.codVenditore ? 'warn' : 'primary'">
-
+      <div class="field" *ngIf="dto.tipoEvento === 'APPUNTAMENTO'">
+        <mat-form-field appearance="outline">
           <mat-label>Venditore</mat-label>
-
-          <mat-select [(ngModel)]="dto.codVenditore">
-
-            <mat-option *ngFor="let v of venditori"
-                        [value]="v.codVenditore">
-
+          <mat-select [(ngModel)]="codVenditoreAppuntamento">
+            <mat-option *ngFor="let v of venditori" [value]="v.codVenditore">
               {{ v.fullname }}
-
             </mat-option>
-
           </mat-select>
         </mat-form-field>
-        <div class="validation-error"
-             *ngIf="saveAttempted && !dto.codVenditore">
-          Venditore obbligatorio
-        </div>
       </div>
-
-      <div class="field">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !dto.sedeId ? 'warn' : 'primary'">
-
-          <mat-label>Sede</mat-label>
-
-          <mat-select [(ngModel)]="dto.sedeId">
-
-            <mat-option *ngFor="let s of sedi"
-                        [value]="s.id">
-
-              {{ s.descrizione }}
-
+      <div class="field" *ngIf="dto.tipoEvento === 'FORMAZIONE'">
+        <mat-form-field appearance="outline">
+          <mat-label>Venditori</mat-label>
+          <mat-select multiple [(ngModel)]="dto.codVenditori">
+            <mat-option *ngFor="let v of venditori" [value]="v.codVenditore">
+              {{ v.fullname }}
             </mat-option>
-
           </mat-select>
         </mat-form-field>
-        <div class="validation-error"
-             *ngIf="saveAttempted && !dto.sedeId">
+      </div>
+      <div class="field">
+        <mat-form-field appearance="outline" [color]="saveAttempted && !dto.sedeId ? 'warn' : 'primary'">
+          <mat-label>Sede</mat-label>
+          <mat-select [(ngModel)]="dto.sedeId">
+            <mat-option *ngFor="let s of sedi" [value]="s.id">
+              {{ s.descrizione }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="validation-error" *ngIf="saveAttempted && !dto.sedeId">
           Sede obbligatoria
         </div>
       </div>
-
     </div>
 
     <!-- MOTIVO -->
-
-    <div class="form-row form-row-2">
+    <div *ngIf="dto.tipoEvento === 'APPUNTAMENTO'" class="form-row form-row-2">
 
       <div class="field">
-
-        <mat-form-field appearance="outline"
-                        [color]="saveAttempted && !motivoRootId ? 'warn' : 'primary'">
-
+        <mat-form-field appearance="outline" [color]="saveAttempted && !motivoRootId ? 'warn' : 'primary'">
           <mat-label>Motivo</mat-label>
-
-          <mat-select
-            [(ngModel)]="motivoRootId"
-            (selectionChange)="onMotivoRootChange($event.value)">
-
-            <mat-option *ngFor="let m of motiviRoot"
-                        [value]="m.id">
-
+          <mat-select [(ngModel)]="motivoRootId" (selectionChange)="onMotivoRootChange($event.value)">
+            <mat-option *ngFor="let m of motiviRoot" [value]="m.id">
               {{ m.descrizione }}
-
             </mat-option>
-
           </mat-select>
-
-
-
         </mat-form-field>
-        <div class="validation-error"
-             *ngIf="saveAttempted && !motivoRootId">
+        <div class="validation-error" *ngIf="saveAttempted && !motivoRootId">
           Motivo obbligatorio
         </div>
       </div>
-
-      <div class="field"
-           *ngIf="motiviFigli.length > 0">
-
+      <div class="field" *ngIf="motiviFigli.length > 0">
         <mat-form-field appearance="outline">
-
           <mat-label>Sotto Motivo</mat-label>
-
           <mat-select [(ngModel)]="motivoFiglioId">
-
-            <mat-option *ngFor="let m of motiviFigli"
-                        [value]="m.id">
-
+            <mat-option *ngFor="let m of motiviFigli" [value]="m.id">
               {{ m.descrizione }}
-
             </mat-option>
-
           </mat-select>
-
         </mat-form-field>
-
       </div>
-
     </div>
 
     <!-- CONTATTI -->
-
-    <div class="form-row form-row-2">
-
+    <div class="form-row form-row-2" *ngIf="dto.tipoEvento === 'APPUNTAMENTO'">
       <div class="field">
-
         <mat-form-field appearance="outline">
-
           <mat-label>Telefono</mat-label>
-
-          <input matInput
-                 [(ngModel)]="dto.telefono">
-
+          <input matInput [(ngModel)]="dto.telefono">
         </mat-form-field>
-
       </div>
-
       <div class="field">
-
         <mat-form-field appearance="outline">
-
           <mat-label>Email</mat-label>
-
-          <input matInput
-                 [(ngModel)]="dto.email">
-
+          <input matInput [(ngModel)]="dto.email">
         </mat-form-field>
-
       </div>
-
     </div>
 
     <!-- INDIRIZZO -->
-
-    <div class="form-row form-row-2">
-
+    <div class="form-row form-row-2" *ngIf="dto.tipoEvento === 'APPUNTAMENTO'">
       <div class="field">
-
         <mat-form-field appearance="outline">
-
           <mat-label>Via</mat-label>
-
-          <input matInput
-                 [(ngModel)]="dto.via">
-
+          <input matInput [(ngModel)]="dto.via">
         </mat-form-field>
-
       </div>
-
       <div class="field">
-
         <mat-form-field appearance="outline">
-
           <mat-label>Civico</mat-label>
-
-          <input matInput
-                 [(ngModel)]="dto.civico">
-
+          <input matInput [(ngModel)]="dto.civico">
         </mat-form-field>
-
       </div>
-
     </div>
-
-    <div class="form-row form-row-3">
-
+    <div class="form-row form-row-3" *ngIf="dto.tipoEvento === 'APPUNTAMENTO'">
       <div class="field">
-
         <mat-form-field appearance="outline">
-
           <mat-label>CAP</mat-label>
-
-          <input matInput
-                 [(ngModel)]="dto.cap">
-
+          <input matInput [(ngModel)]="dto.cap">
         </mat-form-field>
-
       </div>
-
       <div class="field">
-
         <div class="comune-wrapper">
-
           <mat-form-field appearance="outline">
-
             <mat-label>Comune</mat-label>
-
-            <input matInput
-                   [(ngModel)]="comuneSearch"
-                   (ngModelChange)="onComuneSearch($event)">
-
+            <input matInput [(ngModel)]="comuneSearch" (ngModelChange)="onComuneSearch($event)">
           </mat-form-field>
-
-          <div class="autocomplete-dropdown"
-               *ngIf="listaComuni.length > 0">
-
-            <div class="autocomplete-item"
-                 *ngFor="let c of listaComuni"
-                 (click)="selectComune(c)">
-
+          <div class="autocomplete-dropdown" *ngIf="listaComuni.length > 0">
+            <div class="autocomplete-item" *ngFor="let c of listaComuni" (click)="selectComune(c)">
               {{ c.nomeComune }}
               ({{ c.siglaProvincia }})
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
       <div class="field">
-
         <mat-form-field appearance="outline">
-
           <mat-label>Provincia</mat-label>
-
           <mat-select [(ngModel)]="dto.provincia">
-
-            <mat-option *ngFor="let p of province"
-                        [value]="p">
-
+            <mat-option *ngFor="let p of province" [value]="p">
               {{ p }}
-
             </mat-option>
-
           </mat-select>
-
         </mat-form-field>
-
       </div>
-
     </div>
 
     <!-- NOTE -->
 
     <div class="form-row">
-
       <div class="field field-full">
-
         <mat-form-field appearance="outline">
-
           <mat-label>Note</mat-label>
-
-          <textarea matInput
-                    rows="5"
-                    [(ngModel)]="dto.note">
+          <textarea matInput rows="5" [(ngModel)]="dto.note">
           </textarea>
-
         </mat-form-field>
-
       </div>
-
     </div>
-
   </div>
-
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-
-  <button mat-stroked-button
-          color="warn"
-          *ngIf="dto.id"
-          (click)="delete()">
-
-    Elimina
-
-  </button>
-
-  <button mat-stroked-button
-          (click)="close()">
-
-    Chiudi
-
-  </button>
-
-  <button mat-raised-button
-          color="primary"
-          (click)="save()">
-
-    Salva
-
-  </button>
-
+  <button mat-stroked-button color="warn" *ngIf="dto.id" (click)="delete()">Elimina</button>
+  <button mat-stroked-button (click)="close()">Chiudi</button>
+  <button mat-raised-button color="primary" (click)="save()">Salva</button>
 </mat-dialog-actions>

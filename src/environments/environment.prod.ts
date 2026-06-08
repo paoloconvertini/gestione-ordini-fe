@@ -38,6 +38,7 @@ export const environment = {
   OPERAI: 'operai',
   ATTIVITA_MONTAGGIO: 'attivita-montaggio',
   TIPI_ATTIVITA_MONTAGGIO: 'tipi-attivita-montaggio',
-  APPUNTAMENTO: 'appuntamenti'
+  APPUNTAMENTO: 'appuntamenti',
+  ASSENZE: 'assenze'
  // DBX_ACCESS_TOKEN: (window as any)['env']['dbxAccessToken']
 };

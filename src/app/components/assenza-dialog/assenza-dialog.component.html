@@ -1,0 +1,174 @@
+<mat-dialog-content>
+
+  <mat-spinner *ngIf="loader">
+  </mat-spinner>
+
+  <div *ngIf="!loader">
+
+    <div class="form-row form-row-2">
+      <div class="field">
+
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && (!dto.codVenditori || dto.codVenditori.length === 0) ? 'warn' : 'primary'">
+
+          <mat-label>Venditori</mat-label>
+
+          <mat-select multiple
+                      [(ngModel)]="dto.codVenditori">
+
+            <mat-option *ngFor="let v of venditori"
+                        [value]="v.codVenditore">
+
+              {{ v.fullname }}
+
+            </mat-option>
+
+          </mat-select>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="form-row form-row-2">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.dataDa ? 'warn' : 'primary'">
+
+          <mat-label>Data Da</mat-label>
+
+          <input matInput
+                 [matDatepicker]="pickerDa"
+                 [(ngModel)]="dto.dataDa">
+
+          <mat-datepicker-toggle matIconSuffix
+                                 [for]="pickerDa">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #pickerDa>
+          </mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline"
+                        [color]="saveAttempted && !dto.dataA ? 'warn' : 'primary'">
+
+          <mat-label>Data A</mat-label>
+
+          <input matInput
+                 [matDatepicker]="pickerA"
+                 [(ngModel)]="dto.dataA">
+
+          <mat-datepicker-toggle matIconSuffix
+                                 [for]="pickerA">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #pickerA>
+          </mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="form-row">
+
+      <mat-checkbox [(ngModel)]="dto.giornataIntera">
+
+        Giornata intera
+
+      </mat-checkbox>
+
+    </div>
+
+    <div class="form-row form-row-2"
+         *ngIf="!dto.giornataIntera">
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Ora Da</mat-label>
+
+          <input matInput
+                 type="time"
+                 [(ngModel)]="dto.oraDa">
+
+        </mat-form-field>
+
+      </div>
+
+      <div class="field">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Ora A</mat-label>
+
+          <input matInput
+                 type="time"
+                 [(ngModel)]="dto.oraA">
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+    <div class="form-row">
+
+      <div class="field field-full">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>Note</mat-label>
+
+          <textarea matInput
+                    rows="4"
+                    [(ngModel)]="dto.note">
+          </textarea>
+
+        </mat-form-field>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button mat-stroked-button
+          color="warn"
+          *ngIf="dto.id"
+          (click)="delete()">
+
+    Elimina
+
+  </button>
+
+  <button mat-stroked-button
+          (click)="close()">
+
+    Chiudi
+
+  </button>
+
+  <button mat-raised-button
+          color="primary"
+          (click)="save()">
+
+    Salva
+
+  </button>
+
+</mat-dialog-actions>

@@ -152,13 +152,8 @@
 
     </button>
 
-    <button mat-raised-button
-            color="accent"
-            (click)="openDialog()">
-
-      Nuovo Appuntamento
-
-    </button>
+    <button mat-raised-button color="accent" (click)="openDialog()">Nuovo Appuntamento</button>
+    <button mat-raised-button color="warn" (click)="openAssenzaDialog()">Nuova Assenza</button>
 
   </div>
 
@@ -175,7 +170,9 @@
     <div *ngIf="!loader"
          class="calendar-wrapper">
 
-      <full-calendar [options]="calendarOptions">
+      <full-calendar
+        #calendar
+        [options]="calendarOptions">
       </full-calendar>
 
     </div>
