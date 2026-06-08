@@ -100,28 +100,46 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
 
         return {
           html: `
-    <div class="appuntamento-event">
-      <div class="appuntamento-event-venditore">
-        ${e.venditoriLabel || ''} - ${e.sedeDescrizione || ''}
+      <div class="appuntamento-event">
+
+        <div class="appuntamento-event-venditore">
+          ${e.venditoriLabel || ''} - ${e.sedeDescrizione || ''}
+        </div>
+
+        <div class="appuntamento-event-info">
+          <strong>${e.dataOraLabel || ''}</strong>
+        </div>
+
+        ${
+            e.tipoEvento === 'FORMAZIONE'
+              ? `
+              <div class="appuntamento-event-info">
+                <strong>FORMAZIONE: ${e.descrizione || ''}</strong>
+              </div>
+            `
+              : `
+              <div class="appuntamento-event-cliente">
+                ${e.clienteLabel || ''}
+              </div>
+
+              <div class="appuntamento-event-info">
+                ${e.telefono || ''}
+              </div>
+
+              <div class="appuntamento-event-indirizzo">
+                ${e.indirizzoLabel || ''}
+              </div>
+
+              <div class="appuntamento-event-info">
+                ${e.motivoLabel || ''}
+              </div>
+            `
+          }
+
       </div>
-      <div class="appuntamento-event-info">
-        <strong>${e.dataOraLabel || ''}</strong>
-      </div>
-      <div class="appuntamento-event-cliente">
-        ${e.clienteLabel || ''}
-      </div>
-      <div class="appuntamento-event-info">
-          ${e.telefono || ''}
-       </div>
-      <div class="appuntamento-event-indirizzo">
-        ${e.indirizzoLabel || ''}
-      </div>
-      <div class="appuntamento-event-info">
-        ${e.motivoLabel || ''}
-      </div>
-    </div>
-  `
-        };},
+    `
+        };
+      },
       datesSet: (info: any) => {
 
         this.dataCalendarioDa =
