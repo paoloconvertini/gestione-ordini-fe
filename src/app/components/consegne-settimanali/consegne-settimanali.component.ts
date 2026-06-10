@@ -539,21 +539,37 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
 
 
-  copiaDati(consegna: any) {
+  esportaWhatsapp(consegna: any, giorno: GiornoConsegne): void {
+
+    const dataConsegna = moment(giorno.data).format('DD/MM/YYYY');
 
     const testo = [
-      consegna.intestazione,
-      consegna.indirizzo,
-      consegna.localita,
-      consegna.cellulare
-    ]
-      .filter(x => x)
-      .join('\n');
+      'CONSEGNA',
+      '',
+      'Data: ' + dataConsegna,
+      'Cliente: ' + (consegna.intestazione || ''),
+      '',
+      'Ordine: ' + consegna.anno + '/' + consegna.serie + '/' + consegna.progressivo,
+      'Ordine consegna: ' + (consegna.ordine || ''),
+      '',
+      'Indirizzo: ' + (consegna.indirizzo || ''),
+      'Localita: ' + (consegna.localita || ''),
+      '',
+      'Telefono: ' + (consegna.cellulare || consegna.telefono || ''),
+      '',
+      'Veicolo: ' + (consegna.descVeicolo || ''),
+      'Fascia: ' + (consegna.oraConsegna === 'P' ? 'Pomeriggio' : 'Mattina')
+    ];
 
-    navigator.clipboard.writeText(testo);
+    if (consegna.note) {
+      testo.push('');
+      testo.push('Note:');
+      testo.push(consegna.note);
+    }
 
-    this.snackbar.open('Dati copiati', 'OK', {
-      duration: 2000
-    });
+    const whatsappUrl =
+      'https://wa.me/?text=' + encodeURIComponent(testo.join('\n'));
+
+    window.open(whatsappUrl, '_blank');
   }
 }
