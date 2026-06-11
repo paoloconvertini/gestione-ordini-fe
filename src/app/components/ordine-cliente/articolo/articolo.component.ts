@@ -32,6 +32,7 @@ import { FatturaAccontoDialogComponent } from '../../fattura-acconto-dialog/fatt
 import {PermissionService} from "../../../services/auth/permission.service";
 import {OrdiniClientiStateService} from "../../../services/state/ordini-clienti-state.service";
 import {AuthService} from "../../../services/auth/auth.service";
+import {EditFieldDialogComponent} from "../../edit-field-dialog/edit-field-dialog.component";
 
 export interface Option {
   name: string,
@@ -794,6 +795,47 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       }
     });
 
+  }
+
+  openEditField(
+    articolo: any,
+    field: string,
+    title: string,
+    type: 'text' | 'number' | 'textarea'
+  ) {
+
+    const dialogRef = this.dialog.open(EditFieldDialogComponent, {
+      width: '600px',
+      data: {
+        title,
+        value: articolo[field],
+        type
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result === undefined || result === articolo[field]) {
+        return;
+      }
+
+      articolo[field] = result;
+
+      switch (field) {
+
+        case 'quantita':
+          this.resetQta(articolo);
+          break;
+
+        case 'qtaRiservata':
+          this.checkFlagRiservato(articolo);
+          break;
+
+        case 'qtaProntoConsegna':
+          this.checkFlagProntoConsegna(articolo);
+          break;
+      }
+    });
   }
 
   creaFatturaAcconto() {

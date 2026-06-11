@@ -118,6 +118,7 @@ import { AgendaAppuntamentiComponent } from './components/agenda-appuntamenti/ag
 import { AppuntamentoDialogComponent } from './components/appuntamento-dialog/appuntamento-dialog.component';
 import { AssenzeGiornoDialogComponent } from './components/assenze-giorno-dialog/assenze-giorno-dialog.component';
 import { AssenzaDialogComponent } from './components/assenza-dialog/assenza-dialog.component';
+import { EditFieldDialogComponent } from './components/edit-field-dialog/edit-field-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -198,7 +199,8 @@ export const DateFormats = {
     AgendaAppuntamentiComponent,
     AppuntamentoDialogComponent,
     AssenzeGiornoDialogComponent,
-    AssenzaDialogComponent
+    AssenzaDialogComponent,
+    EditFieldDialogComponent
   ],
   imports: [
     MatDatepickerModule,

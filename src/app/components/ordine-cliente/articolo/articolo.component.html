@@ -41,18 +41,71 @@
     <div class="col-lg-12">
       <mat-card class="margin-bottom testata-margin-top">
         <mat-card-content>
-          <span class="padding-right">Numero ordine: <b>{{filtroArticoli.anno}}/{{filtroArticoli.serie}}/{{filtroArticoli.progressivo}}</b> del <b>{{ordineDettaglio.dataOrdine | date: 'dd/MM/yyyy'}}</b></span>
-          <span class="padding-right">intestato a
-            <b>{{ordineDettaglio.intestazione}} - {{ordineDettaglio.sottoConto}}</b>&nbsp;
-            <span style="font-size: 0.75em" *ngIf="ordineDettaglio.riferimento && ordineDettaglio.riferimento !== ' '">({{ordineDettaglio.riferimento}})</span>
-          </span>
-          <span class="padding-right">Totale: <b>{{ordineDettaglio.totale | currency: 'EUR':'symbol'}}</b></span>
-          <span class="padding-right">Pagam: <b>{{ordineDettaglio.modalitaPagamento}}</b></span>
-          <span class="padding-right">Tel: <b>{{ordineDettaglio.telefono}} - {{ordineDettaglio.cellulare}}</b></span>
-          <button class="float-end" (click)="mostraAcconti(ordineDettaglio.sottoConto)" mat-button
-                  matTooltip="Mostra acconti">
-            <mat-icon aria-hidden="false" aria-label="mostra acconti" color="primary">receipt_long</mat-icon>
-          </button>
+
+          <div class="order-header">
+
+            <div class="order-info">
+              <span class="label">Ordine</span>
+              <span class="value">
+        {{filtroArticoli.anno}}/{{filtroArticoli.serie}}/{{filtroArticoli.progressivo}}
+      </span>
+              <span class="sub-value">
+        {{ordineDettaglio.dataOrdine | date:'dd/MM/yyyy'}}
+      </span>
+            </div>
+
+            <div class="order-info">
+              <span class="label">Cliente</span>
+              <span class="value">
+        {{ordineDettaglio.intestazione}}
+      </span>
+              <span class="sub-value">
+        {{ordineDettaglio.sottoConto}}
+                <span *ngIf="ordineDettaglio.riferimento && ordineDettaglio.riferimento !== ' '">
+          ({{ordineDettaglio.riferimento}})
+        </span>
+      </span>
+            </div>
+
+            <div class="order-info">
+              <span class="label">Totale</span>
+              <span class="value">
+        {{ordineDettaglio.totale | currency:'EUR':'symbol'}}
+      </span>
+            </div>
+
+            <div class="order-info">
+              <span class="label">Pagamento</span>
+              <span class="value">
+        {{ordineDettaglio.modalitaPagamento}}
+      </span>
+            </div>
+
+            <div class="order-info">
+              <span class="label">Telefono</span>
+              <span class="value">
+        {{ordineDettaglio.telefono}}
+      </span>
+              <span class="sub-value">
+        {{ordineDettaglio.cellulare}}
+      </span>
+            </div>
+
+            <div class="order-actions">
+              <button
+                (click)="mostraAcconti(ordineDettaglio.sottoConto)"
+                mat-icon-button
+                matTooltip="Mostra acconti">
+
+                <mat-icon color="primary">
+                  receipt_long
+                </mat-icon>
+
+              </button>
+            </div>
+
+          </div>
+
         </mat-card-content>
       </mat-card>
     </div>
@@ -114,11 +167,31 @@
           <ng-container matColumnDef="codice">
             <th mat-header-cell *matHeaderCellDef>Codice</th>
             <td mat-cell *matCellDef="let articolo">
-              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
-                <span [ngClass]="{'hasCarico': articolo.numDoc && !articolo.flagRiservato && articolo.flagOrdinato}" [matTooltip]="'Art. caricato il ' + (articolo.dataCarico  | date: 'dd/MM/yyyy' )+
-                 ' con n.doc. ' + articolo.numDoc + ' del ' + (articolo.dataDoc | date: 'dd/MM/yyyy' ) + '. Movimento mag. ' + articolo.annoMag + '/'
-                  + articolo.serieMag + '/' + articolo.progressivoMag">{{articolo.farticolo}}</span>
-              </span>
+
+              <div class="codice-container">
+
+                <mat-icon
+                  *ngIf="articolo.flBolla"
+                  class="bolla-icon"
+                  (click)="getBolle(articolo);
+               (expandedElement = expandedElement === articolo ? null : articolo);
+               $event.stopPropagation()"
+                  matTooltip="Visualizza bolle">
+                  local_shipping
+                </mat-icon>
+
+                <span
+                  [ngClass]="{'hasCarico': articolo.numDoc && !articolo.flagRiservato && articolo.flagOrdinato}"
+                  [matTooltip]="'Art. caricato il ' + (articolo.dataCarico | date:'dd/MM/yyyy') +
+      ' con n.doc. ' + articolo.numDoc + ' del ' + (articolo.dataDoc | date:'dd/MM/yyyy') +
+      '. Movimento mag. ' + articolo.annoMag + '/' + articolo.serieMag + '/' + articolo.progressivoMag">
+
+      {{ articolo.farticolo }}
+
+    </span>
+
+              </div>
+
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -128,25 +201,28 @@
               <span *ngIf="(articolo.tipoRigo ==='C' || articolo.tipoRigo ==='AC')">
                 {{articolo.fdescrArticolo}}
               </span>
-              <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditDescrizione) || filtro.statusOrdine === 'ARCHIVIATO'">
-                {{articolo.fdescrArticolo}}<br><b>{{articolo.codArtFornitore}}</b>
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <span [ngClass]="{ 'editable-field': perm.canEditDescrizione && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                (click)="perm.canEditDescrizione && filtro.statusOrdine !== 'ARCHIVIATO'
+                  ? openEditField( articolo,'fdescrArticolo','Descrizione articolo','textarea') : null">
+                {{articolo.fdescrArticolo}}</span><br>
+                <b [ngClass]="{'editable-field': perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                  (click)="perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'
+                   ? openEditField(articolo,'codArtFornitore','Codice fornitore','text') : null">
+                  {{articolo.codArtFornitore || '-' }}</b>
               </span>
-                <textarea *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditDescrizione && filtro.statusOrdine !== 'ARCHIVIATO'" type="text" class="form-control"
-                     [(ngModel)]="articolo.fdescrArticolo" ></textarea>
-              <textarea *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'" type="text" class="form-control"
-                     [(ngModel)]="articolo.codArtFornitore"> </textarea>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="quantita">
             <th mat-header-cell *matHeaderCellDef>Qtà<br>(da conseg.)</th>
             <td mat-cell *matCellDef="let articolo">
-              <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditQuantita) || filtro.statusOrdine === 'ARCHIVIATO'">{{articolo.quantita}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQuantita && filtro.statusOrdine !== 'ARCHIVIATO'" type="number"
-                     min="0" class="form-control input" (change)="resetQta(articolo)"
-                     [(ngModel)]="articolo.quantita"/>
+            <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
+              [ngClass]="{'editable-field': perm.canEditQuantita && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                  (click)="perm.canEditQuantita && filtro.statusOrdine !== 'ARCHIVIATO'
+                   ? openEditField(articolo, 'quantita', 'Quantità', 'number') : null">
+              {{articolo.quantita}}
+            </span>
               &nbsp;{{articolo.funitaMisura}}
               <span *ngIf="articolo.flBolla">&nbsp;({{articolo.qtaDaConsegnare | number : '1.2-2'}})</span>
             </td>
@@ -155,9 +231,13 @@
           <ng-container matColumnDef="qtaConsegnatoSenzaBolla">
             <th mat-header-cell *matHeaderCellDef> Qtà senza bolla</th>
             <td mat-cell *matCellDef="let articolo">
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQtaConsegnatoSenzaBolla" type="number"
-                     min="0" class="form-control input"
-                     [(ngModel)]="articolo.qtaConsegnatoSenzaBolla"/>
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <span [ngClass]="{'editable-field': perm.canEditQtaConsegnatoSenzaBolla}"
+                  (click)="perm.canEditQtaConsegnatoSenzaBolla
+                    ? openEditField(articolo,'qtaConsegnatoSenzaBolla','Quantità consegnata senza bolla','number') : null">
+                  {{articolo.qtaConsegnatoSenzaBolla ?? '-'}}
+                </span>
+              </span>
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -197,35 +277,38 @@
           <ng-container matColumnDef="tono">
             <th mat-header-cell *matHeaderCellDef>Tono</th>
             <td mat-cell *matCellDef="let articolo">
-        <span
-          *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditTono) || filtro.statusOrdine === 'ARCHIVIATO'">{{articolo.tono}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditTono && filtro.statusOrdine !== 'ARCHIVIATO'" type="text"
-                     class="form-control input"
-                     [(ngModel)]="articolo.tono" maxlength="10"/>
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <span [ngClass]="{'editable-field': perm.canEditTono && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                  (click)="perm.canEditTono && filtro.statusOrdine !== 'ARCHIVIATO' ? openEditField(articolo,'tono','Tono', 'text')  : null">
+                  {{articolo.tono || '-'}}
+                </span>
+              </span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="qtaRiservata">
             <th mat-header-cell *matHeaderCellDef>Qtà Riserv.</th>
             <td mat-cell *matCellDef="let articolo">
-              <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditQtaRiservata) || filtro.statusOrdine === 'ARCHIVIATO'">{{articolo.qtaRiservata}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQtaRiservata && filtro.statusOrdine !== 'ARCHIVIATO'" type="number"
-                     min="0" class="form-control input"
-                     [(ngModel)]="articolo.qtaRiservata" (keyup)="checkFlagRiservato(articolo)"
-                     (change)="checkFlagRiservato(articolo)"/>
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <span [ngClass]="{'editable-field': perm.canEditQtaRiservata && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                  (click)="perm.canEditQtaRiservata && filtro.statusOrdine !== 'ARCHIVIATO'
+                    ? openEditField(articolo,'qtaRiservata','Quantità riservata','number') : null">
+                  {{articolo.qtaRiservata ?? '-'}}
+                </span>
+              </span>
             </td>
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="qtaProntoConsegna">
             <th mat-header-cell *matHeaderCellDef>Qtà Pronto Cons.</th>
             <td mat-cell *matCellDef="let articolo">
-              <span
-                *ngIf="(articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !perm.canEditQtaProntoConsegna) || filtro.statusOrdine === 'ARCHIVIATO'">{{articolo.qtaProntoConsegna}}</span>
-              <input *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && perm.canEditQtaProntoConsegna && filtro.statusOrdine !== 'ARCHIVIATO'" type="number"
-                     min="0" class="form-control input"
-                     [(ngModel)]="articolo.qtaProntoConsegna" (keyup)="checkFlagProntoConsegna(articolo)"
-                     (change)="checkFlagProntoConsegna(articolo)"/>
+              <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'">
+                <span [ngClass]="{'editable-field': perm.canEditQtaProntoConsegna && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                  (click)="perm.canEditQtaProntoConsegna && filtro.statusOrdine !== 'ARCHIVIATO'
+                    ? openEditField(articolo,'qtaProntoConsegna','Quantità pronta consegna','number') : null">
+                  {{articolo.qtaProntoConsegna ?? '-'}}
+                </span>
+              </span>
             </td>
           </ng-container>
           <!-- Name Column -->
@@ -290,44 +373,62 @@
 
           <ng-container matColumnDef="azioni">
             <th mat-header-cell *matHeaderCellDef></th>
+
             <td mat-cell *matCellDef="let articolo">
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" (click)="showHistory(articolo)" mat-icon-button
-                      matTooltip="Storia articolo">
-                <mat-icon aria-hidden="false" aria-label="firma" color="primary">work_history</mat-icon>
+
+              <!-- NOTE -->
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
+                      (click)="aggiungiNote(articolo)"
+                      mat-icon-button
+                      matTooltip="Aggiungi note">
+                <mat-icon fontIcon="speaker_notes"
+                          color="primary"
+                          [ngClass]="{'nota-presente': articolo.note}">
+                </mat-icon>
               </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'" (click)="aggiungiNote(articolo)" mat-icon-button matTooltip="Aggiungi note" >
-                <mat-icon aria-hidden="false" aria-label="firma" fontIcon="speaker_notes" color="primary" [ngClass]="{'nota-presente':articolo.note}"></mat-icon>
+
+              <!-- MENU -->
+              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
+                      mat-icon-button
+                      [matMenuTriggerFor]="azioniMenu">
+                <mat-icon>more_vert</mat-icon>
               </button>
-              <button
-                *ngIf="perm.canAssociaFornitore && filtro.statusOrdine === 'DA_ORDINARE' && articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.articolo && articolo.farticolo !== '*PZ' && articolo.farticolo !== '*MQ' && articolo.farticolo !== '*ML'"
-                (click)="addFornitore(articolo.farticolo)" mat-icon-button
-                matTooltip="Associa fornitore">
-                <mat-icon aria-hidden="false" aria-label="firma" color="primary">warning_amber</mat-icon>
-              </button>
-              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.annoOAF" mat-icon-button
-                      matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
-                        {{articolo.dataOrdineOAF?('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy' )) : ''}}
-                        {{articolo.qtyuser1?('. Settimana cons.: ' + articolo.qtyuser1): ''}}
-                        {{articolo.datauser1?('. Data cons.: ' + (articolo.datauser1 | date: 'dd/MM/yyyy')): ''}}
-                        " #tooltip="matTooltip" (click)="tooltip.toggle()">
-                <mat-icon aria-hidden="false"
-                          aria-label="nota ordine fornitore"
-                          color="primary">store</mat-icon>
-              </button>
-              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && !articolo.annoOAF" mat-icon-button matToolTip="Collega OAF" (click)="collegaOAF(articolo)">
-                <mat-icon aria-hidden="false"
-                          aria-label="collega ordine fornitore"
-                          color="primary">add_link</mat-icon>
-              </button>
-              <button  *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.noteOrdCli && perm.canViewNoteOAF" mat-icon-button
-                      matTooltip="{{articolo.noteOrdCli}}" #tooltip="matTooltip" (click)="tooltip.toggle()">
-                <mat-icon aria-hidden="false"
-                          aria-label="nota ordine fornitore"
-                          color="primary">info</mat-icon>
-              </button>
-              <button *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC' && articolo.flBolla" mat-icon-button aria-label="expand row" (click)="getBolle(articolo); (expandedElement = expandedElement === articolo ? null : articolo); $event.stopPropagation()">
-                <mat-icon color="primary">local_shipping</mat-icon>
-              </button>
+
+              <mat-menu #azioniMenu="matMenu">
+
+                <button mat-menu-item (click)="showHistory(articolo)">
+                  <mat-icon>work_history</mat-icon>
+                  <span>Storico articolo</span>
+                </button>
+
+                <button mat-menu-item
+                        *ngIf="perm.canAssociaFornitore
+                && filtro.statusOrdine === 'DA_ORDINARE'
+                && !articolo.articolo
+                && articolo.farticolo !== '*PZ'
+                && articolo.farticolo !== '*MQ'
+                && articolo.farticolo !== '*ML'"
+                        (click)="addFornitore(articolo.farticolo)">
+                  <mat-icon>warning_amber</mat-icon>
+                  <span>Associa fornitore</span>
+                </button>
+
+                <button mat-menu-item
+                        *ngIf="!articolo.annoOAF"
+                        (click)="collegaOAF(articolo)">
+                  <mat-icon>add_link</mat-icon>
+                  <span>Collega OAF</span>
+                </button>
+
+                <button mat-menu-item
+                        *ngIf="articolo.noteOrdCli && perm.canViewNoteOAF"
+                        [matTooltip]="articolo.noteOrdCli">
+                  <mat-icon>info</mat-icon>
+                  <span>Info OAF</span>
+                </button>
+
+              </mat-menu>
+
             </td>
           </ng-container>
 
