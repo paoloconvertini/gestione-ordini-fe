@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{data.title}}</h2>
+
+<mat-dialog-content>
+
+  <textarea
+    *ngIf="data.type === 'textarea'"
+    rows="6"
+    class="form-control"
+    [(ngModel)]="value">
+  </textarea>
+
+  <input
+    *ngIf="data.type === 'text'"
+    matInput
+    class="form-control"
+    [(ngModel)]="value">
+
+  <input
+    *ngIf="data.type === 'number'"
+    type="number"
+    matInput
+    class="form-control"
+    [(ngModel)]="value">
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annulla()">Annulla</button>
+  <button mat-raised-button color="primary" (click)="salva()">Salva</button>
+</mat-dialog-actions>

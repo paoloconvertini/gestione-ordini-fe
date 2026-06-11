@@ -13,7 +13,7 @@
   margin: 0 auto;
   position: relative;
   overflow: auto;
-  height: 400px;
+  height: calc(100vh - 320px);
 }
 
 .padding-right {
@@ -39,6 +39,13 @@
   text-align: right;
   font-weight: bold;
   min-width: 35px;
+  white-space: nowrap;
+}
+
+.mat-column-azioni .azioni-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .margin-left {
@@ -129,6 +136,22 @@ tr.example-detail-row {
   column-gap: 25px;
 }
 
+.codice-container {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 4px;
+}
+
+.bolla-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  line-height: 16px;
+  cursor: pointer;
+}
+
 .nota-presente {
   color:#d11f0c!important;
 }
@@ -152,4 +175,51 @@ mat-card-content {
 
 .button-row {
   margin: 0 8px;
+}
+
+.editable-field {
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: inline-block;
+  min-width: 40px;
+}
+
+.editable-field:hover {
+  color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.05);
+}
+
+.order-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-info .label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.order-info .value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.order-info .sub-value {
+  font-size: 13px;
+  color: #666;
+}
+
+.order-actions {
+  margin-left: auto;
 }
