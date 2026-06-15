@@ -74,30 +74,57 @@
 }
 
 .calendar-event {
-  padding: 6px;
-  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  line-height: 1.2;
+}
+
+.calendar-event-header {
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+  padding-bottom: 4px;
+}
+
+.calendar-event-tipo {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
 }
 
 .calendar-event-cliente {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.calendar-event-footer {
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 4px;
+}
+
+.calendar-event-indirizzo {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.calendar-event-body {
+  padding: 2px 0;
+}
+
+.calendar-event-attivita {
   font-size: 12px;
   font-weight: 600;
 }
 
-.calendar-event-indirizzo,
-.calendar-event-info,
-.calendar-event-attivita {
-  font-size: 10px;
-}
-
-.calendar-event-attivita {
+.calendar-event-indirizzo {
   font-size: 11px;
-  margin-top: 3px;
-  opacity: 0.95;
+  margin-bottom: 2px;
 }
 
 .calendar-event-info {
   font-size: 11px;
-  margin-top: 2px;
   opacity: 0.95;
 }
 

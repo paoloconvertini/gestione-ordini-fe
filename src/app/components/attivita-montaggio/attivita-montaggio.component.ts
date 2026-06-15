@@ -69,17 +69,12 @@ export class AttivitaMontaggioComponent extends BaseComponent implements OnInit 
       ],
 
       initialView: 'timeGridWeek',
-
       locale: 'it',
-
-      height: 'auto',
-
+      height: 1200,
+      expandRows: true,
       slotMinTime: '07:00:00',
-
       slotMaxTime: '20:00:00',
-
       allDaySlot: false,
-
       nowIndicator: true,
 
       headerToolbar: {
@@ -97,27 +92,58 @@ export class AttivitaMontaggioComponent extends BaseComponent implements OnInit 
 
       events: [],
       eventContent: (arg: any) => {
+
         const e = arg.event.extendedProps;
+
         return {
           html: `
-            <div class="calendar-event">
-              <div class="calendar-event-cliente">
-                ${e.clienteLabel || ''}
-              </div>
-              <div class="calendar-event-indirizzo">
-                📍 ${e.indirizzoLabel || ''}
-                ${e.localita ? ', ' + e.localita : ''}
-              </div>
-              <div class="calendar-event-info">
-                📞 ${e.telefono || ''}
-              </div>
-              <div class="calendar-event-info">
-                🕒 ${e.dataOraLabel || ''}
-              </div>
-              <div class="calendar-event-attivita">
-                 🧰 ${e.attivitaLabel || ''}
-              </div>
-            </div>`
+      <div style="line-height:1.15; padding:2px;">
+
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          margin-bottom:2px;
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
+        ">
+          ${e.clienteLabel || ''}
+        </div>
+
+        <div style="
+          font-size:11px;
+          font-weight:600;
+          text-transform:uppercase;
+          opacity:0.95;
+          margin-bottom:4px;
+        ">
+          ${e.tipoAppuntamento || ''}${e.attivitaLabel ? ' - ' + e.attivitaLabel : ''}
+        </div>
+
+        <div style="
+          font-size:12px;
+          font-weight:700;
+          margin-bottom:4px;
+        ">
+          ${e.dataOraLabel || ''}
+        </div>
+
+        <div style="
+          font-size:10px;
+          margin-bottom:2px;
+        ">
+          ${e.indirizzoLabel || ''}
+          ${e.localita ? ', ' + e.localita : ''}
+        </div>
+
+        <div style="
+          font-size:10px;
+        ">
+          ${e.telefono || ''}
+        </div>
+
+      </div>
+    `
         };
       },
       eventDidMount: (info: any) => {
