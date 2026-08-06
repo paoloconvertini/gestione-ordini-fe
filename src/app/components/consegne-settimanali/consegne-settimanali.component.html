@@ -14,25 +14,8 @@
 <div class="week-navigation">
   <button
     class="calendar-btn"
-    [disabled]="filtro.deltaSettimana === -3"
     mat-raised-button
-    (click)="retrieveList(-3)">
-    <mat-icon>first_page</mat-icon>
-  </button>
-
-  <button
-    class="calendar-btn"
-    [disabled]="filtro.deltaSettimana === -2"
-    mat-raised-button
-    (click)="retrieveList(-2)">
-    <mat-icon>keyboard_double_arrow_left</mat-icon>
-  </button>
-
-  <button
-    class="calendar-btn"
-    [disabled]="filtro.deltaSettimana === -1"
-    mat-raised-button
-    (click)="retrieveList(-1)">
+    (click)="retrieveList(filtro.deltaSettimana - 1)">
     <mat-icon>chevron_left</mat-icon>
   </button>
 
@@ -45,26 +28,9 @@
   </button>
 
   <button
-    class="calendar-btn"
-    [disabled]="filtro.deltaSettimana === 1"
     mat-raised-button
-    (click)="retrieveList(1)">
+    (click)="retrieveList(filtro.deltaSettimana + 1)">
     <mat-icon>chevron_right</mat-icon>
-  </button>
-
-  <button
-    class="calendar-btn"
-    [disabled]="filtro.deltaSettimana === 2"
-    mat-raised-button
-    (click)="retrieveList(2)">
-    <mat-icon>keyboard_double_arrow_right</mat-icon>
-  </button>
-
-  <button
-    [disabled]="filtro.deltaSettimana === 3"
-    mat-raised-button
-    (click)="retrieveList(3)">
-    <mat-icon>last_page</mat-icon>
   </button>
 </div>
 
