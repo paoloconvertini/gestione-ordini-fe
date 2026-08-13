@@ -414,6 +414,16 @@
                 </button>
 
                 <button mat-menu-item
+                        *ngIf="articolo.annoOAF"
+                        matTooltip="Fornitore: {{articolo.intestazione}}. Riferimento n. {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}
+                          {{articolo.dataOrdineOAF ? ('del ' + (articolo.dataOrdineOAF | date: 'dd/MM/yyyy')) : ''}}
+                          {{articolo.qtyuser1 ? ('. Settimana cons.: ' + articolo.qtyuser1) : ''}}
+                          {{articolo.datauser1 ? ('. Data cons.: ' + (articolo.datauser1 | date: 'dd/MM/yyyy')) : ''}}">
+                  <mat-icon>store</mat-icon>
+                  <span>OAF {{articolo.annoOAF}}/{{articolo.serieOAF}}/{{articolo.progressivoOAF}}</span>
+                </button>
+
+                <button mat-menu-item
                         *ngIf="!articolo.annoOAF"
                         (click)="collegaOAF(articolo)">
                   <mat-icon>add_link</mat-icon>
@@ -422,7 +432,8 @@
 
                 <button mat-menu-item
                         *ngIf="articolo.noteOrdCli && perm.canViewNoteOAF"
-                        [matTooltip]="articolo.noteOrdCli">
+                        (click)="mostraInfoOAF(articolo.noteOrdCli)"
+                        matTooltip="Visualizza note ordine fornitore">
                   <mat-icon>info</mat-icon>
                   <span>Info OAF</span>
                 </button>
@@ -483,7 +494,6 @@
     </div>
   </div>
 </div>
-
 
 
 

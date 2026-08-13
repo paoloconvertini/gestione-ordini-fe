@@ -757,6 +757,16 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     this.router.navigate(['/collega-oaf', articolo.progrGenerale, articolo.anno, articolo.serie, articolo.progressivo]);
   }
 
+  mostraInfoOAF(noteOrdCli: string) {
+    this.dialog.open(WarnDialogComponent, {
+      width: '30%',
+      data: {
+        data: [noteOrdCli],
+        msg: 'Note ordine fornitore'
+      }
+    });
+  }
+
   resetQta(articolo: any) {
     articolo.flagRiservato = false;
     articolo.flProntoConsegna = false;
