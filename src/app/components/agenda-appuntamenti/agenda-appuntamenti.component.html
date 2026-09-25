@@ -3,12 +3,21 @@
   <div class="page-title-wrapper">
 
     <div class="page-title">
-      Agenda Appuntamenti
+      Agenda
     </div>
 
-    <span class="result-badge">
-      {{ totalItems }}
-    </span>
+    <div class="agenda-counters">
+      <span class="agenda-counter visite-counter">
+        <mat-icon aria-hidden="true">directions_walk</mat-icon>
+        <span>Visite</span>
+        <strong>{{ visiteCount }}</strong>
+      </span>
+      <span class="agenda-counter appuntamenti-counter">
+        <mat-icon aria-hidden="true">event</mat-icon>
+        <span>Appuntamenti</span>
+        <strong>{{ appuntamentiCount }}</strong>
+      </span>
+    </div>
 
   </div>
 

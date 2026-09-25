@@ -231,7 +231,7 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
   save(): void {
 
     this.saveAttempted = true;
-    if (this.dto.tipoEvento === 'APPUNTAMENTO') {
+    if (this.isClienteEvent()) {
       this.dto.codVenditori = this.codVenditoreAppuntamento
           ? [this.codVenditoreAppuntamento]
           : [];
@@ -346,5 +346,9 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
       this.dto.nomeCliente?.trim()
       && this.dto.motivoId
     );
+  }
+
+  isClienteEvent(): boolean {
+    return this.dto.tipoEvento === 'APPUNTAMENTO' || this.dto.tipoEvento === 'VISITA';
   }
 }

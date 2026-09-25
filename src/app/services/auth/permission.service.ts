@@ -155,7 +155,10 @@ export class PermissionService {
   }
 
   get canViewAppuntamenti(): boolean {
-    return this.auth.hasPerm('appuntamenti.view');
+    // Le visite sono state accorpate all'agenda appuntamenti: chi aveva
+    // accesso al registro visite deve poter usare la nuova agenda.
+    return this.auth.hasPerm('appuntamenti.view')
+      || this.auth.hasPerm('showroom.view');
   }
 
   get canViewAgende(): boolean {

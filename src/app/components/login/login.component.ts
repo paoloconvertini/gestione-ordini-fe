@@ -46,7 +46,7 @@ export class LoginComponent extends BaseComponent {
           if (this.perm.canViewRegistroVisite
             && !this.perm.canViewOrdiniClienti
             && !this.perm.canViewOrdiniFornitori) {
-            this.router.navigate(['/registro-visite']);
+            this.router.navigate(['/agenda-appuntamenti']);
             return;
           }
 

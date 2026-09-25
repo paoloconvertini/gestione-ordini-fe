@@ -21,12 +21,39 @@
   gap: 8px;
 }
 
-.result-badge {
-  background: #1976d2;
-  color: white;
+.agenda-counters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agenda-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
   font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 14px;
+  padding: 5px 10px;
+  border-radius: 16px;
+}
+
+.agenda-counter mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.agenda-counter strong {
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+.visite-counter {
+  background: #42A5F5;
+}
+
+.appuntamenti-counter {
+  background: #1976D2;
 }
 
 .filter-card {
@@ -127,4 +154,3 @@
   }
 
 }
-

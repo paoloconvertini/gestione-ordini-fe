@@ -23,12 +23,6 @@
       Agenda Appuntamenti
     </button>
 
-    <button *ngIf="perm.canViewRegistroVisite"
-            mat-menu-item
-            [routerLink]="['/registro-visite']">
-      Registro Visiste
-    </button>
-
   </mat-menu>
   <!-- MENU PRINCIPALE (SOTTOMENU) -->
   <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>

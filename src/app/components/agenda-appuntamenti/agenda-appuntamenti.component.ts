@@ -25,7 +25,8 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
   loader = false;
   @ViewChild('calendar')
   calendar!: FullCalendarComponent;
-  totalItems = 0;
+  visiteCount = 0;
+  appuntamentiCount = 0;
 
   filtro: any = {};
 
@@ -219,7 +220,8 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
       .subscribe({
         next: (res: any) => {
 
-          this.totalItems = res.count;
+          this.visiteCount = res.list.filter((evento: any) => evento.tipoEvento === 'VISITA').length;
+          this.appuntamentiCount = res.list.filter((evento: any) => evento.tipoEvento === 'APPUNTAMENTO').length;
 
           const events: any[] = [];
 
@@ -442,4 +444,3 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
   }
 
 }
-
