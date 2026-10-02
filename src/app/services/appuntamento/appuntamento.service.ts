@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CommonService } from '../CommonSerivce';
+import * as moment from 'moment';
 
 const url = environment.baseUrl + environment.APPUNTAMENTO;
 
@@ -24,11 +25,20 @@ export class AppuntamentoService extends CommonService {
   }
 
   create(dto: any): Observable<any> {
-    return this.http.post<any>(this.url, dto);
+    return this.http.post<any>(this.url, this.toPayload(dto));
   }
 
   override update(id: number, dto: any): Observable<any> {
-    return this.http.put<any>(`${this.url}/${id}`, dto);
+    return this.http.put<any>(`${this.url}/${id}`, this.toPayload(dto));
+  }
+
+  private toPayload(dto: any): any {
+    return {
+      ...dto,
+      dataAppuntamento: dto.dataAppuntamento
+        ? moment(dto.dataAppuntamento).format('YYYY-MM-DD')
+        : dto.dataAppuntamento
+    };
   }
 
   delete(id: number): Observable<any> {

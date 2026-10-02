@@ -257,7 +257,6 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
         },
         error: (err) => {
           console.error(err);
-          alert(err?.error?.message || 'Errore durante il salvataggio');
           this.loader = false;
         }
       });
