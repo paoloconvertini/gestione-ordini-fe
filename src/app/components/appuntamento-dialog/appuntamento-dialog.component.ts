@@ -125,7 +125,7 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
     this.authService.getVenditori(['Venditore'])
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(res => {
-        this.venditori = res;
+        this.venditori = res.filter((v: any) => v.codVenditore?.trim());
       });
   }
 
@@ -236,6 +236,9 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
           ? [this.codVenditoreAppuntamento]
           : [];
     }
+    if (this.isClienteEvent()) {
+      this.dto.altriPartecipanti = null;
+    }
     this.dto.motivoId = this.motivoFiglioId ?? this.motivoRootId;
 
     if (!this.isValid()) {
@@ -329,22 +332,25 @@ export class AppuntamentoDialogComponent extends BaseComponent implements OnInit
       this.dto.sedeId
       && this.dto.dataAppuntamento
       && this.dto.oraDa
-      && this.dto.oraA
-      && this.dto.codVenditori
-      && this.dto.codVenditori.length > 0;
+      && this.dto.oraA;
 
     if (!baseValid) {
       return false;
     }
 
     if (this.dto.tipoEvento === 'FORMAZIONE') {
-      return true;
+      return this.hasPartecipanti();
     }
 
     return !!(
-      this.dto.nomeCliente?.trim()
+      this.dto.codVenditori?.length
+      && this.dto.nomeCliente?.trim()
       && this.dto.motivoId
     );
+  }
+
+  hasPartecipanti(): boolean {
+    return !!(this.dto.codVenditori?.length || this.dto.altriPartecipanti?.trim());
   }
 
   isClienteEvent(): boolean {

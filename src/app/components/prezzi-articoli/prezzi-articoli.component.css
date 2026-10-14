@@ -1,0 +1,94 @@
+.prezzi-page { padding: 24px; color: #263247; }
+[hidden] { display: none !important; }
+.page-header { margin-bottom: 20px; }
+.eyebrow { color: #68758a; font-size: 12px; text-transform: uppercase; letter-spacing: .09em; }
+h1 { margin: 4px 0 0; font-size: 27px; font-weight: 600; }
+.ricerca-card, .pannello { padding: 20px; border: 1px solid #e3e8ef; border-radius: 12px; box-shadow: none; }
+.filtri, .azioni { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
+.campo { display: flex; flex-direction: column; width: 160px; max-width: 100%; gap: 7px; }
+.campo-fornitore { width: 360px; }
+.campo label { font-size: 13px; font-weight: 600; color: #586174; }
+.campo mat-form-field { width: 100%; }
+.filtri button, .azioni button { min-height: 48px; border-radius: 8px; }
+.filtri mat-checkbox { align-self: center; margin-top: 22px; }
+.fornitore-contesto { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 24px 0 16px; font-size: 13px; color: #68758a; }
+.fornitore-contesto > div { display: flex; align-items: center; gap: 10px; }
+h2 { margin: 0; font-size: 18px; font-weight: 600; color: #263247; }
+.codice-fornitore { padding: 3px 8px; background: #edf0f7; border-radius: 5px; font-variant-numeric: tabular-nums; }
+.pannelli { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.titolo-pannello { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.titolo-pannello mat-icon { color: #6978ad; font-size: 21px; }
+h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.soglia-salvata, .nota-pannello { margin: 14px 0 0; color: #68758a; font-size: 12px; }
+.soglia-salvata strong { margin-left: 8px; color: #263247; }
+.badge-soglia { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 18px 0; }
+.riepilogo-soglia { display: flex; align-items: center; justify-content: space-between; gap: 22px; min-width: 155px; padding: 12px 16px; border: 1px solid transparent; border-radius: 10px; }
+.riepilogo-soglia > div { display: flex; flex-direction: column; gap: 6px; }
+.riepilogo-label { font-size: 12px; font-weight: 500; }
+.riepilogo-soglia strong { font-size: 25px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.sotto { background: #fff1ef; color: #a52c26; border-color: #f6ddd9; }
+.sopra { background: #edf7f0; color: #267044; border-color: #dceee1; }
+.pari { background: #f3f5f9; color: #586174; border-color: #e6eaf1; }
+.menu-soglia { transition: opacity .15s ease; }
+.non-confrontabili { font-size: 12px; color: #68758a; }
+.anteprima-soglia { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #eef1fd; color: #344593; border-radius: 10px; margin-bottom: 16px; }
+.anteprima-soglia div { flex: 1; }
+.anteprima-soglia strong, .anteprima-soglia span { display: block; }
+.anteprima-soglia span { margin-top: 4px; font-size: 13px; }
+.errore { display: flex; align-items: center; gap: 10px; padding: 14px; margin: 16px 0; border-radius: 8px; background: #fff1ef; color: #a52c26; }
+.stato-vuoto { padding: 64px 20px; text-align: center; color: #68758a; }
+.stato-vuoto > mat-icon { width: 44px; height: 44px; font-size: 44px; color: #97a3bc; margin-bottom: 16px; }
+.stato-vuoto p { font-size: 14px; }
+.tabella { position: relative; min-height: 140px; overflow-x: auto; border: 1px solid #e3e8ef; border-radius: 10px; margin-top: 16px; }
+.caricamento { position: sticky; top: 0; left: 0; z-index: 30; height: 140px; display: flex; justify-content: center; align-items: center; gap: 14px; background: rgba(255,255,255,.96); color: #586174; }
+table { width: 100%; }
+th { background: #f6f8fb !important; color: #586174; font-size: 12px; font-weight: 600; white-space: nowrap; }
+th, td { padding-right: 18px !important; }
+td { border-bottom-color: #edf0f5; }
+.mat-column-selezione { width: 48px; }
+.mat-column-articolo { min-width: 240px; max-width: 400px; padding-top: 12px; padding-bottom: 12px; }
+.articolo-descrizione { display: block; font-weight: 500; line-height: 1.4; }
+.articolo-codice { display: block; color: #68758a; font-size: 12px; margin-top: 4px; }
+.mat-column-costoUltimo, .mat-column-prezzoBase, .mat-column-ricaricoAttuale, .mat-column-nuovoPrezzo, .mat-column-deltaRicarico { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+small { display: block; color: #68758a; font-size: 11px; margin-top: 3px; }
+.delta { font-weight: 600; }
+.delta small { color: inherit; font-weight: 400; }
+.sopra-soglia { color: #267044; }
+.sotto-soglia { color: #a52c26; }
+.in-soglia { color: #68758a; }
+.riga-selezionata { background: #f7f8fe; }
+tr.mat-row:hover, tr.mat-mdc-row:hover { background: #f0f3fa; }
+.colonna-anteprima { background: #eef1fd !important; color: #344593; font-weight: 600; }
+.stato-disponibile { color: #68758a; }
+.stato-escluso { color: #876021; }
+mat-paginator { background: transparent; }
+.barra-conferma { position: sticky; bottom: 16px; z-index: 40; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 16px 20px; margin-top: 16px; border: 1px solid #dce2f3; border-radius: 12px; background: #fff; box-shadow: 0 6px 24px #2632471a; }
+.selezione-riepilogo { display: flex; align-items: center; gap: 12px; }
+.selezione-riepilogo mat-icon { color: #3f51b5; }
+.selezione-riepilogo strong, .selezione-riepilogo span { display: block; }
+.selezione-riepilogo strong { font-size: 14px; }
+.selezione-riepilogo span { margin-top: 4px; font-size: 12px; color: #68758a; }
+.barra-azioni { display: flex; flex-wrap: wrap; gap: 8px; }
+.barra-azioni button { border-radius: 8px; }
+@media (hover: hover) and (pointer: fine) {
+  .menu-soglia { opacity: 0; }
+  .riepilogo-soglia:hover .menu-soglia, .riepilogo-soglia:focus-within .menu-soglia, .menu-soglia.menu-aperto { opacity: 1; }
+}
+@media (max-width: 900px) { .pannelli { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  .prezzi-page { padding: 12px; }
+  .ricerca-card, .pannello { padding: 16px; }
+  .campo-fornitore { width: 100%; }
+  .filtri mat-checkbox { margin-top: 0; }
+  .riepilogo-soglia { min-width: 120px; flex: 1; gap: 8px; }
+  .fornitore-contesto > div { align-items: flex-start; }
+  .anteprima-soglia { flex-wrap: wrap; }
+  .barra-conferma { bottom: 8px; padding: 14px; }
+  .barra-azioni { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .menu-soglia { transition: none; } }
+
+.articolo-intestazione { display: flex; align-items: flex-start; gap: 8px; }
+.stato-articolo { flex: 0 0 18px; width: 18px; height: 18px; font-size: 18px; margin-top: 1px; cursor: help; }
+.stato-articolo:focus-visible { outline: 2px solid #3f51b5; outline-offset: 3px; border-radius: 50%; }
+.stato-articolo.stato-disponibile { color: #267044; }

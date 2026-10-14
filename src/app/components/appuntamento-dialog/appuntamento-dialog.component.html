@@ -114,6 +114,19 @@
       </div>
     </div>
 
+    <div class="form-row" *ngIf="dto.tipoEvento === 'FORMAZIONE'">
+      <div class="field field-full">
+        <mat-form-field appearance="outline">
+          <mat-label>Altri partecipanti</mat-label>
+          <textarea matInput rows="3" [(ngModel)]="dto.altriPartecipanti"></textarea>
+          <mat-hint>Inserisci un nome per riga se non presente tra i venditori</mat-hint>
+        </mat-form-field>
+        <div class="validation-error" *ngIf="saveAttempted && !hasPartecipanti()">
+          Seleziona almeno un venditore oppure inserisci un partecipante
+        </div>
+      </div>
+    </div>
+
     <!-- MOTIVO -->
     <div *ngIf="isClienteEvent()" class="form-row form-row-2">
 

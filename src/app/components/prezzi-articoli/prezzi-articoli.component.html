@@ -1,0 +1,191 @@
+<main class="prezzi-page" *ngIf="perm.canGestisciPrezziArticoli; else accessoNegato">
+  <header class="page-header">
+    <div><span class="eyebrow">Listini</span><h1>Prezzi articoli</h1></div>
+  </header>
+
+  <mat-card class="ricerca-card">
+    <form class="filtri" (ngSubmit)="cerca()">
+      <div class="campo campo-fornitore">
+        <label for="classeA1-fornitore">Fornitore</label>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput id="classeA1-fornitore" name="classeA1" [(ngModel)]="classeA1" required
+                 [matAutocomplete]="fornitoriAutocomplete" autocomplete="off"
+                 [disabled]="loader || confermaAperta || caricamentoClassi" placeholder="Cerca codice o nome">
+          <mat-autocomplete #fornitoriAutocomplete="matAutocomplete" [displayWith]="mostraFornitore">
+            <mat-option *ngFor="let c of classiFornitoreFiltrate" [value]="c.codice">
+              {{ c.codice }} — {{ c.descrizione }}
+            </mat-option>
+            <mat-option *ngIf="!classiFornitoreFiltrate.length" disabled>Nessun fornitore trovato</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!classeA1Valido || loader || confermaAperta">Cerca articoli</button>
+      <mat-checkbox color="primary" name="includiBloccati" [(ngModel)]="includiBloccati" [disabled]="loader || confermaAperta">
+        Includi articoli bloccati
+      </mat-checkbox>
+    </form>
+  </mat-card>
+
+  <div class="fornitore-contesto" *ngIf="ricercaEseguita">
+    <div><h2>{{ nomeFornitoreCaricato }}</h2><span class="codice-fornitore">{{ classeA1Caricato }}</span></div>
+    <span>{{ articoli.length }} articoli · {{ aggiornabili.length }} aggiornabili · {{ articoli.length - aggiornabili.length }} esclusi</span>
+  </div>
+
+  <div class="pannelli" *ngIf="ricercaEseguita">
+    <mat-card class="pannello">
+      <div class="titolo-pannello"><mat-icon>tune</mat-icon><h3>Soglia di riferimento</h3></div>
+      <div class="azioni">
+        <div class="campo">
+          <label for="ricarico-impostato">Soglia fornitore %</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input matInput id="ricarico-impostato" type="number" min="0" max="10000" step="0.0001"
+                   [ngModel]="classeA1.trim() === classeA1Caricato ? sogliaDaSalvare : null"
+                   (ngModelChange)="sogliaDaSalvare = $event" placeholder="Non impostata"
+                   [disabled]="loader || confermaAperta || classeA1.trim() !== classeA1Caricato">
+          </mat-form-field>
+        </div>
+        <button mat-stroked-button color="primary" (click)="salvaSoglia()" [disabled]="!puoSalvareSoglia">Salva soglia</button>
+      </div>
+      <p class="soglia-salvata">Soglia salvata <strong>{{ sogliaVisibile === null ? '—' : ((sogliaVisibile | number:'1.0-0') + '%') }}</strong></p>
+    </mat-card>
+    <mat-card class="pannello">
+      <div class="titolo-pannello"><mat-icon>sell</mat-icon><h3>Aggiornamento prezzi</h3></div>
+      <div class="azioni">
+        <div class="campo">
+          <label for="nuovo-ricarico">Nuovo ricarico %</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input matInput id="nuovo-ricarico" type="number" [(ngModel)]="percentuale" min="0" max="10000" step="0.0001"
+                   [disabled]="loader || confermaAperta">
+          </mat-form-field>
+        </div>
+        <button mat-stroked-button color="primary" (click)="cerca(true)"
+                [disabled]="!classeA1Valido || !percentualeValida || loader || confermaAperta">Calcola anteprima</button>
+      </div>
+      <p class="nota-pannello">Ricarico sul costo ultimo · prezzi IVA esclusa</p>
+    </mat-card>
+  </div>
+
+  <div *ngIf="errore" class="errore" role="alert"><mat-icon>error_outline</mat-icon><span>{{ errore }}</span></div>
+
+  <ng-container *ngIf="ricercaEseguita">
+    <div class="badge-soglia" *ngIf="conteggiSoglia as conteggi" aria-label="Riepilogo articoli rispetto alla soglia" aria-live="polite">
+      <div class="riepilogo-soglia sotto">
+        <div><span class="riepilogo-label">Sotto soglia</span><strong>{{ conteggi.sotto }}</strong></div>
+        <button mat-icon-button class="menu-soglia" [matMenuTriggerFor]="azioniSoglia" #menuSoglia="matMenuTrigger"
+                [class.menu-aperto]="menuSoglia.menuOpen" [disabled]="loader || confermaAperta"
+                aria-label="Azioni per gli articoli sotto soglia" matTooltip="Azioni sotto soglia">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </div>
+      <mat-menu #azioniSoglia="matMenu">
+        <button mat-menu-item (click)="preparaPortaASoglia()" [disabled]="!puoPortareASoglia">
+          <mat-icon>done_all</mat-icon><span>Porta a soglia</span>
+        </button>
+      </mat-menu>
+      <div class="riepilogo-soglia sopra"><div><span class="riepilogo-label">Sopra soglia</span><strong>{{ conteggi.sopra }}</strong></div><mat-icon>trending_up</mat-icon></div>
+      <div class="riepilogo-soglia pari"><div><span class="riepilogo-label">In soglia</span><strong>{{ conteggi.pari }}</strong></div><mat-icon>check</mat-icon></div>
+      <span class="non-confrontabili" *ngIf="conteggi.nonConfrontabili">{{ conteggi.nonConfrontabili }} non confrontabili</span>
+    </div>
+  </ng-container>
+
+  <div class="anteprima-soglia" *ngIf="portaASoglia && !loader">
+    <mat-icon>preview</mat-icon>
+    <div><strong>Anteprima degli articoli sotto soglia</strong><span>{{ selezionabili.length }} aggiornabili. Deseleziona quelli da escludere.</span></div>
+    <button mat-button (click)="annullaAnteprima()" [disabled]="confermaAperta">Mostra tutti</button>
+  </div>
+
+  <div class="stato-vuoto" *ngIf="!ricercaEseguita && !loader && !errore">
+    <mat-icon>inventory_2</mat-icon><h2>Scegli un fornitore</h2><p>Cerca per nome o codice per consultare i prezzi degli articoli.</p>
+  </div>
+  <div class="stato-vuoto" *ngIf="ricercaEseguita && !loader && !dataSource.data.length">
+    <mat-icon>{{ portaASoglia ? 'task_alt' : 'search_off' }}</mat-icon>
+    <h2>{{ portaASoglia ? 'Nessun articolo da portare a soglia' : 'Nessun articolo trovato' }}</h2>
+    <p>{{ portaASoglia ? 'Gli articoli aggiornabili sono già in soglia oppure sopra soglia.' : 'Prova a selezionare un altro fornitore.' }}</p>
+  </div>
+
+  <div class="tabella" [hidden]="!loader && (!ricercaEseguita || !dataSource.data.length)" [attr.aria-busy]="loader">
+    <div class="caricamento" *ngIf="loader" role="status"><mat-spinner diameter="32"></mat-spinner><span>Caricamento articoli…</span></div>
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="selezione">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox color="primary" (change)="selezionaTutti()"
+                        [checked]="selezionabili.length > 0 && selezionati.length === selezionabili.length"
+                        [indeterminate]="selezionati.length > 0 && selezionati.length < selezionabili.length"
+                        [disabled]="!puoSelezionare || !selezionabili.length"
+                        aria-label="Seleziona o deseleziona tutti gli articoli aggiornabili, su tutte le pagine">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let a">
+          <mat-checkbox color="primary" (change)="selezionaArticolo(a)" [checked]="selection.isSelected(a)"
+                        [disabled]="!puoSelezionare || !a.aggiornabile"
+                        [aria-label]="'Seleziona articolo ' + a.articolo">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="articolo">
+        <th mat-header-cell *matHeaderCellDef>Articolo</th>
+        <td mat-cell *matCellDef="let a">
+          <span class="articolo-intestazione">
+            <span class="articolo-descrizione">{{ a.descrizione }}</span>
+            <mat-icon class="stato-articolo" [class.stato-escluso]="a.motivoEsclusione"
+                      [class.stato-disponibile]="!a.motivoEsclusione"
+                      [matTooltip]="a.motivoEsclusione || 'Aggiornabile'"
+                      [attr.aria-label]="a.motivoEsclusione || 'Aggiornabile'"
+                      role="img" tabindex="0">
+              {{ a.motivoEsclusione ? 'error_outline' : 'check_circle_outline' }}
+            </mat-icon>
+          </span>
+          <span class="articolo-codice">{{ a.articolo }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="costoUltimo">
+        <th mat-header-cell *matHeaderCellDef>Costo ultimo</th>
+        <td mat-cell *matCellDef="let a">
+          {{ a.costoRiferimento === null ? '—' : (a.costoRiferimento | number:'1.2-2') }}
+          <small *ngIf="a.costoRettificato">Costo rettificato +40%</small>
+          <small *ngIf="a.dataUltimoAcquisto">{{ a.dataUltimoAcquisto | date:'dd/MM/yyyy' }}</small>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="prezzoBase">
+        <th mat-header-cell *matHeaderCellDef>Prezzo base</th>
+        <td mat-cell *matCellDef="let a">{{ a.prezzoBase === null ? '—' : (a.prezzoBase | number:'1.2-2') }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ricaricoAttuale">
+        <th mat-header-cell *matHeaderCellDef>Ricarico attuale</th>
+        <td mat-cell *matCellDef="let a">{{ a.ricaricoAttuale === null ? '—' : ((a.ricaricoAttuale | number:'1.0-0') + '%') }}</td>
+      </ng-container>
+      <ng-container matColumnDef="deltaRicarico">
+        <th mat-header-cell *matHeaderCellDef>Delta soglia</th>
+        <td mat-cell *matCellDef="let a">
+          <ng-container *ngIf="deltaRicarico(a) !== null; else deltaAssente">
+            <span class="delta" [class.sopra-soglia]="deltaRicarico(a)! > 0"
+                  [class.sotto-soglia]="deltaRicarico(a)! < 0"
+                  [class.in-soglia]="deltaRicarico(a) === 0">
+              {{ deltaRicarico(a)! > 0 ? '+' : '' }}{{ deltaRicarico(a) | number:'1.0-0' }} p.p.
+              <small>{{ deltaRicarico(a)! > 0 ? 'Sopra soglia' : deltaRicarico(a)! < 0 ? 'Sotto soglia' : 'In soglia' }}</small>
+            </span>
+          </ng-container>
+          <ng-template #deltaAssente>—</ng-template>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nuovoPrezzo">
+        <th mat-header-cell *matHeaderCellDef [class.colonna-anteprima]="percentualeAnteprima !== null">Nuovo prezzo</th>
+        <td mat-cell *matCellDef="let a" [class.colonna-anteprima]="percentualeAnteprima !== null">{{ percentuale !== percentualeAnteprima || a.nuovoPrezzo === null ? '—' : (a.nuovoPrezzo | number:'1.2-2') }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="colonne; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: colonne" [class.riga-selezionata]="selection.isSelected(row)"></tr>
+    </table>
+  </div>
+  <mat-paginator [hidden]="!ricercaEseguita || !dataSource.data.length" [disabled]="loader"
+                 [pageSize]="50" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+
+  <div class="barra-conferma" *ngIf="percentualeAnteprima !== null" aria-label="Conferma aggiornamento prezzi">
+    <div class="selezione-riepilogo"><mat-icon>checklist</mat-icon><div><strong>{{ selezionati.length }} articoli selezionati</strong><span>Su tutte le pagine · {{ percentualeAnteprima | number:'1.0-0' }}% di ricarico</span></div></div>
+    <div class="barra-azioni">
+      <button mat-button (click)="annullaAnteprima()" [disabled]="loader || confermaAperta">Annulla anteprima</button>
+      <button mat-raised-button color="primary" (click)="applica()" [disabled]="!puoApplicare">Aggiorna {{ selezionati.length }} prezzi</button>
+    </div>
+  </div>
+</main>
+<ng-template #accessoNegato><p class="prezzi-page">Non hai il permesso per accedere alla gestione dei prezzi articoli.</p></ng-template>

@@ -31,7 +31,15 @@ import {GestioneMotiviComponent} from "./components/showroom/gestione-motivi/ges
 import {AttivitaMontaggioComponent} from "./components/attivita-montaggio/attivita-montaggio.component";
 import {AgendaAppuntamentiComponent} from "./components/agenda-appuntamenti/agenda-appuntamenti.component";
 
+import { PrezziArticoliComponent } from './components/prezzi-articoli/prezzi-articoli.component';
+
 const routes: Routes = [
+  {
+    path: 'prezzi-articoli',
+    canActivate: [AuthGuard],
+    data: { permission: 'prezzi_articoli.view' },
+    component: PrezziArticoliComponent
+  },
   {
     path: 'users',
     canActivate: [AuthGuard],

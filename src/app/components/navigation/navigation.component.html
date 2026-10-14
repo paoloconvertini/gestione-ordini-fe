@@ -27,6 +27,7 @@
   <!-- MENU PRINCIPALE (SOTTOMENU) -->
   <button *ngIf="perm.canViewOrdiniClienti" mat-button [routerLink]="['/ordini-clienti']">Ordine Clienti</button>
   <button *ngIf="perm.canViewOrdiniFornitori" mat-button [routerLink]="['/ordini-fornitore']">Ordine Fornitori</button>
+  <button *ngIf="perm.canGestisciPrezziArticoli" mat-button [routerLink]="['/prezzi-articoli']">Prezzi articoli</button>
 
   <button mat-button *ngIf="perm.canViewLogistica" [matMenuTriggerFor]="logistica">Logistica</button>
   <mat-menu #logistica="matMenu">

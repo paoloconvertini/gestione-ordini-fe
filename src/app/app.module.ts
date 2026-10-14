@@ -19,6 +19,8 @@ import {JwtModule} from "@auth0/angular-jwt";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {OrdineClienteComponent} from './components/ordine-cliente/ordine-cliente-list/ordine-cliente.component';
 import {ArticoloComponent} from './components/ordine-cliente/articolo/articolo.component';
+import { PrezziArticoliComponent } from './components/prezzi-articoli/prezzi-articoli.component';
+import { RicaricoDeselezionatiDialogComponent } from './components/prezzi-articoli/ricarico-deselezionati-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatPaginatorModule} from "@angular/material/paginator";
@@ -141,7 +143,7 @@ export const DateFormats = {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent,
+    ArticoloComponent, PrezziArticoliComponent, RicaricoDeselezionatiDialogComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent,
     HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent,
     WarnDialogComponent, AddFornitoreDialogComponent, ResetPasswordComponent, UserListComponent,
     UserDetailComponent,

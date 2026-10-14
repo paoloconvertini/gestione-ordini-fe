@@ -8,6 +8,10 @@ export class PermissionService {
 
   constructor(private auth: AuthService) {}
 
+  get canGestisciPrezziArticoli() {
+    return this.auth.hasPerm('prezzi_articoli.view');
+  }
+
   // Navigation permissions
   get canViewUsers() {
     return this.auth.hasPerm('users.view');

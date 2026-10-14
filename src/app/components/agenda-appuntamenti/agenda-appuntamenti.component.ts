@@ -104,7 +104,7 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
       <div class="appuntamento-event">
 
         <div class="appuntamento-event-venditore">
-          ${e.venditoriLabel || ''} - ${e.sedeDescrizione || ''}
+          ${this.escapeHtml(e.venditoriLabel || '')} - ${e.sedeDescrizione || ''}
         </div>
 
         <div class="appuntamento-event-info">
@@ -162,7 +162,7 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
         }
 
         if (e.venditoriLabel) {
-          tooltip += '\nVenditori: ' + e.venditoriLabel;
+          tooltip += (e.tipoEvento === 'FORMAZIONE' ? '\nPartecipanti: ' : '\nVenditori: ') + e.venditoriLabel;
         }
 
         if (e.motivoLabel) {
@@ -182,6 +182,12 @@ export class AgendaAppuntamentiComponent extends BaseComponent implements OnInit
         this.openDialog(undefined, info.date);
       }
     };
+  }
+
+  private escapeHtml(value: string): string {
+    const element = document.createElement('span');
+    element.textContent = value;
+    return element.innerHTML;
   }
 
   loadSedi(): void {
