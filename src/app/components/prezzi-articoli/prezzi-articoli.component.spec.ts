@@ -14,7 +14,7 @@ describe('PrezziArticoliComponent', () => {
   let service: jasmine.SpyObj<PrezziArticoliService>;
   let dialog: jasmine.SpyObj<MatDialog>;
   const articolo: PrezzoArticolo = {
-    articolo: '4141030000100', descrizione: 'Flessibile', unitaMisura: 'PZ', unitaAcquisto: 'PZ',
+    articolo: '4141030000100', descrizione: 'Flessibile', giacenzaTotale: 10, giacenze: [{magazzino: 'B', giacenza: 10}], unitaMisura: 'PZ', unitaAcquisto: 'PZ',
     bloccato: '', costoUltimo: 100, costoRiferimento: 100, costoRettificato: false, prezzoBase: 130, ricaricoAttuale: 30, nuovoPrezzo: 145,
     movimento: 123, dataUltimoAcquisto: '2024-01-01', motivoEsclusione: null, aggiornabile: true
   };
@@ -38,6 +38,19 @@ describe('PrezziArticoliComponent', () => {
   function risultato(articoli: PrezzoArticolo[], ricaricoImpostato: number | null = null) {
     return of({ articoli, ricaricoImpostato });
   }
+
+  it('mostra prima gli aggiornabili e lascia tutti i senza costo in fondo anche dopo annulla anteprima', () => {
+    const senzaCosto = {...articolo, articolo: 'A', costoUltimo: null, aggiornabile: false};
+    const bloccato = {...articolo, articolo: 'B', aggiornabile: false};
+    const aggiornabile = {...articolo, articolo: 'C'};
+    const costoZero = {...articolo, articolo: 'D', costoUltimo: 0, aggiornabile: false};
+    service.cerca.and.returnValue(risultato([senzaCosto, bloccato, aggiornabile, costoZero]));
+    component.cerca(true);
+    expect((component.dataSource.data as PrezzoArticolo[]).map(a => a.articolo)).toEqual(['C', 'B', 'A', 'D']);
+    expect(component.selezionati.map(a => a.articolo)).toEqual(['C']);
+    component.annullaAnteprima();
+    expect((component.dataSource.data as PrezzoArticolo[]).map(a => a.articolo)).toEqual(['C', 'B', 'A', 'D']);
+  });
 
   it('annulla l’anteprima ripristinando tutte le righe senza chiamare il backend', () => {
     component.cerca(true);

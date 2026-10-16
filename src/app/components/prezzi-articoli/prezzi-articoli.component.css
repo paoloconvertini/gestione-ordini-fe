@@ -92,3 +92,5 @@ mat-paginator { background: transparent; }
 .stato-articolo { flex: 0 0 18px; width: 18px; height: 18px; font-size: 18px; margin-top: 1px; cursor: help; }
 .stato-articolo:focus-visible { outline: 2px solid #3f51b5; outline-offset: 3px; border-radius: 50%; }
 .stato-articolo.stato-disponibile { color: #267044; }
+
+.saldo-magazzino { min-height: 22px; white-space: nowrap; }

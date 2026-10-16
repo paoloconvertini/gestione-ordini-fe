@@ -32,7 +32,7 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
   articoli: PrezzoArticolo[] = [];
   selection = new SelectionModel<PrezzoArticolo>(true, []);
   errore = '';
-  colonne = ['selezione', 'articolo', 'costoUltimo', 'prezzoBase', 'ricaricoAttuale', 'deltaRicarico', 'nuovoPrezzo'];
+  colonne = ['selezione', 'articolo', 'magazzino', 'giacenza', 'costoUltimo', 'prezzoBase', 'ricaricoAttuale', 'deltaRicarico', 'nuovoPrezzo'];
 
   constructor(private service: PrezziArticoliService, private dialog: MatDialog,
               private snackbar: MatSnackBar, public perm: PermissionService) {
@@ -141,6 +141,11 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
       });
   }
 
+  private prioritaArticolo(articolo: PrezzoArticolo): number {
+    if (articolo.aggiornabile) return 0;
+    return articolo.costoUltimo === null || articolo.costoUltimo <= 0 ? 2 : 1;
+  }
+
   get aggiornabili(): PrezzoArticolo[] {
     return this.articoli.filter(a => a.aggiornabile);
   }
@@ -205,7 +210,7 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
     this.selection.clear();
     this.service.cerca(classeA1, percentuale, includiBloccati).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
       next: data => {
-        this.articoli = data.articoli;
+        this.articoli = [...data.articoli].sort((a, b) => this.prioritaArticolo(a) - this.prioritaArticolo(b));
         this.ricaricoImpostato = data.ricaricoImpostato;
         this.sogliaDaSalvare = data.ricaricoImpostato;
         this.classeA1Caricato = classeA1;
@@ -213,7 +218,7 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
         this.percentualeAnteprima = percentuale;
         this.ricercaEseguita = true;
         if (percentuale !== null) this.selection.select(...this.selezionabili);
-        this.createPaginator(this.portaASoglia ? this.selezionabili : data.articoli, 50);
+        this.createPaginator(this.portaASoglia ? this.selezionabili : this.articoli, 50);
         if (this.portaASoglia && percentuale !== this.ricaricoImpostato) {
           this.percentualeAnteprima = null;
           this.errore = 'La soglia è cambiata. Premi nuovamente Porta a soglia per ricalcolare.';

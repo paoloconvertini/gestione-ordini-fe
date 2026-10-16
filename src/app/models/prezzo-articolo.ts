@@ -1,6 +1,13 @@
+export interface GiacenzaMagazzino {
+  magazzino: string;
+  giacenza: number;
+}
+
 export interface PrezzoArticolo {
   articolo: string;
   descrizione: string;
+  giacenzaTotale: number;
+  giacenze: GiacenzaMagazzino[];
   unitaMisura: string | null;
   unitaAcquisto: string | null;
   bloccato: string | null;
