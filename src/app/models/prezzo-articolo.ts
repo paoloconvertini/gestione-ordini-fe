@@ -38,3 +38,10 @@ export interface AggiornamentoPrezzi {
   articoliDeselezionati?: PrezzoArticolo[];
   portaASoglia?: boolean;
 }
+
+export interface StoricoPrezzoArticolo {
+  dataModifica: string;
+  prezzoPrecedente: number | null;
+  prezzoBase: number;
+  utente: string | null;
+}

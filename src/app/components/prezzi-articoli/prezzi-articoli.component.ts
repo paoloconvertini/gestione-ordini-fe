@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { AggiornamentoPrezzi, PrezzoArticolo } from '../../models/prezzo-articolo';
 import { PrezziArticoliService } from '../../services/prezzi-articoli/prezzi-articoli.service';
 import { PermissionService } from '../../services/auth/permission.service';
+import { StoricoPrezziDialogComponent } from './storico-prezzi-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { RicaricoDeselezionatiDialogComponent, RicaricoDeselezionatiResult } from './ricarico-deselezionati-dialog.component';
 
@@ -29,6 +30,7 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
   ricercaEseguita = false;
   confermaAperta = false;
   portaASoglia = false;
+  filtroSoglia: 'sotto' | 'sopra' | 'pari' | null = null;
   articoli: PrezzoArticolo[] = [];
   selection = new SelectionModel<PrezzoArticolo>(true, []);
   errore = '';
@@ -69,12 +71,59 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
     return this.classiFornitore.find(c => c.codice === this.classeA1Caricato)?.descrizione || this.classeA1Caricato;
   }
 
+  apriStorico(articolo: PrezzoArticolo): void {
+    if (!this.perm.canGestisciPrezziArticoli || this.loader || this.confermaAperta) return;
+    this.dialog.open(StoricoPrezziDialogComponent, {
+      width: '750px', maxWidth: '95vw', maxHeight: '90vh',
+      data: { articolo: articolo.articolo, descrizione: articolo.descrizione }
+    });
+  }
+
+  cambiaFornitore(classeA1: string): void {
+    if (this.loader || this.confermaAperta || classeA1 === this.classeA1) return;
+    this.classeA1 = classeA1;
+    this.annullaAnteprima();
+  }
+
+  mostraTutti(): void {
+    if (this.loader || this.confermaAperta) return;
+    this.filtroSoglia = null;
+    this.aggiornaVista();
+  }
+
+  filtraSoglia(filtro: 'sotto' | 'sopra' | 'pari'): void {
+    if (this.loader || this.confermaAperta) return;
+    this.filtroSoglia = this.filtroSoglia === filtro ? null : filtro;
+    this.aggiornaVista();
+  }
+
+  private aggiornaVista(): void {
+    const articoli = [...this.articoli].sort((a, b) => {
+      const deltaA = this.deltaRicarico(a) ?? 0;
+      const deltaB = this.deltaRicarico(b) ?? 0;
+      const gruppoA = deltaA < 0 ? 0 : deltaA > 0 ? 1 : 2;
+      const gruppoB = deltaB < 0 ? 0 : deltaB > 0 ? 1 : 2;
+      if (gruppoA !== gruppoB) return gruppoA - gruppoB;
+      if (deltaA > 0 && deltaB > 0 && deltaA !== deltaB) return deltaB - deltaA;
+      return this.prioritaArticolo(a) - this.prioritaArticolo(b);
+    });
+    this.createPaginator(articoli.filter(a => {
+      const delta = this.deltaRicarico(a);
+      if (this.filtroSoglia === null) return true;
+      if (delta === null) return false;
+      return this.filtroSoglia === 'sotto' ? delta < 0 : this.filtroSoglia === 'sopra' ? delta > 0 : delta === 0;
+    }), 50);
+    this.paginator?.firstPage();
+  }
+
   annullaAnteprima(): void {
     if (this.loader || this.confermaAperta) return;
+    this.percentuale = null;
     this.percentualeAnteprima = null;
     this.portaASoglia = false;
     this.selection.clear();
-    this.createPaginator(this.articoli, 50);
+    this.filtroSoglia = null;
+    this.aggiornaVista();
   }
 
   get classeA1Valido(): boolean {
@@ -130,6 +179,7 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
         next: response => {
           this.ricaricoImpostato = percentuale;
           this.sogliaDaSalvare = percentuale;
+          this.aggiornaVista();
           this.loader = false;
           this.snackbar.open(response.msg, 'Chiudi', { duration: 5000 });
         },
@@ -142,8 +192,9 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
   }
 
   private prioritaArticolo(articolo: PrezzoArticolo): number {
-    if (articolo.aggiornabile) return 0;
-    return articolo.costoUltimo === null || articolo.costoUltimo <= 0 ? 2 : 1;
+    const sottoSoglia = (this.deltaRicarico(articolo) ?? 0) < 0;
+    const priorita = articolo.aggiornabile ? 0 : articolo.costoUltimo === null || articolo.costoUltimo <= 0 ? 2 : 1;
+    return (sottoSoglia ? 0 : 3) + priorita;
   }
 
   get aggiornabili(): PrezzoArticolo[] {
@@ -218,7 +269,8 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
         this.percentualeAnteprima = percentuale;
         this.ricercaEseguita = true;
         if (percentuale !== null) this.selection.select(...this.selezionabili);
-        this.createPaginator(this.portaASoglia ? this.selezionabili : this.articoli, 50);
+        this.filtroSoglia = this.portaASoglia ? 'sotto' : null;
+        this.aggiornaVista();
         if (this.portaASoglia && percentuale !== this.ricaricoImpostato) {
           this.percentualeAnteprima = null;
           this.errore = 'La soglia è cambiata. Premi nuovamente Porta a soglia per ricalcolare.';
@@ -242,9 +294,9 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
       articoli: this.selezionati.map(a => ({ ...a }))
     };
     if (this.portaASoglia) richiesta.portaASoglia = true;
-    const deselezionati = this.aggiornabili.filter(a => !this.selection.isSelected(a)).map(a => ({ ...a }));
+    const deselezionati = this.selezionabili.filter(a => !this.selection.isSelected(a)).map(a => ({ ...a }));
     this.confermaAperta = true;
-    if (deselezionati.length && !this.portaASoglia) {
+    if (deselezionati.length) {
       this.dialog.open<RicaricoDeselezionatiDialogComponent, unknown, RicaricoDeselezionatiResult>(RicaricoDeselezionatiDialogComponent, {
         width: '850px', maxWidth: '95vw', disableClose: true,
         data: { articoli: deselezionati, percentualePrincipale: richiesta.percentuale, numeroSelezionati: richiesta.articoli.length }
@@ -279,7 +331,8 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
       next: response => {
         this.loader = false;
         this.snackbar.open(response.msg, 'Chiudi', { duration: 5000 });
-        this.cerca(!richiesta.portaASoglia);
+        this.annullaAnteprima();
+        this.cerca();
       },
       error: error => {
         this.loader = false;

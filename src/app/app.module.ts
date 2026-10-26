@@ -1,3 +1,4 @@
+import { StoricoPrezziDialogComponent } from './components/prezzi-articoli/storico-prezzi-dialog.component';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
@@ -143,7 +144,7 @@ export const DateFormats = {
 @NgModule({
   declarations: [
     AppComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, PrezziArticoliComponent, RicaricoDeselezionatiDialogComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent,
+    ArticoloComponent, PrezziArticoliComponent, RicaricoDeselezionatiDialogComponent, StoricoPrezziDialogComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent,
     HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent,
     WarnDialogComponent, AddFornitoreDialogComponent, ResetPasswordComponent, UserListComponent,
     UserDetailComponent,

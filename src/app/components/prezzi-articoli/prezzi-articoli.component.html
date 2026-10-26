@@ -9,7 +9,7 @@
         <label for="classeA1-fornitore">Fornitore</label>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-icon matPrefix>search</mat-icon>
-          <input matInput id="classeA1-fornitore" name="classeA1" [(ngModel)]="classeA1" required
+          <input matInput id="classeA1-fornitore" name="classeA1" [ngModel]="classeA1" (ngModelChange)="cambiaFornitore($event)" required
                  [matAutocomplete]="fornitoriAutocomplete" autocomplete="off"
                  [disabled]="loader || confermaAperta || caricamentoClassi" placeholder="Cerca codice o nome">
           <mat-autocomplete #fornitoriAutocomplete="matAutocomplete" [displayWith]="mostraFornitore">
@@ -70,8 +70,11 @@
 
   <ng-container *ngIf="ricercaEseguita">
     <div class="badge-soglia" *ngIf="conteggiSoglia as conteggi" aria-label="Riepilogo articoli rispetto alla soglia" aria-live="polite">
-      <div class="riepilogo-soglia sotto">
-        <div><span class="riepilogo-label">Sotto soglia</span><strong>{{ conteggi.sotto }}</strong></div>
+      <div class="riepilogo-soglia sotto" [class.filtro-attivo]="filtroSoglia === 'sotto'">
+        <button type="button" class="filtro-contatore" (click)="filtraSoglia('sotto')"
+                [attr.aria-pressed]="filtroSoglia === 'sotto'" [disabled]="loader || confermaAperta">
+          <span class="riepilogo-label">Sotto soglia</span><strong>{{ conteggi.sotto }}</strong>
+        </button>
         <button mat-icon-button class="menu-soglia" [matMenuTriggerFor]="azioniSoglia" #menuSoglia="matMenuTrigger"
                 [class.menu-aperto]="menuSoglia.menuOpen" [disabled]="loader || confermaAperta"
                 aria-label="Azioni per gli articoli sotto soglia" matTooltip="Azioni sotto soglia">
@@ -83,8 +86,15 @@
           <mat-icon>done_all</mat-icon><span>Porta a soglia</span>
         </button>
       </mat-menu>
-      <div class="riepilogo-soglia sopra"><div><span class="riepilogo-label">Sopra soglia</span><strong>{{ conteggi.sopra }}</strong></div><mat-icon>trending_up</mat-icon></div>
-      <div class="riepilogo-soglia pari"><div><span class="riepilogo-label">In soglia</span><strong>{{ conteggi.pari }}</strong></div><mat-icon>check</mat-icon></div>
+      <button type="button" class="riepilogo-soglia sopra" [class.filtro-attivo]="filtroSoglia === 'sopra'"
+              (click)="filtraSoglia('sopra')" [attr.aria-pressed]="filtroSoglia === 'sopra'" [disabled]="loader || confermaAperta">
+        <div><span class="riepilogo-label">Sopra soglia</span><strong>{{ conteggi.sopra }}</strong></div><mat-icon>trending_up</mat-icon>
+      </button>
+      <button type="button" class="riepilogo-soglia pari" [class.filtro-attivo]="filtroSoglia === 'pari'"
+              (click)="filtraSoglia('pari')" [attr.aria-pressed]="filtroSoglia === 'pari'" [disabled]="loader || confermaAperta">
+        <div><span class="riepilogo-label">In soglia</span><strong>{{ conteggi.pari }}</strong></div><mat-icon>check</mat-icon>
+      </button>
+      <button mat-button *ngIf="filtroSoglia" (click)="mostraTutti()" [disabled]="loader || confermaAperta">Mostra tutti</button>
       <span class="non-confrontabili" *ngIf="conteggi.nonConfrontabili">{{ conteggi.nonConfrontabili }} non confrontabili</span>
     </div>
   </ng-container>
@@ -92,7 +102,7 @@
   <div class="anteprima-soglia" *ngIf="portaASoglia && !loader">
     <mat-icon>preview</mat-icon>
     <div><strong>Anteprima degli articoli sotto soglia</strong><span>{{ selezionabili.length }} aggiornabili. Deseleziona quelli da escludere.</span></div>
-    <button mat-button (click)="annullaAnteprima()" [disabled]="confermaAperta">Mostra tutti</button>
+    <button mat-button (click)="mostraTutti()" [disabled]="confermaAperta">Mostra tutti</button>
   </div>
 
   <div class="stato-vuoto" *ngIf="!ricercaEseguita && !loader && !errore">
@@ -100,8 +110,8 @@
   </div>
   <div class="stato-vuoto" *ngIf="ricercaEseguita && !loader && !dataSource.data.length">
     <mat-icon>{{ portaASoglia ? 'task_alt' : 'search_off' }}</mat-icon>
-    <h2>{{ portaASoglia ? 'Nessun articolo da portare a soglia' : 'Nessun articolo trovato' }}</h2>
-    <p>{{ portaASoglia ? 'Gli articoli aggiornabili sono già in soglia oppure sopra soglia.' : 'Non risultano articoli con giacenza totale positiva per il fornitore selezionato.' }}</p>
+    <h2>{{ filtroSoglia ? 'Nessun articolo nel filtro selezionato' : 'Nessun articolo trovato' }}</h2>
+    <p>{{ filtroSoglia ? 'Seleziona un altro filtro oppure premi Mostra tutti.' : 'Non risultano articoli con giacenza totale positiva per il fornitore selezionato.' }}</p>
   </div>
 
   <div class="tabella" [hidden]="!loader && (!ricercaEseguita || !dataSource.data.length)" [attr.aria-busy]="loader">
@@ -118,7 +128,7 @@
         </th>
         <td mat-cell *matCellDef="let a">
           <mat-checkbox color="primary" (change)="selezionaArticolo(a)" [checked]="selection.isSelected(a)"
-                        [disabled]="!puoSelezionare || !a.aggiornabile"
+                        [disabled]="!puoSelezionare || !a.aggiornabile || (portaASoglia && (deltaRicarico(a) === null || deltaRicarico(a)! >= 0))"
                         [aria-label]="'Seleziona articolo ' + a.articolo">
           </mat-checkbox>
         </td>
@@ -161,7 +171,13 @@
       </ng-container>
       <ng-container matColumnDef="prezzoBase">
         <th mat-header-cell *matHeaderCellDef>Prezzo base</th>
-        <td mat-cell *matCellDef="let a">{{ a.prezzoBase === null ? '—' : (a.prezzoBase | number:'1.2-2') }}</td>
+        <td mat-cell *matCellDef="let a">
+          {{ a.prezzoBase === null ? '—' : (a.prezzoBase | number:'1.2-2') }}
+          <button mat-icon-button (click)="apriStorico(a)" [disabled]="loader || confermaAperta"
+                  matTooltip="Cronologia prezzo base" [attr.aria-label]="'Cronologia prezzo base articolo ' + a.articolo">
+            <mat-icon>history</mat-icon>
+          </button>
+        </td>
       </ng-container>
       <ng-container matColumnDef="ricaricoAttuale">
         <th mat-header-cell *matHeaderCellDef>Ricarico attuale</th>
@@ -183,7 +199,7 @@
       </ng-container>
       <ng-container matColumnDef="nuovoPrezzo">
         <th mat-header-cell *matHeaderCellDef [class.colonna-anteprima]="percentualeAnteprima !== null">Nuovo prezzo</th>
-        <td mat-cell *matCellDef="let a" [class.colonna-anteprima]="percentualeAnteprima !== null">{{ percentuale !== percentualeAnteprima || a.nuovoPrezzo === null ? '—' : (a.nuovoPrezzo | number:'1.2-2') }}</td>
+        <td mat-cell *matCellDef="let a" [class.colonna-anteprima]="percentualeAnteprima !== null">{{ percentualeAnteprima === null || percentuale !== percentualeAnteprima || a.nuovoPrezzo === null ? '—' : (a.nuovoPrezzo | number:'1.2-2') }}</td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="colonne; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: colonne" [class.riga-selezionata]="selection.isSelected(row)"></tr>

@@ -94,3 +94,9 @@ mat-paginator { background: transparent; }
 .stato-articolo.stato-disponibile { color: #267044; }
 
 .saldo-magazzino { min-height: 22px; white-space: nowrap; }
+
+button.riepilogo-soglia, .filtro-contatore { font-family: inherit; text-align: left; cursor: pointer; }
+.filtro-contatore { display: flex; flex-direction: column; gap: 6px; padding: 0; border: 0; background: transparent; color: inherit; flex: 1; }
+.riepilogo-soglia.filtro-attivo { outline: 2px solid currentColor; outline-offset: 2px; }
+button.riepilogo-soglia:focus-visible, .filtro-contatore:focus-visible { outline: 2px solid #3f51b5; outline-offset: 3px; }
+button.riepilogo-soglia:disabled, .filtro-contatore:disabled { cursor: default; opacity: .6; }

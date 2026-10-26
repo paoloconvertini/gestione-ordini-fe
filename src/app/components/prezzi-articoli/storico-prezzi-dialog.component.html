@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Cronologia prezzo base</h2>
+<mat-dialog-content [attr.aria-busy]="caricamento">
+  <p><strong>{{ data.descrizione }}</strong><br>{{ data.articolo }}</p>
+  <p class="nota">Modifiche registrate dalla pagina Prezzi articoli, dalla più recente. Prezzi IVA esclusa.</p>
+  <div class="caricamento" *ngIf="caricamento" role="status">
+    <mat-spinner diameter="28"></mat-spinner><span>Caricamento cronologia…</span>
+  </div>
+  <p *ngIf="errore" role="alert">{{ errore }}</p>
+  <p *ngIf="!caricamento && !errore && !storico.length">Nessuna modifica del prezzo base registrata.</p>
+  <table *ngIf="!caricamento && !errore && storico.length">
+    <thead><tr><th>Data e ora</th><th>Prezzo precedente</th><th>Prezzo base</th><th>Utente</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let voce of storico">
+        <td>{{ voce.dataModifica | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+        <td class="importo">{{ voce.prezzoPrecedente === null ? '—' : (voce.prezzoPrecedente | number:'1.3-3') }}</td>
+        <td class="importo">{{ voce.prezzoBase | number:'1.3-3' }}</td>
+        <td>{{ voce.utente || '—' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end"><button mat-button mat-dialog-close>Chiudi</button></mat-dialog-actions>

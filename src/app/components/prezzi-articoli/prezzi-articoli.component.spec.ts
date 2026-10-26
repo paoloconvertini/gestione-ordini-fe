@@ -1,3 +1,4 @@
+import { StoricoPrezziDialogComponent } from './storico-prezzi-dialog.component';
 import { of, throwError } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -39,6 +40,17 @@ describe('PrezziArticoliComponent', () => {
     return of({ articoli, ricaricoImpostato });
   }
 
+  it('apre la cronologia del singolo articolo senza cambiare selezioni o prezzi', () => {
+    component.cerca(true);
+    component.apriStorico(articolo);
+    expect(dialog.open).toHaveBeenCalledOnceWith(StoricoPrezziDialogComponent, {
+      width: '750px', maxWidth: '95vw', maxHeight: '90vh',
+      data: { articolo: articolo.articolo, descrizione: articolo.descrizione }
+    });
+    expect(component.selezionati).toEqual([articolo]);
+    expect(service.aggiorna).not.toHaveBeenCalled();
+  });
+
   it('mostra prima gli aggiornabili e lascia tutti i senza costo in fondo anche dopo annulla anteprima', () => {
     const senzaCosto = {...articolo, articolo: 'A', costoUltimo: null, aggiornabile: false};
     const bloccato = {...articolo, articolo: 'B', aggiornabile: false};
@@ -59,10 +71,34 @@ describe('PrezziArticoliComponent', () => {
     component.portaASoglia = true;
     component.annullaAnteprima();
     expect(component.percentualeAnteprima).toBeNull();
+    expect(component.percentuale).toBeNull();
     expect(component.portaASoglia).toBeFalse();
     expect(component.selezionati.length).toBe(0);
     expect(component.dataSource.data).toEqual(righe);
     expect(service.cerca).not.toHaveBeenCalled();
+    expect(service.aggiorna).not.toHaveBeenCalled();
+  });
+
+  it('cambiando fornitore azzera subito il ricavo e invalida la vecchia anteprima', () => {
+    component.cerca(true);
+    component.cambiaFornitore('710');
+    expect(component.classeA1).toBe('710');
+    expect(component.percentuale).toBeNull();
+    expect(component.percentualeAnteprima).toBeNull();
+    expect(component.selection.isEmpty()).toBeTrue();
+    expect(component.puoApplicare).toBeFalse();
+    component.cerca();
+    expect(service.cerca.calls.mostRecent().args).toEqual(['710', null, false]);
+    expect(component.percentuale).toBeNull();
+  });
+
+  it('cambiando fornitore cancella anche un ricavo inserito senza anteprima', () => {
+    component.cerca();
+    component.percentuale = 35;
+    component.cambiaFornitore('71');
+    expect(component.percentuale).toBeNull();
+    component.cambiaFornitore('710');
+    expect(component.percentuale).toBeNull();
     expect(service.aggiorna).not.toHaveBeenCalled();
   });
 
@@ -105,7 +141,7 @@ describe('PrezziArticoliComponent', () => {
     expect(component.conteggiSoglia).toBeNull();
   });
 
-  it('Porta a soglia prepara solo gli aggiornabili sotto soglia e ignora i deselezionati senza seconda popup', () => {
+  it('Porta a soglia propone la conferma solo per i deselezionati sotto soglia', () => {
     const secondo = { ...articolo, articolo: 'LUX2', ricaricoAttuale: 40 };
     const sopra = { ...articolo, articolo: 'LUX3', ricaricoAttuale: 70 };
     const pari = { ...articolo, articolo: 'LUX4', ricaricoAttuale: 59.98 };
@@ -116,20 +152,118 @@ describe('PrezziArticoliComponent', () => {
     component.preparaPortaASoglia();
     expect(service.cerca).toHaveBeenCalledWith('414', 60, false);
     expect(component.portaASoglia).toBeTrue();
-    expect(component.dataSource.data).toEqual([articolo, secondo]);
+    expect(component.dataSource.data).toEqual([articolo, secondo, bloccato]);
     expect(component.selezionati).toEqual([articolo, secondo]);
     component.selezionaArticolo(secondo);
     component.selezionaArticolo(sopra);
     expect(component.selezionati).toEqual([articolo]);
-    conferma(true);
+    sceltaDeselezionati({ applica: false });
     component.applica();
-    expect(dialog.open.calls.mostRecent().args[0]).toBe(ConfirmDialogComponent);
+    expect(dialog.open.calls.mostRecent().args[0]).toBe(RicaricoDeselezionatiDialogComponent);
+    expect(dialog.open.calls.mostRecent().args[1]?.data).toEqual({
+      articoli: [secondo], percentualePrincipale: 60, numeroSelezionati: 1
+    });
     expect(service.aggiorna).toHaveBeenCalledOnceWith({
       classeA1: '414', percentuale: 60, ricaricoImpostato: 60, includiBloccati: false,
       articoli: [articolo], portaASoglia: true
     });
     expect(service.salvaSoglia).not.toHaveBeenCalled();
     expect(component.portaASoglia).toBeFalse();
+  });
+
+  it('Porta a soglia invia il ricarico alternativo scelto per i deselezionati', () => {
+    const secondo = { ...articolo, articolo: 'LUX2', ricaricoAttuale: 40 };
+    service.cerca.and.returnValue(risultato([articolo, secondo], 60));
+    component.cerca();
+    component.preparaPortaASoglia();
+    component.selezionaArticolo(secondo);
+    sceltaDeselezionati({ applica: true, percentuale: 30 });
+    component.applica();
+    expect(service.aggiorna).toHaveBeenCalledOnceWith({
+      classeA1: '414', percentuale: 60, ricaricoImpostato: 60, includiBloccati: false,
+      articoli: [articolo], portaASoglia: true,
+      percentualeDeselezionati: 30, articoliDeselezionati: [secondo]
+    });
+  });
+
+  it('Porta a soglia annulla entrambi i gruppi chiudendo la conferma dei deselezionati', () => {
+    const secondo = { ...articolo, articolo: 'LUX2' };
+    service.cerca.and.returnValue(risultato([articolo, secondo], 60));
+    component.cerca();
+    component.preparaPortaASoglia();
+    component.selezionaArticolo(secondo);
+    sceltaDeselezionati(undefined);
+    component.applica();
+    expect(service.aggiorna).not.toHaveBeenCalled();
+    expect(component.confermaAperta).toBeFalse();
+  });
+
+  it('Mostra tutti conserva anteprima, selezioni ed esclusioni della modalità soglia', () => {
+    const secondo = { ...articolo, articolo: 'LUX2', ricaricoAttuale: 40 };
+    const sopra = { ...articolo, articolo: 'LUX3', ricaricoAttuale: 70 };
+    service.cerca.and.returnValue(risultato([articolo, secondo, sopra], 60));
+    component.cerca();
+    component.preparaPortaASoglia();
+    component.selezionaArticolo(secondo);
+    service.cerca.calls.reset();
+    component.mostraTutti();
+    expect(component.dataSource.data).toEqual([articolo, secondo, sopra]);
+    expect(component.portaASoglia).toBeTrue();
+    expect(component.percentualeAnteprima).toBe(60);
+    expect(component.selezionati).toEqual([articolo]);
+    expect(component.puoApplicare).toBeTrue();
+    component.selezionaArticolo(sopra);
+    expect(component.selezionati).toEqual([articolo]);
+    sceltaDeselezionati({ applica: false });
+    component.applica();
+    expect(dialog.open.calls.mostRecent().args[1]?.data).toEqual({
+      articoli: [secondo], percentualePrincipale: 60, numeroSelezionati: 1
+    });
+    expect(service.aggiorna).toHaveBeenCalledOnceWith({
+      classeA1: '414', percentuale: 60, ricaricoImpostato: 60, includiBloccati: false,
+      articoli: [articolo], portaASoglia: true
+    });
+  });
+
+  it('ordina i sopra soglia per delta decrescente nella lista completa e filtrata', () => {
+    const basso = { ...articolo, articolo: 'basso', ricaricoAttuale: 65 };
+    const alto = { ...articolo, articolo: 'alto', ricaricoAttuale: 90, aggiornabile: false };
+    const medio = { ...articolo, articolo: 'medio', ricaricoAttuale: 75 };
+    const pari = { ...articolo, articolo: 'pari', ricaricoAttuale: 60 };
+    service.cerca.and.returnValue(risultato([pari, basso, alto, articolo, medio], 60));
+    component.cerca();
+    expect(component.dataSource.data).toEqual([articolo, alto, medio, basso, pari]);
+    component.filtraSoglia('sopra');
+    expect(component.dataSource.data).toEqual([alto, medio, basso]);
+    component.mostraTutti();
+    expect(component.dataSource.data).toEqual([articolo, alto, medio, basso, pari]);
+  });
+
+  it('ordina prima tutti i sotto soglia e filtra senza alterare conteggi o selezioni', () => {
+    const sopra = { ...articolo, articolo: 'sopra', ricaricoAttuale: 70 };
+    const pari = { ...articolo, articolo: 'pari', ricaricoAttuale: 59.98 };
+    const bloccato = { ...articolo, articolo: 'bloccato', aggiornabile: false };
+    const assente = { ...articolo, articolo: 'assente', ricaricoAttuale: null };
+    service.cerca.and.returnValue(risultato([sopra, pari, bloccato, articolo, assente], 60));
+    component.cerca(true);
+    expect(component.dataSource.data).toEqual([articolo, bloccato, sopra, pari, assente]);
+    const selezionati = component.selezionati;
+    const conteggi = component.conteggiSoglia;
+    component.filtraSoglia('sotto');
+    expect(component.dataSource.data).toEqual([articolo, bloccato]);
+    component.filtraSoglia('sopra');
+    expect(component.dataSource.data).toEqual([sopra]);
+    component.filtraSoglia('pari');
+    expect(component.dataSource.data).toEqual([pari]);
+    expect(component.conteggiSoglia).toEqual(conteggi);
+    expect(component.selezionati).toEqual(selezionati);
+    component.filtraSoglia('pari');
+    expect(component.filtroSoglia).toBeNull();
+    expect(component.dataSource.data.length).toBe(5);
+    component.filtraSoglia('sotto');
+    component.mostraTutti();
+    expect(component.dataSource.data.length).toBe(5);
+    expect(component.selezionati).toEqual(selezionati);
   });
 
   it('Porta a soglia non è disponibile senza soglia o senza candidati e rileva una soglia cambiata', () => {
@@ -254,6 +388,26 @@ describe('PrezziArticoliComponent', () => {
       classeA1: '414', percentuale: 45, ricaricoImpostato: null, includiBloccati: false, articoli: [articolo]
     });
   });
+
+  for (const portaASoglia of [false, true]) {
+    it(`dopo il salvataggio ${portaASoglia ? 'a soglia' : 'del ricavo'} ricarica senza riaprire l’anteprima`, () => {
+      service.cerca.and.returnValue(risultato([articolo], 60));
+      component.cerca();
+      if (portaASoglia) component.preparaPortaASoglia();
+      else component.cerca(true);
+      conferma(true);
+      component.applica();
+      expect(service.aggiorna).toHaveBeenCalledTimes(1);
+      expect(service.cerca.calls.mostRecent().args).toEqual(['414', null, false]);
+      expect(component.percentuale).toBeNull();
+      expect(component.percentualeAnteprima).toBeNull();
+      expect(component.portaASoglia).toBeFalse();
+      expect(component.selection.isEmpty()).toBeTrue();
+      expect(component.puoApplicare).toBeFalse();
+      component.applica();
+      expect(service.aggiorna).toHaveBeenCalledTimes(1);
+    });
+  }
 
   it('non aggiorna se si annulla la conferma', () => {
     component.cerca(true);
@@ -385,5 +539,40 @@ describe('RicaricoDeselezionatiDialogComponent', () => {
     component.percentuale = 0;
     component.applicaAncheDeselezionati();
     expect(dialogRef.close).toHaveBeenCalledOnceWith({ applica: true, percentuale: 0 });
+  });
+});
+
+describe('StoricoPrezziDialogComponent', () => {
+  let component: StoricoPrezziDialogComponent;
+  let service: jasmine.SpyObj<PrezziArticoliService>;
+
+  beforeEach(() => {
+    service = jasmine.createSpyObj('PrezziArticoliService', ['storico']);
+    component = new StoricoPrezziDialogComponent({ articolo: '414', descrizione: 'Articolo' }, service);
+  });
+
+  afterEach(() => component.ngOnDestroy());
+
+  it('carica le modifiche del codice richiesto e gestisce la cronologia vuota', () => {
+    service.storico.and.returnValue(of([]));
+    component.ngOnInit();
+    expect(service.storico).toHaveBeenCalledOnceWith('414');
+    expect(component.caricamento).toBeFalse();
+    expect(component.storico).toEqual([]);
+    expect(component.errore).toBe('');
+  });
+
+  it('mantiene l’ordine delle modifiche restituito dal server', () => {
+    const storico = [{ dataModifica: '2026-10-26T10:00:00', prezzoPrecedente: 100, prezzoBase: 160, utente: 'TEST' }];
+    service.storico.and.returnValue(of(storico));
+    component.ngOnInit();
+    expect(component.storico).toEqual(storico);
+  });
+
+  it('mostra un errore se la lettura fallisce', () => {
+    service.storico.and.returnValue(throwError(() => ({ error: { msg: 'Cronologia non disponibile' } })));
+    component.ngOnInit();
+    expect(component.caricamento).toBeFalse();
+    expect(component.errore).toBe('Cronologia non disponibile');
   });
 });

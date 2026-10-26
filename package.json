@@ -1,6 +1,6 @@
 {
   "name": "gestione-ordini",
-  "version": "5.2.13",
+  "version": "5.2.14",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
