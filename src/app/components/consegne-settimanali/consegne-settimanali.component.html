@@ -2,6 +2,11 @@
   <div class="ordine-title">
     <span>CONSEGNE SETTIMANALI</span>
   </div>
+  <div class="header-actions">
+    <button class="nuova-consegna-btn" mat-stroked-button color="primary" (click)="nuovaConsegna()">
+      <mat-icon>add</mat-icon> Nuova consegna senza ordine
+    </button>
+  </div>
 </div>
 
 <div *ngIf="showMappa && !compactMode" class="map-wrapper">
@@ -114,7 +119,7 @@
                               <div class="box-evento" cdkDrag>
                                 <div class="evento-toolbar">
 
-                                  <button (click)="aggiungiNote(consegna)"
+                                  <button *ngIf="consegna.idConsegnaLibera == null" (click)="aggiungiNote(consegna)"
                                           mat-icon-button
                                           matTooltip="{{ consegna.note || 'Inserisci nota' }}">
                                     <mat-icon
@@ -167,7 +172,13 @@
                                     </div>
 
                                     <div class="evento-ordine">
-                                      {{ consegna.anno }}/{{ consegna.serie }}/{{ consegna.progressivo }}
+                                      <ng-container *ngIf="consegna.idConsegnaLibera == null; else senzaOrdine">
+                                        {{ consegna.anno }}/{{ consegna.serie }}/{{ consegna.progressivo }}
+                                      </ng-container>
+                                      <ng-template #senzaOrdine>
+                                        <mat-icon class="senza-ordine-icon" matTooltip="Consegna senza ordine"
+                                                  role="img" aria-label="Consegna senza ordine" [attr.aria-hidden]="false">link_off</mat-icon>
+                                      </ng-template>
                                     </div>
 
                                     <div class="evento-cliente">

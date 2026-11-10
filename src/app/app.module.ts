@@ -1,4 +1,5 @@
 import { StoricoPrezziDialogComponent } from './components/prezzi-articoli/storico-prezzi-dialog.component';
+import {ConsegnaLiberaDialogComponent} from './components/consegna-libera-dialog/consegna-libera-dialog.component';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
@@ -190,6 +191,7 @@ export const DateFormats = {
     GestioneMotiviComponent,
     MotivoDialogComponent,
     ConsegnaEditDialogComponent,
+    ConsegnaLiberaDialogComponent,
     NotaConsegnaDialogComponent,
     CoordinateDialogComponent,
     EventActionsDialogComponent,
