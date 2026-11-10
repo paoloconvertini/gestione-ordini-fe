@@ -200,6 +200,11 @@
                                       {{ consegna.cellulare }}
                                     </div>
 
+                                    <div class="evento-motivazione" *ngIf="consegna.idConsegnaLibera != null && consegna.motivazione"
+                                         [matTooltip]="consegna.motivazione">
+                                      {{ consegna.motivazione }}
+                                    </div>
+
                                     <div class="evento-footer">
 
                   <span>

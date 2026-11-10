@@ -29,6 +29,11 @@
       <input matInput formControlName="telefono" maxlength="50">
     </mat-form-field>
     <mat-form-field appearance="outline">
+      <mat-label>Motivazione</mat-label>
+      <textarea matInput formControlName="motivazione" rows="3" maxlength="2000"></textarea>
+      <mat-hint align="end">{{ form.get('motivazione')?.value?.length || 0 }}/2000</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
       <mat-label>Data consegna</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="dataConsegna">
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>

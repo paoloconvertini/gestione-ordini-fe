@@ -542,3 +542,19 @@
     font-size: 34px;
   }
 }
+
+.evento-motivazione {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  color: white;
+  font-size: 11px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.evento-missing-coords .evento-motivazione { color: #000; }

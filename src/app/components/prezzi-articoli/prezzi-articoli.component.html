@@ -9,9 +9,15 @@
         <label for="classeA1-fornitore">Fornitore</label>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-icon matPrefix>search</mat-icon>
-          <input matInput id="classeA1-fornitore" name="classeA1" [ngModel]="classeA1" (ngModelChange)="cambiaFornitore($event)" required
+          <input #fornitoreInput matInput id="classeA1-fornitore" name="classeA1" [ngModel]="classeA1" (ngModelChange)="cambiaFornitore($event)" required
                  [matAutocomplete]="fornitoriAutocomplete" autocomplete="off"
                  [disabled]="loader || confermaAperta || caricamentoClassi" placeholder="Cerca codice o nome">
+          <button *ngIf="classeA1 || ricercaEseguita" mat-icon-button matSuffix type="button" color="warn"
+                  aria-label="Reset filtro fornitore" matTooltip="Reset filtro fornitore"
+                  [disabled]="loader || confermaAperta || caricamentoClassi"
+                  (click)="resetFornitore(); fornitoreInput.focus()">
+            <mat-icon>backspace</mat-icon>
+          </button>
           <mat-autocomplete #fornitoriAutocomplete="matAutocomplete" [displayWith]="mostraFornitore">
             <mat-option *ngFor="let c of classiFornitoreFiltrate" [value]="c.codice">
               {{ c.codice }} — {{ c.descrizione }}

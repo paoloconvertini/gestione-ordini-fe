@@ -85,6 +85,19 @@ export class PrezziArticoliComponent extends CommonListComponent implements OnIn
     this.annullaAnteprima();
   }
 
+  resetFornitore(): void {
+    if (this.loader || this.confermaAperta || this.caricamentoClassi) return;
+    this.classeA1 = '';
+    this.classeA1Caricato = '';
+    this.ricercaEseguita = false;
+    this.articoli = [];
+    this.ricaricoImpostato = null;
+    this.sogliaDaSalvare = null;
+    this.bloccatiCaricati = false;
+    this.errore = '';
+    this.annullaAnteprima();
+  }
+
   mostraTutti(): void {
     if (this.loader || this.confermaAperta) return;
     this.filtroSoglia = null;

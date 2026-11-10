@@ -40,6 +40,20 @@ describe('PrezziArticoliComponent', () => {
     return of({ articoli, ricaricoImpostato });
   }
 
+  it('la gomma elimina i risultati e impedisce di applicare la vecchia anteprima', () => {
+    component.cerca(true);
+    expect(component.puoApplicare).toBeTrue();
+    component.resetFornitore();
+    expect(component.classeA1).toBe('');
+    expect(component.ricercaEseguita).toBeFalse();
+    expect(component.articoli).toEqual([]);
+    expect(component.dataSource.data).toEqual([]);
+    expect(component.selection.isEmpty()).toBeTrue();
+    expect(component.puoApplicare).toBeFalse();
+    component.applica();
+    expect(service.aggiorna).not.toHaveBeenCalled();
+  });
+
   it('apre la cronologia del singolo articolo senza cambiare selezioni o prezzi', () => {
     component.cerca(true);
     component.apriStorico(articolo);

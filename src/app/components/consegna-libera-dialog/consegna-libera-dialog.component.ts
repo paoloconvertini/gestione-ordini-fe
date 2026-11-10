@@ -40,6 +40,7 @@ export class ConsegnaLiberaDialogComponent extends BaseComponent implements OnIn
       indirizzo: [c.indirizzo || '', [Validators.required, Validators.maxLength(255)]],
       localita: [c.localita || '', [Validators.required, Validators.maxLength(255)]],
       telefono: [c.telefono || '', Validators.maxLength(50)],
+      motivazione: [c.motivazione || '', Validators.maxLength(2000)],
       dataConsegna: [c.dataConsegna || this.data?.dataConsegna || null, Validators.required],
       oraConsegna: [c.oraConsegna || null, Validators.required],
       veicolo: [c.veicolo ?? null, Validators.required]

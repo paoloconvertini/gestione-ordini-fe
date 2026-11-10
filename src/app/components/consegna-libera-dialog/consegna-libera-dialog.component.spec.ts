@@ -67,6 +67,15 @@ describe('ConsegnaLiberaDialogComponent', () => {
     expect(component.comuni).toEqual([]);
   }));
 
+  it('invia la motivazione insieme alla consegna e ne valida la lunghezza', () => {
+    compila();
+    component.form.get('motivazione')!.setValue('Consegna campioni');
+    component.conferma();
+    expect(lista.salvaConsegnaLibera.calls.mostRecent().args[0].motivazione).toBe('Consegna campioni');
+    component.form.get('motivazione')!.setValue('a'.repeat(2001));
+    expect(component.form.invalid).toBeTrue();
+  });
+
   it('non salva se mancano dati obbligatori o se il nome contiene solo spazi', () => {
     component.conferma();
     expect(lista.salvaConsegnaLibera).not.toHaveBeenCalled();
@@ -95,10 +104,11 @@ describe('ConsegnaLiberaDialogComponent', () => {
     component.ngOnDestroy();
     component = new ConsegnaLiberaDialogComponent(new FormBuilder(), lista,
       {getVeicoli: () => of([])} as any, clienti, snackbar, showroom, dialog,
-      {consegna: {idConsegnaLibera: 42, intestazione: 'Nome', indirizzo: 'Via Uno', localita: 'Bari',
+      {consegna: {idConsegnaLibera: 42, intestazione: 'Nome', indirizzo: 'Via Uno', localita: 'Bari', motivazione: 'Ritiro campioni',
         dataConsegna: '2026-10-21', oraConsegna: 'P', veicolo: 1}});
     component.ngOnInit(); component.conferma();
     expect(lista.salvaConsegnaLibera.calls.mostRecent().args[1]).toBe(42);
+    expect(lista.salvaConsegnaLibera.calls.mostRecent().args[0].motivazione).toBe('Ritiro campioni');
   });
 
   it('impedisce il doppio invio e riabilita il salvataggio dopo errore', () => {
