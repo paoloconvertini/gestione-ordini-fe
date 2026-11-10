@@ -154,6 +154,7 @@
 
                                 </div>
                                 <div class="evento" [ngClass]="{'pomeriggio': consegna.oraConsegna === 'P',
+                                       'evento-senza-ordine': consegna.idConsegnaLibera != null,
                                        'evento-missing-coords': hasMissingCoords(consegna)}"
                                      (click)="onClickConsegna(consegna, giorno)">
                                   <div class="evento-warning"

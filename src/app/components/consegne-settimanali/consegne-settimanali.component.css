@@ -558,3 +558,23 @@
 }
 
 .evento-missing-coords .evento-motivazione { color: #000; }
+
+.evento.evento-senza-ordine {
+  background-color: #cd6767;
+  border-color: #cd6767;
+}
+
+.evento.evento-senza-ordine.evento-missing-coords {
+  border-left-color: #f44336;
+}
+
+.evento-senza-ordine .evento-title,
+.evento-senza-ordine .evento-localita,
+.evento-senza-ordine .evento-ordine,
+.evento-senza-ordine .evento-cliente,
+.evento-senza-ordine .evento-indirizzo,
+.evento-senza-ordine .evento-cellulare,
+.evento-senza-ordine .evento-motivazione,
+.evento-senza-ordine .evento-icon {
+  color: white;
+}
