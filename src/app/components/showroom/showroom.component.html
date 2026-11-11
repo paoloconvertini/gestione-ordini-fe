@@ -81,7 +81,7 @@
 
           <mat-option *ngFor="let option of radioPerVenditoreOptions"
                       [value]="option.codVenditore">
-            {{ option.fullname }}
+            {{ option.fullname }}{{ option.codVenditore ? ' (' + option.codVenditore + ')' : '' }}
           </mat-option>
 
         </mat-select>

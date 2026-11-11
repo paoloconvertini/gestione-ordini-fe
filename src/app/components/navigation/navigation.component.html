@@ -1,9 +1,57 @@
-<mat-toolbar color="primary" class="app-toolbar">
-
-  <!-- Titolo -->
-  <span class="toolbar-title">Gestione ordini</span>
-
+<mat-toolbar class="app-toolbar">
+  <button mat-icon-button (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-controls="app-sidebar" aria-label="Apri o chiudi il menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <a class="toolbar-title" routerLink="/dashboard">Gestione ordini</a>
   <span class="spacer"></span>
+  <!-- MENU UTENTE A DESTRA -->
+  <button mat-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
+    <div class="avatar">{{ avatarLetter }}</div>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <div class="user-header">
+      <div class="username">{{ username }}</div>
+      <div class="role">{{ mainRole }}</div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <button *ngIf="perm.canViewUsers" mat-menu-item [routerLink]="['/users']">
+      <mat-icon>person</mat-icon>
+      <span>Gestisci dipendenti</span>
+    </button>
+
+    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/role']">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Gestisci ruoli</span>
+    </button>
+
+    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/permissions']">
+      <mat-icon>lock</mat-icon>
+      <span>Gestisci permessi</span>
+    </button>
+
+    <button *ngIf="perm.canViewMotivi" mat-menu-item [routerLink]="['/gestione-motivi']">
+      <mat-icon>category</mat-icon>
+      <span>Gestione motivi showroom</span>
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+
+  </mat-menu>
+
+</mat-toolbar>
+<mat-sidenav-container class="app-layout">
+  <mat-sidenav [fixedInViewport]="true" [fixedTopGap]="mobile ? 56 : 64" id="app-sidebar" [mode]="mobile ? 'over' : 'side'" [opened]="menuOpen" (openedChange)="onMenuChanged($event)" class="app-sidebar">
+    <div class="sidebar-heading">AREA DI LAVORO</div>
+    <nav class="sidebar-nav" aria-label="Navigazione principale">
+      <a mat-button routerLink="/dashboard" routerLinkActive="nav-active"><mat-icon>space_dashboard</mat-icon> Dashboard</a>
   <button *ngIf="perm.canViewAgende"
           mat-button
           [matMenuTriggerFor]="agende">
@@ -95,46 +143,9 @@
   </mat-menu>
 
 
-  <!-- MENU UTENTE A DESTRA -->
-  <button mat-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
-    <div class="avatar">{{ avatarLetter }}</div>
-  </button>
-
-  <mat-menu #userMenu="matMenu">
-    <div class="user-header">
-      <div class="username">{{ username }}</div>
-      <div class="role">{{ mainRole }}</div>
-    </div>
-
-    <mat-divider></mat-divider>
-
-    <button *ngIf="perm.canViewUsers" mat-menu-item [routerLink]="['/users']">
-      <mat-icon>person</mat-icon>
-      <span>Gestisci dipendenti</span>
-    </button>
-
-    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/role']">
-      <mat-icon>manage_accounts</mat-icon>
-      <span>Gestisci ruoli</span>
-    </button>
-
-    <button *ngIf="perm.canViewRoles" mat-menu-item [routerLink]="['/permissions']">
-      <mat-icon>lock</mat-icon>
-      <span>Gestisci permessi</span>
-    </button>
-
-    <button *ngIf="perm.canViewMotivi" mat-menu-item [routerLink]="['/gestione-motivi']">
-      <mat-icon>category</mat-icon>
-      <span>Gestione motivi showroom</span>
-    </button>
-
-    <mat-divider></mat-divider>
-
-    <button mat-menu-item (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      <span>Logout</span>
-    </button>
-
-  </mat-menu>
-
-</mat-toolbar>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content class="app-content">
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

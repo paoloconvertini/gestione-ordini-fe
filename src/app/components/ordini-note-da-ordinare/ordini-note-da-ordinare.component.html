@@ -1,0 +1,42 @@
+<main class="note-page">
+  <header><div><h1>Articoli da ordinare con note</h1><p>Raggruppati per venditore e ordine. Le note più vecchie vengono prima; quelle senza data sono in fondo al proprio gruppo.</p></div>
+    <button mat-stroked-button routerLink="/dashboard"><mat-icon>arrow_back</mat-icon>Dashboard</button>
+  </header>
+  <div class="filtri">
+    <mat-form-field appearance="outline"><mat-label>Venditore</mat-label>
+      <mat-select [(ngModel)]="filtroVenditore"><mat-option value="">Tutti</mat-option>
+        <mat-option *ngFor="let v of venditori" [value]="v.codice">{{ v.nome }}{{ v.codice && v.nome !== v.codice ? ' (' + v.codice + ')' : '' }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-stroked-button (click)="carica()" [disabled]="loading"><mat-icon>refresh</mat-icon>Aggiorna</button>
+  </div>
+  <p *ngIf="loading" role="status">Caricamento…</p>
+  <p *ngIf="errore" role="alert">Impossibile caricare gli articoli. Premi Aggiorna per riprovare.</p>
+  <p *ngIf="erroreVenditori" role="status">Nomi venditori non disponibili: vengono mostrati i codici.</p>
+  <p *ngIf="!loading && !errore && !gruppiVisibili.length">Nessun articolo da ordinare con note.</p>
+  <ng-container *ngIf="!loading && !errore">
+    <section class="venditore" *ngFor="let gruppo of gruppiVisibili">
+      <div class="venditore-header"><h2>{{ gruppo.nome }} <small>{{ gruppo.codice }}</small></h2>
+        <div class="azioni">
+          <mat-checkbox color="primary" [checked]="tutteSelezionate(gruppo)" [indeterminate]="alcuneSelezionate(gruppo)"
+                        (change)="selezionaTutte(gruppo, $event.checked)">Seleziona tutto</mat-checkbox>
+          <button mat-stroked-button color="primary" [disabled]="!selezionate(gruppo).length" (click)="condividi(gruppo)">
+            <mat-icon>share</mat-icon>WhatsApp · {{ selezionate(gruppo).length }} righe
+          </button>
+        </div>
+      </div>
+      <article class="ordine" *ngFor="let ordine of gruppo.ordini">
+        <h3><a [routerLink]="['/articoli/view', ordine.righe[0].anno, ordine.righe[0].serie, ordine.righe[0].progressivo]"
+               (click)="preparaOrdine(ordine.righe[0])">Ordine {{ ordine.chiave }}</a><span>{{ ordine.righe[0].cliente }}</span></h3>
+        <div class="riga" *ngFor="let riga of ordine.righe">
+          <mat-checkbox color="primary" [checked]="selection.isSelected(riga.progrGenerale)"
+                        (change)="selection.toggle(riga.progrGenerale)" [attr.aria-label]="'Seleziona riga ' + riga.rigo + ' ordine ' + ordine.chiave"></mat-checkbox>
+          <div class="contenuto"><div class="articolo"><strong>{{ riga.descrizione }}</strong><small>{{ riga.articolo }} · riga {{ riga.rigo }}</small></div>
+            <p class="nota">{{ riga.nota }}</p>
+            <small class="data-nota">{{ riga.dataNota ? (riga.dataNota | date:'dd/MM/yyyy HH:mm') : 'Data nota non disponibile' }}</small>
+          </div>
+        </div>
+      </article>
+    </section>
+  </ng-container>
+</main>

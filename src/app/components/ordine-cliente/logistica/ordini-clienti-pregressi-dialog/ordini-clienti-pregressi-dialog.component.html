@@ -20,7 +20,7 @@
       <mat-radio-group (change)="retrieveList()"
                        aria-label="Select an option" [(ngModel)]="filtro.codVenditore">
         <mat-radio-button *ngFor="let option of radioPerVenditoreOptions" [checked]="option.checked"
-                          [value]="option.codVenditore">{{option.fullname}}
+                          [value]="option.codVenditore">{{option.fullname}}{{option.codVenditore ? ' (' + option.codVenditore + ')' : ''}}
         </mat-radio-button>
       </mat-radio-group>
     </div>

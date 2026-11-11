@@ -83,7 +83,7 @@
         <mat-option *ngFor="let v of venditori"
                     [value]="v.codVenditore">
 
-          {{ v.fullname }}
+          {{ v.fullname }}{{ v.codVenditore ? ' (' + v.codVenditore + ')' : '' }}
 
         </mat-option>
 

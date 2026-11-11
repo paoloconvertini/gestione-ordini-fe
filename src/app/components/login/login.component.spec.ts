@@ -1,23 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { of } from 'rxjs';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ LoginComponent ]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('dopo il login apre la dashboard', () => {
+    const router = jasmine.createSpyObj('Router', ['navigate']);
+    const auth = jasmine.createSpyObj('AuthService', ['login']);
+    auth.login.and.returnValue(of({}));
+    const component = new LoginComponent(auth, router, {} as any);
+    component.form.setValue({ username: 'test' as any, password: 'test' as any });
+    component.submitForm();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+    component.ngOnDestroy();
   });
 });

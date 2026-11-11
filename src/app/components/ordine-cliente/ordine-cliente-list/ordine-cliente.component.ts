@@ -499,6 +499,8 @@ export class OrdineClienteComponent extends BaseComponent implements OnInit, Aft
         width: '1200px',
         maxHeight: '90vh',
         data: { ordine }
+      }).afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(saved => {
+        if (saved) this.retrieveList();
       });
   }
 

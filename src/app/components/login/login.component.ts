@@ -5,8 +5,6 @@ import { AuthService } from '../../services/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntil } from 'rxjs';
 import { BaseComponent } from '../baseComponent';
-import {OrdiniClientiStateService} from "../../services/state/ordini-clienti-state.service";
-import {PermissionService} from "../../services/auth/permission.service";
 
 @Component({
   selector: 'app-login',
@@ -25,9 +23,7 @@ export class LoginComponent extends BaseComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private snackbar: MatSnackBar,
-    private state: OrdiniClientiStateService,
-    private perm: PermissionService
+    private snackbar: MatSnackBar
   ) {
     super();
   }
@@ -42,39 +38,7 @@ export class LoginComponent extends BaseComponent {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
-          // 0️⃣ SHOWROOM ONLY
-          if (this.perm.canViewRegistroVisite
-            && !this.perm.canViewOrdiniClienti
-            && !this.perm.canViewOrdiniFornitori) {
-            this.router.navigate(['/agenda-appuntamenti']);
-            return;
-          }
-
-          // 1️⃣ AMMINISTRATIVO → ordini-clienti con filtro preimpostato DA_ORDINARE
-          if (this.perm.canRedirectAmministrativo) {
-            this.state.setState({ filtroStatus: 'DA_ORDINARE', page: 0 });
-            this.router.navigate(['/ordini-clienti']);
-            return;
-          }
-
-          // 2️⃣ LOGISTICA → pagina logistica
-          if (this.perm.canRedirectLogistica) {
-            const state = this.state.getState();
-            state.prontoConsegna = true;
-            state.page = 0;
-            this.state.setState(state);
-            this.router.navigate(['/ordini-clienti']);
-            return;
-          }
-
-          // 3️⃣ DEFAULT → ordini-clienti (status rimane quello salvato o default “TUTTI”)
-          if (this.perm.canRedirectDefault) {
-            this.router.navigate(['/ordini-clienti']);
-            return;
-          }
-
-          // Fallback (non succede mai)
-          this.router.navigate(['/ordini-clienti']);
+          this.router.navigate(['/dashboard']);
         },
         error: () => {
           this.snackbar.open('Credenziali non valide', 'Chiudi', {

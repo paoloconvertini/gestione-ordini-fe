@@ -1,3 +1,5 @@
-<app-navigation *ngIf="(authService.user$ | async) && !isLoginPage"></app-navigation>
-<router-outlet></router-outlet>
-
+<ng-template #page><router-outlet></router-outlet></ng-template>
+<app-navigation *ngIf="(authService.user$ | async) && !isLoginPage; else publicPage">
+  <ng-container *ngTemplateOutlet="page"></ng-container>
+</app-navigation>
+<ng-template #publicPage><ng-container *ngTemplateOutlet="page"></ng-container></ng-template>

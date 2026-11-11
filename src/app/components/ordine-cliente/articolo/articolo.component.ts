@@ -97,6 +97,11 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
 
     this.filtro = this.state.getState();
     this.user = this.authService.getCurrentUser()?.username;
+    if (this.filtro.daCodificare) {
+      this.filtroArticoli.flDaCodificare = true;
+      this.onDaCodificareChange();
+      return;
+    }
 
     if (this.perm.canDefaultFiltroNonDisponibile && this.filtro.statusOrdine === 'DA_ORDINARE') {
       this.filtroArticoli.flNonDisponibile = true;
@@ -466,13 +471,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       });
   }
 
-  annulla() {
+  annulla(destinazione: '/ordini-clienti' | '/dashboard' = '/ordini-clienti') {
     if (this.user === this.ordineDettaglio.userLock) {
       this.service.annulla(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.router.navigate(['/ordini-clienti']);
+              this.router.navigate([destinazione]);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -480,8 +485,18 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         })
     } else {
-      this.router.navigate(['/ordini-clienti']);
+      this.router.navigate([destinazione]);
     }
+  }
+
+  onDaCodificareChange(): void {
+    if (this.filtroArticoli.flDaCodificare) {
+      this.filtroArticoli.flNonDisponibile = false;
+      this.filtroArticoli.flDaRiservare = false;
+      this.filtroArticoli.flConsegna = 3;
+      this.filtro.searchText = '';
+    }
+    this.getArticoliByOrdineId();
   }
 
   getArticoliByOrdineId(): void {

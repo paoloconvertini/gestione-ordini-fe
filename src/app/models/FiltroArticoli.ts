@@ -6,6 +6,8 @@ export class FiltroArticoli {
 
   flNonDisponibile:  boolean = false;
 
+  flDaCodificare: boolean = false;
+
   flConsegna?:  number;
 
   anno: any;

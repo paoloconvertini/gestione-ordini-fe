@@ -1,0 +1,157 @@
+<main class="dashboard">
+  <header class="dashboard-header">
+    <div>
+      <p class="eyebrow">IL TUO SPAZIO DI LAVORO</p>
+      <h1>Ciao, {{ username }}.</h1>
+      <p class="subtitle">Ecco cosa richiede la tua attenzione.</p>
+    </div>
+    <div class="header-actions">
+      <span>{{ todayLabel }}</span>
+      <button mat-stroked-button (click)="load()" [disabled]="loading"><mat-icon>refresh</mat-icon> Aggiorna</button>
+    </div>
+  </header>
+
+  <section class="attention" aria-labelledby="attention-title" [attr.aria-busy]="loading">
+    <div class="section-header"><h2 id="attention-title">Da tenere d’occhio</h2><span *ngIf="updatedAt && !loading && !error">Aggiornato alle {{ updatedAt | date:'HH:mm' }}</span></div>
+    <div *ngIf="loading" class="loading" role="status"><mat-spinner diameter="28"></mat-spinner> Caricamento dei contatori…</div>
+    <div *ngIf="error" class="error" role="alert">Non è stato possibile caricare i contatori. <button mat-button (click)="load()">Riprova</button></div>
+    <div class="counter-grid" *ngIf="data as counters">
+      <button class="counter-card amber" *ngIf="counters.daOrdinare != null" (click)="openOrders('ordinare')">
+        <span class="counter-top"><span class="counter-icon"><mat-icon>shopping_cart</mat-icon></span><mat-icon>north_east</mat-icon></span>
+        <strong>{{ counters.daOrdinare | number }}</strong><h3>Da ordinare</h3>
+        <p>Ordini clienti in attesa di ordinazione.</p><span class="counter-link">Gestisci gli ordini <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card rose" *ngIf="counters.daOrdinareModificati != null" (click)="openOrders('modificati')">
+        <span class="counter-top">
+          <span class="counter-icon">
+            <svg class="dashboard-custom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M2 3h2l3 13h3M5 7h10l-1 5H6" />
+              <circle cx="8" cy="20" r="1.5" />
+              <g transform="translate(2 0) rotate(14 17 13)">
+                <path d="M15 17V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12l-2 5-2-5Z" fill="var(--tint)" />
+                <path d="M15 7h4m-4 10h4M17 7v10" stroke-width="1.3" />
+              </g>
+            </svg>
+          </span>
+          <mat-icon>north_east</mat-icon>
+        </span>
+        <strong>{{ counters.daOrdinareModificati | number }}</strong><h3>Da ordinare modificati</h3>
+        <p>Ordini da ordinare evidenziati in rosa nella lista.</p><span class="counter-link">Verifica le modifiche <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card amber" *ngIf="counters.daOrdinareConNote != null" routerLink="/ordini-note-da-ordinare">
+        <span class="counter-top"><span class="counter-icon"><mat-icon>speaker_notes</mat-icon></span><mat-icon>north_east</mat-icon></span>
+        <strong>{{ counters.daOrdinareConNote | number }}</strong><h3>Da ordinare con note</h3>
+        <p>Ordini con articoli da ordinare e note da verificare.</p><span class="counter-link">Verifica per venditore <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card amber" *ngIf="counters.daCodificare != null" (click)="openOrders('codifica')">
+        <span class="counter-top">
+          <span class="counter-icon">
+            <svg class="dashboard-custom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M7 3H3v4m14-4h4v4M3 17v4h4m14-4v4h-4" />
+              <g fill="currentColor" stroke="none">
+                <rect x="5" y="7" width="1" height="10" />
+                <rect x="7.5" y="7" width="2" height="10" />
+                <rect x="11" y="7" width="1" height="10" />
+                <rect x="13.5" y="7" width="2.5" height="10" />
+                <rect x="17.5" y="7" width="1.5" height="10" />
+              </g>
+            </svg>
+          </span>
+          <mat-icon>north_east</mat-icon>
+        </span>
+        <strong>{{ counters.daCodificare | number }}</strong><h3>Ordini da codificare</h3>
+        <p>Con almeno un articolo da codificare.</p><span class="counter-link">Apri gli ordini <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card teal" *ngIf="counters.prontoConsegna != null" (click)="openOrders('pronto')">
+        <span class="counter-top"><span class="counter-icon"><mat-icon>rocket_launch</mat-icon></span><mat-icon>north_east</mat-icon></span>
+        <strong>{{ counters.prontoConsegna | number }}</strong><h3>Pronto consegna</h3>
+        <p>Ordini con prodotti pronti per la consegna.</p><span class="counter-link">Prepara le bolle <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card teal" *ngIf="counters.consegneDaProgrammare != null" (click)="openOrders('programmare')">
+        <span class="counter-top"><span class="counter-icon"><mat-icon>event_available</mat-icon></span><mat-icon>north_east</mat-icon></span>
+        <strong>{{ counters.consegneDaProgrammare | number }}</strong><h3>Consegne da programmare</h3>
+        <p>Pronto consegna con bolla, senza data di consegna.</p><span class="counter-link">Programma le consegne <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card red" *ngIf="counters.carichiDaProcessare != null" (click)="openOrders('carichi')">
+        <span class="counter-top">
+          <span class="counter-icon">
+            <svg class="dashboard-custom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="5.5" cy="3.5" r="2" fill="currentColor" stroke="none" />
+              <path d="m5 7-1 6-2 8m2-8 4 3-1 5M5 7l4 4h2" stroke-width="2.4" />
+              <path d="m10 8 8 12 4-3" stroke-width="2" />
+              <path d="m14 9 4-2.5 4.5 6.5-4 2.5L14 9Z" fill="currentColor" stroke="none" />
+              <circle cx="15" cy="20.5" r="2.5" fill="none" stroke-width="1.8" />
+            </svg>
+          </span>
+          <mat-icon>north_east</mat-icon>
+        </span>
+        <strong>{{ counters.carichiDaProcessare | number }}</strong><h3>Carichi da processare</h3>
+        <p>Ordini con articoli arrivati in magazzino, ancora da processare.</p><span class="counter-link">Gestisci i carichi <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card amber" *ngIf="counters.senzaBolla != null" (click)="openOrders('bolle')">
+        <span class="counter-top">
+          <span class="counter-icon">
+            <svg class="dashboard-custom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6" />
+              <path d="m8.5 12 7 6m0-6-7 6" stroke-width="2.2" />
+            </svg>
+          </span>
+          <mat-icon>north_east</mat-icon>
+        </span>
+        <strong>{{ counters.senzaBolla | number }}</strong><h3>Consegnati senza bolla</h3>
+        <p>Ordini aperti con articoli consegnati senza documento.</p><span class="counter-link">Verifica le bolle <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card slate" *ngIf="counters.archiviatiSenzaFirma != null" (click)="openOrders('firme')">
+        <span class="counter-top"><span class="counter-icon"><mat-icon>draw</mat-icon></span><mat-icon>north_east</mat-icon></span>
+        <strong>{{ counters.archiviatiSenzaFirma | number }}</strong><h3>Archiviati senza firma</h3>
+        <p>Ordini archiviati senza la firma del cliente.</p><span class="counter-link">Verifica le firme <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <button class="counter-card slate" *ngIf="counters.ordiniAttivi != null" (click)="openOrders('all')">
+        <span class="counter-top">
+          <span class="counter-icon">
+            <svg class="dashboard-custom-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M6 17H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1" />
+              <rect x="7" y="6" width="14" height="16" rx="2" />
+              <path d="M11 10h6m-6 4h6m-6 4h4" />
+            </svg>
+          </span>
+          <mat-icon>north_east</mat-icon>
+        </span>
+        <strong>{{ counters.ordiniAttivi | number }}</strong><h3>Ordini attivi</h3>
+        <p>Tutti gli ordini aperti, esclusi gli archiviati.</p><span class="counter-link">Vedi tutti <mat-icon>arrow_forward</mat-icon></span>
+      </button>
+      <p class="empty" *ngIf="counters.ordiniAttivi == null">Accedi alle tue attività dai collegamenti qui sotto o dal menu laterale.</p>
+    </div>
+  </section>
+
+  <section class="pending-loads" *ngIf="data?.carichiPiuVecchi?.length" aria-labelledby="loads-title">
+    <div class="section-header"><h2 id="loads-title">I carichi in attesa da più tempo</h2><button mat-button (click)="openOrders('carichi')">Mostra tutti <mat-icon>arrow_forward</mat-icon></button></div>
+    <p class="duration-note">Fino a 5 ordini, dalla prima data di carico ancora da processare. Gli ordini senza data compaiono in fondo.</p>
+    <div class="pending-list">
+      <button *ngFor="let carico of data?.carichiPiuVecchi" (click)="openCarico(carico)" class="pending-order">
+        <span class="pending-order-number">{{ carico.anno }}/{{ carico.serie }}/{{ carico.progressivo }}</span>
+        <span class="pending-customer">{{ carico.cliente }}</span>
+        <span class="pending-date">{{ carico.dataCarico ? ('Carico del ' + (carico.dataCarico | date:'dd/MM/yyyy')) : 'Data carico non disponibile' }}</span>
+        <strong class="pending-age" *ngIf="carico.giorni != null">{{ carico.giorni > 0 ? ('Da ' + carico.giorni + ' giorni') : carico.giorni === 0 ? 'Da oggi' : 'Data futura' }}</strong>
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </section>
+
+  <section class="shortcuts" aria-labelledby="shortcuts-title">
+    <div class="section-header"><h2 id="shortcuts-title">Accesso rapido</h2><span>Le tue attività, a portata di mano</span></div>
+    <div class="shortcut-grid">
+      <a *ngIf="perm.canViewOrdiniClienti" routerLink="/ordini-clienti"><mat-icon>receipt_long</mat-icon><span>Ordini clienti<small>Consulta e gestisci gli ordini</small></span><mat-icon>chevron_right</mat-icon></a>
+      <a *ngIf="perm.canViewOrdiniFornitori" routerLink="/ordini-fornitore"><mat-icon>inventory_2</mat-icon><span>Ordini fornitori<small>Acquisti e approvvigionamenti</small></span><mat-icon>chevron_right</mat-icon></a>
+      <a *ngIf="perm.canViewLogistica" routerLink="/consegne-settimanali"><mat-icon>calendar_month</mat-icon><span>Consegne settimanali<small>Organizza le prossime consegne</small></span><mat-icon>chevron_right</mat-icon></a>
+      <a *ngIf="perm.canViewAppuntamenti" routerLink="/agenda-appuntamenti"><mat-icon>event</mat-icon><span>Agenda appuntamenti<small>Appuntamenti, visite e formazione</small></span><mat-icon>chevron_right</mat-icon></a>
+      <a *ngIf="perm.canViewAttivitaMontaggio" routerLink="/attivita-montaggio"><mat-icon>handyman</mat-icon><span>Attività di montaggio<small>Pianifica il lavoro delle squadre</small></span><mat-icon>chevron_right</mat-icon></a>
+      <a *ngIf="perm.canGestisciPrezziArticoli" routerLink="/prezzi-articoli"><mat-icon>sell</mat-icon><span>Prezzi articoli<small>Ricarichi e soglie per fornitore</small></span><mat-icon>chevron_right</mat-icon></a>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,16 @@
+.note-page { max-width: 1200px; margin: auto; padding: 32px 24px; color: #23394f; }
+header, .venditore-header, .azioni, .filtri { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+header p { color: #738397; line-height: 1.6; }
+.filtri { justify-content: flex-start; margin: 24px 0; }
+.venditore { margin: 24px 0 32px; border: 1px solid #e0e7ed; border-radius: 12px; background: white; overflow: hidden; }
+.venditore-header { padding: 20px; background: #f6f8fa; }
+h2 { margin: 0; font-size: 19px; } h2 small { margin-left: 8px; font-size: 12px; color: #738397; }
+.ordine { padding: 20px; border-top: 1px solid #e0e7ed; }
+h3 { display: flex; flex-wrap: wrap; gap: 16px; margin: 0 0 12px; font-size: 15px; }
+h3 a { color: #237b89; } h3 span { font-weight: 400; }
+.riga { display: flex; gap: 12px; padding: 16px 0; }
+.riga + .riga { border-top: 1px solid #edf1f5; }
+.contenuto { min-width: 0; flex: 1; }
+.articolo { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.articolo small, .data-nota { color: #738397; }
+.nota { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0; padding: 12px 16px; background: #fff8e9; border-radius: 6px; line-height: 1.6; }

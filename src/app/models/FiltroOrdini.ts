@@ -8,6 +8,18 @@ export class FiltroOrdini {
 
   prontoConsegna: boolean = false;
 
+  daCodificare: boolean = false;
+
+  daOrdinareModificati: boolean = false;
+
+  carichiDaProcessare: boolean = false;
+
+  senzaBolla: boolean = false;
+
+  senzaFirma: boolean = false;
+
+  consegneDaProgrammare: boolean = false;
+
   searchText: string = '';
 
   veicolo: any;

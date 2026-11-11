@@ -11,9 +11,12 @@
     <button *ngIf="false" class="" (click)="cercaBolle()" mat-raised-button color="primary" aria-label="ordine">
       Bolle
     </button>
-    <button class="" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
-      Aggiorna lista
-    </button>
+    <div class="page-header-actions">
+      <button mat-stroked-button routerLink="/dashboard"><mat-icon>arrow_back</mat-icon>Dashboard</button>
+      <button class="" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
+        Aggiorna lista
+      </button>
+    </div>
   </div>
   <div class="blink_text warning-banner" *ngIf="countHasCarico > 0">
     ATTENZIONE!! Ci sono {{countHasCarico}} ordini contenenti articoli caricati in magazzino e non ancora processati
@@ -35,7 +38,7 @@
             <mat-option [value]="null">Tutti</mat-option>
             <mat-option *ngFor="let option of radioPerVenditoreOptions"
                         [value]="option.codVenditore">
-              {{option.fullname}}
+              {{option.fullname}}{{option.codVenditore ? ' (' + option.codVenditore + ')' : ''}}
             </mat-option>
           </mat-select>
         </mat-form-field>

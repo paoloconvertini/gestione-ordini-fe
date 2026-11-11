@@ -1,3 +1,4 @@
+import {OrdiniNoteDaOrdinareComponent} from './components/ordini-note-da-ordinare/ordini-note-da-ordinare.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {LoginComponent} from "./components/login/login.component";
@@ -33,7 +34,11 @@ import {AgendaAppuntamentiComponent} from "./components/agenda-appuntamenti/agen
 
 import { PrezziArticoliComponent } from './components/prezzi-articoli/prezzi-articoli.component';
 
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+
 const routes: Routes = [
+  {path: 'ordini-note-da-ordinare', canActivate: [AuthGuard], data: {permission: 'ordini_clienti.view'}, component: OrdiniNoteDaOrdinareComponent},
+  { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
   {
     path: 'prezzi-articoli',
     canActivate: [AuthGuard],
@@ -204,14 +209,13 @@ const routes: Routes = [
     component: ResetPasswordComponent,
   },
   {
-    path: '**',
-    pathMatch: 'full',
-    redirectTo: 'login',
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
   },
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
+    path: '**',
+    redirectTo: 'dashboard'
   }
 ];
 
