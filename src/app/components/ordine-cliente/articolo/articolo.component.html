@@ -359,10 +359,20 @@
           </ng-container>
           <!-- Name Column -->
           <ng-container matColumnDef="flProntoConsegna">
-            <th mat-header-cell *matHeaderCellDef>Pronto Cons.</th>
+            <th mat-header-cell *matHeaderCellDef>
+              <div class="pronto-consegna-header">
+                <span>Pronto Cons.</span>
+                <mat-checkbox color="primary" aria-label="Seleziona tutti i pronto consegna"
+                              matTooltip="Seleziona o deseleziona tutte le righe modificabili della lista filtrata"
+                              [checked]="tuttiProntoConsegna" [indeterminate]="alcuniProntoConsegna"
+                              [disabled]="loader || !righeProntoConsegnaModificabili.length"
+                              (change)="selezionaTuttiProntoConsegna($event.checked)">
+                </mat-checkbox>
+              </div>
+            </th>
             <td mat-cell *matCellDef="let articolo">
               <span *ngIf="articolo.tipoRigo !=='AC'">
-                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" disabled="{{( !perm.canEditProntoConsegna || ordineDettaglio.locked || filtro.statusOrdine === 'ARCHIVIATO' || (articolo.tipoRigo !=='C' && articolo.flagConsegnato) )}}"
+                <mat-checkbox (change)="checkQtaProntoConsegna(articolo)" [disabled]="!puoModificareProntoConsegna(articolo)"
                               [(ngModel)]="articolo.flProntoConsegna" color="primary">
                 </mat-checkbox>
               </span>

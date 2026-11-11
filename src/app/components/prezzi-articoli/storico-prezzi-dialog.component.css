@@ -1,0 +1,7 @@
+mat-dialog-content { max-height: 65vh; overflow: auto; }
+.nota { color: #68758a; font-size: 13px; }
+.caricamento { display: flex; align-items: center; gap: 12px; padding: 20px 0; }
+table { width: 100%; border-collapse: collapse; }
+th { position: sticky; top: 0; background: #f6f8fb; color: #586174; text-align: left; }
+th, td { padding: 12px; border-bottom: 1px solid #e3e8ef; }
+.importo { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }

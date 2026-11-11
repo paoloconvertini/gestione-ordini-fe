@@ -1,4 +1,5 @@
 export interface OrdineMappaDto {
+  idConsegnaLibera?: number;
   anno: number;
   serie: string;
   progressivo: number;

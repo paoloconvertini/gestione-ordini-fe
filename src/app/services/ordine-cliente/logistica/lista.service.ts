@@ -52,6 +52,15 @@ export class ListaService extends CommonService{
     return this.http.delete<any>(`${this.url}/elimina-programmazione/${anno}/${serie}/${progressivo}`);
   }
 
+  salvaConsegnaLibera(dto: any, id?: number): Observable<any> {
+    const endpoint = environment.baseUrl + 'consegne-libere';
+    return id == null ? this.http.post(endpoint, dto) : this.http.put(`${endpoint}/${id}`, dto);
+  }
+
+  eliminaConsegnaLibera(id: number): Observable<any> {
+    return this.http.delete(environment.baseUrl + `consegne-libere/${id}`);
+  }
+
   riordinaConsegne(lista: any) {
     return this.http.put<any>(`${this.url}/riordina-consegne`, lista);
   }

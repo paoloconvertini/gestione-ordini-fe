@@ -6,10 +6,34 @@
 /* HEADER */
 
 .header-bar {
-  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px 0;
+  margin-bottom: 24px;
+}
+
+.header-actions {
+  grid-column: 3;
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.nuova-consegna-btn {
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border-color: currentColor;
+  background-color: #fff;
+  font-weight: 500;
+  letter-spacing: .2px;
+  white-space: normal;
 }
 
 .ordine-title {
+  grid-column: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,6 +261,14 @@
   font-weight: 600;
   color: white;
   opacity: 0.95;
+}
+
+.senza-ordine-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
 }
 
 .evento-cliente {
@@ -493,6 +525,15 @@
 }
 
 @media (max-width: 900px) {
+  .header-bar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ordine-title,
+  .header-actions {
+    grid-column: 1;
+  }
+
   .ordine-title {
     font-size: 20px;
   }
@@ -500,4 +541,40 @@
   .giorno-num {
     font-size: 34px;
   }
+}
+
+.evento-motivazione {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  color: white;
+  font-size: 11px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.evento-missing-coords .evento-motivazione { color: #000; }
+
+.evento.evento-senza-ordine {
+  background-color: #cd6767;
+  border-color: #cd6767;
+}
+
+.evento.evento-senza-ordine.evento-missing-coords {
+  border-left-color: #f44336;
+}
+
+.evento-senza-ordine .evento-title,
+.evento-senza-ordine .evento-localita,
+.evento-senza-ordine .evento-ordine,
+.evento-senza-ordine .evento-cliente,
+.evento-senza-ordine .evento-indirizzo,
+.evento-senza-ordine .evento-cellulare,
+.evento-senza-ordine .evento-motivazione,
+.evento-senza-ordine .evento-icon {
+  color: white;
 }

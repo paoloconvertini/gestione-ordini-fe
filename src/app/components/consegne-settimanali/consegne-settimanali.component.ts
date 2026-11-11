@@ -1,3 +1,4 @@
+import {ConsegnaLiberaDialogComponent} from '../consegna-libera-dialog/consegna-libera-dialog.component';
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {BaseComponent} from "../baseComponent";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -157,6 +158,7 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
             if (!c.latitudine || !c.longitudine) continue;
 
             result.push({
+              idConsegnaLibera: c.idConsegnaLibera,
               anno: c.anno,
               serie: c.serie,
               progressivo: c.progressivo,
@@ -277,7 +279,23 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
   }
 
+  nuovaConsegna(): void {
+    this.apriConsegnaLibera();
+  }
+
+  private apriConsegnaLibera(consegna?: any): void {
+    this.dialog.open(ConsegnaLiberaDialogComponent, {
+      width: '550px', maxHeight: '90vh', data: {consegna}
+    }).afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(result => {
+      if (result) this.retrieveList(this.filtro.deltaSettimana);
+    });
+  }
+
   dettaglio(consegna: any) {
+    if (consegna.idConsegnaLibera != null) {
+      this.apriConsegnaLibera(consegna);
+      return;
+    }
 
     this.dialog.open(ConsegneSettimanaliDettaglioDialogComponent, {
       width: '90%',
@@ -301,6 +319,10 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
   }
 
   modificaConsegna(consegna: any): void {
+    if (consegna.idConsegnaLibera != null) {
+      this.apriConsegnaLibera(consegna);
+      return;
+    }
 
     const dialogRef = this.dialog.open(ConsegnaEditDialogComponent, {
       width: '450px',
@@ -332,11 +354,10 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
         return;
       }
 
-      this.service.eliminaProgrammazione(
-        consegna.anno,
-        consegna.serie,
-        consegna.progressivo
-      ).subscribe(() => {
+      const richiesta = consegna.idConsegnaLibera != null
+        ? this.service.eliminaConsegnaLibera(consegna.idConsegnaLibera)
+        : this.service.eliminaProgrammazione(consegna.anno, consegna.serie, consegna.progressivo);
+      richiesta.subscribe(() => {
 
         this.snackbar.open('Consegna rimossa', 'OK', {
           duration: 2000
@@ -363,6 +384,7 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
     );
 
     const lista = veicolo.consegne.map((c: any, index: number) => ({
+      idConsegnaLibera: c.idConsegnaLibera,
       anno: c.anno,
       serie: c.serie,
       progressivo: c.progressivo,
@@ -423,6 +445,7 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
             if (!c.latitudine || !c.longitudine) continue;
 
             result.push({
+              idConsegnaLibera: c.idConsegnaLibera,
               anno: c.anno,
               serie: c.serie,
               progressivo: c.progressivo,
@@ -480,10 +503,11 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
 
         if (!result) return;
 
-        this.pianoContiService.updateCoordinates({
-          sottoConto: consegna.sottoConto,
-          coords: result.coords
-        }).subscribe(() => {
+        const [latitudine, longitudine] = result.coords.split(',').map(Number);
+        const richiesta = consegna.idConsegnaLibera != null
+          ? this.service.salvaConsegnaLibera({...consegna, latitudine, longitudine}, consegna.idConsegnaLibera)
+          : this.pianoContiService.updateCoordinates({sottoConto: consegna.sottoConto, coords: result.coords});
+        richiesta.subscribe(() => {
 
           this.snackbar.open('Coordinate aggiornate', 'OK', {
             duration: 2000
@@ -549,7 +573,8 @@ export class ConsegneSettimanaliComponent extends BaseComponent implements OnIni
       'Data: ' + dataConsegna,
       'Cliente: ' + (consegna.intestazione || ''),
       '',
-      'Ordine: ' + consegna.anno + '/' + consegna.serie + '/' + consegna.progressivo,
+      consegna.idConsegnaLibera != null ? 'Consegna senza ordine'
+        : 'Ordine: ' + consegna.anno + '/' + consegna.serie + '/' + consegna.progressivo,
       'Ordine consegna: ' + (consegna.ordine || ''),
       '',
       'Indirizzo: ' + (consegna.indirizzo || ''),

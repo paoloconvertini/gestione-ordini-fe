@@ -173,6 +173,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
         new Feature({
           geometry: new Point([e.longitudine, e.latitudine]),
           name: e.intestazione,
+          destinatarioKey: e.idConsegnaLibera != null ? `consegna-${e.idConsegnaLibera}`
+            : (e.sottoConto || `${e.anno}/${e.serie}/${e.progressivo}`),
           indirizzo: e.indirizzo,
           telefono: e.telefono,
           cellulare: e.cellulare,
@@ -296,7 +298,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
     for (const f of features) {
 
-      const key = f.get('sottoConto');
+      const key = f.get('destinatarioKey');
 
       if (!grouped[key]) {
         grouped[key] = [];
@@ -624,6 +626,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
     }
 
     const result = this.optimizedOrder.map((o: any, index: number) => ({
+      idConsegnaLibera: o.idConsegnaLibera,
       anno: o.anno,
       serie: o.serie,
       progressivo: o.progressivo,
@@ -638,10 +641,10 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
   isChanged(item: any, index: number): boolean {
     const originalIndex = this.currentOrder.findIndex(
-      o =>
-        o.anno === item.anno &&
-        o.serie === item.serie &&
-        o.progressivo === item.progressivo
+      o => item.idConsegnaLibera != null
+        ? o.idConsegnaLibera === item.idConsegnaLibera
+        : o.idConsegnaLibera == null && o.anno === item.anno &&
+          o.serie === item.serie && o.progressivo === item.progressivo
     );
 
     return originalIndex !== index;

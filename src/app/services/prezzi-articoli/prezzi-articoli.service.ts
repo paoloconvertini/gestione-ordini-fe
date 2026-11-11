@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AggiornamentoPrezzi, PrezziArticoli } from '../../models/prezzo-articolo';
+import { AggiornamentoPrezzi, PrezziArticoli, StoricoPrezzoArticolo } from '../../models/prezzo-articolo';
 
 @Injectable({ providedIn: 'root' })
 export class PrezziArticoliService {
@@ -23,6 +23,12 @@ export class PrezziArticoliService {
   salvaSoglia(classeA1: string, percentuale: number, ricaricoImpostato: number | null): Observable<{ msg: string; error: boolean }> {
     return this.http.put<{ msg: string; error: boolean }>(this.url + '/soglia-fornitore',
       { classeA1, percentuale, ricaricoImpostato });
+  }
+
+  storico(articolo: string): Observable<StoricoPrezzoArticolo[]> {
+    return this.http.get<StoricoPrezzoArticolo[]>(this.url + '/storico', {
+      params: new HttpParams().set('articolo', articolo)
+    });
   }
 
   aggiorna(richiesta: AggiornamentoPrezzi): Observable<{ msg: string; error: boolean }> {

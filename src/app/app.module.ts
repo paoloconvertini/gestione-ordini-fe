@@ -1,4 +1,6 @@
 import {OrdiniNoteDaOrdinareComponent} from './components/ordini-note-da-ordinare/ordini-note-da-ordinare.component';
+import { StoricoPrezziDialogComponent } from './components/prezzi-articoli/storico-prezzi-dialog.component';
+import {ConsegnaLiberaDialogComponent} from './components/consegna-libera-dialog/consegna-libera-dialog.component';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
@@ -147,7 +149,7 @@ export const DateFormats = {
     OrdiniNoteDaOrdinareComponent,
     AppComponent,
     DashboardComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,
-    ArticoloComponent, PrezziArticoliComponent, RicaricoDeselezionatiDialogComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent,
+    ArticoloComponent, PrezziArticoliComponent, RicaricoDeselezionatiDialogComponent, StoricoPrezziDialogComponent, SnackbarComponent, FirmaDialogComponent, InviaEmailComponent,
     HistoryDialogComponent, ConfirmDialogComponent, OafListComponent, OafDettaglioComponent,
     WarnDialogComponent, AddFornitoreDialogComponent, ResetPasswordComponent, UserListComponent,
     UserDetailComponent,
@@ -193,6 +195,7 @@ export const DateFormats = {
     GestioneMotiviComponent,
     MotivoDialogComponent,
     ConsegnaEditDialogComponent,
+    ConsegnaLiberaDialogComponent,
     NotaConsegnaDialogComponent,
     CoordinateDialogComponent,
     EventActionsDialogComponent,
