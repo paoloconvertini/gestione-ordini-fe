@@ -540,6 +540,36 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     }
   }
 
+  puoModificareProntoConsegna(articolo: any): boolean {
+    return this.perm.canEditProntoConsegna && !this.ordineDettaglio.locked
+      && this.filtro.statusOrdine !== 'ARCHIVIATO' && articolo.tipoRigo !== 'AC'
+      && (articolo.tipoRigo === 'C' || !articolo.flagConsegnato);
+  }
+
+  get righeProntoConsegnaModificabili(): any[] {
+    return this.dataSource.filteredData.filter(articolo => this.puoModificareProntoConsegna(articolo));
+  }
+
+  get tuttiProntoConsegna(): boolean {
+    const righe = this.righeProntoConsegnaModificabili;
+    return righe.length > 0 && righe.every(articolo => articolo.flProntoConsegna);
+  }
+
+  get alcuniProntoConsegna(): boolean {
+    const righe = this.righeProntoConsegnaModificabili;
+    return righe.some(articolo => articolo.flProntoConsegna)
+      && !righe.every(articolo => articolo.flProntoConsegna);
+  }
+
+  selezionaTuttiProntoConsegna(checked: boolean): void {
+    if (this.loader) return;
+    for (const articolo of this.righeProntoConsegnaModificabili) {
+      if (!!articolo.flProntoConsegna === checked) continue;
+      articolo.flProntoConsegna = checked;
+      this.checkQtaProntoConsegna(articolo);
+    }
+  }
+
   aggiungiNoteLogistica(ordine: OrdineDettaglio) {
     let data: OrdineClienteNotaDto = new OrdineClienteNotaDto();
     data.anno = ordine.anno;

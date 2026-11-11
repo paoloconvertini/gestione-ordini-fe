@@ -223,3 +223,9 @@ mat-card-content {
 .order-actions {
   margin-left: auto;
 }
+.pronto-consegna-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
