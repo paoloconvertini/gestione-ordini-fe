@@ -471,13 +471,19 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       });
   }
 
-  annulla(destinazione: '/ordini-clienti' | '/dashboard' = '/ordini-clienti') {
+  get daNoteDaOrdinare(): boolean {
+    return this.route.snapshot.queryParamMap.get('origine') === 'note-da-ordinare';
+  }
+
+  annulla(destinazione: '/ordini-clienti' | '/dashboard' | '/ordini-note-da-ordinare' = '/ordini-clienti') {
+    const extras = destinazione === '/ordini-note-da-ordinare'
+      ? {queryParams: {venditore: this.route.snapshot.queryParamMap.get('venditore') || null}} : {};
     if (this.user === this.ordineDettaglio.userLock) {
       this.service.annulla(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.router.navigate([destinazione]);
+              this.router.navigate([destinazione], extras);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -485,7 +491,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         })
     } else {
-      this.router.navigate([destinazione]);
+      this.router.navigate([destinazione], extras);
     }
   }
 

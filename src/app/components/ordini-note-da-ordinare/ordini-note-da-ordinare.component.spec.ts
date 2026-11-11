@@ -21,7 +21,7 @@ describe('OrdiniNoteDaOrdinareComponent', () => {
     auth = jasmine.createSpyObj('AuthService', ['getVenditori']);
     auth.getVenditori.and.returnValue(of([{codVenditore: 'A', fullname: 'Anna'}, {codVenditore: 'B', fullname: 'Bruno'}]));
     state = jasmine.createSpyObj('state', ['setState']);
-    component = new OrdiniNoteDaOrdinareComponent(service, auth, {canFiltroVenditore: true} as any, state);
+    component = new OrdiniNoteDaOrdinareComponent(service, auth, {canFiltroVenditore: true} as any, state, {snapshot: {queryParamMap: {get: () => null}}} as any);
     component.ngOnInit();
   });
   afterEach(() => component.ngOnDestroy());
@@ -81,7 +81,7 @@ describe('OrdiniNoteDaOrdinareComponent', () => {
 
   it('usa i codici venditore se la lettura dei nomi fallisce', () => {
     auth.getVenditori.and.returnValue(throwError(() => new Error('offline')));
-    component = new OrdiniNoteDaOrdinareComponent(service, auth, {canFiltroVenditore: true} as any, state);
+    component = new OrdiniNoteDaOrdinareComponent(service, auth, {canFiltroVenditore: true} as any, state, {snapshot: {queryParamMap: {get: () => null}}} as any);
     component.ngOnInit(); expect(component.erroreVenditori).toBeTrue(); expect(component.gruppi[0].nome).toBe('A');
   });
 

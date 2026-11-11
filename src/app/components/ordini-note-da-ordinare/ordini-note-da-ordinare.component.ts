@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {SelectionModel} from '@angular/cdk/collections';
 import {takeUntil} from 'rxjs';
 import {BaseComponent} from '../baseComponent';
@@ -27,9 +28,10 @@ export class OrdiniNoteDaOrdinareComponent extends BaseComponent implements OnIn
   private nomi = new Map<string, string>();
 
   constructor(private service: DashboardService, private auth: AuthService,
-              public perm: PermissionService, private state: OrdiniClientiStateService) { super(); }
+              public perm: PermissionService, private state: OrdiniClientiStateService, private route: ActivatedRoute) { super(); }
 
   ngOnInit(): void {
+    this.filtroVenditore = this.route.snapshot.queryParamMap.get('venditore') || '';
     this.carica();
     if (this.perm.canFiltroVenditore) {
       this.auth.getVenditori(['Venditore']).pipe(takeUntil(this.ngUnsubscribe)).subscribe({

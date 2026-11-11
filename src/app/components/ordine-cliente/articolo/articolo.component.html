@@ -9,11 +9,9 @@
       <span *ngIf="filtro.statusOrdine==='ARCHIVIATO'"> ARCHIVIATO</span>
     </div>
     <div class="col-lg-12 col-md-4 col-sm-12">
-      <button class="button-row" mat-stroked-button (click)="annulla('/dashboard')">
-        <mat-icon>arrow_back</mat-icon>Dashboard
-      </button>
-      <button class="button-row" mat-raised-button (click)="annulla()" color="primary" matTooltip="Indietro">
-        <mat-icon>arrow_back</mat-icon>Indietro
+      <button class="button-row" mat-raised-button color="primary"
+              (click)="annulla(daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
+        <mat-icon>arrow_back</mat-icon>{{ daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
       </button>
       <button class="button-row" *ngIf="perm.canCreaOrdineForn && filtro.statusOrdine === 'DA_ORDINARE'" mat-raised-button color="primary" (click)="creaOrdineForn()">
         Crea Ordine a forn.

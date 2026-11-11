@@ -43,15 +43,17 @@ describe('ArticoloComponent: ingresso da codificare', () => {
   });
 });
 
-describe('ArticoloComponent: ritorno alla dashboard', () => {
+describe('ArticoloComponent: navigazione di ritorno', () => {
   let component: ArticoloComponent;
   let service: any;
   let router: any;
+  let route: any;
   beforeEach(() => {
     service = jasmine.createSpyObj('ArticoloService', ['annulla']);
     router = jasmine.createSpyObj('Router', ['navigate']);
+    route = {snapshot: {queryParamMap: new Map([['origine', 'note-da-ordinare'], ['venditore', '11']])}};
     component = new ArticoloComponent({} as any, {} as any, service, {} as any,
-      {} as any, {} as any, router, {} as any, {} as any, {} as any, {} as any);
+      {} as any, {} as any, router, route, {} as any, {} as any, {} as any);
     component.user = 'Test';
     component.filtroArticoli.anno = 2026; component.filtroArticoli.serie = 'A'; component.filtroArticoli.progressivo = 7;
   });
@@ -64,7 +66,17 @@ describe('ArticoloComponent: ritorno alla dashboard', () => {
     expect(service.annulla).toHaveBeenCalledWith(2026, 'A', 7);
     expect(router.navigate).not.toHaveBeenCalled();
     risposta.next({err: false});
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard'], {});
+  });
+
+  it('torna agli articoli con note mantenendo il venditore dopo lo sblocco', () => {
+    const risposta = new Subject<any>(); service.annulla.and.returnValue(risposta);
+    component.ordineDettaglio.userLock = 'Test';
+    expect(component.daNoteDaOrdinare).toBeTrue();
+    component.annulla('/ordini-note-da-ordinare');
+    expect(router.navigate).not.toHaveBeenCalled();
+    risposta.next({err: false});
+    expect(router.navigate).toHaveBeenCalledWith(['/ordini-note-da-ordinare'], {queryParams: {venditore: '11'}});
   });
 
   it('non esce dal dettaglio se lo sblocco non riesce', () => {
@@ -75,8 +87,8 @@ describe('ArticoloComponent: ritorno alla dashboard', () => {
 
   it('mantiene il ritorno ordinario alla lista e non sblocca ordini di altri utenti', () => {
     component.ordineDettaglio.userLock = 'Altro';
-    component.annulla(); expect(router.navigate).toHaveBeenCalledWith(['/ordini-clienti']);
-    component.annulla('/dashboard'); expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+    component.annulla(); expect(router.navigate).toHaveBeenCalledWith(['/ordini-clienti'], {});
+    component.annulla('/dashboard'); expect(router.navigate).toHaveBeenCalledWith(['/dashboard'], {});
     expect(service.annulla).not.toHaveBeenCalled();
   });
 });
