@@ -1,3 +1,4 @@
+import {filtroDashboard} from '../../models/dashboard-view';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
@@ -54,15 +55,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
   }
 
   openOrders(type: 'all' | 'programmare' | 'ordinare' | 'modificati' | 'codifica' | 'pronto' | 'carichi' | 'bolle' | 'firme'): void {
-    const filtro = new FiltroOrdini();
-    filtro.filtroStatus = type === 'firme' ? 'ARCHIVIATO' : (type === 'ordinare' || type === 'modificati') ? 'DA_ORDINARE' : 'TUTTI';
-    filtro.daCodificare = type === 'codifica';
-    filtro.daOrdinareModificati = type === 'modificati';
-    filtro.prontoConsegna = type === 'pronto';
-    filtro.carichiDaProcessare = type === 'carichi';
-    filtro.senzaBolla = type === 'bolle';
-    filtro.senzaFirma = type === 'firme';
-    filtro.consegneDaProgrammare = type === 'programmare';
+    const filtro = filtroDashboard(type);
     this.state.resetState();
     this.state.setState(filtro);
     this.router.navigate(['/ordini-clienti']);

@@ -49,6 +49,11 @@ export class DashboardService {
     return this.http.get<OrdineNotaDaOrdinare[]>(environment.baseUrl + 'dashboard/note-da-ordinare', {params});
   }
 
+  articoli(tipo: string, venditore: string, pagina: number): Observable<{righe: OrdineNotaDaOrdinare[]; totaleOrdini: number}> {
+    const params = new HttpParams().set('venditore', venditore).set('pagina', pagina);
+    return this.http.get<{righe: OrdineNotaDaOrdinare[]; totaleOrdini: number}>(environment.baseUrl + 'dashboard/articoli/' + tipo, {params});
+  }
+
   get(): Observable<Dashboard> {
     return this.http.get<Dashboard>(environment.baseUrl + 'dashboard');
   }

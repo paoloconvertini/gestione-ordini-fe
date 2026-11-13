@@ -1,10 +1,11 @@
 <main class="note-page">
-  <header><div><h1>Articoli da ordinare con note</h1><p>Raggruppati per venditore e ordine. Le note più vecchie vengono prima; quelle senza data sono in fondo al proprio gruppo.</p></div>
-    <button mat-stroked-button routerLink="/dashboard"><mat-icon>arrow_back</mat-icon>Dashboard</button>
+  <header><div><h1>{{ titolo }}</h1><p *ngIf="!tipo">Raggruppati per venditore e ordine. Le note più vecchie vengono prima; quelle senza data sono in fondo al proprio gruppo.</p></div>
+    <div class="azioni"><a mat-stroked-button color="primary" routerLink="/ordini-clienti" (click)="preparaVistaOrdini()"><mat-icon>table_rows</mat-icon>Vista ordini</a>
+    <button mat-stroked-button routerLink="/dashboard"><mat-icon>arrow_back</mat-icon>Dashboard</button></div>
   </header>
   <div class="filtri">
     <mat-form-field appearance="outline"><mat-label>Venditore</mat-label>
-      <mat-select [(ngModel)]="filtroVenditore"><mat-option value="">Tutti</mat-option>
+      <mat-select [(ngModel)]="filtroVenditore" (selectionChange)="cambiaVenditore()"><mat-option value="">Tutti</mat-option>
         <mat-option *ngFor="let v of venditori" [value]="v.codice">{{ v.nome }}{{ v.codice && v.nome !== v.codice ? ' (' + v.codice + ')' : '' }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -13,7 +14,7 @@
   <p *ngIf="loading" role="status">Caricamento…</p>
   <p *ngIf="errore" role="alert">Impossibile caricare gli articoli. Premi Aggiorna per riprovare.</p>
   <p *ngIf="erroreVenditori" role="status">Nomi venditori non disponibili: vengono mostrati i codici.</p>
-  <p *ngIf="!loading && !errore && !gruppiVisibili.length">Nessun articolo da ordinare con note.</p>
+  <p *ngIf="!loading && !errore && !gruppiVisibili.length">Nessun articolo da visualizzare.</p>
   <ng-container *ngIf="!loading && !errore">
     <section class="venditore" *ngFor="let gruppo of gruppiVisibili">
       <div class="venditore-header"><h2>{{ gruppo.nome }} <small>{{ gruppo.codice }}</small></h2>
@@ -29,7 +30,7 @@
         <div class="ordine-header">
           <h3><strong>Ordine {{ ordine.chiave }}</strong><span>{{ ordine.righe[0].cliente }}</span></h3>
           <a class="apri-ordine" mat-stroked-button color="primary" [routerLink]="['/articoli/view', ordine.righe[0].anno, ordine.righe[0].serie, ordine.righe[0].progressivo]"
-             [queryParams]="{origine: 'note-da-ordinare', venditore: filtroVenditore}" (click)="preparaOrdine(ordine.righe[0])">
+             [queryParams]="queryDettaglio" (click)="preparaOrdine(ordine.righe[0])">
             <mat-icon>open_in_new</mat-icon>Apri ordine
           </a>
         </div>
@@ -37,11 +38,13 @@
           <mat-checkbox color="primary" [checked]="selection.isSelected(riga.progrGenerale)"
                         (change)="selection.toggle(riga.progrGenerale)" [attr.aria-label]="'Seleziona riga ' + riga.rigo + ' ordine ' + ordine.chiave"></mat-checkbox>
           <div class="contenuto"><div class="articolo"><strong>{{ riga.descrizione }}</strong><small>{{ riga.articolo }} · riga {{ riga.rigo }}</small></div>
-            <p class="nota">{{ riga.nota }}</p>
-            <small class="data-nota">{{ riga.dataNota ? (riga.dataNota | date:'dd/MM/yyyy HH:mm') : 'Data nota non disponibile' }}</small>
+            <p class="nota" *ngIf="riga.nota && riga.nota.trim().toUpperCase() !== 'NULL'">{{ riga.nota }}</p>
+            <small class="data-nota" *ngIf="!tipo || riga.dataNota">{{ riga.dataNota ? (riga.dataNota | date:'dd/MM/yyyy HH:mm') : 'Data nota non disponibile' }}</small>
           </div>
         </div>
       </article>
     </section>
   </ng-container>
+  <mat-paginator *ngIf="tipo && !errore" [length]="totaleOrdini" [pageSize]="20" [pageIndex]="pagina"
+                 [hidePageSize]="true" [disabled]="loading" (page)="cambiaPagina($event.pageIndex)" aria-label="Pagine di ordini"></mat-paginator>
 </main>

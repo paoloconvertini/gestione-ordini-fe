@@ -37,6 +37,7 @@ import { PrezziArticoliComponent } from './components/prezzi-articoli/prezzi-art
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
+  {path: 'dashboard-articoli/:tipo', canActivate: [AuthGuard], data: {permission: 'ordini_clienti.view'}, component: OrdiniNoteDaOrdinareComponent},
   {path: 'ordini-note-da-ordinare', canActivate: [AuthGuard], data: {permission: 'ordini_clienti.view'}, component: OrdiniNoteDaOrdinareComponent},
   { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
   {

@@ -10,8 +10,8 @@
     </div>
     <div class="col-lg-12 col-md-4 col-sm-12">
       <button class="button-row" mat-raised-button color="primary"
-              (click)="annulla(daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
-        <mat-icon>arrow_back</mat-icon>{{ daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
+              (click)="annulla(ritornoDashboardArticoli ? '/dashboard-articoli' : daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
+        <mat-icon>arrow_back</mat-icon>{{ ritornoDashboardArticoli ? 'Torna agli articoli' : daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
       </button>
       <button class="button-row" *ngIf="perm.canCreaOrdineForn && filtro.statusOrdine === 'DA_ORDINARE'" mat-raised-button color="primary" (click)="creaOrdineForn()">
         Crea Ordine a forn.
@@ -189,10 +189,13 @@
                 </mat-icon>
 
                 <span
-                  [ngClass]="{'hasCarico': articolo.numDoc && !articolo.flagRiservato && articolo.flagOrdinato}"
-                  [matTooltip]="'Art. caricato il ' + (articolo.dataCarico | date:'dd/MM/yyyy') +
-      ' con n.doc. ' + articolo.numDoc + ' del ' + (articolo.dataDoc | date:'dd/MM/yyyy') +
-      '. Movimento mag. ' + articolo.annoMag + '/' + articolo.serieMag + '/' + articolo.progressivoMag">
+                  [ngClass]="{'hasCarico': datoCaricoPresente(articolo.numDoc) && !articolo.flagRiservato && articolo.flagOrdinato}"
+                  [matTooltipDisabled]="!datoCaricoPresente(articolo.numDoc) || articolo.flagRiservato || !articolo.flagOrdinato"
+                  [matTooltip]="'Articolo caricato' + (datoCaricoPresente(articolo.dataCarico) ? ' il ' + (articolo.dataCarico | date:'dd/MM/yyyy') : '') +
+                    (datoCaricoPresente(articolo.numDoc) ? ' con n.doc. ' + articolo.numDoc : '') +
+                    (datoCaricoPresente(articolo.dataDoc) ? ' del ' + (articolo.dataDoc | date:'dd/MM/yyyy') : '') +
+                    (datoCaricoPresente(articolo.annoMag) && datoCaricoPresente(articolo.serieMag) && datoCaricoPresente(articolo.progressivoMag)
+                      ? '. Movimento mag. ' + articolo.annoMag + '/' + articolo.serieMag + '/' + articolo.progressivoMag : '')">
 
       {{ articolo.farticolo }}
 
@@ -214,10 +217,19 @@
                 (click)="perm.canEditDescrizione && filtro.statusOrdine !== 'ARCHIVIATO'
                   ? openEditField( articolo,'fdescrArticolo','Descrizione articolo','textarea') : null">
                 {{articolo.fdescrArticolo}}</span><br>
-                <b [ngClass]="{'editable-field': perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'}"
-                  (click)="perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'
-                   ? openEditField(articolo,'codArtFornitore','Codice fornitore','text') : null">
-                  {{articolo.codArtFornitore || '-' }}</b>
+                <button *ngIf="!articolo.codArtFornitore?.trim() && perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'; else codiceFornitoreLettura"
+                        type="button" class="codice-fornitore-button codice-fornitore-vuoto"
+                        (click)="openEditField(articolo,'codArtFornitore','Codice fornitore','text')">
+                  <mat-icon>edit</mat-icon>
+                  <span>Inserisci codice fornitore</span>
+                </button>
+                <ng-template #codiceFornitoreLettura>
+                  <b [ngClass]="{'editable-field': perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'}"
+                     (click)="perm.canEditCodiceFornitore && filtro.statusOrdine !== 'ARCHIVIATO'
+                       ? openEditField(articolo,'codArtFornitore','Codice fornitore','text') : null">
+                    {{ articolo.codArtFornitore || '-' }}
+                  </b>
+                </ng-template>
               </span>
             </td>
           </ng-container>

@@ -136,6 +136,12 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     this.updateArticoli();
   }
 
+  datoCaricoPresente(valore: unknown): boolean {
+    if (valore == null) return false;
+    const testo = String(valore).trim();
+    return testo !== '' && testo.toUpperCase() !== 'NULL';
+  }
+
   getBolle(articolo: any) {
     if (this.expandedElement === articolo) {
       return;
@@ -472,18 +478,27 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
   }
 
   get daNoteDaOrdinare(): boolean {
-    return this.route.snapshot.queryParamMap.get('origine') === 'note-da-ordinare';
+    return ['note-da-ordinare', 'dashboard-articoli'].includes(this.route.snapshot.queryParamMap.get('origine') || '');
   }
 
-  annulla(destinazione: '/ordini-clienti' | '/dashboard' | '/ordini-note-da-ordinare' = '/ordini-clienti') {
-    const extras = destinazione === '/ordini-note-da-ordinare'
+  get ritornoDashboardArticoli(): boolean {
+    return this.route.snapshot.queryParamMap.get('origine') === 'dashboard-articoli';
+  }
+
+  annulla(destinazione: '/ordini-clienti' | '/dashboard' | '/ordini-note-da-ordinare' | '/dashboard-articoli' = '/ordini-clienti') {
+    const percorso = destinazione === '/dashboard-articoli'
+      ? [destinazione, this.route.snapshot.queryParamMap.get('tipo')] : [destinazione];
+    const extras = destinazione === '/dashboard-articoli'
+      ? {queryParams: {venditore: this.route.snapshot.queryParamMap.get('venditore') || null,
+          pagina: this.route.snapshot.queryParamMap.get('pagina') || 0}}
+      : destinazione === '/ordini-note-da-ordinare'
       ? {queryParams: {venditore: this.route.snapshot.queryParamMap.get('venditore') || null}} : {};
     if (this.user === this.ordineDettaglio.userLock) {
       this.service.annulla(this.filtroArticoli.anno, this.filtroArticoli.serie, this.filtroArticoli.progressivo).pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: (data: any) => {
             if (data && !data.err) {
-              this.router.navigate([destinazione], extras);
+              this.router.navigate(percorso, extras);
             }
           }, error: (e: any) => {
             console.error(e);
@@ -491,7 +506,7 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
           }
         })
     } else {
-      this.router.navigate([destinazione], extras);
+      this.router.navigate(percorso, extras);
     }
   }
 

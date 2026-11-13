@@ -20,10 +20,29 @@ describe('OrdiniNoteDaOrdinareComponent', () => {
     ]));
     auth = jasmine.createSpyObj('AuthService', ['getVenditori']);
     auth.getVenditori.and.returnValue(of([{codVenditore: 'A', fullname: 'Anna'}, {codVenditore: 'B', fullname: 'Bruno'}]));
-    state = jasmine.createSpyObj('state', ['setState']);
+    state = jasmine.createSpyObj('state', ['setState', 'resetState']);
     component = new OrdiniNoteDaOrdinareComponent(service, auth, {canFiltroVenditore: true} as any, state, {snapshot: {queryParamMap: {get: () => null}}} as any);
     component.ngOnInit();
   });
+  it('carica gli articoli della tile per pagina e venditore e prepara il ritorno', () => {
+    component.ngOnDestroy();
+    service.articoli = jasmine.createSpy('articoli').and.returnValue(of({righe: [riga(9, 'A', 10, null)], totaleOrdini: 42}));
+    const route = {snapshot: {paramMap: new Map([['tipo', 'pronto']]),
+      queryParamMap: new Map([['venditore', 'A'], ['pagina', '1']])}};
+    component = new OrdiniNoteDaOrdinareComponent(service, auth, {canFiltroVenditore: true} as any, state, route as any);
+    component.ngOnInit();
+    expect(service.articoli).toHaveBeenCalledWith('pronto', 'A', 1);
+    expect(component.totaleOrdini).toBe(42);
+    expect(component.queryDettaglio).toEqual({origine: 'dashboard-articoli', tipo: 'pronto', venditore: 'A', pagina: 1});
+    component.preparaVistaOrdini();
+    expect(state.resetState).toHaveBeenCalled();
+    expect(state.setState.calls.mostRecent().args[0].prontoConsegna).toBeTrue();
+    component.cambiaVenditore();
+    expect(service.articoli).toHaveBeenCalledWith('pronto', 'A', 0);
+    const open = spyOn(window, 'open'); component.selection.select(9); component.condividi(component.gruppi[0]);
+    expect(decodeURIComponent(open.calls.mostRecent().args[0] as string)).not.toContain('Nota: null');
+  });
+
   afterEach(() => component.ngOnDestroy());
 
   it('raggruppa per venditore e ordine, ordinando le note più vecchie prima delle recenti e di quelle senza data', () => {

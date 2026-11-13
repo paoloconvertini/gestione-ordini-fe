@@ -1,5 +1,9 @@
 export class FiltroOrdini {
 
+  dashboardTipo: string = '';
+
+  daOrdinareConNote: boolean = false;
+
   filtroStatus: string = '';
 
   statusOrdine: any;

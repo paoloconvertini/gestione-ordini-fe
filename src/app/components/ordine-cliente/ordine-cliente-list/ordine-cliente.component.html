@@ -12,6 +12,10 @@
       Bolle
     </button>
     <div class="page-header-actions">
+      <a *ngIf="filtro.dashboardTipo" mat-stroked-button color="primary"
+         [routerLink]="filtro.dashboardTipo === 'note' ? ['/ordini-note-da-ordinare'] : ['/dashboard-articoli', filtro.dashboardTipo]" [queryParams]="{venditore: filtro.codVenditore}">
+        <mat-icon>view_list</mat-icon>Vista articoli
+      </a>
       <button mat-stroked-button routerLink="/dashboard"><mat-icon>arrow_back</mat-icon>Dashboard</button>
       <button class="" (click)="refreshPage()" mat-raised-button color="primary" aria-label="ordine">
         Aggiorna lista

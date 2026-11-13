@@ -79,6 +79,14 @@ describe('ArticoloComponent: navigazione di ritorno', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/ordini-note-da-ordinare'], {queryParams: {venditore: '11'}});
   });
 
+  it('torna alla vista articoli conservando tipo, venditore e pagina', () => {
+    route.snapshot.queryParamMap = new Map([['origine', 'dashboard-articoli'], ['tipo', 'pronto'], ['venditore', '11'], ['pagina', '2']]);
+    component.ordineDettaglio.userLock = 'Altro';
+    expect(component.ritornoDashboardArticoli).toBeTrue();
+    component.annulla('/dashboard-articoli');
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard-articoli', 'pronto'], {queryParams: {venditore: '11', pagina: '2'}});
+  });
+
   it('non esce dal dettaglio se lo sblocco non riesce', () => {
     service.annulla.and.returnValue(of({err: true})); component.ordineDettaglio.userLock = 'Test';
     component.annulla('/dashboard');
@@ -90,5 +98,20 @@ describe('ArticoloComponent: navigazione di ritorno', () => {
     component.annulla(); expect(router.navigate).toHaveBeenCalledWith(['/ordini-clienti'], {});
     component.annulla('/dashboard'); expect(router.navigate).toHaveBeenCalledWith(['/dashboard'], {});
     expect(service.annulla).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('ArticoloComponent: dati carico', () => {
+  it('considera assenti anche le stringhe NULL e gli spazi', () => {
+    for (const valore of [null, undefined, '', '   ', 'NULL', ' null ']) {
+      expect(ArticoloComponent.prototype.datoCaricoPresente(valore)).toBeFalse();
+    }
+  });
+
+  it('conserva i riferimenti validi, compresi quelli numerici', () => {
+    for (const valore of ['4619', 2024, 0, 'CF', 'TEST-GRAFICA']) {
+      expect(ArticoloComponent.prototype.datoCaricoPresente(valore)).toBeTrue();
+    }
   });
 });
