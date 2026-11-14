@@ -8,34 +8,53 @@
       <span *ngIf="filtro.statusOrdine==='COMPLETO'"> COMPLETO</span>
       <span *ngIf="filtro.statusOrdine==='ARCHIVIATO'"> ARCHIVIATO</span>
     </div>
-    <div class="col-lg-12 col-md-4 col-sm-12">
-      <button class="button-row" mat-raised-button color="primary"
-              (click)="annulla(ritornoDashboardArticoli ? '/dashboard-articoli' : daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
-        <mat-icon>arrow_back</mat-icon>{{ ritornoDashboardArticoli ? 'Torna agli articoli' : daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
-      </button>
-      <button class="button-row" *ngIf="perm.canCreaOrdineForn && filtro.statusOrdine === 'DA_ORDINARE'" mat-raised-button color="primary" (click)="creaOrdineForn()">
-        Crea Ordine a forn.
-      </button>
-      <button class="button-row" *ngIf="perm.canCaricaMagazzino" [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="caricaMagazzino()">
-        Carica Mag.
-      </button>
-      <button class="button-row" *ngIf="perm.canCodificaArticoli" mat-raised-button color="primary" (click)="codificaArticoli()">
-        Codifica art.
-      </button>
-      <button class="button-row" *ngIf="perm.canCreaFatturaAcconto" mat-raised-button color="primary" (click)="creaFatturaAcconto()">
-        Crea Fatt. Acconto
-      </button>
-      <button class="button-row" *ngIf="perm.canSelectBolla" [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()">
-        Crea Bolla
-      </button>
-      <button class="button-row" [disabled]="selection.isEmpty()" mat-raised-button color="primary" (click)="cercaSchedeTecniche()" >
-        Schede tecnica <mat-icon>download</mat-icon>
-      </button>
-      <button class="button-row" *ngIf="perm.canNoteLogistica"  (click)="aggiungiNoteLogistica(ordineDettaglio)" mat-raised-button
-              [matTooltip]="(ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL') ? ordineDettaglio.noteLogistica : ''" matTooltipClass="note">
-        <mat-icon aria-hidden="false" aria-label="firma" fontIcon="contact_phone" color="primary"
-                  [ngClass]="{'nota-logistica-presente':ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL'}" class="icon-detail logistica"></mat-icon>
-      </button>
+    <div class="col-12">
+      <nav class="ordine-toolbar" aria-label="Azioni ordine cliente">
+        <button class="button-row ritorno-ordine" mat-button color="primary"
+                (click)="annulla(ritornoDashboardArticoli ? '/dashboard-articoli' : daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
+          <mat-icon>arrow_back</mat-icon>{{ ritornoDashboardArticoli ? 'Torna agli articoli' : daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
+        </button>
+        <div class="azioni-ordine">
+          <button class="button-row" *ngIf="perm.canSelectBolla" [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()">
+            <mat-icon aria-hidden="true">local_shipping</mat-icon>Crea bolla
+          </button>
+          <button class="button-row" *ngIf="perm.canCaricaMagazzino" [disabled]="selection.isEmpty()" mat-stroked-button color="primary" [matMenuTriggerFor]="caricoOrdineMenu">
+            <mat-icon class="carico-icon" aria-hidden="true"><svg width="24" height="24" viewBox="-1 -1 26 26" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="5.5" cy="3.5" r="2" fill="currentColor" stroke="none" />
+              <path d="m5 7-1 6-2 8m2-8 4 3-1 5M5 7l4 4h2" stroke-width="2.4" />
+              <path d="m10 8 8 12 4-3" stroke-width="2" />
+              <path d="m14 9 4-2.5 4.5 6.5-4 2.5L14 9Z" fill="currentColor" stroke="none" />
+              <circle cx="15" cy="20.5" r="2.5" fill="none" stroke-width="1.8" />
+            </svg></mat-icon>Carica magazzino<span class="freccia-menu" aria-hidden="true">▾</span>
+          </button>
+          <mat-menu #caricoOrdineMenu="matMenu">
+            <button mat-menu-item (click)="caricaMagazzino()"><mat-icon>inventory_2</mat-icon>Carico ordinario</button>
+            <button mat-menu-item (click)="caricaMagazzinoInfissi()"><mat-icon>window</mat-icon>Carico infissi</button>
+          </mat-menu>
+          <button class="button-row" *ngIf="perm.canCodificaArticoli" mat-stroked-button color="primary" (click)="codificaArticoli()">
+            <mat-icon aria-hidden="true">qr_code_2</mat-icon>Codifica articoli
+          </button>
+          <button class="button-row" *ngIf="perm.canCreaFatturaAcconto" mat-stroked-button color="primary" (click)="creaFatturaAcconto()">
+            <mat-icon aria-hidden="true">receipt_long</mat-icon>Fattura d'acconto
+          </button>
+          <button class="button-row" mat-button [matMenuTriggerFor]="altreAzioniOrdineMenu">
+            <mat-icon aria-hidden="true">more_horiz</mat-icon>Altre azioni
+          </button>
+          <mat-menu #altreAzioniOrdineMenu="matMenu">
+            <button mat-menu-item *ngIf="perm.canCreaOrdineForn && filtro.statusOrdine === 'DA_ORDINARE'" (click)="creaOrdineForn()">
+              <mat-icon>add_shopping_cart</mat-icon>Crea ordine fornitore
+            </button>
+            <button mat-menu-item [disabled]="selection.isEmpty()" (click)="cercaSchedeTecniche()">
+              <mat-icon>download</mat-icon>Schede tecniche
+            </button>
+          </mat-menu>
+          <button class="button-row note-logistica-azione" *ngIf="perm.canNoteLogistica" mat-button (click)="aggiungiNoteLogistica(ordineDettaglio)"
+                  [matTooltip]="(ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL') ? ordineDettaglio.noteLogistica : ''" matTooltipClass="note">
+            <mat-icon [ngClass]="{'nota-logistica-presente': ordineDettaglio.noteLogistica && ordineDettaglio.noteLogistica !== 'NULL'}">contact_phone</mat-icon>Note logistica
+          </button>
+        </div>
+      </nav>
     </div>
   </div>
   <div class="row" >

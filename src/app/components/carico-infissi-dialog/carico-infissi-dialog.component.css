@@ -1,0 +1,14 @@
+.introduzione { line-height: 1.6; margin-bottom: 24px; }
+.campi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; }
+.errore { color: #b3261e; padding: 12px; background: #fff1f0; border-radius: 4px; }
+.anteprima { margin-top: 16px; }
+.tabella { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+.numero { text-align: right; white-space: nowrap; }
+tfoot { background: #f5f7f8; }
+.nota { color: #64717a; line-height: 1.5; margin-top: 16px; }
+@media (max-width: 700px) { .campi { grid-template-columns: 1fr; } }
+
+.campi mat-form-field { width: 100%; min-width: 0; }
+:host ::ng-deep .campi .mdc-floating-label { white-space: nowrap !important; }

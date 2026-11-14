@@ -1,3 +1,4 @@
+import {CaricoInfissiDialogComponent} from '../../carico-infissi-dialog/carico-infissi-dialog.component';
 import {Component, Input, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {MatDialog} from "@angular/material/dialog";
@@ -838,6 +839,23 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     articolo.flProntoConsegna = false;
     articolo.qtaRiservata = undefined;
     articolo.qtaProntoConsegna = undefined;
+  }
+
+  caricaMagazzinoInfissi(): void {
+    const articoli = this.selection.selected;
+    if (articoli.some(a => !a.progrGenerale || !a.quantita || a.quantita <= 0 || a.tipoRigo === 'C'
+      || a.tipoRigo === 'AC' || ['*PZ', '*MQ', '*ML'].includes(a.farticolo))) {
+      this.snackbar.open('Seleziona soltanto articoli codificati con quantità positiva.', 'Chiudi', {duration: 5000});
+      return;
+    }
+    this.dialog.open(CaricoInfissiDialogComponent, {
+      width: '1000px', maxWidth: '95vw', data: articoli.map(a => ({progrGenerale: a.progrGenerale, quantita: a.quantita}))
+    }).afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(res => {
+      if (res && !res.error) {
+        this.selection.clear();
+        this.snackbar.open(res.msg, 'Chiudi', {horizontalPosition: 'center', verticalPosition: 'top'});
+      }
+    });
   }
 
   caricaMagazzino() {

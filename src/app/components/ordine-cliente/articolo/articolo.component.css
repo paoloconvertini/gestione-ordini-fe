@@ -249,3 +249,34 @@ mat-card-content {
 .codice-fornitore-vuoto { border-style: dashed; }
 .codice-fornitore-button:hover { background: #e8f0f3; border-color: #285c68; }
 .codice-fornitore-button:focus-visible { outline: 2px solid #285c68; outline-offset: 2px; }
+
+.button-row .mat-icon.carico-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.carico-icon svg { display: block; width: 100%; height: 100%; }
+
+.ordine-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding: 16px 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e3e8eb;
+}
+.azioni-ordine { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.ordine-toolbar .button-row { margin: 0; white-space: nowrap; }
+.ordine-toolbar .ritorno-ordine { margin-right: auto; }
+.freccia-menu { margin-left: 8px; font-size: 12px; }
+.ordine-toolbar .note-logistica-azione { color: #536572; }
+@media (max-width: 767px) {
+  .ordine-toolbar { gap: 12px; }
+  .azioni-ordine { width: 100%; }
+}

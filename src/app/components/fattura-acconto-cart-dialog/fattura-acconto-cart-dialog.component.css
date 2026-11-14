@@ -1,39 +1,50 @@
-.main-content {
-  display: flex;
-  gap: 10px;
+:host { display: flex; flex-direction: column; max-height: inherit; min-width: 0; color: #243746; }
+.riepilogo-header { flex-shrink: 0; padding: 24px 28px 20px; border-bottom: 1px solid #e2e8ec; }
+.riepilogo-header h2 { margin: 0; padding: 0; font-size: 23px; font-weight: 600; }
+.riepilogo-header p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 8px 0 0; overflow-wrap: anywhere; }
+.riepilogo-header p span { color: #6c7c88; font-size: 13px; }
+.main-content { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; min-height: 0; padding: 24px 28px; background: #fafbfc; }
+.pannello { min-width: 0; align-self: start; border: 1px solid #e0e7eb; border-radius: 8px; background: white; }
+.pannello-header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #e8edf0; }
+h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.conteggio { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; background: #eaf1f4; color: #285c68; font-size: 12px; font-weight: 600; }
+.acconto-selezionato { padding: 12px 16px 16px; }
+.acconto-selezionato + .acconto-selezionato { border-top: 1px solid #e8edf0; }
+.acconto-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.acconto-header > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; overflow-wrap: anywhere; }
+.acconto-header strong { font-size: 14px; font-weight: 600; }
+.aliquota-acconto { font-size: 12px; color: #6c7c88; }
+.rimuovi-acconto { flex-shrink: 0; color: #6c7c88; }
+.rimuovi-acconto:hover { color: #b3261e; }
+.importi-riga { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin: 12px 0 0; }
+.importi-riga dt { font-size: 12px; font-weight: 400; color: #6c7c88; }
+.importi-riga dd { margin: 4px 0 0; font-size: 14px; overflow-wrap: anywhere; }
+.importo-ivato { font-weight: 600; }
+.totale-carrello { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 20px; background: #edf5f6; border-radius: 0 0 8px 8px; }
+.totale-carrello > span { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 500; }
+.totale-carrello small { font-size: 12px; font-weight: 400; color: #617582; }
+.totale-carrello strong { font-size: 25px; color: #205d69; }
+.documenti-cliente { padding: 16px; min-width: 0; }
+.vuoto { padding: 16px; margin: 0; color: #6c7c88; line-height: 1.6; }
+.riepilogo-footer { flex-shrink: 0; display: flex; justify-content: flex-end; gap: 8px; padding: 16px 28px; border-top: 1px solid #e2e8ec; background: white; }
+@media (max-width: 1200px) { .main-content { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) {
+  .riepilogo-header { padding: 20px 16px; }
+  .main-content { padding: 20px 16px; gap: 16px; }
+  .riepilogo-footer { padding: 16px; }
+  .riepilogo-header h2 { font-size: 20px; }
 }
 
-.left-panel {
-  flex: 1;
+/* Lo storico usa l'altezza naturale: scorre verticalmente solo il corpo della modale. */
+:host ::ng-deep .documenti-cliente app-fido-cliente > .row { margin: 0; }
+:host ::ng-deep .documenti-cliente app-fido-cliente > .row > div { padding: 0; min-width: 0; }
+:host ::ng-deep .documenti-cliente .acconti-container {
+  max-height: none;
+  padding: 0;
+  margin: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  box-shadow: none;
 }
-
-.right-panel {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.totale-row td {
-  border-top: 2px solid #444; /* separazione forte */
-  padding: 8px 10px;
-}
-
-.etichetta-totale {
-  text-align: right;
-  font-weight: bold;
-  background-color: #fafafa; /* leggero contrasto */
-}
-
-.totale-ivato {
-  font-weight: bold;
-  text-align: right;
-  background-color: #f0f0f0; /* più evidenziato */
-  color: #222;
-  font-size: 1.05em;
-}
-
-.importo {
-  text-align: right;
-  padding-right: 8px;
-}
+:host ::ng-deep .documenti-cliente .table th,
+:host ::ng-deep .documenti-cliente .table td { padding: 8px 6px; }

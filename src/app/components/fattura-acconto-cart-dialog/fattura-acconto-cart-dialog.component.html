@@ -1,40 +1,39 @@
-<h1 mat-dialog-title>Riepilogo acconti di <b>{{intestazione}} - {{sottoConto}}</b> </h1>
+<header class="riepilogo-header">
+  <h2 mat-dialog-title>Riepilogo acconti</h2>
+  <p><strong>{{intestazione}}</strong><span>Cliente {{sottoConto}}</span></p>
+</header>
 <div mat-dialog-content class="main-content">
-  <div class="left-panel">
-    <table class="table">
-      <thead>
-      <tr>
-        <td>Ordine n.</td>
-        <td>Iva</td>
-        <td>Imponibile</td>
-        <td>Importo</td>
-        <td></td>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let acconto of acconti; let i = index">
-        <td>{{acconto.anno}}/{{acconto.serie}}/{{acconto.progressivo}}</td>
-        <td>{{acconto.iva}}%</td>
-        <td class="importo">{{acconto.nuovoAcconto | currency: 'EUR':'symbol'}}</td>
-        <td class="importo">{{acconto.nuovoAccontoIvato  | currency: 'EUR':'symbol'}}</td>
-        <td>
-          <button mat-icon-button (click)="rimuovi(i)">
-            <mat-icon>close</mat-icon>
-          </button>
-        </td>
-      </tr>
-      <tr class="totale-row">
-        <td colspan="3" class="etichetta-totale">Totale</td>
-        <td class="totale-ivato">{{totaleIvato | currency: 'EUR':'symbol'}}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="right-panel">
-    <app-fido-cliente [contoCliente]="sottoConto" [mostraSituazioneCliente]="false"></app-fido-cliente>
-  </div>
+  <section class="pannello pannello-acconti" aria-labelledby="acconti-selezionati-title">
+    <div class="pannello-header">
+      <h3 id="acconti-selezionati-title">Acconti selezionati</h3>
+      <span class="conteggio">{{acconti.length}}</span>
+    </div>
+    <div class="elenco-acconti">
+      <article class="acconto-selezionato" *ngFor="let acconto of acconti; let i = index">
+        <div class="acconto-header">
+          <div><strong>{{acconto.anno}}/{{acconto.serie}}/{{acconto.progressivo}}</strong><span class="aliquota-acconto">IVA {{acconto.iva}}%</span></div>
+          <button mat-icon-button class="rimuovi-acconto" (click)="rimuovi(i)" matTooltip="Rimuovi acconto" [attr.aria-label]="'Rimuovi acconto ordine ' + acconto.anno + '/' + acconto.serie + '/' + acconto.progressivo"><mat-icon>delete_outline</mat-icon></button>
+        </div>
+        <dl class="importi-riga">
+          <div><dt>Imponibile</dt><dd>{{acconto.nuovoAcconto | currency:'EUR':'symbol':'1.2-2'}}</dd></div>
+          <div><dt>IVA inclusa</dt><dd class="importo-ivato">{{acconto.nuovoAccontoIvato | currency:'EUR':'symbol':'1.2-2'}}</dd></div>
+        </dl>
+      </article>
+      <p *ngIf="!acconti.length" class="vuoto">Nessun acconto selezionato. Torna alla selezione per aggiungerne uno.</p>
+    </div>
+    <div class="totale-carrello">
+      <span>Totale acconti <small>IVA inclusa</small></span>
+      <strong>{{totaleIvato | currency:'EUR':'symbol':'1.2-2'}}</strong>
+    </div>
+  </section>
+  <section class="pannello pannello-cliente" aria-labelledby="documenti-cliente-title">
+    <div class="pannello-header"><h3 id="documenti-cliente-title">Acconti e documenti del cliente</h3></div>
+    <div class="documenti-cliente">
+      <app-fido-cliente [contoCliente]="sottoConto" [mostraSituazioneCliente]="false"></app-fido-cliente>
+    </div>
+  </section>
 </div>
-<div mat-dialog-actions>
-  <button mat-button mat-dialog-close>Chiudi</button>
-  <button mat-button (click)="conferma()">Conferma</button>
+<div mat-dialog-actions class="riepilogo-footer">
+  <button mat-button mat-dialog-close><mat-icon>arrow_back</mat-icon>Torna alla selezione</button>
+  <button mat-raised-button color="primary" (click)="conferma()"><mat-icon>check</mat-icon>Conferma</button>
 </div>

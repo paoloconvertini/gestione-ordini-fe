@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Carico magazzino infissi</h2>
+<mat-dialog-content>
+  <p class="introduzione">Inserisci i dati del DDT e il totale esclusa IVA. L'importo viene ripartito sulle quantità degli articoli selezionati.</p>
+  <form [formGroup]="form" class="campi">
+    <mat-form-field appearance="outline" floatLabel="always"><mat-label>Numero DDT</mat-label><input matInput formControlName="numDoc" maxlength="15"><mat-error>Inserisci il numero DDT (massimo 15 caratteri)</mat-error></mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always"><mat-label>Data documento</mat-label><input matInput [matDatepicker]="documento" formControlName="dataDocumento"><mat-datepicker-toggle matIconSuffix [for]="documento"></mat-datepicker-toggle><mat-datepicker #documento></mat-datepicker></mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always"><mat-label>Data operazione</mat-label><input matInput [matDatepicker]="operazione" formControlName="dataOperazione"><mat-datepicker-toggle matIconSuffix [for]="operazione"></mat-datepicker-toggle><mat-datepicker #operazione></mat-datepicker></mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always"><mat-label>Vettore</mat-label><mat-select formControlName="vettore"><mat-option *ngFor="let v of vettori" [value]="v.id">{{v.id}} - {{v.nome}}</mat-option></mat-select></mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always"><mat-label>Causale</mat-label><mat-select formControlName="causale"><mat-option *ngFor="let c of causali" [value]="c.id">{{c.id}} - {{c.nome}}</mat-option></mat-select></mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always"><mat-label>Totale esclusa IVA</mat-label><input matInput type="number" min="0.01" step="0.01" formControlName="totaleImponibile"><span matTextSuffix>€</span><mat-error>Inserisci un importo positivo con massimo due decimali</mat-error></mat-form-field>
+  </form>
+  <p *ngIf="caricamento || calcolo" role="status">{{caricamento ? 'Caricamento dati…' : 'Calcolo ripartizione…'}}</p>
+  <p class="errore" *ngIf="errore" role="alert">{{errore}}</p>
+  <section *ngIf="anteprima as a" class="anteprima">
+    <h3>Ripartizione del carico</h3>
+    <p>Quantità totale: <strong>{{a.quantitaTotale | number:'1.0-4'}}</strong> · Costo unitario medio: <strong>{{a.costoUnitario | number:'1.2-8'}} €</strong></p>
+    <div class="tabella"><table><thead><tr><th>Riga / articolo</th><th class="numero">Quantità</th><th class="numero">Imponibile</th></tr></thead>
+      <tbody><tr *ngFor="let r of a.righe"><td><strong>{{r.rigo}} · {{r.articolo}}</strong><br>{{r.descrizione}}</td><td class="numero">{{r.quantita | number:'1.0-4'}}</td><td class="numero">{{r.imponibile | currency:'EUR'}}</td></tr></tbody>
+      <tfoot><tr><th colspan="2">Totale esclusa IVA</th><th class="numero">{{a.totaleImponibile | currency:'EUR'}}</th></tr></tfoot>
+    </table></div>
+    <p class="nota">Gli eventuali centesimi residui sono distribuiti tra le righe. La somma coincide con il totale inserito. Verranno caricate le quantità intere delle righe selezionate.</p>
+  </section>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="chiudi()" [disabled]="salvataggio"><mat-icon aria-hidden="true">close</mat-icon>Annulla</button>
+  <button mat-stroked-button color="primary" (click)="calcola()" [disabled]="form.invalid || caricamento || calcolo || salvataggio"><mat-icon aria-hidden="true">calculate</mat-icon>Calcola ripartizione</button>
+  <button mat-raised-button color="primary" (click)="salva()" [disabled]="!anteprima || form.invalid || calcolo || salvataggio"><mat-icon aria-hidden="true">inventory_2</mat-icon>{{salvataggio ? 'Registrazione…' : 'Conferma carico'}}</button>
+</mat-dialog-actions>

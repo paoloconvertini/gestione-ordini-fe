@@ -1,3 +1,4 @@
+import {CaricoInfissiDialogComponent} from './components/carico-infissi-dialog/carico-infissi-dialog.component';
 import {OrdiniNoteDaOrdinareComponent} from './components/ordini-note-da-ordinare/ordini-note-da-ordinare.component';
 import { StoricoPrezziDialogComponent } from './components/prezzi-articoli/storico-prezzi-dialog.component';
 import {ConsegnaLiberaDialogComponent} from './components/consegna-libera-dialog/consegna-libera-dialog.component';
@@ -182,6 +183,7 @@ export const DateFormats = {
     ConsegneSettimanaliComponent,
     ConsegneSettimanaliDettaglioDialogComponent,
     CaricoMagazzinoDialogComponent,
+    CaricoInfissiDialogComponent,
     FatturaAccontoDialogComponent,
     FatturaAccontoCartDialogComponent,
     AccontiNonValidatiDialogComponent,
