@@ -457,3 +457,6 @@ table.table-container { overflow: visible; }
 .mat-mdc-dialog-container .mdc-dialog__surface { overflow-x: hidden; }
 .mat-mdc-dialog-container .container { max-width: 100%; }
 .mat-mdc-dialog-content { min-width: 0; box-sizing: border-box; }
+
+/* La shell gestisce lo scroll del contenuto, senza una seconda pagina esterna. */
+app-root { display: block; min-height: 100%; }

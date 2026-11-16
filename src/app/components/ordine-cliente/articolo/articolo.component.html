@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid dettaglio-articoli" [class.pagina-estesa]="showAcconti">
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 ordine-title">
       DETTAGLIO ORDINE
@@ -168,8 +168,8 @@
       </mat-checkbox>
     </div>
   </div>
-  <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12">
+  <div class="row articoli-tabella-row">
+    <div class="col-lg-12 col-md-12 col-sm-12 articoli-tabella-col">
       <section class="example-container mat-elevation-z8" tabindex="0">
         <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
         <table class="table-container" *ngIf="!loader" mat-table multiTemplateDataRows [dataSource]="dataSource">
@@ -526,7 +526,7 @@
       </section>
     </div>
   </div>
-  <div class="row float-end">
+  <div class="row azioni-salvataggio">
     <div class="col-lg-12 col-md-12 col-sm-12">
       <button mat-raised-button color="primary" [disabled]="ordineDettaglio.locked"
               *ngIf="filtro.statusOrdine !== 'ARCHIVIATO' && perm.canSalvaArticoli"

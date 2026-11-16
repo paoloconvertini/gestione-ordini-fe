@@ -13,7 +13,8 @@
   margin: 0 auto;
   position: relative;
   overflow: auto;
-  height: calc(100vh - 320px);
+  height: 100%;
+  min-height: 0;
 }
 
 .padding-right {
@@ -279,4 +280,27 @@ mat-card-content {
 @media (max-width: 767px) {
   .ordine-toolbar { gap: 12px; }
   .azioni-ordine { width: 100%; }
+}
+
+:host { display: block; height: 100%; min-height: 0; }
+.dettaglio-articoli { display: flex; flex-direction: column; height: 100%; padding-bottom: 12px; box-sizing: border-box; }
+.dettaglio-articoli > .row { flex-shrink: 0; }
+.dettaglio-articoli > .articoli-tabella-row { flex: 1 1 0; min-height: 0; }
+.articoli-tabella-col { height: 100%; min-height: 0; }
+.azioni-salvataggio { text-align: right; }
+.dettaglio-articoli.pagina-estesa { height: auto; min-height: 100%; }
+.pagina-estesa > .articoli-tabella-row { flex: none; }
+.pagina-estesa .articoli-tabella-col, .pagina-estesa .example-container { height: auto; }
+@media (max-width: 900px), (max-height: 800px) {
+  :host { height: auto; min-height: 100%; }
+  .dettaglio-articoli { height: auto; min-height: 100%; }
+  .dettaglio-articoli > .articoli-tabella-row { flex: none; }
+  .articoli-tabella-col, .example-container { height: auto; }
+}
+
+/* Con gli acconti aperti lo scroll verticale resta alla pagina, non al pannello interno. */
+:host ::ng-deep .dettaglio-articoli.pagina-estesa app-fido-cliente .scrollable {
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
 }
