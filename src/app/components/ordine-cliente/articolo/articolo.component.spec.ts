@@ -25,6 +25,15 @@ describe('ArticoloComponent: ingresso da codificare', () => {
     });
   }
 
+  it('riconosce le righe di pagamento per mostrare percentuali anche sui commenti', () => {
+    const component = crea(false, 'COMPLETO');
+    expect(component.rigaPagamento({farticolo: '*ACCONTO', tipoRigo: 'C'})).toBeTrue();
+    expect(component.rigaPagamento({farticolo: '*SALDO ', tipoRigo: 'C'})).toBeTrue();
+    expect(component.rigaPagamento({farticolo: '*MODCONS', tipoRigo: 'C'})).toBeFalse();
+    expect(component.rigaPagamento({farticolo: 'ARTICOLO', tipoRigo: ' '})).toBeFalse();
+    component.ngOnDestroy();
+  });
+
   it('conserva il filtro automatico quando non arriva dalla lista da codificare', () => {
     const component = crea(false, 'DA_ORDINARE');
     component.ngOnInit();
@@ -77,6 +86,17 @@ describe('ArticoloComponent: navigazione di ritorno', () => {
     expect(router.navigate).not.toHaveBeenCalled();
     risposta.next({err: false});
     expect(router.navigate).toHaveBeenCalledWith(['/ordini-note-da-ordinare'], {queryParams: {venditore: '11'}});
+  });
+
+  it('torna alle scadenze mantenendo venditore e stato dopo lo sblocco', () => {
+    route.snapshot.queryParamMap = new Map([['origine', 'pagamenti'], ['venditore', '11'], ['statoPagamento', 'ANOMALIA']]);
+    const risposta = new Subject<any>(); service.annulla.and.returnValue(risposta);
+    component.ordineDettaglio.userLock = 'Test';
+    expect(component.ritornoPagamenti).toBeTrue();
+    component.annulla('/modalita-pagamento');
+    expect(router.navigate).not.toHaveBeenCalled();
+    risposta.next({err: false});
+    expect(router.navigate).toHaveBeenCalledWith(['/modalita-pagamento'], {queryParams: {venditore: '11', stato: 'ANOMALIA'}});
   });
 
   it('torna alla vista articoli conservando tipo, venditore e pagina', () => {

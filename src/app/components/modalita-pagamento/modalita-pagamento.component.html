@@ -1,0 +1,60 @@
+<main class="pagamenti-page">
+  <header>
+    <div><p class="eyebrow">CONDIZIONI DI PAGAMENTO</p><h1>{{filtroStato === 'DA_FATTURARE' ? 'Da fatturare oggi' : 'Acconti e saldi'}}</h1>
+      <p *ngIf="filtroStato === 'DA_FATTURARE'">{{oggi}} · Acconti e saldi da fatturare, arretrati compresi.</p>
+      <p *ngIf="filtroStato !== 'DA_FATTURARE'">Condizioni di pagamento, raggruppate per venditore e ordine.</p></div>
+    <div class="azioni">
+      <button mat-stroked-button routerLink="/dashboard"><mat-icon>arrow_back</mat-icon>Dashboard</button>
+      <button mat-stroked-button [disabled]="loading" (click)="carica()"><mat-icon>refresh</mat-icon>Aggiorna lista</button>
+    </div>
+  </header>
+  <p class="ultimo-controllo">Risultati dell’ultima verifica delle condizioni di pagamento.
+    <span *ngIf="ultimoControllo">Ultima verifica: {{ultimoControllo | date:'dd/MM/yyyy HH:mm'}}.</span>
+  </p>
+  <div class="filtri">
+    <mat-form-field appearance="outline"><mat-label>Venditore</mat-label>
+      <mat-select [(ngModel)]="filtroVenditore" (selectionChange)="raggruppa()">
+        <mat-option value="">Tutti</mat-option>
+        <mat-option *ngFor="let v of venditori" [value]="v.codice">{{v.nome}} ({{v.codice}})</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Mostra</mat-label>
+      <mat-select [(ngModel)]="filtroStato" (selectionChange)="raggruppa()">
+        <mat-option value="DA_FATTURARE">Da fatturare oggi</mat-option>
+        <mat-option value="ANOMALIA">Anomalie</mat-option>
+        <mat-option value="PROGRAMMATO">Programmati</mat-option>
+        <mat-option value="AL_PRONTO">Saldo al pronto</mat-option>
+        <mat-option value="EMESSO">Già emessi</mat-option>
+        <mat-option value="TUTTI">Tutte le scadenze</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <p *ngIf="erroreVenditori" role="status">Nomi venditori non disponibili: restano visibili i codici.</p>
+  <p *ngIf="loading" role="status">Caricamento…</p>
+  <p *ngIf="errore" class="errore" role="alert">{{errore}}</p>
+  <p *ngIf="!loading && !errore && !gruppi.length" class="vuoto">{{filtroStato === 'DA_FATTURARE' ? 'Nessun ordine da fatturare oggi.' : 'Nessuna scadenza per i filtri selezionati.'}}</p>
+  <section *ngFor="let gruppo of gruppi" class="venditore" [attr.aria-busy]="loading">
+    <h2>{{gruppo.nome}} <small>{{gruppo.codice}}</small></h2>
+    <article *ngFor="let ordine of gruppo.ordini" class="ordine">
+      <div class="ordine-header">
+        <div><h3>Ordine {{ordine.chiave}}</h3><span>{{ordine.righe[0].cliente}}</span></div>
+        <a mat-stroked-button color="primary"
+           [routerLink]="['/articoli/view', ordine.righe[0].anno, ordine.righe[0].serie, ordine.righe[0].progressivo]"
+           [queryParams]="{origine: 'pagamenti', venditore: filtroVenditore, statoPagamento: filtroStato}"
+           (click)="preparaOrdine(ordine.righe[0])"><mat-icon>open_in_new</mat-icon>Apri ordine</a>
+      </div>
+      <div *ngFor="let r of ordine.righe" class="scadenza" [class.anomala]="r.stato === 'ANOMALIA'">
+        <div class="scadenza-header"><strong>{{r.articolo === '*ACCONTO' ? 'Acconto' : 'Saldo'}} · {{r.percentuale | number:'1.0-4'}}%</strong>
+          <span class="stato" [class.da-fatturare]="r.stato === 'DA_FATTURARE'">{{stati[r.stato]}}</span></div>
+        <p>{{r.descrizioneScritta}}</p>
+        <div class="dati">
+          <span><small>Da fatturare dal</small><strong>{{r.dataScadenza ? (r.dataScadenza | date:'dd/MM/yyyy') : 'Al completamento ordine'}}</strong></span>
+          <span><small>Imponibile previsto</small><strong>{{r.importoPrevisto | currency:'EUR'}}</strong></span>
+          <span *ngIf="r.stato === 'EMESSO'"><small>Quota prevista coperta</small><strong>{{r.importoFatturato | currency:'EUR'}}</strong></span>
+        </div>
+        <p *ngIf="r.anomalia" class="anomalia"><mat-icon aria-hidden="true">warning_amber</mat-icon>{{r.anomalia}}</p>
+        <p *ngIf="r.fatture" class="fatture"><strong>Fatture trovate nell’ordine:</strong> {{r.fatture}}</p>
+      </div>
+    </article>
+  </section>
+</main>

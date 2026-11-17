@@ -37,6 +37,11 @@ export class AuthGuard implements CanActivate {
     // 2️⃣ CHECK PERMESSO SU ROUTE (opzionale)
     // route.data = { permission: 'ordine.modifica' }
     // ----------------------------------------------------
+    const requiredRole = route.data['role'];
+    if (requiredRole && !this.auth.hasRole(requiredRole)) {
+      return this.router.parseUrl('/dashboard');
+    }
+
     const requiredPerm = route.data['permission'];
 
     if (requiredPerm && !this.auth.hasPerm(requiredPerm)) {

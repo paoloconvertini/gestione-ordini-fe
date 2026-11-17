@@ -16,6 +16,13 @@
     <div *ngIf="loading" class="loading" role="status"><mat-spinner diameter="28"></mat-spinner> Caricamento dei contatori…</div>
     <div *ngIf="error" class="error" role="alert">Non è stato possibile caricare i contatori. <button mat-button (click)="load()">Riprova</button></div>
     <div class="counter-grid" *ngIf="data as counters">
+      <button class="counter-card amber" *ngIf="counters.fattureDaEmettere != null" routerLink="/modalita-pagamento">
+        <span class="counter-top"><span class="counter-icon"><mat-icon>request_quote</mat-icon></span><mat-icon>north_east</mat-icon></span>
+        <strong>{{ counters.fattureDaEmettere | number }}</strong><h3>Da fatturare oggi</h3>
+        <p>Ordini clienti da fatturare, arretrati compresi.</p>
+        <p *ngIf="counters.anomaliePagamento">{{ counters.anomaliePagamento }} ordini con anomalie da verificare</p>
+        <span class="counter-link">Apri gli ordini da fatturare <mat-icon>arrow_forward</mat-icon></span>
+      </button>
       <button class="counter-card amber" *ngIf="counters.daOrdinare != null" (click)="openOrders('ordinare')">
         <span class="counter-top"><span class="counter-icon"><mat-icon>shopping_cart</mat-icon></span><mat-icon>north_east</mat-icon></span>
         <strong>{{ counters.daOrdinare | number }}</strong><h3>Da ordinare</h3>

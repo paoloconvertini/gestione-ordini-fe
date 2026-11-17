@@ -1,3 +1,4 @@
+import {ModalitaPagamentoComponent} from './components/modalita-pagamento/modalita-pagamento.component';
 import {UnioneOafDialogComponent} from './components/unione-oaf-dialog/unione-oaf-dialog.component';
 import {CaricoInfissiDialogComponent} from './components/carico-infissi-dialog/carico-infissi-dialog.component';
 import {OrdiniNoteDaOrdinareComponent} from './components/ordini-note-da-ordinare/ordini-note-da-ordinare.component';
@@ -148,6 +149,7 @@ export const DateFormats = {
 
 @NgModule({
   declarations: [
+    ModalitaPagamentoComponent,
     OrdiniNoteDaOrdinareComponent,
     AppComponent,
     DashboardComponent, LoginComponent, NavigationComponent, OrdineClienteComponent,

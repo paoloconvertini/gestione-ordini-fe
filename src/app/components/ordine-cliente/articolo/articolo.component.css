@@ -304,3 +304,12 @@ mat-card-content {
   overflow-x: auto;
   overflow-y: visible;
 }
+
+.percentuale-pagamento {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #edf4f5;
+  color: #405e69;
+  white-space: nowrap;
+}

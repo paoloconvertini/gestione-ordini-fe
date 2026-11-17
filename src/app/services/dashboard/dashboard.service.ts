@@ -1,3 +1,4 @@
+import {PagamentoOrdine} from '../../models/pagamento-ordine';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -13,6 +14,9 @@ export interface DashboardCarico {
 }
 
 export interface Dashboard {
+  fattureDaEmettere?: number | null;
+  anomaliePagamento?: number | null;
+  controlloPagamenti?: string | null;
   ordiniAttivi: number | null;
   daCodificare: number | null;
   daOrdinare: number | null;
@@ -52,6 +56,10 @@ export class DashboardService {
   articoli(tipo: string, venditore: string, pagina: number): Observable<{righe: OrdineNotaDaOrdinare[]; totaleOrdini: number}> {
     const params = new HttpParams().set('venditore', venditore).set('pagina', pagina);
     return this.http.get<{righe: OrdineNotaDaOrdinare[]; totaleOrdini: number}>(environment.baseUrl + 'dashboard/articoli/' + tipo, {params});
+  }
+
+  pagamenti(): Observable<PagamentoOrdine[]> {
+    return this.http.get<PagamentoOrdine[]>(environment.baseUrl + 'dashboard/pagamenti');
   }
 
   get(): Observable<Dashboard> {

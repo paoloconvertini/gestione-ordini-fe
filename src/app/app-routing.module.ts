@@ -1,3 +1,4 @@
+import {ModalitaPagamentoComponent} from './components/modalita-pagamento/modalita-pagamento.component';
 import {OrdiniNoteDaOrdinareComponent} from './components/ordini-note-da-ordinare/ordini-note-da-ordinare.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -37,6 +38,7 @@ import { PrezziArticoliComponent } from './components/prezzi-articoli/prezzi-art
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
+  {path: 'modalita-pagamento', canActivate: [AuthGuard], data: {role: 'Admin'}, component: ModalitaPagamentoComponent},
   {path: 'dashboard-articoli/:tipo', canActivate: [AuthGuard], data: {permission: 'ordini_clienti.view'}, component: OrdiniNoteDaOrdinareComponent},
   {path: 'ordini-note-da-ordinare', canActivate: [AuthGuard], data: {permission: 'ordini_clienti.view'}, component: OrdiniNoteDaOrdinareComponent},
   { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },

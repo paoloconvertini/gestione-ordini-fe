@@ -478,6 +478,14 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
       });
   }
 
+  rigaPagamento(articolo: any): boolean {
+    return ['*ACCONTO', '*SALDO'].includes((articolo.farticolo || '').trim().toUpperCase());
+  }
+
+  get ritornoPagamenti(): boolean {
+    return this.route.snapshot.queryParamMap.get('origine') === 'pagamenti';
+  }
+
   get daNoteDaOrdinare(): boolean {
     return ['note-da-ordinare', 'dashboard-articoli'].includes(this.route.snapshot.queryParamMap.get('origine') || '');
   }
@@ -486,10 +494,13 @@ export class ArticoloComponent extends CommonListComponent implements OnInit {
     return this.route.snapshot.queryParamMap.get('origine') === 'dashboard-articoli';
   }
 
-  annulla(destinazione: '/ordini-clienti' | '/dashboard' | '/ordini-note-da-ordinare' | '/dashboard-articoli' = '/ordini-clienti') {
+  annulla(destinazione: '/ordini-clienti' | '/dashboard' | '/ordini-note-da-ordinare' | '/dashboard-articoli' | '/modalita-pagamento' = '/ordini-clienti') {
     const percorso = destinazione === '/dashboard-articoli'
       ? [destinazione, this.route.snapshot.queryParamMap.get('tipo')] : [destinazione];
-    const extras = destinazione === '/dashboard-articoli'
+    const extras = destinazione === '/modalita-pagamento'
+      ? {queryParams: {venditore: this.route.snapshot.queryParamMap.get('venditore') || null,
+          stato: this.route.snapshot.queryParamMap.get('statoPagamento') || 'DA_FATTURARE'}}
+      : destinazione === '/dashboard-articoli'
       ? {queryParams: {venditore: this.route.snapshot.queryParamMap.get('venditore') || null,
           pagina: this.route.snapshot.queryParamMap.get('pagina') || 0}}
       : destinazione === '/ordini-note-da-ordinare'

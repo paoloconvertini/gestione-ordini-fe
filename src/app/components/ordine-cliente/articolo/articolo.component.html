@@ -11,8 +11,8 @@
     <div class="col-12">
       <nav class="ordine-toolbar" aria-label="Azioni ordine cliente">
         <button class="button-row ritorno-ordine" mat-button color="primary"
-                (click)="annulla(ritornoDashboardArticoli ? '/dashboard-articoli' : daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
-          <mat-icon>arrow_back</mat-icon>{{ ritornoDashboardArticoli ? 'Torna agli articoli' : daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
+                (click)="annulla(ritornoPagamenti ? '/modalita-pagamento' : ritornoDashboardArticoli ? '/dashboard-articoli' : daNoteDaOrdinare ? '/ordini-note-da-ordinare' : '/ordini-clienti')">
+          <mat-icon>arrow_back</mat-icon>{{ ritornoPagamenti ? 'Torna alle scadenze' : ritornoDashboardArticoli ? 'Torna agli articoli' : daNoteDaOrdinare ? 'Torna agli articoli con note' : 'Indietro' }}
         </button>
         <div class="azioni-ordine">
           <button class="button-row" *ngIf="perm.canSelectBolla" [disabled]="selection.isEmpty() || disabilitaBolla" mat-raised-button color="primary" (click)="cercaAltriOrdini()">
@@ -256,6 +256,9 @@
           <ng-container matColumnDef="quantita">
             <th mat-header-cell *matHeaderCellDef>Qtà<br>(da conseg.)</th>
             <td mat-cell *matCellDef="let articolo">
+              <strong *ngIf="rigaPagamento(articolo); else quantitaMateriale" class="percentuale-pagamento"
+                      matTooltip="Percentuale di pagamento">{{articolo.quantita | number:'1.0-4'}}%</strong>
+              <ng-template #quantitaMateriale>
             <span *ngIf="articolo.tipoRigo !=='C' && articolo.tipoRigo !=='AC'"
               [ngClass]="{'editable-field': perm.canEditQuantita && filtro.statusOrdine !== 'ARCHIVIATO'}"
                   (click)="perm.canEditQuantita && filtro.statusOrdine !== 'ARCHIVIATO'
@@ -264,6 +267,7 @@
             </span>
               &nbsp;{{articolo.funitaMisura}}
               <span *ngIf="articolo.flBolla">&nbsp;({{articolo.qtaDaConsegnare | number : '1.2-2'}})</span>
+              </ng-template>
             </td>
           </ng-container>
           <!-- Name Column -->

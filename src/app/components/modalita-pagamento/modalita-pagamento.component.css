@@ -1,0 +1,34 @@
+.pagamenti-page { max-width: 1400px; margin: auto; padding: 28px; color: #263e49; }
+header, .ordine-header, .scadenza-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+header { flex-wrap: wrap; }
+h1 { margin: 4px 0 8px; font-size: 28px; }
+h2 { font-size: 20px; } h2 small { color: #627580; margin-left: 8px; }
+h3 { margin: 0 0 6px; font-size: 17px; }
+p { margin: 8px 0; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: #607d8b; }
+.azioni, .filtri { display: flex; flex-wrap: wrap; gap: 12px; }
+.filtri { margin-top: 24px; }
+.filtri mat-form-field { width: 280px; max-width: 100%; }
+.ultimo-controllo, .fatture, .dati small { color: #627580; font-size: 13px; }
+.venditore { margin-top: 24px; }
+.ordine { border: 1px solid #dce5e9; border-radius: 10px; background: white; margin: 16px 0; overflow: hidden; }
+.ordine-header { background: #f3f7f8; padding: 18px 20px; }
+.ordine-header > div { min-width: 0; overflow-wrap: anywhere; }
+.ordine-header a { flex-shrink: 0; }
+.scadenza { padding: 18px 20px; border-top: 1px solid #e3eaed; }
+.scadenza.anomala { background: #fff8ea; }
+.stato { padding: 4px 10px; background: #edf2f4; border-radius: 20px; font-size: 12px; white-space: nowrap; }
+.stato.da-fatturare { background: #dcefeb; color: #236b58; }
+.dati { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 12px; }
+.dati span { display: flex; flex-direction: column; gap: 4px; }
+.anomalia { display: flex; align-items: flex-start; gap: 8px; color: #805a13; margin-top: 16px; }
+.anomalia mat-icon { flex-shrink: 0; }
+.fatture { overflow-wrap: anywhere; margin-top: 14px; }
+.errore { color: #a52d28; }
+.vuoto { padding: 28px; background: white; border-radius: 8px; }
+@media(max-width: 600px) {
+  .pagamenti-page { padding: 16px; }
+  .ordine-header { align-items: flex-start; flex-direction: column; padding: 16px; }
+  .scadenza { padding: 16px; }
+  .scadenza-header { flex-wrap: wrap; }
+}
