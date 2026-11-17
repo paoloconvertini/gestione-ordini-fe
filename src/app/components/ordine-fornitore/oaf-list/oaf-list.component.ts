@@ -1,3 +1,4 @@
+import {UnioneOafDialogComponent} from '../../unione-oaf-dialog/unione-oaf-dialog.component';
 import {Component, OnInit} from '@angular/core';
 import {CommonListComponent} from "../../commonListComponent";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -27,6 +28,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   status?: string;
   selection = new SelectionModel<any>(true, []);
   updateList: any = [];
+  unioneInCorso = false;
   filtro: FiltroOrdini = new FiltroOrdini();
 
   constructor(private snackbar: MatSnackBar,
@@ -119,18 +121,53 @@ export class OafListComponent extends CommonListComponent implements OnInit {
     }
   }
 
+  fornitoreDiversoSelezionato(ordine: any): boolean {
+    if (!this.selection.isSelected(ordine)) return false;
+    const destinazione = this.selection.selected.reduce((prima, corrente) =>
+      corrente.anno > prima.anno ? corrente : prima, this.selection.selected[0]);
+    return ordine.gruppo !== destinazione.gruppo
+      || ordine.conto?.trim() !== destinazione.conto?.trim();
+  }
+
   unisciOrdini() {
-    this.loader = true;
-    this.service.unisciOrdini(this.selection.selected).pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe({
-        next: () => {
-          this.loader = false;
-          this.retrieveFornitoreList();
-        }
-      })
+    if (this.unioneInCorso || this.loader || this.selection.selected.length < 2) return;
+    const ordini = this.selection.selected.map(o => ({anno: o.anno, serie: o.serie, progressivo: o.progressivo}));
+    this.unioneInCorso = true;
+    this.service.anteprimaUnione(ordini).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+      next: anteprima => {
+        if (!this.stessaSelezione(ordini)) { this.unioneInCorso = false; return; }
+        this.dialog.open(UnioneOafDialogComponent, {width: '800px', maxWidth: '95vw', data: anteprima})
+          .afterClosed().pipe(takeUntil(this.ngUnsubscribe)).subscribe(conferma => {
+            if (!conferma || !this.stessaSelezione(ordini)) { this.unioneInCorso = false; return; }
+            this.loader = true;
+            this.service.unisciOrdini(ordini, anteprima.fornitoriDiversi, anteprima.versione)
+              .pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+                next: res => {
+                  this.unioneInCorso = false; this.loader = false; this.selection.clear();
+                  if (res?.error) { this.snackbar.open(res.msg || 'Unione non riuscita', 'Chiudi'); return; }
+                  this.snackbar.open(res?.msg || 'Ordini unificati', 'Chiudi', {duration: 5000});
+                  this.retrieveFornitoreList();
+                },
+                error: err => this.erroreUnione(err)
+              });
+          });
+      },
+      error: err => this.erroreUnione(err)
+    });
+  }
+
+  private stessaSelezione(ordini: {anno: number; serie: string; progressivo: number}[]): boolean {
+    return this.selection.selected.length === ordini.length && ordini.every(o => this.selection.selected.some(s =>
+      s.anno === o.anno && s.serie === o.serie && s.progressivo === o.progressivo));
+  }
+
+  private erroreUnione(err: any): void {
+    this.loader = false; this.unioneInCorso = false; this.selection.clear();
+    this.snackbar.open(err.error?.msg || err.error?.message || 'Unione non riuscita. Aggiorna la lista prima di riprovare.', 'Chiudi');
   }
 
   retrieveFornitoreList(): void {
+    this.selection.clear();
     this.loader = true;
     this.updateList = [];
       this.service.getAllOaf(this.filtro).pipe(takeUntil(this.ngUnsubscribe)).subscribe({
@@ -315,6 +352,7 @@ export class OafListComponent extends CommonListComponent implements OnInit {
   }
 
   override applyFilter() {
+    this.selection.clear();
     this.state.setState({ searchText: this.filtro.searchText });
 
     super.applyFilter(this.filtro.searchText);

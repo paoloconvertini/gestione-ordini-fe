@@ -75,12 +75,23 @@
 
         <div class="filters-spacer"></div>
 
-        <button mat-raised-button color="primary"
-                *ngIf="perm.canUnisciOrdini && filtro.filtroStatus === 'F'"
-                (click)="unisciOrdini()">
-          Unisci ordini
-        </button>
-
+      </div>
+      <div class="selection-toolbar"
+           *ngIf="perm.canUnisciOrdini && filtro.filtroStatus === 'F' && selection.hasValue()">
+        <mat-icon aria-hidden="true">check_circle</mat-icon>
+        <div class="selection-summary" role="status" aria-live="polite">
+          <strong>{{selection.selected.length}} {{selection.selected.length === 1 ? 'ordine selezionato' : 'ordini selezionati'}}</strong>
+          <span>Selezione su tutte le pagine</span>
+        </div>
+        <div class="selection-actions">
+          <button mat-button [disabled]="loader || unioneInCorso" (click)="selection.clear()">Deseleziona tutto</button>
+          <button mat-raised-button color="primary"
+                  [disabled]="loader || unioneInCorso || selection.selected.length < 2"
+                  (click)="unisciOrdini()">
+            <mat-icon aria-hidden="true">merge_type</mat-icon>
+            Unisci ordini
+          </button>
+        </div>
       </div>
       <div class="mat-elevation-z8">
             <mat-spinner *ngIf="loader" class="loader"></mat-spinner>
@@ -175,7 +186,10 @@
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                  [class.order-supplier-warning]="perm.canUnisciOrdini && filtro.filtroStatus === 'F' && fornitoreDiversoSelezionato(row)"
+                  [class.order-selected]="perm.canUnisciOrdini && filtro.filtroStatus === 'F' && selection.isSelected(row)"
+                  (click)="selection.toggle(row)"></tr>
 
               <!-- Row shown when there is no matching data. -->
               <tr class="mat-row" *matNoDataRow>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {CommonService} from "../../CommonSerivce";
-import {HttpClient} from "@angular/common/http";
+import {AnteprimaUnioneOaf, OrdineUnioneOaf} from "../../../models/anteprima-unione-oaf";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../../../environments/environment";
 import {Observable} from "rxjs";
 import {FiltroOrdini} from "../../../models/FiltroOrdini";
@@ -32,8 +33,13 @@ export class OrdineFornitoreService extends CommonService{
     return this.http.get(`${this.url}/richiediApprovazione/${anno}/${serie}/${progressivo}`);
   }
 
-  unisciOrdini(data: any[]): Observable<any> {
-    return this.http.post(`${this.url}/unisciOrdini`, data);
+  anteprimaUnione(data: OrdineUnioneOaf[]): Observable<AnteprimaUnioneOaf> {
+    return this.http.post<AnteprimaUnioneOaf>(`${this.url}/unisciOrdini/anteprima`, data);
+  }
+
+  unisciOrdini(data: OrdineUnioneOaf[], confermaFornitoriDiversi: boolean, versione: string): Observable<any> {
+    const params = new HttpParams().set('confermaFornitoriDiversi', confermaFornitoriDiversi).set('versione', versione);
+    return this.http.post(`${this.url}/unisciOrdini`, data, {params});
   }
 
   apriOrdine(anno: any, serie: any, progressivo: any) {

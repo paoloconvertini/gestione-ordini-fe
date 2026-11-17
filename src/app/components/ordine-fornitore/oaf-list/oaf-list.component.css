@@ -93,3 +93,27 @@
   background-color: #607d8b;
   color: white;
 }
+
+.selection-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid #cbdadd;
+  border-radius: 8px;
+  background: #edf4f5;
+  color: #405e69;
+}
+.selection-toolbar > mat-icon { flex-shrink: 0; }
+.selection-summary { display: flex; flex-direction: column; gap: 3px; }
+.selection-summary span { font-size: 12px; color: #526a74; }
+.selection-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+tr.order-selected { background-color: #edf4f5; }
+tr.order-selected td:first-child { box-shadow: inset 3px 0 #607d8b; }
+@media (max-width: 600px) {
+  .selection-toolbar { flex-wrap: wrap; padding: 12px; }
+  .selection-actions { width: 100%; justify-content: flex-end; }
+}
+
+tr.order-supplier-warning { background-color: #fff4df; }
+tr.order-supplier-warning td:first-child { box-shadow: inset 3px 0 #b87912; }

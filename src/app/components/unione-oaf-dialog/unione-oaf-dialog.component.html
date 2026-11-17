@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Unisci ordini fornitori</h2>
+<mat-dialog-content>
+  <p class="conteggio">{{data.ordini.length}} ordini selezionati per l'unione</p>
+  <section class="destination-card" aria-label="Ordine mantenuto">
+    <mat-icon aria-hidden="true">merge_type</mat-icon>
+    <div>
+      <span class="section-label">Ordine mantenuto</span>
+      <strong class="destination-number">{{data.ordini[0].anno}}/{{data.ordini[0].serie}}/{{data.ordini[0].progressivo}}</strong>
+      <span class="supplier-name">{{data.ordini[0].intestazione}}</span>
+      <small>Codice fornitore {{data.ordini[0].gruppo}}/{{data.ordini[0].conto}}</small>
+    </div>
+  </section>
+  <div *ngIf="data.fornitoriDiversi" class="avviso" role="alert">
+    <mat-icon aria-hidden="true">warning_amber</mat-icon>
+    <div><strong>Stai unendo fornitori diversi</strong>
+      <p>Le righe degli ordini elencati sotto saranno trasferite all'ordine di {{data.ordini[0].intestazione}}.</p>
+      <span>Controlla nomi e codici dei fornitori prima di confermare.</span>
+    </div>
+  </div>
+  <h3>Ordini da accorpare</h3>
+  <p class="transfer-description">Le righe confluiranno nell'ordine mantenuto. Gli ordini di origine saranno rimossi dalla lista.</p>
+  <div class="table-scroll"><table>
+    <thead><tr><th scope="col">Ordine</th><th scope="col">Fornitore</th></tr></thead>
+    <tbody><tr *ngFor="let o of data.ordini.slice(1)"
+      [class.supplier-warning]="o.gruppo !== data.ordini[0].gruppo || o.conto !== data.ordini[0].conto">
+      <td class="order-number">{{o.anno}}/{{o.serie}}/{{o.progressivo}}</td>
+      <td><span class="supplier-name">{{o.intestazione}}</span>
+        <span class="supplier-warning-label" *ngIf="o.gruppo !== data.ordini[0].gruppo || o.conto !== data.ordini[0].conto">Fornitore diverso</span><small>Codice {{o.gruppo}}/{{o.conto}}</small></td>
+    </tr></tbody>
+  </table></div>
+  <mat-checkbox *ngIf="data.fornitoriDiversi" [(ngModel)]="confermaDiversi" color="warn">Confermo il trasferimento delle righe tra fornitori diversi</mat-checkbox>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Annulla</button>
+  <button mat-raised-button [color]="data.fornitoriDiversi ? 'warn' : 'primary'" [disabled]="data.fornitoriDiversi && !confermaDiversi" (click)="conferma()">Conferma unione</button>
+</mat-dialog-actions>

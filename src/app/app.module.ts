@@ -1,3 +1,4 @@
+import {UnioneOafDialogComponent} from './components/unione-oaf-dialog/unione-oaf-dialog.component';
 import {CaricoInfissiDialogComponent} from './components/carico-infissi-dialog/carico-infissi-dialog.component';
 import {OrdiniNoteDaOrdinareComponent} from './components/ordini-note-da-ordinare/ordini-note-da-ordinare.component';
 import { StoricoPrezziDialogComponent } from './components/prezzi-articoli/storico-prezzi-dialog.component';
@@ -184,6 +185,7 @@ export const DateFormats = {
     ConsegneSettimanaliDettaglioDialogComponent,
     CaricoMagazzinoDialogComponent,
     CaricoInfissiDialogComponent,
+    UnioneOafDialogComponent,
     FatturaAccontoDialogComponent,
     FatturaAccontoCartDialogComponent,
     AccontiNonValidatiDialogComponent,
